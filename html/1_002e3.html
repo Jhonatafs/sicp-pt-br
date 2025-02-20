@@ -1715,4 +1715,1164 @@ fração contínua. Defina um procedimento <code>cont-frac</code> tal que avalia
 <code>(cont-frac n d k)</code> calcule o valor da fração contínua finita de <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>k</mi>
 </math> termos.
-Verifique seu procedimento aproximando <math xmlns="http://
+Verifique seu procedimento aproximando <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>φ<!-- φ --></mi>
+  </mrow>
+</math> usando
+
+<pre><code class="language-scheme">(cont-frac (lambda (i) 1.0)
+           (lambda (i) 1.0)
+           k)</code></pre>
+
+<p>para valores sucessivos de <code>k</code>. Quão grande você deve fazer <code>k</code> para
+obter uma aproximação que seja precisa até 4 casas decimais?
+</p>
+</li><li> Se o seu procedimento <code>cont-frac</code> gerar um processo recursivo, escreva um
+que gere um processo iterativo. Se ele gerar um processo iterativo,
+escreva um que gere um processo recursivo.
+
+</li></ol>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e38"></a>Exercício 1.38:</strong> Em 1737, o matemático suíço
+Leonhard Euler publicou um artigo <cite>De Fractionibus Continuis</cite>, que
+incluía uma expansão de fração contínua para <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>e</mi>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+  </mrow>
+</math>, onde <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>e</mi>
+</math> é a base
+dos logaritmos naturais. Nessa fração, os <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>N</mi>
+    <mi>i</mi>
+  </msub>
+</math> são todos 1, e
+os <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>D</mi>
+    <mi>i</mi>
+  </msub>
+</math> são sucessivamente 1, 2, 1, 1, 4, 1, 1, 6, 1, 1, 8, ….
+Escreva um programa que use o seu procedimento <code>cont-frac</code> do <a href="#Exercise-1_002e37">Exercício 1.37</a> 
+para aproximar <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>e</mi>
+</math>, com base na expansão de Euler.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e39"></a>Exercício 1.39:</strong> Uma representação de fração contínua
+da função tangente foi publicada em 1770 pelo matemático alemão J.H. Lambert:
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>tan</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>x</mi>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mi>x</mi>
+      <mrow>
+        <mn>1</mn>
+        <mo>−<!-- − --></mo>
+        <mfrac>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+          <mrow>
+            <mn>3</mn>
+            <mo>−<!-- − --></mo>
+            <mfrac>
+              <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+              </msup>
+              <mrow>
+                <mn>5</mn>
+                <mo>−<!-- − --></mo>
+                <mo>…<!-- … --></mo>
+              </mrow>
+            </mfrac>
+          </mrow>
+        </mfrac>
+      </mrow>
+    </mfrac>
+    <mspace width="thinmathspace"/>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+onde <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> está em radianos. Defina um procedimento <code>(tan-cf x k)</code> que
+calcula uma aproximação da função tangente com base na fórmula de Lambert.
+<code>k</code> especifica o número de termos a serem calculados, como no <a href="#Exercise-1_002e37">Exercício 1.37</a>.
+</p></blockquote>
+
+<a id="g_t1_002e3_002e4"></a>
+<a id="Procedures-as-Returned-Values"></a>
+<h4 class="subsection"><span class="secnum">1.3.4</span><span class="sectitle">Procedimentos como Valores Retornados</span></h4>
+
+<p>Os exemplos acima demonstram como a capacidade de passar procedimentos como argumentos
+aumenta significativamente o poder expressivo de nossa linguagem de programação. Podemos
+alcançar ainda mais poder expressivo criando procedimentos cujos valores retornados
+são eles mesmos procedimentos.
+</p>
+<p>Podemos ilustrar essa ideia olhando novamente para o exemplo de ponto fixo
+descrito no final de <a href="#g_t1_002e3_002e3">1.3.3</a>. Formulamos uma nova versão do
+procedimento de raiz quadrada como uma busca por ponto fixo, começando com a
+observação de que <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msqrt>
+    <mi>x</mi>
+  </msqrt>
+</math> é um ponto fixo da função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>. Então usamos o amortecimento médio para fazer as aproximações convergirem.
+O amortecimento médio é uma técnica geral útil por si só. Ou seja, dada uma
+função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, consideramos a função cujo valor em <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> é igual à
+média de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>.
+</p>
+<p>Podemos expressar a ideia de amortecimento médio por meio do seguinte procedimento:
+</p>
+<pre><code class="language-scheme">(define (average-damp f)
+  (lambda (x) 
+    (average x (f x))))</code></pre>
+
+<p><code>Average-damp</code> é um procedimento que recebe como argumento um procedimento
+<code>f</code> e retorna como valor um procedimento (produzido pelo <code>lambda</code>)
+que, quando aplicado a um número <code>x</code>, produz a média de <code>x</code> e
+<code>(f x)</code>. Por exemplo, aplicando <code>average-damp</code> ao procedimento <code>square</code>
+produz um procedimento cujo valor em algum número <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> é a média
+de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>x</mi>
+    <mn>2</mn>
+  </msup>
+</math>. Aplicando esse procedimento resultante a 10 retorna a
+média de 10 e 100, ou 55:<a class="footnote_link" id="DOCF59" href="#FOOT59"><sup>59</sup></a>
+</p>
+<pre><code class="language-scheme">((average-damp square) 10)
+<i>55</i></code></pre>
+
+<p>Usando <code>average-damp</code>, podemos reformular o procedimento de raiz quadrada da seguinte forma:
+</p>
+<pre><code class="language-scheme">(define (sqrt x)
+  (fixed-point 
+   (average-damp 
+    (lambda (y) (/ x y)))
+   1.0))</code></pre>
+
+<p>Observe como essa formulação torna explícitas as três ideias do método:
+busca por ponto fixo, amortecimento médio e a função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>.
+É instrutivo comparar essa formulação do método de raiz quadrada com
+a versão original dada em <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>. Lembre-se de que esses
+procedimentos expressam o mesmo processo e observe como a ideia
+fica mais clara quando expressamos o processo em termos dessas abstrações. Em
+geral, existem muitas maneiras de formular um processo como um procedimento.
+Programadores experientes sabem como escolher formulações procedurais que são
+particularmente perspicazes e onde elementos úteis do processo são expostos
+como entidades separadas que podem ser reutilizadas em outras aplicações. Como um exemplo simples de reutilização, observe que a raiz cúbica de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> é um ponto fixo da
+função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>, então podemos imediatamente generalizar nosso
+procedimento de raiz quadrada para um que extrai raízes cúbicas:<a class="footnote_link" id="DOCF60" href="#FOOT60"><sup>60</sup></a>
+</p>
+<pre><code class="language-scheme">(define (cube-root x)
+  (fixed-point 
+   (average-damp 
+    (lambda (y) 
+      (/ x (square y))))
+   1.0))</code></pre>
+
+<a id="Newton_0027s-method"></a>
+<h5 class="subsubheading">Método de Newton</h5>
+
+<p>Quando introduzimos o procedimento de raiz quadrada, em <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>, nós
+mencionamos que este era um caso especial do <a id="index-Newton_0027s-method"></a>
+<em>método de Newton</em>.  
+Se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> é uma função diferenciável, então uma solução da equação
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math> é um ponto fixo da função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> onde
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mi>x</mi>
+  <mo>−<!-- − --></mo>
+  <mfrac>
+    <mrow>
+      <mi>g</mi>
+      <mo stretchy="false">(</mo>
+      <mi>x</mi>
+      <mo stretchy="false">)</mo>
+    </mrow>
+    <mrow>
+      <mi>D</mi>
+      <mi>g</mi>
+      <mo stretchy="false">(</mo>
+      <mi>x</mi>
+      <mo stretchy="false">)</mo>
+    </mrow>
+  </mfrac>
+</math>
+
+e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>D</mi>
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> é a derivada de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> avaliada em <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>. O método de
+Newton é o uso do método de ponto fixo que vimos acima para aproximar uma
+solução da equação encontrando um ponto fixo da função
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF61" href="#FOOT61"><sup>61</sup></a>
+</p>
+<p>Para muitas funções <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> e para estimativas iniciais suficientemente boas para <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>,
+o método de Newton converge muito rapidamente para uma solução de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>.<a class="footnote_link" id="DOCF62" href="#FOOT62"><sup>62</sup></a>
+</p>
+<p>Para implementar o método de Newton como um procedimento, devemos primeiro expressar a
+ideia de derivada. Observe que "derivada", como o amortecimento médio, é
+algo que transforma uma função em outra função. Por exemplo, a
+derivada da função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+</math> é a função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mn>3</mn>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>.
+Em geral, se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> é uma função e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math> é um número pequeno,
+então a derivada <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>D</mi>
+    <mi>g</mi>
+  </mrow>
+</math> de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> é a função cujo valor em qualquer
+número <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> é dado (no limite de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math> pequeno) por
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>D</mi>
+  <mi>g</mi>
+  <mo stretchy="false">(</mo>
+  <mi>x</mi>
+  <mo stretchy="false">)</mo>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mi>g</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mi>d</mi>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+        <mo>−<!-- − --></mo>
+        <mi>g</mi>
+        <mo stretchy="false">(</mo>
+        <mi>x</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+      <mrow>
+        <mi>d</mi>
+        <mi>x</mi>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+Assim, podemos expressar a ideia de derivada (tomando <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math> como, por exemplo,
+0.00001) como o procedimento
+</p>
+<pre><code class="language-scheme">(define (deriv g)
+  (lambda (x)
+    (/ (- (g (+ x dx)) (g x))
+       dx)))</code></pre>
+
+<p>junto com a definição
+</p>
+<pre><code class="language-scheme">(define dx 0.00001)</code></pre>
+
+<p>Como <code>average-damp</code>, <code>deriv</code> é um procedimento que recebe um procedimento como
+argumento e retorna um procedimento como valor. Por exemplo, para aproximar a
+derivada de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+</math> em 5 (cujo valor exato é 75) podemos avaliar
+</p>
+<pre><code class="language-scheme">(define (cube x) (* x x x))
+
+((deriv cube) 5)
+<i>75.00014999664018</i></code></pre>
+
+<p>Com a ajuda de <code>deriv</code>, podemos expressar o método de Newton como um processo de
+ponto fixo:
+</p>
+<pre><code class="language-scheme">(define (newton-transform g)
+  (lambda (x)
+    (- x (/ (g x) 
+            ((deriv g) x)))))
+
+(define (newtons-method g guess)
+  (fixed-point (newton-transform g) 
+               guess))</code></pre>
+
+<p>O procedimento <code>newton-transform</code> expressa a fórmula no início desta
+seção, e <code>newtons-method</code> é facilmente definido em termos disso.
+Ele recebe como argumentos um procedimento que calcula a função para a qual queremos
+encontrar um zero, junto com uma estimativa inicial. Por exemplo, para encontrar a
+raiz quadrada de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>, podemos usar o método de Newton para encontrar um zero da função
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>−<!-- − --></mo>
+    <mi>x</mi>
+  </mrow>
+</math> começando com uma estimativa inicial de 1.<a class="footnote_link" id="DOCF63" href="#FOOT63"><sup>63</sup></a>
+</p>
+<p>Isso fornece mais uma forma do procedimento de raiz quadrada:
+</p>
+<pre><code class="language-scheme">(define (sqrt x)
+  (newtons-method 
+   (lambda (y) 
+     (- (square y) x)) 
+   1.0))</code></pre>
+
+<a id="Abstractions-and-first_002dclass-procedures"></a>
+<h5 class="subsubheading">Abstrações e procedimentos de primeira classe</h5>
+
+<p>Vimos duas maneiras de expressar o cálculo da raiz quadrada como uma instância de um
+método mais geral, uma como uma busca por ponto fixo e outra usando o método de
+Newton. Como o método de Newton foi ele mesmo expresso como um processo de ponto fixo,
+na verdade vimos duas maneiras de calcular raízes quadradas como pontos fixos. Cada método
+começa com uma função e encontra um ponto fixo de alguma transformação da
+função. Podemos expressar essa ideia geral como um procedimento:
+</p>
+<pre><code class="language-scheme">(define (fixed-point-of-transform 
+         g transform guess)
+  (fixed-point (transform g) guess))</code></pre>
+
+<p>Este procedimento muito geral recebe como argumentos um procedimento <code>g</code> que
+calcula alguma função, um procedimento que transforma <code>g</code> e uma estimativa inicial.
+O resultado retornado é um ponto fixo da função transformada.
+</p>
+<p>Usando essa abstração, podemos reformular o primeiro cálculo de raiz quadrada desta
+seção (onde procuramos um ponto fixo da versão amortecida de
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>) como uma instância desse método geral:
+</p>
+<pre><code class="language-scheme">(define (sqrt x)
+  (fixed-point-of-transform 
+   (lambda (y) (/ x y))
+   average-damp
+   1.0))</code></pre>
+
+<p>Da mesma forma, podemos expressar o segundo cálculo de raiz quadrada desta seção
+(uma instância do método de Newton que encontra um ponto fixo da transformação de Newton
+de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>−<!-- − --></mo>
+    <mi>x</mi>
+  </mrow>
+</math>) como
+</p>
+<pre><code class="language-scheme">(define (sqrt x)
+  (fixed-point-of-transform 
+   (lambda (y) (- (square y) x))
+   newton-transform
+   1.0))</code></pre>
+
+<p>Começamos a seção <a href="#g_t1_002e3">1.3</a> com a observação de que procedimentos compostos são um
+mecanismo crucial de abstração, porque nos permitem expressar métodos gerais
+de computação como elementos explícitos em nossa linguagem de programação. Agora
+vimos como procedimentos de ordem superior nos permitem manipular esses métodos gerais
+para criar mais abstrações.
+</p>
+<p>Como programadores, devemos estar atentos a oportunidades para identificar as
+abstrações subjacentes em nossos programas e construir sobre elas e generalizá-las
+para criar abstrações mais poderosas. Isso não significa que devemos sempre
+escrever programas da maneira mais abstrata possível; programadores experientes sabem como
+escolher o nível de abstração apropriado para sua tarefa. Mas é importante
+ser capaz de pensar em termos dessas abstrações, para que possamos estar
+prontos para aplicá-las em novos contextos. A importância dos procedimentos de ordem superior
+é que eles nos permitem representar essas abstrações explicitamente como
+elementos em nossa linguagem de programação, para que possam ser manipulados como
+outros elementos computacionais.
+</p>
+<p>Em geral, as linguagens de programação impõem restrições sobre as maneiras pelas quais
+elementos computacionais podem ser manipulados. Elementos com as menores
+restrições são ditos ter <a id="index-first_002dclass"></a>
+<em>status de primeira classe</em>. Alguns dos
+"direitos e privilégios" dos elementos de primeira classe são:<a class="footnote_link" id="DOCF64" href="#FOOT64"><sup>64</sup></a>
+</p>
+<ul>
+<li> Eles podem ser nomeados por variáveis.
+
+</li><li> Eles podem ser passados como argumentos para procedimentos.
+
+</li><li> Eles podem ser retornados como resultados de procedimentos.
+
+</li><li> Eles podem ser incluídos em estruturas de dados.<a class="footnote_link" id="DOCF65" href="#FOOT65"><sup>65</sup></a>
+
+</li></ul>
+
+<p>Lisp, ao contrário de outras linguagens de programação comuns, concede aos procedimentos status
+completo de primeira classe. Isso impõe desafios para uma implementação eficiente, mas
+o ganho resultante em poder expressivo é enorme.<a class="footnote_link" id="DOCF66" href="#FOOT66"><sup>66</sup></a>
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e40"></a>Exercício 1.40:</strong> Defina um procedimento <code>cubic</code>
+que pode ser usado junto com o procedimento <code>newtons-method</code> em
+expressões da forma
+</p>
+<pre><code class="language-scheme">(newtons-method (cubic a b c) 1)</code></pre>
+
+<p>para aproximar zeros do cúbico <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>+</mo>
+    <mi>a</mi>
+    <msup>
+      <mi>x</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>+</mo>
+    <mi>b</mi>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>c</mi>
+  </mrow>
+</math>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e41"></a>Exercício 1.41:</strong> Defina um procedimento <code>double</code>
+que recebe um procedimento de um argumento como argumento e retorna um procedimento que
+aplica o procedimento original duas vezes. Por exemplo, se <code>inc</code> é um
+procedimento que adiciona 1 ao seu argumento, então <code>(double inc)</code> deve ser um
+procedimento que adiciona 2. Qual valor é retornado por
+</p>
+<pre><code class="language-scheme">(((double (double double)) inc) 5)</code></pre>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e42"></a>Exercício 1.42:</strong> Sejam <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> duas
+funções de um argumento. A <a id="index-composition"></a>
+<em>composição</em> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> após <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>g</mi>
+</math> é definida
+como a função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>. Defina um procedimento
+<code>compose</code> que implementa a composição. Por exemplo, se <code>inc</code> é um
+procedimento que adiciona 1 ao seu argumento,
+</p>
+<pre><code class="language-scheme">((compose square inc) 6)
+<i>49</i></code></pre>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e43"></a>Exercício 1.43:</strong> Se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> é uma função numérica
+e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> é um inteiro positivo, então podemos formar a <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> aplicação
+repetida de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, que é definida como a função cujo valor em <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>
+é <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mo>…<!-- … --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>…<!-- … --></mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>. Por exemplo, se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> é a
+função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mn>1</mn>
+  </mrow>
+</math>, então a <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> aplicação repetida de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> é
+a função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>n</mi>
+  </mrow>
+</math>. Se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> é a operação de elevar um número ao quadrado,
+então a <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> aplicação repetida de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> é a função que
+eleva seu argumento à <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mn>2</mn>
+      <mi>n</mi>
+    </msup>
+    <mtext>-th</mtext>
+  </mrow>
+</math> potência. Escreva um procedimento que recebe como
+entradas um procedimento que calcula <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> e um inteiro positivo <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> e retorna
+o procedimento que calcula a <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> aplicação repetida de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>. Seu
+procedimento deve ser capaz de ser usado da seguinte forma:
+</p>
+<pre><code class="language-scheme">((repeated square 2) 5)
+<i>625</i></code></pre>
+
+<p>Dica: Você pode achar conveniente usar <code>compose</code> do <a href="#Exercise-1_002e42">Exercício 1.42</a>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e44"></a>Exercício 1.44:</strong> A ideia de <a id="index-smoothing"></a>
+<em>suavização</em> de uma
+função é um conceito importante no processamento de sinais. Se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> é uma função
+e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math> é algum número pequeno, então a versão suavizada de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> é a
+função cujo valor em um ponto <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> é a média de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo>−<!-- − --></mo>
+    <mi>d</mi>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo>+</mo>
+    <mi>d</mi>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>. Escreva um procedimento
+<code>smooth</code> que recebe como entrada um procedimento que calcula <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> e retorna um
+procedimento que calcula a versão suavizada de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>. Às vezes é valioso
+suavizar repetidamente uma função (ou seja, suavizar a função suavizada, e assim por diante)
+para obter a <a id="index-n_002dfold-smoothed-function"></a>
+<em>função suavizada <i>n</i>-vezes</em>. Mostre como gerar
+a função suavizada <i>n</i>-vezes de qualquer função dada usando <code>smooth</code> e
+<code>repeated</code> do <a href="#Exercise-1_002e43">Exercício 1.43</a>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e45"></a>Exercício 1.45:</strong> Vimos em <a href="#g_t1_002e3_002e3">1.3.3</a>
+que tentar calcular raízes quadradas encontrando ingenuamente um ponto fixo de
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math> não converge, e que isso pode ser corrigido pelo amortecimento
+médio. O mesmo método funciona para encontrar raízes cúbicas como pontos fixos da
+função amortecida <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+</math>. Infelizmente, o processo não
+funciona para raízes quartas—um único amortecimento médio não é suficiente para fazer uma
+busca por ponto fixo para <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+</math> convergir. Por outro lado, se
+amortecermos a média duas vezes (ou seja, usarmos o amortecimento médio do amortecimento médio de 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mn>3</mn>
+    </msup>
+  </mrow>
+</math>) a busca por ponto fixo converge. Faça alguns experimentos
+para determinar quantos amortecimentos médios são necessários para calcular <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> raízes como uma
+busca por ponto fixo baseada em amortecimento médio repetido de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msup>
+      <mi>y</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mspace width="0.1em"/>
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msup>
+  </mrow>
+</math>.  
+Use isso para implementar um procedimento simples para calcular
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msup>
+    <mi>n</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mtext>th</mtext>
+    </mrow>
+  </msup>
+</math> raízes usando <code>fixed-point</code>, <code>average-damp</code>, e o
+procedimento <code>repeated</code> do <a href="#Exercise-1_002e43">Exercício 1.43</a>. Assuma que quaisquer operações
+aritméticas necessárias estão disponíveis como primitivas.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e46"></a>Exercício 1.46:</strong> Vários dos métodos numéricos
+descritos neste capítulo são instâncias de uma estratégia computacional extremamente
+geral conhecida como <a id="index-iterative-improvement"></a>
+<em>melhoria iterativa</em>. A melhoria iterativa diz
+que, para calcular algo, começamos com uma estimativa inicial para a resposta, testamos
+se a estimativa é boa o suficiente, e caso contrário, melhoramos a estimativa e continuamos o
+processo usando a estimativa melhorada como a nova estimativa. Escreva um procedimento
+<code>iterative-improve</code> que recebe dois procedimentos como argumentos: um método para
+dizer se uma estimativa é boa o suficiente e um método para melhorar uma estimativa.
+<code>Iterative-improve</code> deve retornar como seu valor um procedimento que recebe uma
+estimativa como argumento e continua melhorando a estimativa até que ela seja boa o suficiente.
+Reescreva o procedimento <code>sqrt</code> de <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a> e o
+procedimento <code>fixed-point</code> de <a href="#g_t1_002e3_002e3">1.3.3</a> em termos de
+<code>iterative-improve</code>.
+</p></blockquote>
+
+<div class="footnote">
+<h4 class="footnotes-heading">Notas de rodapé</h4>
+
+<div id="FOOT49"><p><a class="footnote_backlink" href="#DOCF49"><sup>49</sup></a>
+Esta série, geralmente
+escrita na forma equivalente 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mi>π<!-- π --></mi>
+      <mn>4</mn>
+    </mfrac>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mo>−<!-- − --></mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>3</mn>
+      </mfrac>
+    </mrow>
+    <mo>+</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>5</mn>
+      </mfrac>
+    </mrow>
+  </mrow>
+  <mo>−<!-- − --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>7</mn>
+      </mfrac>
+    </mrow>
+    <mo>+</mo>
+    <mo>…<!-- … --></mo>
+  </mrow>
+</math>, 
+é devida a Leibniz. Veremos como usar isso como base para alguns
+truques numéricos sofisticados em <a href="3_002e5.xhtml#g_t3_002e5_002e3">3.5.3</a>.</p>
+</div>
+<div id="FOOT50"><p><a class="footnote_backlink" href="#DOCF50"><sup>50</sup></a>
+Observe que usamos
+estrutura de bloco (<a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a>) para incorporar as definições de
+<code>pi-next</code> e <code>pi-term</code> dentro de <code>pi-sum</code>, já que esses procedimentos
+são improváveis de serem úteis para qualquer outro propósito. Veremos como nos livrar
+deles completamente em <a href="#g_t1_002e3_002e2">1.3.2</a>.</p>
+</div>
+<div id="FOOT51"><p><a class="footnote_backlink" href="#DOCF51"><sup>51</sup></a>
+A intenção dos
+<a href="#Exercise-1_002e31">Exercício 1.31</a> a <a href="#Exercise-1_002e33">Exercício 1.33</a> é demonstrar o
+poder expressivo que é alcançado ao usar uma abstração apropriada para
+consolidar muitas operações aparentemente díspares. No entanto, embora acumulação
+e filtragem sejam ideias elegantes, nossas mãos estão um pouco atadas ao usá-las neste
+ponto, já que ainda não temos estruturas de dados para fornecer meios adequados
+de combinação para essas abstrações. Voltaremos a essas ideias em
+<a href="2_002e2.xhtml#g_t2_002e2_002e3">2.2.3</a> quando mostrarmos como usar <a id="index-sequences"></a>
+<em>sequências</em> como interfaces
+para combinar filtros e acumuladores para construir abstrações ainda mais poderosas.
+Veremos lá como esses métodos realmente se destacam
+como uma abordagem poderosa e elegante para projetar programas.</p>
+</div>
+<div id="FOOT52"><p><a class="footnote_backlink" href="#DOCF52"><sup>52</sup></a>
+Esta fórmula foi descoberta pelo
+matemático inglês do século XVII John Wallis.</p>
+</div>
+<div id="FOOT53"><p><a class="footnote_backlink" href="#DOCF53"><sup>53</sup></a>
+Seria mais claro e menos intimidante para as pessoas aprendendo
+Lisp se um nome mais óbvio que <code>lambda</code>, como <code>make-procedure</code>,
+fosse usado. Mas a convenção está firmemente estabelecida. A notação é adotada
+do cálculo λ, um formalismo matemático introduzido pelo
+lógico matemático Alonzo <a href="References.xhtml#Church-_00281941_0029">Church (1941)</a>. Church desenvolveu o 
+cálculo λ para fornecer uma base rigorosa para estudar as 
+noções de função
+e aplicação de função. O cálculo λ tornou-se uma ferramenta básica
+para investigações matemáticas da semântica de linguagens de programação.</p>
+</div>
+<div id="FOOT54"><p><a class="footnote_backlink" href="#DOCF54"><sup>54</sup></a>
+Entender
+definições internas bem o suficiente para ter certeza de que um programa significa o que pretendemos que ele
+significa requer um modelo mais elaborado do processo de avaliação do que apresentamos
+neste capítulo. As sutilezas não surgem com definições internas
+de procedimentos, no entanto. Voltaremos a essa questão em 
+<a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a>, depois de aprendermos mais sobre avaliação.</p>
+</div>
+<div id="FOOT55"><p><a class="footnote_backlink" href="#DOCF55"><sup>55</sup></a>
+Usamos 0.001 como um número "pequeno" representativo para
+indicar uma tolerância para o erro aceitável em um cálculo. A
+tolerância apropriada para um cálculo real depende do problema a ser
+resolvido e das limitações do computador e do algoritmo. Isso é frequentemente uma
+consideração muito sutil, exigindo ajuda de um analista numérico ou algum
+outro tipo de mágico.</p>
+</div>
+<div id="FOOT56"><p><a class="footnote_backlink" href="#DOCF56"><sup>56</sup></a>
+Isso pode ser feito usando <code>error</code>, que recebe como
+argumentos um número de itens que são impressos como mensagens de erro.</p>
+</div>
+<div id="FOOT57"><p><a class="footnote_backlink" href="#DOCF57"><sup>57</sup></a>
+Tente isso
+durante uma aula chata: Coloque sua calculadora no modo de radianos e então
+pressione repetidamente o botão <code>cos</code> até obter o ponto fixo.</p>
+</div>
+<div id="FOOT58"><p><a class="footnote_backlink" href="#DOCF58"><sup>58</sup></a>
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mo stretchy="false">↦<!-- ↦ --></mo>
+</math> (pronunciado "mapeia para") é a maneira do matemático de
+escrever <code>lambda</code>. <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math> significa <code>(lambda (y) (/ x y))</code>,
+ou seja, a função cujo valor em <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> é <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>.</p>
+</div>
+<div id="FOOT59"><p><a class="footnote_backlink" href="#DOCF59"><sup>59</sup></a>
+Observe que esta é uma combinação cujo
+operador é ele mesmo uma combinação. <a href="1_002e1.xhtml#Exercise-1_002e4">Exercício 1.4</a> já demonstrou a
+capacidade de formar tais combinações, mas isso foi apenas um exemplo de brinquedo. Aqui
+começamos a ver a real necessidade de tais combinações—ao aplicar um procedimento
+que é obtido como o valor retornado por um procedimento de ordem superior.</p>
+</div>
+<div id="FOOT60"><p><a class="footnote_backlink" href="#DOCF60"><sup>60</sup></a>
+Veja
+<a href="#Exercise-1_002e45">Exercício 1.45</a> para uma generalização adicional.</p>
+</div>
+<div id="FOOT61"><p><a class="footnote_backlink" href="#DOCF61"><sup>61</sup></a>
+Livros de cálculo elementar geralmente descrevem o método de Newton em
+termos da sequência de aproximações <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mi>n</mi>
+      <mo>+</mo>
+      <mn>1</mn>
+    </mrow>
+  </msub>
+  <mo>=</mo>
+  <msub>
+    <mi>x</mi>
+    <mi>n</mi>
+  </msub>
+  <mo>−<!-- − --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>x</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+    <mspace width="thinmathspace"/>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>D</mi>
+    <mi>g</mi>
+    <mo stretchy="false">(</mo>
+    <msub>
+      <mi>x</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>. 
+Ter linguagem para falar sobre processos e usar a ideia de pontos fixos 
+simplifica a descrição do método.</p>
+</div>
+<div id="FOOT62"><p><a class="footnote_backlink" href="#DOCF62"><sup>62</sup></a>
+O método de
+Newton nem sempre converge para uma resposta, mas pode
+ser mostrado que, em casos favoráveis, cada iteração dobra o número de dígitos
+de precisão da aproximação para a solução. Em tais casos, o método de Newton
+convergirá muito mais rapidamente que o método do intervalo médio.</p>
+</div>
+<div id="FOOT63"><p><a class="footnote_backlink" href="#DOCF63"><sup>63</sup></a>
+Para
+encontrar raízes quadradas, o método de Newton converge rapidamente para a solução correta
+de qualquer ponto de partida.</p>
+</div>
+<div id="FOOT64"><p><a class="footnote_backlink" href="#DOCF64"><sup>64</sup></a>
+A noção de
+status de primeira classe de elementos de linguagem de programação é devida ao
+cientista da computação britânico Christopher Strachey (1916-1975).</p>
+</div>
+<div id="FOOT65"><p><a class="footnote_backlink" href="#DOCF65"><sup>65</sup></a>
+Veremos exemplos disso
+depois de introduzirmos estruturas de dados em <a href="Chapter-2.xhtml#Chapter-2">Capítulo 2<!-- /@w --></a>.</p>
+</div>
+<div id="FOOT66"><p><a class="footnote_backlink" href="#DOCF66"><sup>66</sup></a">
+O principal
+custo de implementação de procedimentos de primeira classe é que permitir que procedimentos sejam
+retornados como valores requer reservar armazenamento para as variáveis livres de um procedimento
+mesmo enquanto o procedimento não está sendo executado. Na implementação do Scheme que
+estudaremos em <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>, essas variáveis são armazenadas no ambiente do procedimento.</p>
+</div>
+</div>
+<nav class="header">
+<p>
+Próximo: <a href="Chapter-2.xhtml#Chapter-2" accesskey="n" rel="next">Capítulo 2</a>, Anterior: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="p" rel="prev">1.2</a>, Acima: <a href="#g_t1_002e3" accesskey="u" rel="prev">1.3</a>   [<a href="index.xhtml#SEC_Contents" title="Índice" accesskey="c" rel="contents">Conteúdo</a>]</p>
+</nav>
