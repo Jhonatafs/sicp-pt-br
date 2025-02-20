@@ -305,4 +305,995 @@ Próximo: <a href="Chapter-2.xhtml#Chapter-2" accesskey="n" rel="next">Capítulo
           <mn>2</mn>
         </mfrac>
         <mo>)</mo>
-      </mrow
+      </mrow>
+      <mspace width="thinmathspace"/>
+      <mo>+</mo>
+      <mspace width="thinmathspace"/>
+      <mo>…<!-- … --></mo>
+      <mspace width="thickmathspace"/>
+      <mo>]</mo>
+    </mrow>
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math>
+
+<p>para pequenos valores de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>d</mi>
+    <mi>x</mi>
+  </mrow>
+</math>. Podemos expressar isso diretamente como um procedimento:</p>
+
+<pre><code class="language-scheme">(define (integral f a b dx)
+  (define (add-dx x) (+ x dx))
+  (* (sum f (+ a (/ dx 2.0)) add-dx b) 
+     dx))
+
+(integral cube 0 1 0.01)
+<i>.24998750000000042</i>
+
+(integral cube 0 1 0.001)
+<i>.249999875000001</i></code></pre>
+
+<p>(O valor exato da integral de <code>cube</code> entre 0 e 1 é 1/4.)</p>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e29"></a>Exercício 1.29:</strong> A Regra de Simpson é um método mais preciso de integração numérica do que o método ilustrado acima. Usando a Regra de Simpson, a integral de uma função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> entre <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> é aproximada como:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfrac>
+    <mi>h</mi>
+    <mn>3</mn>
+  </mfrac>
+  <mo stretchy="false">(</mo>
+  <msub>
+    <mi>y</mi>
+    <mn>0</mn>
+  </msub>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <msub>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <msub>
+      <mi>y</mi>
+      <mn>3</mn>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <msub>
+      <mi>y</mi>
+      <mn>4</mn>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mo>⋯<!-- ⋯ --></mo>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>2</mn>
+    <msub>
+      <mi>y</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>2</mn>
+      </mrow>
+    </msub>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>4</mn>
+    <msub>
+      <mi>y</mi>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>−<!-- − --></mo>
+        <mn>1</mn>
+      </mrow>
+    </msub>
+    <mo>+</mo>
+    <msub>
+      <mi>y</mi>
+      <mi>n</mi>
+    </msub>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+<p>onde <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>h</mi>
+    <mo>=</mo>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo>−<!-- − --></mo>
+    <mi>a</mi>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>n</mi>
+  </mrow>
+</math>, para algum inteiro par <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math>, e
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mi>k</mi>
+  </msub>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>a</mi>
+    <mo>+</mo>
+    <mi>k</mi>
+    <mi>h</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>. (Aumentar <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> aumenta a precisão da aproximação.) Defina um procedimento que recebe como argumentos <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> e retorna o valor da integral, calculado usando a Regra de Simpson. Use seu procedimento para integrar <code>cube</code> entre 0 e 1 (com <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>=</mo>
+    <mn>100</mn>
+  </mrow>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>n</mi>
+    <mo>=</mo>
+    <mn>1000</mn>
+  </mrow>
+</math>), e compare os resultados com os do procedimento <code>integral</code> mostrado acima.</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e30"></a>Exercício 1.30:</strong> O procedimento <code>sum</code> acima gera uma recursão linear. O procedimento pode ser reescrito para que a soma seja realizada iterativamente. Mostre como fazer isso preenchendo as expressões ausentes na seguinte definição:</p>
+
+<pre><code class="language-scheme">(define (sum term a next b)
+  (define (iter a result)
+    (if ⟨??⟩
+        ⟨??⟩
+        (iter ⟨??⟩ ⟨??⟩)))
+  (iter ⟨??⟩ ⟨??⟩))</code></pre>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e31"></a>Exercício 1.31:</strong> 
+</p>
+<ol>
+<li> O procedimento <code>sum</code> é apenas o mais simples de um vasto número de abstrações semelhantes que podem ser capturadas como procedimentos de ordem superior.<a class="footnote_link" id="DOCF51" href="#FOOT51"><sup>51</sup></a> Escreva um procedimento análogo chamado <code>product</code> que retorna o produto dos valores de uma função em pontos sobre um determinado intervalo. Mostre como definir <code>factorial</code> em termos de <code>product</code>. Também use <code>product</code> para calcular aproximações de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>π<!-- π --></mi>
+</math> usando a fórmula<a class="footnote_link" id="DOCF52" href="#FOOT52"><sup>52</sup></a>:</li>
+</ol>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfrac>
+    <mi>π<!-- π --></mi>
+    <mn>4</mn>
+  </mfrac>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <mrow>
+        <mn>2</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>4</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>4</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>6</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>6</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>8</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mo>⋯<!-- ⋯ --></mo>
+      </mrow>
+      <mrow>
+        <mn>3</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>3</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>5</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>5</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>7</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>7</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mo>⋯<!-- ⋯ --></mo>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+<p>Se o seu procedimento <code>product</code> gerar um processo recursivo, escreva um que gere um processo iterativo. Se ele gerar um processo iterativo, escreva um que gere um processo recursivo.</p>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e32"></a>Exercício 1.32:</strong> 
+</p>
+<ol>
+<li> Mostre que <code>sum</code> e <code>product</code> (<a href="#Exercise-1_002e31">Exercício 1.31</a>) são ambos casos especiais de uma noção ainda mais geral chamada <code>accumulate</code> que combina uma coleção de termos, usando alguma função de acumulação geral:</li>
+</ol>
+
+<pre><code class="language-scheme">(accumulate 
+ combiner null-value term a next b)</code></pre>
+
+<p><code>Accumulate</code> recebe como argumentos as mesmas especificações de termo e intervalo que <code>sum</code> e <code>product</code>, juntamente com um procedimento <code>combiner</code> (de dois argumentos) que especifica como o termo atual deve ser combinado com a acumulação dos termos anteriores e um <code>null-value</code> que especifica qual valor base usar quando os termos se esgotarem. Escreva <code>accumulate</code> e mostre como <code>sum</code> e <code>product</code> podem ser definidos como chamadas simples para <code>accumulate</code>.</p>
+
+<p>Se o seu procedimento <code>accumulate</code> gerar um processo recursivo, escreva um que gere um processo iterativo. Se ele gerar um processo iterativo, escreva um que gere um processo recursivo.</p>
+</blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e33"></a>Exercício 1.33:</strong> Você pode obter uma versão ainda mais geral de <code>accumulate</code> (<a href="#Exercise-1_002e32">Exercício 1.32</a>) introduzindo a noção de um <a id="index-filter"></a>
+<em>filtro</em> nos termos a serem combinados. Ou seja, combine apenas os termos derivados de valores no intervalo que satisfazem uma condição especificada. A abstração resultante <code>filtered-accumulate</code> recebe os mesmos argumentos que <code>accumulate</code>, juntamente com um predicado adicional de um argumento que especifica o filtro. Escreva <code>filtered-accumulate</code> como um procedimento. Mostre como expressar o seguinte usando <code>filtered-accumulate</code>:</p>
+<ol>
+<li> A soma dos quadrados dos números primos no intervalo de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> a <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> (assumindo que você já tenha um predicado <code>prime?</code> escrito).</li>
+<li> O produto de todos os inteiros positivos menores que <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> que são relativamente primos a <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>n</mi>
+</math> (ou seja, todos os inteiros positivos <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>i</mi>
+    <mo>&lt;</mo>
+    <mi>n</mi>
+  </mrow>
+</math> tais que <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mtext>GCD</mtext>
+    <mo stretchy="false">(</mo>
+    <mi>i</mi>
+    <mo>,</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>1</mn>
+  </mrow>
+</math>).</li>
+</ol>
+</blockquote>
+
+<a id="g_t1_002e3_002e2"></a>
+<a id="Constructing-Procedures-Using-Lambda"></a>
+<h4 class="subsection"><span class="secnum">1.3.2</span><span class="sectitle">Construindo Procedimentos Usando <code>Lambda</code></span></h4>
+
+<p>Ao usar <code>sum</code> como em <a href="#g_t1_002e3_002e1">1.3.1</a>, parece muito incômodo ter que definir procedimentos triviais como <code>pi-term</code> e <code>pi-next</code> apenas para que possamos usá-los como argumentos para nosso procedimento de ordem superior. Em vez de definir <code>pi-next</code> e <code>pi-term</code>, seria mais conveniente ter uma maneira de especificar diretamente “o procedimento que retorna sua entrada incrementada em 4” e “o procedimento que retorna o recíproco de sua entrada vezes sua entrada mais 2”. Podemos fazer isso introduzindo a forma especial <code>lambda</code>, que cria procedimentos. Usando <code>lambda</code>, podemos descrever o que queremos como:</p>
+
+<pre><code class="language-scheme">(lambda (x) (+ x 4))</code></pre>
+
+<p>e</p>
+
+<pre><code class="language-scheme">(lambda (x) (/ 1.0 (* x (+ x 2))))</code></pre>
+
+<p>Então, nosso procedimento <code>pi-sum</code> pode ser expresso sem definir nenhum procedimento auxiliar como:</p>
+
+<pre><code class="language-scheme">(define (pi-sum a b)
+  (sum (lambda (x) (/ 1.0 (* x (+ x 2))))
+       a
+       (lambda (x) (+ x 4))
+       b))</code></pre>
+
+<p>Novamente usando <code>lambda</code>, podemos escrever o procedimento <code>integral</code> sem ter que definir o procedimento auxiliar <code>add-dx</code>:</p>
+
+<pre><code class="language-scheme">(define (integral f a b dx)
+  (* (sum f (+ a (/ dx 2.0))
+            (lambda (x) (+ x dx))
+            b) 
+     dx))</code></pre>
+
+<p>Em geral, <code>lambda</code> é usado para criar procedimentos da mesma forma que <code>define</code>, exceto que nenhum nome é especificado para o procedimento:</p>
+
+<pre><code class="language-scheme">(lambda (⟨formal-parameters⟩) ⟨body⟩)</code></pre>
+
+<p>O procedimento resultante é tão procedimento quanto um que é criado usando <code>define</code>. A única diferença é que ele não foi associado a nenhum nome no ambiente. Na verdade,</p>
+
+<pre><code class="language-scheme">(define (plus4 x) (+ x 4))</code></pre>
+
+<p>é equivalente a</p>
+
+<pre><code class="language-scheme">(define plus4 (lambda (x) (+ x 4)))</code></pre>
+
+<p>Podemos ler uma expressão <code>lambda</code> da seguinte forma:</p>
+
+<div class="example">
+<pre class="example">(lambda                     (x)     (+   x     4))
+    |                        |       |   |     |
+o procedimento de um argumento x que adiciona x e 4
+</pre></div>
+
+<p>Como qualquer expressão que tem um procedimento como seu valor, uma expressão <code>lambda</code> pode ser usada como o operador em uma combinação, como:</p>
+
+<pre><code class="language-scheme">((lambda (x y z) (+ x y (square z))) 1 2 3)
+<i>12</i></code></pre>
+
+<p>ou, mais geralmente, em qualquer contexto onde normalmente usaríamos um nome de procedimento.<a class="footnote_link" id="DOCF53" href="#FOOT53"><sup>53</sup></a></p>
+
+<a id="Using-let-to-create-local-variables"></a>
+<h5 class="subsubheading">Usando <code>let</code> para criar variáveis locais</h5>
+
+<p>Outro uso de <code>lambda</code> é na criação de variáveis locais. Muitas vezes precisamos de variáveis locais em nossos procedimentos além daquelas que foram vinculadas como parâmetros formais. Por exemplo, suponha que desejemos calcular a função:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo>,</mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mi>y</mi>
+    <msup>
+      <mo stretchy="false">)</mo>
+      <mn>2</mn>
+    </msup>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>−<!-- − --></mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo>−<!-- − --></mo>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+<p>que também poderíamos expressar como:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+    <mtr>
+      <mtd>
+        <mi>a</mi>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>1</mn>
+          <mo>+</mo>
+          <mi>x</mi>
+          <mi>y</mi>
+          <mo>,</mo>
+        </mrow>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mpadded height="0" depth="0">
+            <mphantom>
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo>,</mo>
+              <mi>y</mi>
+              <mo stretchy="false">)</mo>
+            </mphantom>
+          </mpadded>
+        </mrow>
+        <mi>b</mi>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>1</mn>
+          <mo>−<!-- − --></mo>
+          <mi>y</mi>
+          <mo>,</mo>
+        </mrow>
+      </mtd>
+    </mtr>
+    <mtr>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>f</mi>
+          <mo stretchy="false">(</mo>
+          <mi>x</mi>
+          <mo>,</mo>
+          <mi>y</mi>
+          <mo stretchy="false">)</mo>
+        </mrow>
+      </mtd>
+      <mtd>
+        <mo>=</mo>
+      </mtd>
+      <mtd>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>x</mi>
+          <msup>
+            <mi>a</mi>
+            <mn>2</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>y</mi>
+          <mi>b</mi>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mi>a</mi>
+          <mi>b</mi>
+          <mo>.</mo>
+        </mrow>
+      </mtd>
+    </mtr>
+  </mtable>
+</math>
+
+<p>Ao escrever um procedimento para calcular <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>, gostaríamos de incluir como variáveis locais não apenas <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math>, mas também os nomes de quantidades intermediárias como <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>. Uma maneira de conseguir isso é usar um procedimento auxiliar para vincular as variáveis locais:</p>
+
+<pre><code class="language-scheme">(define (f x y)
+  (define (f-helper a b)
+    (+ (* x (square a))
+       (* y b)
+       (* a b)))
+  (f-helper (+ 1 (* x y)) 
+            (- 1 y)))</code></pre>
+
+<p>Claro, poderíamos usar uma expressão <code>lambda</code> para especificar um procedimento anônimo para vincular nossas variáveis locais. O corpo de <code>f</code> então se torna uma única chamada para esse procedimento:</p>
+
+<pre><code class="language-scheme">(define (f x y)
+  ((lambda (a b)
+     (+ (* x (square a)) 
+        (* y b) 
+        (* a b)))
+   (+ 1 (* x y))
+   (- 1 y)))</code></pre>
+
+<p>Essa construção é tão útil que há uma forma especial chamada <code>let</code> para tornar seu uso mais conveniente. Usando <code>let</code>, o procedimento <code>f</code> poderia ser escrito como:</p>
+
+<pre><code class="language-scheme">(define (f x y)
+  (let ((a (+ 1 (* x y)))
+        (b (- 1 y)))
+    (+ (* x (square a))
+       (* y b)
+       (* a b))))</code></pre>
+
+<p>A forma geral de uma expressão <code>let</code> é:</p>
+
+<pre><code class="language-scheme">(let ((⟨var₁⟩ ⟨exp₁⟩)
+      (⟨var₂⟩ ⟨exp₂⟩)
+      …
+      (⟨varₙ⟩ ⟨expₙ⟩))
+  ⟨body⟩)</code></pre>
+
+<p>que pode ser pensada como dizendo:</p>
+
+<div class="example">
+<pre class="example">let ⟨<var>var₁</var>⟩ <span class="roman">tenha o valor</span> ⟨<var>exp₁</var>⟩ <span class="roman">e</span>
+    ⟨<var>var₂</var>⟩ <span class="roman">tenha o valor</span> ⟨<var>exp₂</var>⟩ <span class="roman">e</span>
+    <span class="roman">…</span>
+    ⟨<var>varₙ</var>⟩ <span class="roman">tenha o valor</span> ⟨<var>expₙ</var>⟩
+  <span class="roman">em</span> ⟨<var>body</var>⟩
+</pre></div>
+
+<p>A primeira parte da expressão <code>let</code> é uma lista de pares nome-expressão. Quando o <code>let</code> é avaliado, cada nome é associado ao valor da expressão correspondente. O corpo do <code>let</code> é avaliado com esses nomes vinculados como variáveis locais. A maneira como isso acontece é que a expressão <code>let</code> é interpretada como uma sintaxe alternativa para:</p>
+
+<pre><code class="language-scheme">((lambda (⟨var₁⟩ … ⟨varₙ⟩)
+   ⟨body⟩)
+ ⟨exp₁⟩
+ …
+ ⟨expₙ⟩)</code></pre>
+
+<p>Nenhum novo mecanismo é necessário no interpretador para fornecer variáveis locais. Uma expressão <code>let</code> é simplesmente açúcar sintático para a aplicação subjacente de <code>lambda</code>.</p>
+
+<p>Podemos ver a partir dessa equivalência que o escopo de uma variável especificada por uma expressão <code>let</code> é o corpo do <code>let</code>. Isso implica que:</p>
+<ul>
+<li> <code>Let</code> permite vincular variáveis o mais localmente possível ao local onde elas serão usadas. Por exemplo, se o valor de <code>x</code> é 5, o valor da expressão:</li>
+</ul>
+
+<pre><code class="language-scheme">(+ (let ((x 3))
+     (+ x (* x 10)))
+   x)</code></pre>
+
+<p>é 38. Aqui, o <code>x</code> no corpo do <code>let</code> é 3, então o valor da expressão <code>let</code> é 33. Por outro lado, o <code>x</code> que é o segundo argumento para o <code>+</code> mais externo ainda é 5.</p>
+
+<ul>
+<li> Os valores das variáveis são computados fora do <code>let</code>. Isso importa quando as expressões que fornecem os valores para as variáveis locais dependem de variáveis que têm os mesmos nomes que as variáveis locais. Por exemplo, se o valor de <code>x</code> é 2, a expressão:</li>
+</ul>
+
+<pre><code class="language-scheme">(let ((x 3)
+      (y (+ x 2)))
+  (* x y))</code></pre>
+
+<p>terá o valor 12 porque, dentro do corpo do <code>let</code>, <code>x</code> será 3 e <code>y</code> será 4 (que é o <code>x</code> externo mais 2).</p>
+
+<p>Às vezes, podemos usar definições internas para obter o mesmo efeito que com <code>let</code>. Por exemplo, poderíamos ter definido o procedimento <code>f</code> acima como:</p>
+
+<pre><code class="language-scheme">(define (f x y)
+  (define a 
+    (+ 1 (* x y)))
+  (define b (- 1 y))
+  (+ (* x (square a))
+     (* y b)
+     (* a b)))</code></pre>
+
+<p>No entanto, preferimos usar <code>let</code> em situações como essa e usar <code>define</code> interno apenas para procedimentos internos.<a class="footnote_link" id="DOCF54" href="#FOOT54"><sup>54</sup></a></p>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e34"></a>Exercício 1.34:</strong> Suponha que definamos o procedimento:</p>
+
+<pre><code class="language-scheme">(define (f g) (g 2))</code></pre>
+
+<p>Então temos:</p>
+
+<pre><code class="language-scheme">(f square)
+<i>4</i>
+
+(f (lambda (z) (* z (+ z 1))))
+<i>6</i></code></pre>
+
+<p>O que acontece se (perversamente) pedirmos ao interpretador para avaliar a combinação <code>(f f)</code>? Explique.</p></blockquote>
+
+<a id="g_t1_002e3_002e3"></a>
+<a id="Procedures-as-General-Methods"></a>
+<h4 class="subsection"><span class="secnum">1.3.3</span><span class="sectitle">Procedimentos como Métodos Gerais</span></h4>
+
+<p>Introduzimos procedimentos compostos em <a href="1_002e1.xhtml#g_t1_002e1_002e4">1.1.4</a> como um mecanismo para abstrair padrões de operações numéricas, de modo a torná-los independentes dos números particulares envolvidos. Com procedimentos de ordem superior, como o procedimento <code>integral</code> de <a href="#g_t1_002e3_002e1">1.3.1</a>, começamos a ver um tipo mais poderoso de abstração: procedimentos usados para expressar métodos gerais de computação, independentes das funções particulares envolvidas. Nesta seção, discutimos dois exemplos mais elaborados — métodos gerais para encontrar zeros e pontos fixos de funções — e mostramos como esses métodos podem ser expressos diretamente como procedimentos.</p>
+
+<a id="Finding-roots-of-equations-by-the-half_002dinterval-method"></a>
+<h5 class="subsubheading">Encontrando raízes de equações pelo método da bissecção</h5>
+
+<p>O <a id="index-half_002dinterval-method"></a>
+<em>método da bissecção</em> é uma técnica simples, mas poderosa, para encontrar raízes de uma equação <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, onde <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> é uma função contínua. A ideia é que, se nos forem dados pontos <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> tais que <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>a</mi>
+    <mo stretchy="false">)</mo>
+    <mo>&lt;</mo>
+    <mn>0</mn>
+    <mo>&lt;</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, então <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> deve ter pelo menos um zero entre <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+<!--Aqui-->
+<p>Para localizar um zero, seja <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> a média de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>,
+e calcule <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>. Se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>&gt;</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, então <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> deve ter um zero
+entre <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>. Se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>&lt;</mo>
+    <mn>0</mn>
+  </mrow>
+</math>, então <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> deve ter um zero
+entre <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math>. Continuando dessa forma, podemos identificar intervalos cada vez menores
+nos quais <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> deve ter um zero. Quando chegamos a um ponto onde
+o intervalo é pequeno o suficiente, o processo para. Como o intervalo de
+incerteza é reduzido pela metade a cada passo do processo, o número de passos
+necessários cresce como <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi mathvariant="normal">Θ<!-- Θ --></mi>
+    <mo stretchy="false">(</mo>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>L</mi>
+    <mspace width="thinmathspace"/>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mspace width="thinmathspace"/>
+    <mi>T</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>, onde <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>L</mi>
+</math> é o
+comprimento do intervalo original e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>T</mi>
+</math> é a tolerância de erro (ou seja, o
+tamanho do intervalo que consideraremos "pequeno o suficiente"). Aqui está um procedimento
+que implementa essa estratégia:
+</p>
+<pre><code class="language-scheme">(define (search f neg-point pos-point)
+  (let ((midpoint 
+         (average neg-point pos-point)))
+    (if (close-enough? neg-point pos-point)
+        midpoint
+        (let ((test-value (f midpoint)))
+          (cond 
+           ((positive? test-value)
+            (search f neg-point midpoint))
+           ((negative? test-value)
+            (search f midpoint pos-point))
+           (else midpoint))))))</code></pre>
+
+<p>Assumimos que inicialmente recebemos a função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> junto com pontos
+onde seus valores são negativos e positivos. Primeiro calculamos o ponto médio
+dos dois pontos dados. Em seguida, verificamos se o intervalo dado é pequeno
+o suficiente, e se for, simplesmente retornamos o ponto médio como nossa resposta. Caso contrário,
+calculamos como valor de teste o valor de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> no ponto médio. Se o valor de teste
+for positivo, continuamos o processo com um novo intervalo que vai do
+ponto negativo original ao ponto médio. Se o valor de teste for negativo, continuamos
+com o intervalo do ponto médio ao ponto positivo. Finalmente,
+existe a possibilidade de que o valor de teste seja 0, caso em que o ponto médio
+é a própria raiz que estamos procurando.
+</p>
+<p>Para testar se os pontos finais estão "próximos o suficiente", podemos usar um procedimento
+semelhante ao usado em <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a> para calcular raízes
+quadradas:<a class="footnote_link" id="DOCF55" href="#FOOT55"><sup>55</sup></a>
+</p>
+<pre><code class="language-scheme">(define (close-enough? x y) 
+  (&lt; (abs (- x y)) 0.001))</code></pre>
+
+<p><code>Search</code> é difícil de usar diretamente, porque podemos acidentalmente fornecer
+pontos onde os valores de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> não têm o sinal necessário, caso em que
+obtemos uma resposta errada. Em vez disso, usaremos <code>search</code> através do seguinte
+procedimento, que verifica qual dos pontos finais tem um valor de função negativo
+e qual tem um valor positivo, e chama o procedimento <code>search</code>
+de acordo. Se a função tiver o mesmo sinal nos dois pontos dados, o
+método do intervalo médio não pode ser usado, caso em que o procedimento sinaliza um
+erro.<a class="footnote_link" id="DOCF56" href="#FOOT56"><sup>56</sup></a>
+</p>
+<pre><code class="language-scheme">(define (half-interval-method f a b)
+  (let ((a-value (f a))
+        (b-value (f b)))
+    (cond ((and (negative? a-value) 
+                (positive? b-value))
+           (search f a b))
+          ((and (negative? b-value) 
+                (positive? a-value))
+           (search f b a))
+          (else
+           (error "Values are not of 
+                   opposite sign" a b)))))</code></pre>
+
+<p>O exemplo a seguir usa o método do intervalo médio para aproximar <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>π<!-- π --></mi>
+</math> como
+a raiz entre 2 e 4 de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>x</mi>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>:
+</p>
+<pre><code class="language-scheme">(half-interval-method sin 2.0 4.0)
+<i>3.14111328125</i></code></pre>
+
+<p>Aqui está outro exemplo, usando o método do intervalo médio para procurar uma raiz da
+equação <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mn>3</mn>
+    </msup>
+    <mo>−<!-- − --></mo>
+    <mn>2</mn>
+    <mi>x</mi>
+    <mo>−<!-- − --></mo>
+    <mn>3</mn>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math> entre 1 e 2:
+</p>
+<pre><code class="language-scheme">(half-interval-method 
+ (lambda (x) (- (* x x x) (* 2 x) 3))
+ 1.0
+ 2.0)
+<i>1.89306640625</i></code></pre>
+
+<a id="Finding-fixed-points-of-functions"></a>
+<h5 class="subsubheading">Encontrando pontos fixos de funções</h5>
+
+<p>Um número <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> é chamado de <a id="index-fixed-point"></a>
+<em>ponto fixo</em> de uma função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> se <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math>
+satisfaz a equação <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mi>x</mi>
+  </mrow>
+</math>. Para algumas funções <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> podemos
+localizar um ponto fixo começando com uma estimativa inicial e aplicando <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math>
+repetidamente,
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+  <mspace width="1em"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>…<!-- … --></mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+até que o valor não mude muito. Usando essa ideia, podemos criar um
+procedimento <code>fixed-point</code> que recebe como entradas uma função e uma estimativa inicial
+e produz uma aproximação de um ponto fixo da função. Aplicamos
+a função repetidamente até encontrarmos dois valores sucessivos cuja diferença é
+menor que alguma tolerância prescrita:
+</p>
+<pre><code class="language-scheme">(define tolerance 0.00001)
+
+(define (fixed-point f first-guess)
+  (define (close-enough? v1 v2)
+    (&lt; (abs (- v1 v2)) 
+       tolerance))
+  (define (try guess)
+    (let ((next (f guess)))
+      (if (close-enough? guess next)
+          next
+          (try next))))
+  (try first-guess))</code></pre>
+
+<p>Por exemplo, podemos usar este método para aproximar o ponto fixo da
+função cosseno, começando com 1 como uma aproximação inicial:<a class="footnote_link" id="DOCF57" href="#FOOT57"><sup>57</sup></a>
+</p>
+<pre><code class="language-scheme">(fixed-point cos 1.0)
+<i>.7390822985224023</i></code></pre>
+
+<p>Da mesma forma, podemos encontrar uma solução para a equação 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>sin</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mi>cos</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mi>y</mi>
+  </mrow>
+</math>:
+</p>
+<pre><code class="language-scheme">(fixed-point (lambda (y) (+ (sin y) (cos y)))
+             1.0)
+<i>1.2587315962971173</i></code></pre>
+
+<p>O processo de ponto fixo é semelhante ao processo que usamos para encontrar
+raízes quadradas em <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>. Ambos são baseados na ideia de repetidamente
+melhorar uma estimativa até que o resultado satisfaça algum critério. Na verdade, podemos
+facilmente formular o cálculo da raiz quadrada como uma busca por ponto fixo.
+Calcular a raiz quadrada de algum número <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+</math> requer encontrar um <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> tal
+que <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msup>
+    <mo>=</mo>
+    <mi>x</mi>
+  </mrow>
+</math>. Colocando essa equação na forma equivalente 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, reconhecemos que estamos procurando um ponto fixo da
+função<a class="footnote_link" id="DOCF58" href="#FOOT58"><sup>58</sup></a> <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, 
+e podemos, portanto, tentar calcular raízes quadradas como
+</p>
+<pre><code class="language-scheme">(define (sqrt x)
+  (fixed-point (lambda (y) (/ x y))
+               1.0))</code></pre>
+
+<p>Infelizmente, essa busca por ponto fixo não converge. Considere uma estimativa inicial
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>1</mn>
+  </msub>
+</math>. A próxima estimativa é <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-Te
