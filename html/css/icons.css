@@ -1,0 +1,10 @@
+@font-face {
+  font-family: "Icons";
+  src: url("fonts/SymbolsNerdFont-Regular.ttf");
+}
+
+.icon_download::after {
+  font-family: "Icons";
+  content: "";
+  font-size: 120%;
+}

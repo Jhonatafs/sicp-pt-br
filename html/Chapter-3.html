@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html
+  xmlns="http://www.w3.org/1999/xhtml"
+  xmlns:epub="http://www.idpf.org/2007/ops"
+  xml:lang="pt"
+  lang="pt"
+>
+  <!-- Criado por GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+  <head>
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo
+      3
+    </title>
+
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo 3"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo 3"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="Generator" content="texi2any" />
+    <meta charset="utf-8" />
+    <link href="index.html#Top" rel="start" title="Topo" />
+    <link
+      href="Term-Index.html#Term-Index"
+      rel="index"
+      title="Índice de Termos"
+    />
+    <link href="index.html#SEC_Contents" rel="contents" title="Sumário" />
+    <link href="index.html#Top" rel="prev" title="Topo" />
+    <link href="3_002e1.html#g_t3_002e1" rel="next" title="3.1" />
+    <link href="2_002e5.html#g_t2_002e5_002e3" rel="prev" title="2.5.3" />
+
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <link href="css/prettify.css" rel="stylesheet" type="text/css" />
+
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script src="js/footnotes.js" type="text/javascript"></script>
+    <script src="js/browsertest.js" type="text/javascript"></script>
+  </head>
+
+  <body>
+    <section>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      ><a id="pagetop"></a><a id="Chapter-3"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e1.html#g_t3_002e1" accesskey="n" rel="next">3.1</a>,
+          Anterior:
+          <a href="2_002e5.html#g_t2_002e5" accesskey="p" rel="prev">2.5</a>,
+          Acima: <a href="index.html#Top" accesskey="u" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+      <span id="Chapter-3"></span>
+      <h2 class="chapter">
+        <span class="chapnum">3</span
+        ><span class="chaptitle">Modularidade, Objetos e Estado</span>
+      </h2>
+
+      <blockquote>
+        <p>
+          Mεταβάλλον ὰναπαύεται<br />
+          (Mesmo enquanto muda, permanece imóvel.)<br />
+          —Heráclito
+        </p>
+        <p>
+          Quanto mais as coisas mudam, mais elas permanecem as mesmas.<br />
+          —Alphonse Karr
+        </p>
+      </blockquote>
+
+      <p>
+        Os capítulos anteriores introduziram os elementos básicos a partir dos
+        quais os programas são feitos. Vimos como procedimentos primitivos e
+        dados primitivos são combinados para construir entidades compostas, e
+        aprendemos que a abstração é vital para nos ajudar a lidar com a
+        complexidade de sistemas grandes. Mas essas ferramentas não são
+        suficientes para projetar programas. A síntese eficaz de programas
+        também requer princípios organizacionais que possam nos guiar na
+        formulação do projeto geral de um programa. Em particular, precisamos de
+        estratégias para nos ajudar a estruturar sistemas grandes de forma que
+        sejam <a id="index-modular"></a> <em>modulares</em>, ou seja, que possam
+        ser divididos “naturalmente” em partes coerentes que possam ser
+        desenvolvidas e mantidas separadamente.
+      </p>
+      <p>
+        Uma poderosa estratégia de design, particularmente apropriada para a
+        construção de programas que modelam sistemas físicos, é basear a
+        estrutura de nossos programas na estrutura do sistema que está sendo
+        modelado. Para cada objeto no sistema, construímos um objeto
+        computacional correspondente. Para cada ação do sistema, definimos uma
+        operação simbólica em nosso modelo computacional. Nossa esperança ao
+        usar essa estratégia é que a extensão do modelo para acomodar novos
+        objetos ou novas ações não exija mudanças estratégicas no programa,
+        apenas a adição dos novos análogos simbólicos desses objetos ou ações.
+        Se tivermos sido bem-sucedidos em nossa organização do sistema, então,
+        para adicionar um novo recurso ou depurar um antigo, precisaremos
+        trabalhar apenas em uma parte localizada do sistema.
+      </p>
+      <p>
+        Em grande medida, a forma como organizamos um programa grande é ditada
+        por nossa percepção do sistema a ser modelado. Neste capítulo,
+        investigaremos duas estratégias organizacionais proeminentes que surgem
+        de duas visões de mundo bastante diferentes sobre a estrutura dos
+        sistemas. A primeira estratégia organizacional se concentra em
+        <a id="index-objetos"></a> <em>objetos</em>, vendo um sistema grande
+        como uma coleção de objetos distintos cujos comportamentos podem mudar
+        ao longo do tempo. Uma estratégia organizacional alternativa se
+        concentra nos <a id="index-fluxos"></a> <em>fluxos</em> de informação
+        que fluem no sistema, assim como um engenheiro elétrico vê um sistema de
+        processamento de sinais.
+      </p>
+      <p>
+        Tanto a abordagem baseada em objetos quanto a abordagem de processamento
+        de fluxos levantam questões linguísticas significativas na programação.
+        Com objetos, devemos nos preocupar com como um objeto computacional pode
+        mudar e ainda manter sua identidade. Isso nos forçará a abandonar nosso
+        antigo modelo de substituição de computação (<a
+          href="1_002e1.html#g_t1_002e1_002e5"
+          >1.1.5</a
+        >) em favor de um modelo mais mecânico, mas menos teoricamente tratável,
+        o <a id="index-modelo-de-ambiente"></a> <em>modelo de ambiente</em> de
+        computação. As dificuldades de lidar com objetos, mudança e identidade
+        são uma consequência fundamental da necessidade de lidar com o tempo em
+        nossos modelos computacionais. Essas dificuldades se tornam ainda
+        maiores quando permitimos a possibilidade de execução concorrente de
+        programas. A abordagem de fluxos pode ser mais plenamente explorada
+        quando desacoplamos o tempo simulado em nosso modelo da ordem dos
+        eventos que ocorrem no computador durante a avaliação. Conseguiremos
+        isso usando uma técnica conhecida como
+        <a id="index-avaliacao-preguicosa"></a> <em>avaliação preguiçosa</em>.
+      </p>
+
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e1.html#g_t3_002e1" accesskey="n" rel="next">3.1</a>,
+          Anterior:
+          <a href="2_002e5.html#g_t2_002e5" accesskey="p" rel="prev">2.5</a>,
+          Acima: <a href="index.html#Top" accesskey="u" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Ir para o final"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
+</html>

@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
+<!-- Criado por GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<head>
+<title>Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.3</title>
+
+<meta name="description" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.3" />
+<meta name="keywords" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.3" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="Generator" content="texi2any" />
+<meta charset="utf-8" />
+<link href="index.xhtml#Top" rel="start" title="Top" />
+<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
+<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-1.xhtml#Chapter-1" rel="prev" title="Chapter 1" />
+<link href="Chapter-2.xhtml#Chapter-2" rel="next" title="Chapter 2" />
+<link href="1_002e2.xhtml#g_t1_002e2_002e6" rel="prev" title="1.2.6" />
+
+<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/highlight.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+<script>hljs.highlightAll();</script>
+<script src="js/jquery.min.js"></script>
+<script src="js/footnotes.js"></script>
+<script src="js/browsertest.js"></script>
+</head>
+
+<body>
+<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t1_002e3"></a>
+<nav class="header">
+<p>
+Próximo: <a href="Chapter-2.xhtml#Chapter-2" accesskey="n" rel="next">Capítulo 2</a>, Anterior: <a href="1_002e2.xhtml#g_t1_002e2" accesskey="p" rel="prev">1.2</a>, Acima: <a href="Chapter-1.xhtml#Chapter-1" accesskey="u" rel="prev">Capítulo 1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Conteúdo</a>]</p>
+</nav>
+<a id="Formulating-Abstractions-with-Higher_002dOrder-Procedures"></a>
+<h3 class="section"><span class="secnum">1.3</span><span class="sectitle">Formulando Abstrações com Procedimentos de Ordem Superior</span></h3>
+
+<p>Vimos que procedimentos são, na verdade, abstrações que descrevem operações compostas sobre números, independentemente dos números particulares. Por exemplo, quando definimos:</p>
+
+<pre><code class="language-scheme">(define (cube x) (* x x x))</code></pre>
+
+<p>Não estamos falando sobre o cubo de um número específico, mas sim sobre um método para obter o cubo de qualquer número. Claro, poderíamos viver sem nunca definir esse procedimento, sempre escrevendo expressões como:</p>
+
+<pre><code class="language-scheme">(* 3 3 3)
+(* x x x)
+(* y y y)</code></pre>
+
+<p>E nunca mencionando explicitamente <code>cube</code>. Isso nos colocaria em uma séria desvantagem, forçando-nos a trabalhar sempre no nível das operações particulares que são primitivas na linguagem (multiplicação, neste caso), em vez de termos operações de nível mais alto. Nossos programas seriam capazes de calcular cubos, mas nossa linguagem careceria da capacidade de expressar o conceito de cubagem. Uma das coisas que devemos exigir de uma linguagem de programação poderosa é a capacidade de construir abstrações, atribuindo nomes a padrões comuns e, em seguida, trabalhar diretamente em termos dessas abstrações. Procedimentos fornecem essa capacidade. É por isso que todas as linguagens de programação, exceto as mais primitivas, incluem mecanismos para definir procedimentos.</p>
+
+<p>No entanto, mesmo no processamento numérico, seremos severamente limitados em nossa capacidade de criar abstrações se estivermos restritos a procedimentos cujos parâmetros devem ser números. Muitas vezes, o mesmo padrão de programação será usado com vários procedimentos diferentes. Para expressar tais padrões como conceitos, precisaremos construir procedimentos que possam aceitar procedimentos como argumentos ou retornar procedimentos como valores. Procedimentos que manipulam procedimentos são chamados de <a id="index-higher_002dorder-procedures"></a>
+<em>procedimentos de ordem superior</em>. Esta seção mostra como procedimentos de ordem superior podem servir como mecanismos poderosos de abstração, aumentando enormemente o poder expressivo de nossa linguagem.</p>
+
+<a id="g_t1_002e3_002e1"></a>
+<a id="Procedures-as-Arguments"></a>
+<h4 class="subsection"><span class="secnum">1.3.1</span><span class="sectitle">Procedimentos como Argumentos</span></h4>
+
+<p>Considere os seguintes três procedimentos. O primeiro calcula a soma dos inteiros de <code>a</code> até <code>b</code>:</p>
+
+<pre><code class="language-scheme">(define (sum-integers a b)
+  (if (> a b) 
+      0 
+      (+ a (sum-integers (+ a 1) b))))</code></pre>
+
+<p>O segundo calcula a soma dos cubos dos inteiros no intervalo dado:</p>
+
+<pre><code class="language-scheme">(define (sum-cubes a b)
+  (if (> a b) 
+      0 
+      (+ (cube a) 
+         (sum-cubes (+ a 1) b))))</code></pre>
+
+<p>O terceiro calcula a soma de uma sequência de termos na série:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mfrac>
+    <mn>1</mn>
+    <mrow>
+      <mn>1</mn>
+      <mo>⋅<!-- ⋅ --></mo>
+      <mn>3</mn>
+    </mrow>
+  </mfrac>
+  <mo>+</mo>
+  <mfrac>
+    <mn>1</mn>
+    <mrow>
+      <mn>5</mn>
+      <mo>⋅<!-- ⋅ --></mo>
+      <mn>7</mn>
+    </mrow>
+  </mfrac>
+  <mo>+</mo>
+  <mfrac>
+    <mn>1</mn>
+    <mrow>
+      <mn>9</mn>
+      <mo>⋅<!-- ⋅ --></mo>
+      <mn>11</mn>
+    </mrow>
+  </mfrac>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mo>…<!-- … --></mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+<p>que converge para <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>π<!-- π --></mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mn>8</mn>
+  </mrow>
+</math> (muito lentamente):<a class="footnote_link" id="DOCF49" href="#FOOT49"><sup>49</sup></a></p>
+
+<pre><code class="language-scheme">(define (pi-sum a b)
+  (if (> a b)
+      0
+      (+ (/ 1.0 (* a (+ a 2))) 
+         (pi-sum (+ a 4) b))))</code></pre>
+
+<p>Esses três procedimentos compartilham claramente um padrão subjacente comum. Eles são, na maior parte, idênticos, diferindo apenas no nome do procedimento, na função de <code>a</code> usada para calcular o termo a ser adicionado e na função que fornece o próximo valor de <code>a</code>. Poderíamos gerar cada um dos procedimentos preenchendo espaços no mesmo modelo:</p>
+
+<pre><code class="language-scheme">(define (⟨name⟩ a b)
+  (if (> a b)
+      0
+      (+ (⟨term⟩ a) 
+         (⟨name⟩ (⟨next⟩ a) b))))</code></pre>
+
+<p>A presença de tal padrão comum é uma forte evidência de que há uma abstração útil esperando para ser trazida à tona. De fato, os matemáticos há muito identificaram a abstração da <a id="index-summation-of-a-series"></a>
+<em>somação de uma série</em> e inventaram a “notação sigma”, por exemplo:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <munderover>
+      <mo>∑<!-- ∑ --></mo>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mo>=</mo>
+        <mi>a</mi>
+      </mrow>
+      <mi>b</mi>
+    </munderover>
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>n</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>a</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>+</mo>
+  <mo>⋯<!-- ⋯ --></mo>
+  <mo>+</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mo stretchy="false">(</mo>
+    <mi>b</mi>
+    <mo stretchy="false">)</mo>
+    <mo>,</mo>
+  </mrow>
+</math>
+
+<p>para expressar esse conceito. O poder da notação sigma é que ela permite que os matemáticos lidem com o conceito de soma em si, em vez de apenas com somas particulares — por exemplo, para formular resultados gerais sobre somas que são independentes da série particular que está sendo somada.</p>
+
+<p>Da mesma forma, como projetistas de programas, gostaríamos que nossa linguagem fosse poderosa o suficiente para que pudéssemos escrever um procedimento que expressasse o conceito de soma em si, em vez de apenas procedimentos que calculam somas particulares. Podemos fazer isso facilmente em nossa linguagem procedural, tomando o modelo comum mostrado acima e transformando os “espaços” em parâmetros formais:</p>
+
+<pre><code class="language-scheme">(define (sum term a next b)
+  (if (> a b)
+      0
+      (+ (term a)
+         (sum term (next a) next b))))</code></pre>
+
+<p>Observe que <code>sum</code> recebe como argumentos os limites inferior e superior <code>a</code> e <code>b</code>, juntamente com os procedimentos <code>term</code> e <code>next</code>. Podemos usar <code>sum</code> como usaríamos qualquer procedimento. Por exemplo, podemos usá-lo (junto com um procedimento <code>inc</code> que incrementa seu argumento em 1) para definir <code>sum-cubes</code>:</p>
+
+<pre><code class="language-scheme">(define (inc n) (+ n 1))
+
+(define (sum-cubes a b)
+  (sum cube a inc b))</code></pre>
+
+<p>Usando isso, podemos calcular a soma dos cubos dos inteiros de 1 a 10:</p>
+
+<pre><code class="language-scheme">(sum-cubes 1 10)
+<i>3025</i></code></pre>
+
+<p>Com a ajuda de um procedimento de identidade para calcular o termo, podemos definir <code>sum-integers</code> em termos de <code>sum</code>:</p>
+
+<pre><code class="language-scheme">(define (identity x) x)
+
+(define (sum-integers a b)
+  (sum identity a inc b))</code></pre>
+
+<p>Então podemos somar os inteiros de 1 a 10:</p>
+
+<pre><code class="language-scheme">(sum-integers 1 10)
+<i>55</i></code></pre>
+
+<p>Também podemos definir <code>pi-sum</code> da mesma maneira:<a class="footnote_link" id="DOCF50" href="#FOOT50"><sup>50</sup></a></p>
+
+<pre><code class="language-scheme">(define (pi-sum a b)
+  (define (pi-term x)
+    (/ 1.0 (* x (+ x 2))))
+  (define (pi-next x)
+    (+ x 4))
+  (sum pi-term a pi-next b))</code></pre>
+
+<p>Usando esses procedimentos, podemos calcular uma aproximação de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>π<!-- π --></mi>
+</math>:</p>
+
+<pre><code class="language-scheme">(* 8 (pi-sum 1 1000))
+<i>3.139592655589783</i></code></pre>
+
+<p>Uma vez que temos <code>sum</code>, podemos usá-lo como um bloco de construção na formulação de conceitos adicionais. Por exemplo, a integral definida de uma função <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>f</mi>
+</math> entre os limites <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>a</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>b</mi>
+</math> pode ser aproximada numericamente usando a fórmula:</p>
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msubsup>
+      <mo>∫<!-- ∫ --></mo>
+      <mi>a</mi>
+      <mi>b</mi>
+    </msubsup>
+    <mspace width="-0.3em"/>
+    <mi>f</mi>
+  </mrow>
+  <mspace width="thickmathspace"/>
+  <mo>=</mo>
+  <mspace width="thickmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow>
+      <mo>[</mo>
+      <mspace width="thickmathspace"/>
+      <mi>f</mi>
+      <mrow>
+        <mo>(</mo>
+        <mi>a</mi>
+        <mo>+</mo>
+        <mfrac>
+          <mrow>
+            <mi>d</mi>
+            <mi>x</mi>
+          </mrow>
+          <mn>2</mn>
+        </mfrac>
+        <mo>)</mo>
+      </mrow>
+    </mrow>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>+</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>f</mi>
+    <mrow>
+      <mo>(</mo>
+      <mi>a</mi>
+      <mo>+</mo>
+      <mi>d</mi>
+      <mi>x</mi>
+      <mo>+</mo>
+      <mfrac>
+        <mrow>
+          <mi>d</mi>
+          <mi>x</mi>
+        </mrow>
+        <mn>2</mn>
+      </mfrac>
+      <mo>)</mo>
+    </mrow>
+  </mrow>
+  <mspace width="thinmathspace"/>
+  <mo>+</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow>
+      <mi>f</mi>
+      <mrow>
+        <mo>(</mo>
+        <mi>a</mi>
+        <mo>+</mo>
+        <mn>2</mn>
+        <mi>d</mi>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mfrac>
+          <mrow>
+            <mi>d</mi>
+            <mi>x</mi>
+          </mrow>
+          <mn>2</mn>
+        </mfrac>
+        <mo>)</mo>
+      </mrow

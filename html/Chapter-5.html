@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo
+      5
+    </title>
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo 5"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo 5"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/prettify.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <nav class="header">
+        <p>
+          Próximo: <a href="5_002e1.html" rel="next">5.1</a>, Anterior:
+          <a href="4_002e4.html" rel="prev">4.4</a>, Acima:
+          <a href="index.html" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            rel="contents"
+            >Conteúdos</a
+          >]
+        </p>
+      </nav>
+      <h2 class="chapter">
+        <span class="chapnum">5</span
+        ><span class="chaptitle">Computação com Máquinas de Registro</span>
+      </h2>
+      <blockquote>
+        <p>
+          Meu objetivo é mostrar que a máquina celestial não é uma espécie de
+          ser divino e vivo, mas uma espécie de mecanismo de relógio (e quem
+          acredita que um relógio tem alma atribui a glória do criador à obra),
+          na medida em que quase todos os múltiplos movimentos são causados por
+          uma força muito simples e material, assim como todos os movimentos do
+          relógio são causados por um único peso.
+        </p>
+        <p>—Johannes Kepler (carta para Herwart von Hohenburg, 1605)</p>
+      </blockquote>
+      <p>
+        Começamos este livro estudando processos e descrevendo processos em
+        termos de procedimentos escritos em Lisp. Para explicar os significados
+        desses procedimentos, usamos uma sucessão de modelos de avaliação: o
+        modelo de substituição do
+        <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>, o modelo de ambiente
+        do <a href="Chapter-3.html#Chapter-3">Capítulo 3</a> e o avaliador
+        metacircular do <a href="Chapter-4.html#Chapter-4">Capítulo 4</a>.
+        Nosso exame do avaliador metacircular, em particular, dissipou muito do
+        mistério de como linguagens semelhantes ao Lisp são interpretadas. Mas
+        mesmo o avaliador metacircular deixa questões importantes sem resposta,
+        porque não esclarece os mecanismos de controle em um sistema Lisp. Por
+        exemplo, o avaliador não explica como a avaliação de uma subexpressão
+        consegue retornar um valor para a expressão que usa esse valor, nem
+        explica como alguns procedimentos recursivos geram processos iterativos
+        (ou seja, são avaliados usando espaço constante), enquanto outros
+        procedimentos recursivos geram processos recursivos. Essas questões
+        permanecem sem resposta porque o avaliador metacircular é ele mesmo um
+        programa Lisp e, portanto, herda a estrutura de controle do sistema Lisp
+        subjacente. Para fornecer uma descrição mais completa da estrutura de
+        controle do avaliador Lisp, devemos trabalhar em um nível mais primitivo
+        do que o próprio Lisp.
+      </p>
+      <p>
+        Neste capítulo, descreveremos processos em termos da operação passo a
+        passo de um computador tradicional. Tal computador, ou
+        <a id="index-register-machine"></a><em>máquina de registro</em>, executa
+        sequencialmente <a id="index-instructions"></a><em>instruções</em> que
+        manipulam o conteúdo de um conjunto fixo de elementos de armazenamento
+        chamados <a id="index-registers"></a><em>registros</em>. Uma instrução
+        típica de máquina de registro aplica uma operação primitiva ao conteúdo
+        de alguns registros e atribui o resultado a outro registro. Nossas
+        descrições de processos executados por máquinas de registro se parecerão
+        muito com programas de “linguagem de máquina” para computadores
+        tradicionais. No entanto, em vez de nos concentrarmos na linguagem de
+        máquina de qualquer computador específico, examinaremos vários
+        procedimentos Lisp e projetaremos uma máquina de registro específica
+        para executar cada procedimento. Assim, abordaremos nossa tarefa a
+        partir da perspectiva de um arquiteto de hardware, em vez da perspectiva
+        de um programador de linguagem de máquina. Ao projetar máquinas de
+        registro, desenvolveremos mecanismos para implementar construções
+        importantes de programação, como recursão. Também apresentaremos uma
+        linguagem para descrever projetos de máquinas de registro. Em
+        <a href="5_002e2.html#g_t5_002e2">5.2</a>, implementaremos um programa
+        Lisp que usa essas descrições para simular as máquinas que projetamos.
+      </p>
+      <p>
+        A maioria das operações primitivas de nossas máquinas de registro é
+        muito simples. Por exemplo, uma operação pode adicionar os números
+        obtidos de dois registros, produzindo um resultado a ser armazenado em
+        um terceiro registro. Tal operação pode ser realizada por hardware
+        facilmente descrito. No entanto, para lidar com a estrutura de listas,
+        também usaremos as operações de memória <code>car</code>,
+        <code>cdr</code> e <code>cons</code>, que exigem um mecanismo elaborado
+        de alocação de armazenamento. Em
+        <a href="5_002e3.html#g_t5_002e3">5.3</a>, estudaremos sua
+        implementação em termos de operações mais elementares.
+      </p>
+      <p>
+        Em <a href="5_002e4.html#g_t5_002e4">5.4</a>, depois de acumular
+        experiência na formulação de procedimentos simples como máquinas de
+        registro, projetaremos uma máquina que executa o algoritmo descrito pelo
+        avaliador metacircular de <a href="4_002e1.html#g_t4_002e1">4.1</a>.
+        Isso preencherá a lacuna em nossa compreensão de como as expressões
+        Scheme são interpretadas, fornecendo um modelo explícito para os
+        mecanismos de controle no avaliador. Em
+        <a href="5_002e5.html#g_t5_002e5">5.5</a>, estudaremos um compilador
+        simples que traduz programas Scheme em sequências de instruções que
+        podem ser executadas diretamente com os registros e operações da máquina
+        de registro do avaliador.
+      </p>
+      <nav class="header">
+        <p>
+          Próximo: <a href="5_002e1.html" rel="next">5.1</a>, Anterior:
+          <a href="4_002e4.html" rel="prev">4.4</a>, Acima:
+          <a href="index.html" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            rel="contents"
+            >Conteúdos</a
+          >]
+        </p>
+      </nav>
+    </section>
+  </body>
+</html>

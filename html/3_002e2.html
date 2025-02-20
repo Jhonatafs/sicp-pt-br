@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 3.2
+    </title>
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 3.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 3.2"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/prettify.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <a id="pagetop"></a>
+      <a id="g_t3_002e2"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e3.xhtml#g_t3_002e3" accesskey="n" rel="next">3.3</a>,
+          Anterior:
+          <a href="3_002e1.xhtml#g_t3_002e1" accesskey="p" rel="prev">3.1</a>,
+          Acima:
+          <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev"
+            >Capítulo 3</a
+          >
+          [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <a id="The-Environment-Model-of-Evaluation"></a>
+      <h3 class="section">
+        <span class="secnum">3.2</span
+        ><span class="sectitle">O Modelo de Ambiente de Avaliação</span>
+      </h3>
+
+      <p>
+        Quando introduzimos procedimentos compostos no
+        <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>, usamos o modelo de
+        substituição de avaliação (<a href="1_002e1.xhtml#g_t1_002e1_002e5"
+          >1.1.5</a
+        >) para definir o que significa aplicar um procedimento a argumentos:
+      </p>
+      <ul>
+        <li>
+          Para aplicar um procedimento composto a argumentos, avalie o corpo do
+          procedimento com cada parâmetro formal substituído pelo argumento
+          correspondente.
+        </li>
+      </ul>
+
+      <p>
+        Uma vez que admitimos a atribuição em nossa linguagem de programação,
+        tal definição não é mais adequada. Em particular,
+        <a href="3_002e1.xhtml#g_t3_002e1_002e3">3.1.3</a> argumentou que, na
+        presença de atribuição, uma variável não pode mais ser considerada
+        meramente como um nome para um valor. Em vez disso, uma variável deve de
+        alguma forma designar um "local" em que os valores podem ser
+        armazenados. Em nosso novo modelo de avaliação, esses locais serão
+        mantidos em estruturas chamadas <a id="index-environments"></a>
+        <em>ambientes</em>.
+      </p>
+      <p>
+        Um ambiente é uma sequência de <a id="index-frames"></a>
+        <em>frames</em>. Cada frame é uma tabela (possivelmente vazia) de
+        <a id="index-bindings"></a> <em>ligações</em>, que associam nomes de
+        variáveis a seus valores correspondentes. (Um único frame pode conter no
+        máximo uma ligação para qualquer variável.) Cada frame também tem um
+        ponteiro para seu <a id="index-enclosing-environment"></a>
+        <em>ambiente envolvente</em>, a menos que, para fins de discussão, o
+        frame seja considerado
+        <a id="index-global-1"></a>
+        <em>global</em>. O <a id="index-value-of-a-variable"></a>
+        <em>valor de uma variável</em> em relação a um ambiente é o valor dado
+        pela ligação da variável no primeiro frame no ambiente que contém uma
+        ligação para essa variável. Se nenhum frame na sequência especificar uma
+        ligação para a variável, então a variável é dita
+        <a id="index-unbound"></a> <em>não ligada</em> no ambiente.
+      </p>
+      <p>
+        <a href="#Figure-3_002e1">Figura 3.1</a> mostra uma estrutura de
+        ambiente simples consistindo de três frames, rotulados I, II e III. No
+        diagrama, A, B, C e D são ponteiros para ambientes. C e D apontam para o
+        mesmo ambiente. As variáveis <code>z</code> e <code>x</code> estão
+        ligadas no frame II, enquanto <code>y</code> e <code>x</code> estão
+        ligadas no frame I. O valor de <code>x</code> no ambiente D é 3. O valor
+        de <code>x</code> em relação ao ambiente B também é 3. Isso é
+        determinado da seguinte forma: Examinamos o primeiro frame na sequência
+        (frame III) e não encontramos uma ligação para <code>x</code>, então
+        prosseguimos para o ambiente envolvente D e encontramos a ligação no
+        frame I. Por outro lado, o valor de <code>x</code> no ambiente A é 7,
+        porque o primeiro frame na sequência (frame II) contém uma ligação de
+        <code>x</code> a 7. Em relação ao ambiente A, a ligação de
+        <code>x</code> a 7 no frame II é dita <a id="index-shadow"></a>
+        <em>ocultar</em> a ligação de <code>x</code> a 3 no frame I.
+      </p>
+      <figure class="float">
+        <a id="Figure-3_002e1"></a>
+        <object
+          style="width: 26.51ex; height: 23.31ex"
+          data="fig/chap3/Fig3.1b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p><strong>Figura 3.1:</strong> Uma estrutura de ambiente simples.</p>
+        </figcaption>
+      </figure>
+
+      <p>
+        O ambiente é crucial para o processo de avaliação, porque determina o
+        contexto no qual uma expressão deve ser avaliada. De fato, pode-se dizer
+        que expressões em uma linguagem de programação não têm, em si mesmas,
+        qualquer significado. Em vez disso, uma expressão adquire significado
+        apenas em relação a algum ambiente no qual é avaliada. Mesmo a
+        interpretação de uma expressão tão simples quanto
+        <code>(+ 1 1)</code> depende do entendimento de que se está operando em
+        um contexto no qual <code>+</code> é o símbolo para adição. Assim, em
+        nosso modelo de avaliação, sempre falaremos de avaliar uma expressão em
+        relação a algum ambiente. Para descrever interações com o interpretador,
+        vamos supor que há um ambiente global, consistindo de um único frame
+        (sem ambiente envolvente) que inclui valores para os símbolos associados
+        aos procedimentos primitivos. Por exemplo, a ideia de que
+        <code>+</code> é o símbolo para adição é capturada ao dizer que o
+        símbolo <code>+</code> está ligado no ambiente global ao procedimento
+        primitivo de adição.
+      </p>
+
+      <a id="g_t3_002e2_002e1"></a>
+      <a id="The-Rules-for-Evaluation"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.2.1</span
+        ><span class="sectitle">As Regras para Avaliação</span>
+      </h4>
+
+      <p>
+        A especificação geral de como o interpretador avalia uma combinação
+        permanece a mesma de quando a introduzimos pela primeira vez em
+        <a href="1_002e1.xhtml#g_t1_002e1_002e3">1.1.3</a>:
+      </p>
+      <ul>
+        <li>Para avaliar uma combinação:</li>
+      </ul>
+
+      <ol>
+        <li>
+          Avalie as subexpressões da combinação.<a
+            class="footnote_link"
+            id="DOCF140"
+            href="#FOOT140"
+            ><sup>140</sup></a
+          >
+        </li>
+        <li>
+          Aplique o valor da subexpressão do operador aos valores das
+          subexpressões dos operandos.
+        </li>
+      </ol>
+
+      <p>
+        O modelo de ambiente de avaliação substitui o modelo de substituição na
+        especificação do que significa aplicar um procedimento composto a
+        argumentos.
+      </p>
+      <p>
+        No modelo de ambiente de avaliação, um procedimento é sempre um par
+        consistindo de algum código e um ponteiro para um ambiente. Os
+        procedimentos são criados de uma única forma: avaliando uma expressão λ.
+        Isso produz um procedimento cujo código é obtido do texto da expressão λ
+        e cujo ambiente é o ambiente no qual a expressão λ foi avaliada para
+        produzir o procedimento. Por exemplo, considere a definição do
+        procedimento
+      </p>
+      <div class="lisp">
+        <pre
+          class="lisp prettyprinted"
+        ><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln">
+                </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span></pre>
+      </div>
+
+      <p>
+        avaliada no ambiente global. A sintaxe de definição de procedimento é
+        apenas açúcar sintático para uma expressão λ subjacente. Seria
+        equivalente usar
+      </p>
+      <div class="lisp">
+        <pre
+          class="lisp prettyprinted"
+        ><span class="opn">(</span><span class="kwd">define</span><span class="pln"> square
+                </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">)))</span></pre>
+      </div>
+
+      <p>
+        que avalia <code>(lambda (x) (* x x))</code> e liga
+        <code>square</code> ao valor resultante, tudo no ambiente global.
+      </p>
+      <p>
+        <a href="#Figure-3_002e2">Figura 3.2</a> mostra o resultado da avaliação
+        dessa expressão <code>define</code>. O objeto procedimento é um par cujo
+        código especifica que o procedimento tem um parâmetro formal, a saber
+        <code>x</code>, e um corpo de procedimento <code>(* x x)</code>. A parte
+        do ambiente do procedimento é um ponteiro para o ambiente global, já que
+        esse é o ambiente no qual a expressão λ foi avaliada para produzir o
+        procedimento. Uma nova ligação, que associa o objeto procedimento ao
+        símbolo <code>square</code>, foi adicionada ao frame global. Em geral,
+        <code>define</code> cria definições adicionando ligações a frames.
+      </p>
+      <figure class="float">
+        <a id="Figure-3_002e2"></a>
+        <object
+          style="width: 33.85ex; height: 27.37ex"
+          data="fig/chap3/Fig3.2b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.2:</strong> Estrutura de ambiente produzida pela
+            avaliação de <code>(define (square x) (* x x))</code> no ambiente
+            global.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Agora que vimos como os procedimentos são criados, podemos descrever
+        como os procedimentos são aplicados. O modelo de ambiente especifica:
+        Para aplicar um procedimento a argumentos, crie um novo ambiente
+        contendo um frame que liga os parâmetros aos valores dos argumentos. O
+        ambiente envolvente desse frame é o ambiente especificado pelo
+        procedimento. Agora, dentro desse novo ambiente, avalie o corpo do
+        procedimento.
+      </p>
+      <p>
+        Para mostrar como essa regra é seguida,
+        <a href="#Figure-3_002e3">Figura 3.3</a> ilustra a estrutura de ambiente
+        criada pela avaliação da expressão <code>(square 5)</code> no ambiente
+        global, onde <code>square</code> é o procedimento gerado em
+        <a href="#Figure-3_002e2">Figura 3.2</a>. A aplicação do procedimento
+        resulta na criação de um novo ambiente, rotulado E1 na figura, que
+        começa com um frame no qual <code>x</code>, o parâmetro formal do
+        procedimento, está ligado ao argumento 5. O ponteiro que leva para cima
+        a partir desse frame mostra que o ambiente envolvente do frame é o
+        ambiente global. O ambiente global é escolhido aqui porque esse é o
+        ambiente que é indicado como parte do objeto procedimento
+        <code>square</code>. Dentro de E1, avaliamos o corpo do procedimento,
+        <code>(* x x)</code>. Como o valor de <code>x</code> em E1 é 5, o
+        resultado é <code>(* 5 5)</code>, ou 25.
+      </p>
+      <figure class="float">
+        <a id="Figure-3_002e3"></a>
+        <object
+          style="width: 52.49ex; height: 27.37ex"
+          data="fig/chap3/Fig3.3b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.3:</strong> Ambiente criado pela avaliação de
+            <code>(square 5)</code> no ambiente global.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        O modelo de ambiente de aplicação de procedimentos pode ser resumido por
+        duas regras:
+      </p>
+      <ul>
+        <li>
+          Um objeto procedimento é aplicado a um conjunto de argumentos
+          construindo um frame, ligando os parâmetros formais do procedimento
+          aos argumentos da chamada, e então avaliando o corpo do procedimento
+          no contexto do novo ambiente construído. O novo frame tem como
+          ambiente envolvente o ambiente especificado pelo objeto procedimento
+          que está sendo aplicado.
+        </li>
+        <li>
+          Um procedimento é criado avaliando uma expressão λ em relação a um
+          ambiente dado. O objeto procedimento resultante é um par consistindo
+          do texto da expressão λ e um ponteiro para o ambiente no qual o
+          procedimento foi criado.
+        </li>
+      </ul>
+
+      <p>
+        Também especificamos que definir um símbolo usando
+        <code>define</code> cria uma ligação no frame do ambiente atual e
+        atribui ao símbolo o valor indicado.<a
+          class="footnote_link"
+          id="DOCF141"
+          href="#FOOT141"
+          ><sup>141</sup></a
+        >
+        Finalmente, especificamos o comportamento de <code>set!</code>, a
+        operação que nos forçou a introduzir o modelo de ambiente em primeiro
+        lugar. Avaliar a expressão
+        <code>(set! ⟨<var>variável</var>⟩ ⟨<var>valor</var>⟩)</code> em algum
+        ambiente localiza a ligação da variável no ambiente e altera essa
+        ligação para indicar o novo valor. Ou seja, encontra-se o primeiro frame
+        no ambiente que contém uma ligação para a variável e modifica esse
+        frame. Se a variável não estiver ligada no ambiente, então
+        <code>set!</code> sinaliza um erro.
+      </p>
+      <p>
+        Essas regras de avaliação, embora consideravelmente mais complexas que o
+        modelo de substituição, ainda são razoavelmente diretas. Além disso, o
+        modelo de avaliação, embora abstrato, fornece uma descrição correta de
+        como o interpretador avalia expressões. No
+        <a href="Chapter-4.xhtml#Chapter-4">Capítulo 4</a> veremos como esse
+        modelo pode servir como um plano para implementar um interpretador
+        funcional. As seções seguintes elaboram os detalhes do modelo ao
+        analisar alguns programas ilustrativos.
+      </p>
+    </section>
+  </body>
+</html>

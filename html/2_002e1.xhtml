@@ -10,12 +10,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="Generator" content="texi2any" />
 <meta charset="utf-8" />
-<link href="index.xhtml#Top" rel="start" title="Top" />
-<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
-<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
-<link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Chapter 2" />
-<link href="2_002e2.xhtml#g_t2_002e2" rel="next" title="2.2" />
-<link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Chapter 2" />
+<link href="index.html#Top" rel="start" title="Top" />
+<link href="Term-Index.html#Term-Index" rel="index" title="Term Index" />
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-2.html#Chapter-2" rel="prev" title="Chapter 2" />
+<link href="2_002e2.html#g_t2_002e2" rel="next" title="2.2" />
+<link href="Chapter-2.html#Chapter-2" rel="prev" title="Chapter 2" />
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/prettify.css" rel="stylesheet" type="text/css" />
@@ -29,12 +29,12 @@
 <section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t2_002e1"></a>
 <nav class="header">
 <p>
-Next: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="n" rel="next">2.2</a>, Prev: <a href="Chapter-2.xhtml#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="2_002e2.html#g_t2_002e2" accesskey="n" rel="next">2.2</a>, Prev: <a href="Chapter-2.html#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="Chapter-2.html#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 <a id="Introduction-to-Data-Abstraction"></a>
 <h3 class="section"><span class="secnum">2.1</span><span class="sectitle">Introduction to Data Abstraction</span></h3>
 
-<p>In <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a>, we noted that a procedure used as an element in
+<p>In <a href="1_002e1.html#g_t1_002e1_002e8">1.1.8</a>, we noted that a procedure used as an element in
 creating a more complex procedure could be regarded not only as a collection of
 particular operations but also as a procedural abstraction.  That is, the
 details of how the procedure was implemented could be suppressed, and the
@@ -498,7 +498,7 @@ pairs whose elements are pairs, and so on:
 </span><i><span class="lit">3</span></i>
 </pre></div>
 
-<p>In <a href="2_002e2.xhtml#g_t2_002e2">2.2</a> we will see how this ability to combine pairs means that
+<p>In <a href="2_002e2.html#g_t2_002e2">2.2</a> we will see how this ability to combine pairs means that
 pairs can be used as general-purpose building blocks to create all sorts of
 complex data structures.  The single compound-data primitive <a id="index-pair-1"></a>
 <em>pair</em>,
@@ -555,7 +555,7 @@ denominator:<a class="footnote_link" id="DOCF70" href="#FOOT70"><sup>70</sup></a
 <p>As the final example shows, our rational-number implementation does not reduce
 rational numbers to lowest terms.  We can remedy this by changing
 <code>make-rat</code>. If we have a <code>gcd</code> procedure like the one in 
-<a href="1_002e2.xhtml#g_t1_002e2_002e5">1.2.5</a> that produces the greatest common divisor of two integers, we can
+<a href="1_002e2.html#g_t1_002e2_002e5">1.2.5</a> that produces the greatest common divisor of two integers, we can
 use <code>gcd</code> to reduce the numerator and the denominator to lowest terms
 before constructing the pair:
 </p>
@@ -813,7 +813,7 @@ data.  This may seem a curiosity now, but procedural representations of data
 will play a central role in our programming repertoire.  This style of
 programming is often called <a id="index-message-passing"></a>
 <em>message passing</em>, and we will be using it
-as a basic tool in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> when we address the issues of modeling and
+as a basic tool in <a href="Chapter-3.html#Chapter-3">Chapter 3</a> when we address the issues of modeling and
 simulation.
 </p>
 <blockquote>
@@ -829,7 +829,7 @@ x y))</code> yields <code>x</code> for any objects <code>x</code> and <code>y</c
   </span><span class="opn">(</span><span class="pln">z </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p q</span><span class="clo">)</span><span class="pln"> p</span><span class="clo">)))</span></pre></div>
 
 <p>What is the corresponding definition of <code>cdr</code>? (Hint: To verify that this
-works, make use of the substitution model of <a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>.)
+works, make use of the substitution model of <a href="1_002e1.html#g_t1_002e1_002e5">1.1.5</a>.)
 </p></blockquote>
 
 <blockquote>
@@ -1270,7 +1270,7 @@ prints as the value returned by <code>print-rat</code>.</p>
 <div id="FOOT71"><p><a class="footnote_backlink" href="#DOCF71"><sup>71</sup></a>
 Surprisingly, this idea is very difficult to formulate
 rigorously. There are two approaches to giving such a formulation.  One,
-pioneered by C. A. R. <a href="References.xhtml#Hoare-_00281972_0029">Hoare (1972)</a>, is known as the method of <a id="index-abstract-models"></a>
+pioneered by C. A. R. <a href="References.html#Hoare-_00281972_0029">Hoare (1972)</a>, is known as the method of <a id="index-abstract-models"></a>
 <em>abstract models</em>.  
 It formalizes the “procedures plus conditions” specification as
 outlined in the rational-number example above.  Note that the condition on the
@@ -1280,19 +1280,19 @@ objects in terms of previously defined types of data objects.  Assertions about
 data objects can therefore be checked by reducing them to assertions about
 previously defined data objects.  Another approach, introduced by Zilles at
 <abbr>MIT</abbr>, by Goguen, Thatcher, Wagner, and Wright at IBM 
-(see <a href="References.xhtml#Thatcher-et-al_002e-1978">Thatcher et al. 1978</a>), 
-and by Guttag at Toronto (see <a href="References.xhtml#Guttag-1977">Guttag 1977</a>), is called
+(see <a href="References.html#Thatcher-et-al_002e-1978">Thatcher et al. 1978</a>), 
+and by Guttag at Toronto (see <a href="References.html#Guttag-1977">Guttag 1977</a>), is called
 <a id="index-algebraic-specification"></a>
 <em>algebraic specification</em>.  It regards the “procedures” as elements
 of an abstract algebraic system whose behavior is specified by axioms that
 correspond to our “conditions,” and uses the techniques of abstract algebra
 to check assertions about data objects.  Both methods are surveyed in the paper
-by <a href="References.xhtml#Liskov-and-Zilles-_00281975_0029">Liskov and Zilles (1975)</a>.</p>
+by <a href="References.html#Liskov-and-Zilles-_00281975_0029">Liskov and Zilles (1975)</a>.</p>
 </div>
 </div>
 <nav class="header">
 <p>
-Next: <a href="2_002e2.xhtml#g_t2_002e2" accesskey="n" rel="next">2.2</a>, Prev: <a href="Chapter-2.xhtml#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="#g_t2_002e1" accesskey="u" rel="prev">2.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="2_002e2.html#g_t2_002e2" accesskey="n" rel="next">2.2</a>, Prev: <a href="Chapter-2.html#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="#g_t2_002e1" accesskey="u" rel="prev">2.1</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 
 

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª Edição: Capítulo 2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª Edição, Capítulo 2"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª Edição: Capítulo
+      2
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/prettify.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <a id="pagetop"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="2_002e1.html#g_t2_002e1" accesskey="n" rel="next">2.1</a>,
+          Anterior:
+          <a href="1_002e3.html#g_t1_002e3" accesskey="p" rel="prev">1.3</a>,
+          Acima: <a href="index.html#Top" accesskey="u" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <span id="Chapter-2"></span>
+      <h2 class="chapter">
+        <span class="chapnum">2</span
+        ><span class="chaptitle">Construindo Abstrações com Dados</span>
+      </h2>
+
+      <blockquote>
+        <p>
+          Agora chegamos ao passo decisivo da abstração matemática: esquecemos o
+          que os símbolos representam. ... [O matemático] não precisa ficar
+          ocioso; há muitas operações que ele pode realizar com esses símbolos,
+          sem nunca precisar olhar para as coisas que eles representam.
+        </p>
+        <p>—Hermann Weyl, <cite>O Caminho Matemático do Pensamento</cite></p>
+      </blockquote>
+
+      <p>
+        No <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>, nos concentramos
+        em processos computacionais e no papel dos procedimentos no design de
+        programas. Vimos como usar dados primitivos (números) e operações
+        primitivas (operações aritméticas), como combinar procedimentos para
+        formar procedimentos compostos por meio de composição, condicionais e o
+        uso de parâmetros, e como abstrair procedimentos usando
+        <code>define</code>. Vimos que um procedimento pode ser visto como um
+        padrão para a evolução local de um processo, e classificamos,
+        raciocinamos e realizamos análises algorítmicas simples de alguns
+        padrões comuns para processos incorporados em procedimentos. Também
+        vimos que procedimentos de ordem superior aumentam o poder de nossa
+        linguagem, permitindo-nos manipular e, assim, raciocinar em termos de
+        métodos gerais de computação. Isso é muito da essência da programação.
+      </p>
+
+      <p>
+        Neste capítulo, vamos olhar para dados mais complexos. Todos os
+        procedimentos do Capítulo 1 operam em dados numéricos simples, e dados
+        simples não são suficientes para muitos dos problemas que desejamos
+        abordar usando computação. Programas são tipicamente projetados para
+        modelar fenômenos complexos, e muitas vezes é necessário construir
+        objetos computacionais que tenham várias partes para modelar fenômenos
+        do mundo real que têm vários aspectos. Assim, enquanto nosso foco no
+        Capítulo 1 foi em construir abstrações combinando procedimentos para
+        formar procedimentos compostos, neste capítulo nos voltamos para outro
+        aspecto fundamental de qualquer linguagem de programação: os meios que
+        ela fornece para construir abstrações combinando objetos de dados para
+        formar <em>dados compostos</em>.
+      </p>
+
+      <p>
+        Por que queremos dados compostos em uma linguagem de programação? Pelas
+        mesmas razões que queremos procedimentos compostos: para elevar o nível
+        conceitual em que podemos projetar nossos programas, para aumentar a
+        modularidade de nossos designs e para aumentar o poder expressivo de
+        nossa linguagem. Assim como a capacidade de definir procedimentos nos
+        permite lidar com processos em um nível conceitual mais alto do que o
+        das operações primitivas da linguagem, a capacidade de construir objetos
+        de dados compostos nos permite lidar com dados em um nível conceitual
+        mais alto do que o dos objetos de dados primitivos da linguagem.
+      </p>
+
+      <p>
+        Considere a tarefa de projetar um sistema para realizar aritmética com
+        números racionais. Poderíamos imaginar uma operação
+        <code>add-rat</code> que recebe dois números racionais e produz sua
+        soma. Em termos de dados simples, um número racional pode ser pensado
+        como dois inteiros: um numerador e um denominador. Assim, poderíamos
+        projetar um programa no qual cada número racional seria representado por
+        dois inteiros (um numerador e um denominador) e onde
+        <code>add-rat</code> seria implementado por dois procedimentos (um
+        produzindo o numerador da soma e outro produzindo o denominador). Mas
+        isso seria incômodo, porque precisaríamos explicitamente rastrear quais
+        numeradores correspondem a quais denominadores. Em um sistema destinado
+        a realizar muitas operações em muitos números racionais, esses detalhes
+        de contabilidade bagunçariam substancialmente os programas, para não
+        mencionar o que fariam com nossas mentes. Seria muito melhor se
+        pudéssemos "colar" um numerador e um denominador para formar um par—um
+        <em>objeto de dados composto</em>—que nossos programas pudessem
+        manipular de uma maneira consistente com o tratamento de um número
+        racional como uma única unidade conceitual.
+      </p>
+
+      <p>
+        O uso de dados compostos também nos permite aumentar a modularidade de
+        nossos programas. Se pudermos manipular números racionais diretamente
+        como objetos em si mesmos, podemos separar a parte de nosso programa que
+        lida com números racionais per se dos detalhes de como os números
+        racionais podem ser representados como pares de inteiros. A técnica
+        geral de isolar as partes de um programa que lidam com como os objetos
+        de dados são representados das partes de um programa que lidam com como
+        os objetos de dados são usados é uma poderosa metodologia de design
+        chamada <em>abstração de dados</em>. Veremos como a abstração de dados
+        torna os programas muito mais fáceis de projetar, manter e modificar.
+      </p>
+
+      <p>
+        O uso de dados compostos leva a um aumento real no poder expressivo de
+        nossa linguagem de programação. Considere a ideia de formar uma
+        "combinação linear"
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>a</mi>
+            <mi>x</mi>
+            <mo>+</mo>
+            <mi>b</mi>
+            <mi>y</mi>
+          </mrow> </math
+        >. Poderíamos gostar de escrever um procedimento que aceitasse
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>a</mi> </math>,
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>b</mi> </math>,
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>x</mi>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>y</mi>
+        </math>
+        como argumentos e retornasse o valor de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>a</mi>
+            <mi>x</mi>
+            <mo>+</mo>
+            <mi>b</mi>
+            <mi>y</mi>
+          </mrow> </math
+        >. Isso não apresenta dificuldade se os argumentos forem números, porque
+        podemos facilmente definir o procedimento:
+      </p>
+
+      <div class="lisp">
+        <pre
+          class="lisp prettyprinted"
+          style=""
+        ><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">linear-combination a b x y</span><span class="clo">)</span><span class="pln">
+                </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> a x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> b y</span><span class="clo">)))</span></pre>
+      </div>
+
+      <p>
+        Mas suponha que não estejamos preocupados apenas com números. Suponha
+        que gostaríamos de expressar, em termos procedimentais, a ideia de que
+        se pode formar combinações lineares sempre que a adição e a
+        multiplicação são definidas—para números racionais, números complexos,
+        polinômios ou qualquer coisa. Poderíamos expressar isso como um
+        procedimento da forma:
+      </p>
+
+      <div class="lisp">
+        <pre
+          class="lisp prettyprinted"
+          style=""
+        ><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">linear-combination a b x y</span><span class="clo">)</span><span class="pln">
+                </span><span class="opn">(</span><span class="pln">add </span><span class="opn">(</span><span class="pln">mul a x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul b y</span><span class="clo">)))</span></pre>
+      </div>
+
+      <p>
+        onde <code>add</code> e <code>mul</code> não são os procedimentos
+        primitivos <code>+</code> e <code>*</code>, mas coisas mais complexas
+        que realizarão as operações apropriadas para quaisquer tipos de dados
+        que passarmos como argumentos <code>a</code>, <code>b</code>,
+        <code>x</code> e <code>y</code>. O ponto-chave é que a única coisa que
+        <code>linear-combination</code> precisa saber sobre <code>a</code>,
+        <code>b</code>, <code>x</code> e <code>y</code> é que os procedimentos
+        <code>add</code> e <code>mul</code> realizarão as manipulações
+        apropriadas. Da perspectiva do procedimento
+        <code>linear-combination</code>, é irrelevante o que <code>a</code>,
+        <code>b</code>, <code>x</code> e <code>y</code> são e ainda mais
+        irrelevante como eles podem ser representados em termos de dados mais
+        primitivos. Esse mesmo exemplo mostra por que é importante que nossa
+        linguagem de programação forneça a capacidade de manipular objetos
+        compostos diretamente: Sem isso, não há como um procedimento como
+        <code>linear-combination</code> passar seus argumentos para
+        <code>add</code> e <code>mul</code> sem ter que conhecer sua estrutura
+        detalhada.<a class="footnote_link" id="DOCF67" href="#FOOT67"
+          ><sup>67</sup></a
+        >
+      </p>
+
+      <p>
+        Começamos este capítulo implementando o sistema de aritmética de números
+        racionais mencionado acima. Isso formará o pano de fundo para nossa
+        discussão sobre dados compostos e abstração de dados. Assim como com
+        procedimentos compostos, a principal questão a ser abordada é a da
+        abstração como uma técnica para lidar com a complexidade, e veremos como
+        a abstração de dados nos permite erguer barreiras de abstração adequadas
+        entre diferentes partes de um programa.
+      </p>
+
+      <p>
+        Veremos que a chave para formar dados compostos é que uma linguagem de
+        programação deve fornecer algum tipo de "cola" para que objetos de dados
+        possam ser combinados para formar objetos de dados mais complexos. Há
+        muitos tipos possíveis de cola. De fato, descobriremos como formar dados
+        compostos sem usar operações especiais de "dados", apenas procedimentos.
+        Isso desfocará ainda mais a distinção entre "procedimento" e "dados",
+        que já estava se tornando tênue no final do Capítulo 1. Também
+        exploraremos algumas técnicas convencionais para representar sequências
+        e árvores. Uma ideia-chave ao lidar com dados compostos é a noção de
+        <em>fechamento</em>—que a cola que usamos para combinar objetos de dados
+        deve nos permitir combinar não apenas objetos de dados primitivos, mas
+        também objetos de dados compostos. Outra ideia-chave é que objetos de
+        dados compostos podem servir como <em>interfaces convencionais</em> para
+        combinar módulos de programas de maneiras mix-and-match. Ilustraremos
+        algumas dessas ideias apresentando uma linguagem gráfica simples que
+        explora o fechamento.
+      </p>
+
+      <p>
+        Em seguida, aumentaremos o poder representacional de nossa linguagem
+        introduzindo <em>expressões simbólicas</em>—dados cujas partes
+        elementares podem ser símbolos arbitrários em vez de apenas números.
+        Exploraremos várias alternativas para representar conjuntos de objetos.
+        Descobriremos que, assim como uma determinada função numérica pode ser
+        computada por muitos processos computacionais diferentes, há muitas
+        maneiras de representar uma determinada estrutura de dados em termos de
+        objetos mais simples, e a escolha da representação pode ter um impacto
+        significativo nos requisitos de tempo e espaço dos processos que
+        manipulam os dados. Investigaremos essas ideias no contexto de
+        diferenciação simbólica, representação de conjuntos e codificação de
+        informação.
+      </p>
+
+      <p>
+        Em seguida, abordaremos o problema de trabalhar com dados que podem ser
+        representados de maneira diferente por diferentes partes de um programa.
+        Isso leva à necessidade de implementar <em>operações genéricas</em>, que
+        devem lidar com muitos tipos diferentes de dados. Manter a modularidade
+        na presença de operações genéricas requer barreiras de abstração mais
+        poderosas do que as que podem ser erguidas com a simples abstração de
+        dados. Em particular, introduzimos
+        <em>programação dirigida por dados</em> como uma técnica que permite que
+        representações de dados individuais sejam projetadas isoladamente e
+        depois combinadas <em>aditivamente</em> (ou seja, sem modificação). Para
+        ilustrar o poder dessa abordagem para o design de sistemas, fechamos o
+        capítulo aplicando o que aprendemos à implementação de um pacote para
+        realizar aritmética simbólica em polinômios, nos quais os coeficientes
+        dos polinômios podem ser inteiros, números racionais, números complexos
+        e até mesmo outros polinômios.
+      </p>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de Rodapé</h4>
+        <div id="FOOT67">
+          <p>
+            <a class="footnote_backlink" href="#DOCF67"><sup>67</sup></a> A
+            capacidade de manipular procedimentos diretamente fornece um aumento
+            análogo no poder expressivo de uma linguagem de programação. Por
+            exemplo, em <a href="1_002e3.html#g_t1_002e3_002e1">1.3.1</a>,
+            introduzimos o procedimento <code>sum</code>, que recebe um
+            procedimento <code>term</code> como argumento e calcula a soma dos
+            valores de <code>term</code> sobre um intervalo especificado. Para
+            definir <code>sum</code>, é crucial que possamos falar de um
+            procedimento como <code>term</code> como uma entidade em si mesma,
+            sem considerar como <code>term</code> pode ser expresso com
+            operações mais primitivas. De fato, se não tivéssemos a noção de "um
+            procedimento", é duvidoso que sequer pensaríamos na possibilidade de
+            definir uma operação como <code>sum</code>. Além disso, no que diz
+            respeito à realização da soma, os detalhes de como
+            <code>term</code> pode ser construído a partir de operações mais
+            primitivas são irrelevantes.
+          </p>
+        </div>
+      </div>
+
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="2_002e1.html#g_t2_002e1" accesskey="n" rel="next">2.1</a>,
+          Anterior:
+          <a href="1_002e3.html#g_t1_002e3" accesskey="p" rel="prev">1.3</a>,
+          Acima: <a href="index.html#Top" accesskey="u" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <a id="pagebottom"></a>
+  </body>
+</html>

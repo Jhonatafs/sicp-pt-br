@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª Edição: Capítulo 1"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª Edição, Capítulo 1"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª Edição: Capítulo
+      1
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/prettify.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <a id="pagetop"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="1_002e1.html#g_t1_002e1" accesskey="n" rel="next">1.1</a>,
+          Anterior:
+          <a
+            href="Acknowledgments.html#Acknowledgments"
+            accesskey="p"
+            rel="prev"
+            >Agradecimentos</a
+          >, Acima:
+          <a href="index.html#Top" accesskey="u" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <span id="Chapter-1"></span>
+      <h2 class="chapter">
+        <span class="chapnum">1</span
+        ><span class="chaptitle">Construindo Abstrações com Procedimentos</span>
+      </h2>
+
+      <blockquote>
+        <p>
+          Os atos da mente, nos quais ela exerce seu poder sobre ideias simples,
+          são principalmente estes três: 1. Combinar várias ideias simples em
+          uma composta, e assim todas as ideias complexas são feitas. 2. Trazer
+          duas ideias, sejam simples ou complexas, juntas, e colocá-las lado a
+          lado para visualizá-las de uma vez, sem uni-las em uma, obtendo assim
+          todas as suas ideias de relações. 3. Separá-las de todas as outras
+          ideias que as acompanham em sua existência real: isso é chamado de
+          abstração, e assim todas as suas ideias gerais são feitas.
+        </p>
+        <p>
+          —John Locke, <cite>Ensaio sobre o Entendimento Humano</cite> (1690)
+        </p>
+      </blockquote>
+
+      <p>
+        Estamos prestes a estudar a ideia de um <em>processo computacional</em>.
+        Processos computacionais são seres abstratos que habitam computadores. À
+        medida que evoluem, os processos manipulam outras coisas abstratas
+        chamadas <em>dados</em>. A evolução de um processo é dirigida por um
+        padrão de regras chamado <em>programa</em>. As pessoas criam programas
+        para direcionar processos. Efetivamente, conjuramos os espíritos do
+        computador com nossos feitiços.
+      </p>
+
+      <p>
+        Um processo computacional é de fato muito parecido com a ideia de um
+        espírito na visão de um feiticeiro. Ele não pode ser visto ou tocado.
+        Não é composto de matéria. No entanto, é muito real. Pode realizar
+        trabalho intelectual. Pode responder perguntas. Pode afetar o mundo ao
+        liberar dinheiro em um banco ou ao controlar um braço robótico em uma
+        fábrica. Os programas que usamos para conjurar processos são como os
+        feitiços de um feiticeiro. Eles são cuidadosamente compostos a partir de
+        expressões simbólicas em linguagens de programação arcanas e esotéricas
+        que prescrevem as tarefas que queremos que nossos processos realizem.
+      </p>
+
+      <p>
+        Um processo computacional, em um computador funcionando corretamente,
+        executa programas com precisão e exatidão. Assim, como o aprendiz de
+        feiticeiro, programadores iniciantes devem aprender a entender e
+        antecipar as consequências de suas conjurações. Mesmo pequenos erros
+        (geralmente chamados de <em>bugs</em> ou <em>falhas</em>) em programas
+        podem ter consequências complexas e imprevistas.
+      </p>
+
+      <p>
+        Felizmente, aprender a programar é consideravelmente menos perigoso do
+        que aprender feitiçaria, porque os espíritos com os quais lidamos estão
+        convenientemente contidos de forma segura. No entanto, a programação no
+        mundo real requer cuidado, expertise e sabedoria. Um pequeno bug em um
+        programa de design assistido por computador, por exemplo, pode levar ao
+        colapso catastrófico de um avião, uma barragem ou à autodestruição de um
+        robô industrial.
+      </p>
+
+      <p>
+        Engenheiros de software mestres têm a capacidade de organizar programas
+        de forma que possam ter certeza razoável de que os processos resultantes
+        realizarão as tarefas pretendidas. Eles podem visualizar o comportamento
+        de seus sistemas com antecedência. Eles sabem como estruturar programas
+        para que problemas imprevistos não levem a consequências catastróficas,
+        e quando problemas surgem, eles podem <em>depurar</em> seus programas.
+        Sistemas computacionais bem projetados, como automóveis ou reatores
+        nucleares bem projetados, são projetados de forma modular, de modo que
+        as partes possam ser construídas, substituídas e depuradas
+        separadamente.
+      </p>
+
+      <h5 class="subsubheading">Programando em Lisp</h5>
+
+      <p>
+        Precisamos de uma linguagem apropriada para descrever processos, e
+        usaremos para esse propósito a linguagem de programação Lisp. Assim como
+        nossos pensamentos cotidianos são geralmente expressos em nossa
+        linguagem natural (como inglês, francês ou japonês), e descrições de
+        fenômenos quantitativos são expressas com notações matemáticas, nossos
+        pensamentos procedimentais serão expressos em Lisp. Lisp foi inventado
+        no final dos anos 1950 como um formalismo para raciocinar sobre o uso de
+        certos tipos de expressões lógicas, chamadas
+        <em>equações de recursão</em>, como um modelo para computação. A
+        linguagem foi concebida por John McCarthy e é baseada em seu artigo
+        “Funções Recursivas de Expressões Simbólicas e Sua Computação por
+        Máquina” (<a href="References.html#McCarthy-1960">McCarthy 1960</a>).
+      </p>
+
+      <p>
+        Apesar de seu início como um formalismo matemático, Lisp é uma linguagem
+        de programação prática. Um <em>interpretador</em> Lisp é uma máquina que
+        realiza processos descritos na linguagem Lisp. O primeiro interpretador
+        Lisp foi implementado por McCarthy com a ajuda de colegas e alunos no
+        Grupo de Inteligência Artificial do Laboratório de Pesquisa em
+        Eletrônica do MIT e no Centro de Computação do MIT.<a
+          class="footnote_link"
+          id="DOCF1"
+          href="#FOOT1"
+          ><sup>1</sup></a
+        >
+        Lisp, cujo nome é um acrônimo para LISt Processing, foi projetado para
+        fornecer capacidades de manipulação de símbolos para atacar problemas de
+        programação como a diferenciação e integração simbólica de expressões
+        algébricas. Ele incluiu para esse propósito novos objetos de dados
+        conhecidos como átomos e listas, que o distinguiam de todas as outras
+        linguagens da época.
+      </p>
+
+      <p>
+        Lisp não foi o produto de um esforço de design concentrado. Em vez
+        disso, evoluiu informalmente de maneira experimental em resposta às
+        necessidades dos usuários e a considerações pragmáticas de
+        implementação. A evolução informal do Lisp continuou ao longo dos anos,
+        e a comunidade de usuários de Lisp tradicionalmente resistiu a
+        tentativas de promulgar qualquer definição "oficial" da linguagem. Essa
+        evolução, juntamente com a flexibilidade e elegância da concepção
+        inicial, permitiu que o Lisp, que é a segunda linguagem mais antiga em
+        uso generalizado hoje (apenas Fortran é mais antiga), se adaptasse
+        continuamente para abranger as ideias mais modernas sobre design de
+        programas. Assim, o Lisp é agora uma família de dialetos, que, embora
+        compartilhem a maioria das características originais, podem diferir
+        significativamente uns dos outros. O dialeto do Lisp usado neste livro é
+        chamado Scheme.<a class="footnote_link" id="DOCF2" href="#FOOT2"
+          ><sup>2</sup></a
+        >
+      </p>
+
+      <p>
+        Devido ao seu caráter experimental e sua ênfase na manipulação de
+        símbolos, o Lisp foi inicialmente muito ineficiente para cálculos
+        numéricos, pelo menos em comparação com Fortran. Ao longo dos anos, no
+        entanto, compiladores Lisp foram desenvolvidos para traduzir programas
+        em código de máquina que pode realizar cálculos numéricos com eficiência
+        razoável. E para aplicações especiais, o Lisp tem sido usado com grande
+        eficácia.<a class="footnote_link" id="DOCF3" href="#FOOT3"
+          ><sup>3</sup></a
+        >
+        Embora o Lisp ainda não tenha superado sua antiga reputação de ser
+        desesperadamente ineficiente, ele agora é usado em muitas aplicações
+        onde a eficiência não é a principal preocupação. Por exemplo, o Lisp
+        tornou-se uma linguagem de escolha para linguagens de shell de sistemas
+        operacionais e para linguagens de extensão de editores e sistemas de
+        design assistido por computador.
+      </p>
+
+      <p>
+        Se o Lisp não é uma linguagem mainstream, por que estamos usando-o como
+        o framework para nossa discussão sobre programação? Porque a linguagem
+        possui características únicas que a tornam um excelente meio para
+        estudar construções de programação importantes e estruturas de dados, e
+        para relacioná-las às características linguísticas que as suportam. A
+        mais significativa dessas características é o fato de que as descrições
+        de processos em Lisp, chamadas <em>procedimentos</em>, podem ser
+        representadas e manipuladas como dados em Lisp. A importância disso é
+        que existem técnicas poderosas de design de programas que dependem da
+        capacidade de desfazer a distinção tradicional entre dados "passivos" e
+        processos "ativos". Como descobriremos, a flexibilidade do Lisp em lidar
+        com procedimentos como dados o torna uma das linguagens mais
+        convenientes para explorar essas técnicas. A capacidade de representar
+        procedimentos como dados também torna o Lisp uma excelente linguagem
+        para escrever programas que devem manipular outros programas como dados,
+        como os interpretadores e compiladores que suportam linguagens de
+        computador. Além dessas considerações, programar em Lisp é muito
+        divertido.
+      </p>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de Rodapé</h4>
+        <div id="FOOT1">
+          <p>
+            <a class="footnote_backlink" href="#DOCF1"><sup>1</sup></a> O
+            <cite>Manual do Programador Lisp 1</cite> apareceu em 1960 e o
+            <cite>Manual do Programador Lisp 1.5</cite> (<a
+              href="References.html#McCarthy-et-al_002e-1965"
+              >McCarthy et al. 1965</a
+            >) foi publicado em 1962. A história inicial do Lisp é descrita em
+            <a href="References.html#McCarthy-1978">McCarthy 1978</a>.
+          </p>
+        </div>
+        <div id="FOOT2">
+          <p>
+            <a class="footnote_backlink" href="#DOCF2"><sup>2</sup></a> Os dois
+            dialetos nos quais a maioria dos principais programas Lisp dos anos
+            1970 foram escritos são MacLisp (<a href="References.html#Moon-1978"
+              >Moon 1978</a
+            >; <a href="References.html#Pitman-1983">Pitman 1983</a>),
+            desenvolvido no Projeto MAC do MIT, e Interlisp (<a
+              href="References.html#Teitelman-1974"
+              >Teitelman 1974</a
+            >), desenvolvido na Bolt Beranek and Newman Inc. e no Xerox Palo
+            Alto Research Center. O Portable Standard Lisp (<a
+              href="References.html#Hearn-1969"
+              >Hearn 1969</a
+            >; <a href="References.html#Griss-1981">Griss 1981</a>) foi um
+            dialeto Lisp projetado para ser facilmente portável entre diferentes
+            máquinas. O MacLisp gerou vários subdialetos, como o Franz Lisp,
+            desenvolvido na Universidade da Califórnia em Berkeley, e o Zetalisp
+            (<a href="References.html#Moon-and-Weinreb-1981"
+              >Moon e Weinreb 1981</a
+            >), que foi baseado em um processador de propósito especial
+            projetado no Laboratório de Inteligência Artificial do MIT para
+            executar Lisp com muita eficiência. O dialeto Lisp usado neste
+            livro, chamado Scheme (<a
+              href="References.html#Steele-and-Sussman-1975"
+              >Steele e Sussman 1975</a
+            >), foi inventado em 1975 por Guy Lewis Steele Jr. e Gerald Jay
+            Sussman do Laboratório de Inteligência Artificial do MIT e
+            posteriormente reimplementado para uso instrucional no MIT. O Scheme
+            tornou-se um padrão IEEE em 1990 (<a
+              href="References.html#IEEE-1990"
+              >IEEE 1990</a
+            >). O dialeto Common Lisp (<a href="References.html#Steele-1982"
+              >Steele 1982</a
+            >, <a href="References.html#Steele-1990">Steele 1990</a>) foi
+            desenvolvido pela comunidade Lisp para combinar características dos
+            dialetos Lisp anteriores para criar um padrão industrial para Lisp.
+            O Common Lisp tornou-se um padrão ANSI em 1994 (<a
+              href="References.html#ANSI-1994"
+              >ANSI 1994</a
+            >).
+          </p>
+        </div>
+        <div id="FOOT3">
+          <p>
+            <a class="footnote_backlink" href="#DOCF3"><sup>3</sup></a> Uma
+            dessas aplicações especiais foi um cálculo de importância
+            científica—uma integração do movimento do Sistema Solar que estendeu
+            os resultados anteriores em quase duas ordens de magnitude e
+            demonstrou que a dinâmica do Sistema Solar é caótica. Esse cálculo
+            foi possibilitado por novos algoritmos de integração, um compilador
+            de propósito especial e um computador de propósito especial, todos
+            implementados com a ajuda de ferramentas de software escritas em
+            Lisp (<a href="References.html#Abelson-et-al_002e-1992"
+              >Abelson et al. 1992</a
+            >;
+            <a href="References.html#Sussman-and-Wisdom-1992"
+              >Sussman e Wisdom 1992</a
+            >).
+          </p>
+        </div>
+      </div>
+
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="1_002e1.html#g_t1_002e1" accesskey="n" rel="next">1.1</a>,
+          Anterior:
+          <a
+            href="Acknowledgments.html#Acknowledgments"
+            accesskey="p"
+            rel="prev"
+            >Agradecimentos</a
+          >, Acima:
+          <a href="index.html#Top" accesskey="u" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <a id="pagebottom"></a>
+  </body>
+</html>

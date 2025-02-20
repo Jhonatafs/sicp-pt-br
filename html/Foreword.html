@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: Prefácio
+    </title>
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: Prefácio"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: Prefácio"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/prettify.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <nav class="header">
+        <p>
+          Próximo: <a href="Preface.html#Preface" rel="next">Prefácio 2ed.</a>,
+          Anterior:
+          <a href="Dedication.html#Dedication" rel="prev">Dedicação</a>, Acima:
+          <a href="index.html#index" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            rel="contents"
+            >Conteúdos</a
+          >]
+        </p>
+      </nav>
+      <span id="Foreword"></span>
+      <a id="Foreword-1"></a>
+      <h2 class="unnumbered">Prefácio</h2>
+      <p>
+        Educadores, generais, nutricionistas, psicólogos e pais programam.
+        Exércitos, estudantes e algumas sociedades são programados. Um ataque a
+        grandes problemas emprega uma sucessão de programas, a maioria dos quais
+        surge no caminho. Esses programas estão repletos de questões que parecem
+        ser particulares ao problema em questão. Para apreciar a programação
+        como uma atividade intelectual por direito próprio, você deve se voltar
+        para a programação de computadores; você deve ler e escrever programas
+        de computador &mdash; muitos deles. Não importa muito sobre o que são os
+        programas ou quais aplicações eles servem. O que importa é o quão bem
+        eles desempenham e o quão suavemente se encaixam com outros programas na
+        criação de programas ainda maiores. O programador deve buscar tanto a
+        perfeição da parte quanto a adequação da coleção. Neste livro, o uso de
+        “programa” está focado na criação, execução e estudo de programas
+        escritos em um dialeto de Lisp para execução em um computador digital.
+        Usando Lisp, restringimos ou limitamos não o que podemos programar, mas
+        apenas a notação para nossas descrições de programas.
+      </p>
+      <p>
+        Nosso tráfego com o assunto deste livro nos envolve com três focos de
+        fenômenos: a mente humana, coleções de programas de computador e o
+        computador. Todo programa de computador é um modelo, criado na mente, de
+        um processo real ou mental. Esses processos, surgindos da experiência e
+        dos pensamentos humanos, são enormes em número, intrincados em detalhes
+        e, a qualquer momento, apenas parcialmente compreendidos. Eles são
+        modelados para nossa satisfação permanente raramente por nossos
+        programas de computador. Assim, mesmo que nossos programas sejam
+        coleções cuidadosamente elaboradas de símbolos discretos, mosaicos de
+        funções interligadas, eles continuamente evoluem: nós os mudamos à
+        medida que nossa percepção do modelo se aprofunda, se amplia, se
+        generaliza até que o modelo finalmente atinja um lugar metaestável
+        dentro de outro modelo com o qual lutamos. A fonte da euforia associada
+        à programação de computadores é o desdobramento contínuo dentro da mente
+        e no computador de mecanismos expressos como programas e a explosão de
+        percepção que eles geram. Se a arte interpreta nossos sonhos, o
+        computador os executa na forma de programas!
+      </p>
+      <p>
+        Por todo o seu poder, o computador é um mestre severo. Seus programas
+        devem estar corretos, e o que desejamos dizer deve ser dito com precisão
+        em todos os detalhes. Como em toda atividade simbólica, nos convencemos
+        da verdade do programa por meio de argumentos. O próprio Lisp pode
+        receber uma semântica (outro modelo, aliás), e se a função de um
+        programa pode ser especificada, digamos, no cálculo de predicados, os
+        métodos de prova da lógica podem ser usados para fazer um argumento de
+        correção aceitável. Infelizmente, à medida que os programas se tornam
+        grandes e complicados, como quase sempre acontece, a adequação,
+        consistência e correção das especificações em si se tornam
+        questionáveis, de modo que argumentos formais completos de correção
+        raramente acompanham grandes programas. Como grandes programas crescem a
+        partir de pequenos, é crucial que desenvolvamos um arsenal de estruturas
+        de programa padrão das quais nos tornamos seguros—nós as chamamos de
+        idiomas—e aprendamos a combiná-las em estruturas maiores usando técnicas
+        organizacionais de valor comprovado. Essas técnicas são tratadas
+        extensivamente neste livro, e entendê-las é essencial para a
+        participação na empresa prometeica chamada programação. Mais do que
+        qualquer outra coisa, a descoberta e o domínio de técnicas
+        organizacionais poderosas aceleram nossa capacidade de criar programas
+        grandes e significativos. Por outro lado, como escrever grandes
+        programas é muito desgastante, somos estimulados a inventar novos
+        métodos de reduzir a massa de função e detalhe a ser ajustada em grandes
+        programas.
+      </p>
+      <p>
+        Ao contrário dos programas, os computadores devem obedecer às leis da
+        física. Se desejam operar rapidamente—alguns nanossegundos por mudança
+        de estado—eles devem transmitir elétrons apenas a pequenas distâncias
+        (no máximo
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>1</mn>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mn>1</mn>
+                <mn>2</mn>
+              </mfrac>
+            </mrow>
+          </mrow>
+        </math>
+        pés). O calor gerado pelo enorme número de dispositivos tão concentrados
+        no espaço deve ser removido. Uma arte de engenharia requintada foi
+        desenvolvida para equilibrar entre a multiplicidade de funções e a
+        densidade de dispositivos. Em qualquer caso, o hardware sempre opera em
+        um nível mais primitivo do que aquele no qual nos importamos em
+        programar. Os processos que transformam nossos programas Lisp em
+        programas de “máquina” são eles próprios modelos abstratos que
+        programamos. Seu estudo e criação dão muita visão sobre os programas
+        organizacionais associados à programação de modelos arbitrários. Claro,
+        o próprio computador pode ser modelado assim. Pense nisso: o
+        comportamento do menor elemento de comutação física é modelado pela
+        mecânica quântica descrita por equações diferenciais cujo comportamento
+        detalhado é capturado por aproximações numéricas representadas em
+        programas de computador executando em computadores compostos de …!
+      </p>
+      <p>
+        Não é apenas uma questão de conveniência tática identificar
+        separadamente os três focos. Mesmo que, como dizem, esteja tudo na
+        cabeça, essa separação lógica induz uma aceleração do tráfego simbólico
+        entre esses focos cuja riqueza, vitalidade e potencial é superada na
+        experiência humana apenas pela evolução da própria vida. Na melhor das
+        hipóteses, as relações entre os focos são metaestáveis. Os computadores
+        nunca são grandes ou rápidos o suficiente. Cada avanço na tecnologia de
+        hardware leva a empreendimentos de programação mais massivos, novos
+        princípios organizacionais e um enriquecimento de modelos abstratos.
+        Todo leitor deve se perguntar periodicamente “Para que fim, para que
+        fim?”—mas não pergunte com muita frequência, para não perder a diversão
+        da programação pela constipação da filosofia agridoce.
+      </p>
+      <p>
+        Entre os programas que escrevemos, alguns (mas nunca o suficiente)
+        realizam uma função matemática precisa, como ordenar ou encontrar o
+        máximo de uma sequência de números, determinar a primalidade ou
+        encontrar a raiz quadrada. Chamamos tais programas de algoritmos, e
+        muito se sabe sobre seu comportamento ideal, particularmente com
+        respeito aos dois parâmetros importantes de tempo de execução e
+        requisitos de armazenamento de dados. Um programador deve adquirir bons
+        algoritmos e idiomas. Mesmo que alguns programas resistam a
+        especificações precisas, é responsabilidade do programador estimar e
+        sempre tentar melhorar seu desempenho.
+      </p>
+      <p>
+        Lisp é um sobrevivente, estando em uso por cerca de um quarto de século.
+        Entre as linguagens de programação ativas, apenas Fortran teve uma vida
+        mais longa. Ambas as linguagens suportaram as necessidades de
+        programação de áreas importantes de aplicação, Fortran para computação
+        científica e de engenharia e Lisp para inteligência artificial. Essas
+        duas áreas continuam importantes, e seus programadores são tão devotados
+        a essas duas linguagens que Lisp e Fortran podem muito bem continuar em
+        uso ativo por pelo menos mais um quarto de século.
+      </p>
+      <p>
+        Lisp muda. O dialeto Scheme usado neste texto evoluiu do Lisp original e
+        difere deste último de várias maneiras importantes, incluindo escopo
+        estático para vinculação de variáveis e permitindo que funções retornem
+        funções como valores. Em sua estrutura semântica, Scheme é tão próximo
+        de Algol 60 quanto dos primeiros Lisps. Algol 60, nunca mais será uma
+        linguagem ativa, vive nos genes de Scheme e Pascal. Seria difícil
+        encontrar duas linguagens que sejam a moeda de comunicação de duas
+        culturas mais diferentes do que aquelas reunidas em torno dessas duas
+        linguagens. Pascal é para construir pirâmides—estruturas imponentes,
+        impressionantes e estáticas construídas por exércitos empurrando blocos
+        pesados em seus lugares. Lisp é para construir organismos—estruturas
+        imponentes, impressionantes e dinâmicas construídas por esquadrões
+        encaixando miríades flutuantes de organismos mais simples em seus
+        lugares. Os princípios organizacionais usados são os mesmos em ambos os
+        casos, exceto por uma diferença extraordinariamente importante: A
+        funcionalidade exportável discricionária confiada ao programador Lisp
+        individual é mais de uma ordem de magnitude maior do que a encontrada
+        dentro de empreendimentos Pascal. Programas Lisp inflam bibliotecas com
+        funções cuja utilidade transcende a aplicação que as produziu. A lista,
+        estrutura de dados nativa do Lisp, é em grande parte responsável por tal
+        crescimento de utilidade. A estrutura simples e a aplicabilidade natural
+        das listas são refletidas em funções que são incrivelmente não
+        idiossincráticas. Em Pascal, a profusão de estruturas de dados
+        declaráveis induz uma especialização dentro de funções que inibe e pune
+        a cooperação casual. É melhor ter 100 funções operando em uma estrutura
+        de dados do que ter 10 funções operando em 10 estruturas de dados. Como
+        resultado, a pirâmide deve permanecer inalterada por um milênio; o
+        organismo deve evoluir ou perecer.
+      </p>
+      <p>
+        Para ilustrar essa diferença, compare o tratamento de material e
+        exercícios dentro deste livro com o de qualquer texto de primeiro curso
+        usando Pascal. Não trabalhe sob a ilusão de que este é um texto
+        digerível apenas no MIT, peculiar à raça encontrada lá. É precisamente o
+        que um livro sério sobre programação Lisp deve ser, não importa quem
+        seja o aluno ou onde seja usado.
+      </p>
+      <p>
+        Note que este é um texto sobre programação, ao contrário da maioria dos
+        livros de Lisp, que são usados como preparação para o trabalho em
+        inteligência artificial. Afinal, as preocupações críticas de programação
+        da engenharia de software e da inteligência artificial tendem a se
+        fundir à medida que os sistemas sob investigação se tornam maiores. Isso
+        explica por que há tanto interesse crescente em Lisp fora da
+        inteligência artificial.
+      </p>
+      <p>
+        Como seria de esperar de seus objetivos, a pesquisa em inteligência
+        artificial gera muitos problemas significativos de programação. Em
+        outras culturas de programação, essa enxurrada de problemas gera novas
+        linguagens. De fato, em qualquer tarefa de programação muito grande, um
+        princípio organizador útil é controlar e isolar o tráfego dentro dos
+        módulos da tarefa por meio da invenção de linguagens. Essas linguagens
+        tendem a se tornar menos primitivas à medida que se aproximam das
+        fronteiras do sistema onde nós, humanos, interagimos com mais
+        frequência. Como resultado, tais sistemas contêm funções complexas de
+        processamento de linguagem replicadas muitas vezes. Lisp tem uma sintaxe
+        e semântica tão simples que a análise pode ser tratada como uma tarefa
+        elementar. Assim, a tecnologia de análise desempenha quase nenhum papel
+        em programas Lisp, e a construção de processadores de linguagem
+        raramente é um impedimento para a taxa de crescimento e mudança de
+        grandes sistemas Lisp. Finalmente, é essa mesma simplicidade de sintaxe
+        e semântica que é responsável pelo fardo e liberdade carregados por
+        todos os programadores Lisp. Nenhum programa Lisp de qualquer tamanho
+        além de algumas linhas pode ser escrito sem estar saturado de funções
+        discricionárias. Invente e ajuste; tenha ajustes e reinvente! Brindamos
+        ao programador Lisp que escreve seus pensamentos dentro de ninhos de
+        parênteses.
+      </p>
+      <p>
+        Alan J. Perlis<br />
+        New Haven, Connecticut
+      </p>
+      <nav class="header">
+        <p>
+          Próximo: <a href="Preface.html#Preface" rel="next">Prefácio 2ed.</a>,
+          Anterior:
+          <a href="Dedication.html#Dedication" rel="prev">Dedicação</a>, Acima:
+          <a href="index.html#index" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            rel="contents"
+            >Conteúdos</a
+          >]
+        </p>
+      </nav>
+    </section>
+  </body>
+</html>

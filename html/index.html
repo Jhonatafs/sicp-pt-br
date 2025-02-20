@@ -1,0 +1,1242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª Edição: Topo"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª Edição: Topo"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª Edição: Topo
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/prettify.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump"><a href="#pagetop" accesskey="t">⇡</a></span>
+      <a id="pagetop"></a>
+      <nav class="header">
+        <p>
+          Próximo: <a href="UTF.html#UTF" accesskey="n" rel="next">UTF</a>,
+          Anterior: <a href="../index.html" accesskey="p" rel="prev">(dir)</a>,
+          Acima: <a href="../index.html" accesskey="u" rel="prev">(dir)</a> [<a
+            href="#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+      <span id="Top"></span>
+      <span id="index"></span>
+      <h1 class="titlefont">
+        Estrutura e Interpretação<br />
+        de Programas de Computador
+      </h1>
+
+      <div class="subtitle">
+        <abbr>Segunda Edição</abbr><br />
+        Formato Texinfo Não Oficial 2.andresraba6.6
+      </div>
+
+      <strong
+        >Harold Abelson e Gerald Jay Sussman com Julie Sussman, prefácio de Alan
+        J. Perlis</strong
+      ><br />
+
+      <p>©1996 pelo Instituto de Tecnologia de Massachusetts</p>
+
+      <object
+        style="width: 2.42ex; height: 2.42ex"
+        data="fig/icons/cc.std.svg"
+        type="image/svg+xml"
+      >
+        SVG
+      </object>
+      <object
+        style="width: 2.42ex; height: 2.42ex"
+        data="fig/icons/by.std.svg"
+        type="image/svg+xml"
+      >
+        SVG
+      </object>
+      <object
+        style="width: 2.42ex; height: 2.42ex"
+        data="fig/icons/sa.std.svg"
+        type="image/svg+xml"
+      >
+        SVG
+      </object>
+
+      <p>
+        Este trabalho está licenciado sob uma Licença Creative Commons
+        Attribution-ShareAlike 4.0 Internacional (<a
+          href="http://creativecommons.org/licenses/by-sa/4.0/"
+          ><abbr>CC BY-SA 4.0</abbr></a
+        >). Baseado em um trabalho em
+        <a href="http://mitpress.mit.edu/sicp/">mitpress.mit.edu</a>.
+      </p>
+      <p>
+        A <abbr>MIT</abbr> Press<br />
+        Cambridge, Massachusetts<br />
+        Londres, Inglaterra
+      </p>
+      <p>
+        McGraw-Hill Book Company<br />
+        Nova York, St. Louis, San Francisco,<br />
+        Montreal, Toronto
+      </p>
+      <p>
+        Este livro é um de uma série de textos escritos por professores do
+        Departamento de Engenharia Elétrica e Ciência da Computação do Instituto
+        de Tecnologia de Massachusetts. Foi editado e produzido pela
+        <abbr>MIT</abbr> Press sob um acordo de produção-distribuição conjunta
+        com a McGraw-Hill Book Company.
+      </p>
+      <p>
+        Formato Texinfo Não Oficial
+        <a href="http://sicpebook.wordpress.com">2.andresraba6.6</a> (16 de
+        setembro de 2015), baseado em
+        <a href="http://www.neilvandyke.org/sicp-texi/">2.neilvandyke4</a> (10
+        de janeiro de 2007).
+      </p>
+
+      <a id="SEC_Overview"></a>
+      <h2 class="shortcontents-heading">Sumário Curto</h2>
+
+      <div class="shortcontents">
+        <ul class="no-bullet">
+          <li>
+            <a
+              id="stoc-Unofficial-Texinfo-Format"
+              href="#toc-Unofficial-Texinfo-Format"
+              >Formato Texinfo Não Oficial</a
+            >
+          </li>
+          <li>
+            <a id="stoc-Dedication-1" href="#toc-Dedication-1">Dedicatória</a>
+          </li>
+          <li><a id="stoc-Foreword-1" href="#toc-Foreword-1">Prefácio</a></li>
+          <li>
+            <a
+              id="stoc-Preface-to-the-Second-Edition"
+              href="#toc-Preface-to-the-Second-Edition"
+              >Prefácio da Segunda Edição</a
+            >
+          </li>
+          <li>
+            <a
+              id="stoc-Preface-to-the-First-Edition"
+              href="#toc-Preface-to-the-First-Edition"
+              >Prefácio da Primeira Edição</a
+            >
+          </li>
+          <li>
+            <a id="stoc-Acknowledgments-1" href="#toc-Acknowledgments-1"
+              >Agradecimentos</a
+            >
+          </li>
+          <li>
+            <a
+              id="stoc-Building-Abstractions-with-Procedures"
+              href="#toc-Building-Abstractions-with-Procedures"
+              >1 Construindo Abstrações com Procedimentos</a
+            >
+          </li>
+          <li>
+            <a
+              id="stoc-Building-Abstractions-with-Data"
+              href="#toc-Building-Abstractions-with-Data"
+              >2 Construindo Abstrações com Dados</a
+            >
+          </li>
+          <li>
+            <a
+              id="stoc-Modularity_002c-Objects_002c-and-State"
+              href="#toc-Modularity_002c-Objects_002c-and-State"
+              >3 Modularidade, Objetos e Estado</a
+            >
+          </li>
+          <li>
+            <a
+              id="stoc-Metalinguistic-Abstraction"
+              href="#toc-Metalinguistic-Abstraction"
+              >4 Abstração Metalinguística</a
+            >
+          </li>
+          <li>
+            <a
+              id="stoc-Computing-with-Register-Machines"
+              href="#toc-Computing-with-Register-Machines"
+              >5 Computação com Máquinas de Registro</a
+            >
+          </li>
+          <li>
+            <a id="stoc-References-1" href="#toc-References-1">Referências</a>
+          </li>
+          <li>
+            <a id="stoc-List-of-Exercises" href="#toc-List-of-Exercises"
+              >Lista de Exercícios</a
+            >
+          </li>
+          <li>
+            <a id="stoc-List-of-Figures" href="#toc-List-of-Figures"
+              >Lista de Figuras</a
+            >
+          </li>
+          <li>
+            <a id="stoc-Term-Index-1" href="#toc-Term-Index-1"
+              >Índice de Termos</a
+            >
+          </li>
+          <li><a id="stoc-Colophon-1" href="#toc-Colophon-1">Colofão</a></li>
+        </ul>
+      </div>
+
+      <a id="SEC_Contents"></a>
+      <h2 class="contents-heading">Sumário</h2>
+
+      <div class="contents">
+        <ul class="no-bullet">
+          <li>
+            <a id="toc-Unofficial-Texinfo-Format" href="UTF.html#UTF"
+              >Formato Texinfo Não Oficial</a
+            >
+          </li>
+          <li>
+            <a id="toc-Dedication-1" href="Dedication.html#Dedication"
+              >Dedicatória</a
+            >
+          </li>
+          <li>
+            <a id="toc-Foreword-1" href="Foreword.html#Foreword">Prefácio</a>
+          </li>
+          <li>
+            <a
+              id="toc-Preface-to-the-Second-Edition"
+              href="Preface.html#Preface"
+              >Prefácio da Segunda Edição</a
+            >
+          </li>
+          <li>
+            <a
+              id="toc-Preface-to-the-First-Edition"
+              href="Preface-1e.html#Preface-1e"
+              >Prefácio da Primeira Edição</a
+            >
+          </li>
+          <li>
+            <a
+              id="toc-Acknowledgments-1"
+              href="Acknowledgments.html#Acknowledgments"
+              >Agradecimentos</a
+            >
+          </li>
+          <li>
+            <a
+              id="toc-Building-Abstractions-with-Procedures"
+              href="Chapter-1.html#Chapter-1"
+              >1 Construindo Abstrações com Procedimentos</a
+            >
+            <ul class="no-bullet">
+              <li>
+                <a
+                  id="toc-The-Elements-of-Programming"
+                  href="1_002e1.html#g_t1_002e1"
+                  >1.1 Os Elementos da Programação</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a id="toc-Expressions" href="1_002e1.html#g_t1_002e1_002e1"
+                      >1.1.1 Expressões</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Naming-and-the-Environment"
+                      href="1_002e1.html#g_t1_002e1_002e2"
+                      >1.1.2 Nomeação e o Ambiente</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Evaluating-Combinations"
+                      href="1_002e1.html#g_t1_002e1_002e3"
+                      >1.1.3 Avaliando Combinações</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Compound-Procedures"
+                      href="1_002e1.html#g_t1_002e1_002e4"
+                      >1.1.4 Procedimentos Compostos</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-The-Substitution-Model-for-Procedure-Application"
+                      href="1_002e1.html#g_t1_002e1_002e5"
+                      >1.1.5 O Modelo de Substituição para Aplicação de
+                      Procedimentos</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Conditional-Expressions-and-Predicates"
+                      href="1_002e1.html#g_t1_002e1_002e6"
+                      >1.1.6 Expressões Condicionais e Predicados</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Example_003a-Square-Roots-by-Newton_0027s-Method"
+                      href="1_002e1.html#g_t1_002e1_002e7"
+                      >1.1.7 Exemplo: Raízes Quadradas pelo Método de Newton</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Procedures-as-Black_002dBox-Abstractions"
+                      href="1_002e1.html#g_t1_002e1_002e8"
+                      >1.1.8 Procedimentos como Abstrações de Caixa Preta</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Procedures-and-the-Processes-They-Generate"
+                  href="1_002e2.html#g_t1_002e2"
+                  >1.2 Procedimentos e os Processos que Eles Geram</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Linear-Recursion-and-Iteration"
+                      href="1_002e2.html#g_t1_002e2_002e1"
+                      >1.2.1 Recursão Linear e Iteração</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Tree-Recursion"
+                      href="1_002e2.html#g_t1_002e2_002e2"
+                      >1.2.2 Recursão em Árvore</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Orders-of-Growth"
+                      href="1_002e2.html#g_t1_002e2_002e3"
+                      >1.2.3 Ordens de Crescimento</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Exponentiation"
+                      href="1_002e2.html#g_t1_002e2_002e4"
+                      >1.2.4 Exponenciação</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Greatest-Common-Divisors"
+                      href="1_002e2.html#g_t1_002e2_002e5"
+                      >1.2.5 Máximo Divisor Comum</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Example_003a-Testing-for-Primality"
+                      href="1_002e2.html#g_t1_002e2_002e6"
+                      >1.2.6 Exemplo: Testando Primalidade</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Formulating-Abstractions-with-Higher_002dOrder-Procedures"
+                  href="1_002e3.html#g_t1_002e3"
+                  >1.3 Formulando Abstrações com Procedimentos de Ordem
+                  Superior</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Procedures-as-Arguments"
+                      href="1_002e3.html#g_t1_002e3_002e1"
+                      >1.3.1 Procedimentos como Argumentos</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Constructing-Procedures-Using-Lambda"
+                      href="1_002e3.html#g_t1_002e3_002e2"
+                      >1.3.2 Construindo Procedimentos Usando
+                      <code>Lambda</code></a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Procedures-as-General-Methods"
+                      href="1_002e3.html#g_t1_002e3_002e3"
+                      >1.3.3 Procedimentos como Métodos Gerais</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Procedures-as-Returned-Values"
+                      href="1_002e3.html#g_t1_002e3_002e4"
+                      >1.3.4 Procedimentos como Valores Retornados</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a
+              id="toc-Building-Abstractions-with-Data"
+              href="Chapter-2.html#Chapter-2"
+              >2 Construindo Abstrações com Dados</a
+            >
+            <ul class="no-bullet">
+              <li>
+                <a
+                  id="toc-Introduction-to-Data-Abstraction"
+                  href="2_002e1.html#g_t2_002e1"
+                  >2.1 Introdução à Abstração de Dados</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Example_003a-Arithmetic-Operations-for-Rational-Numbers"
+                      href="2_002e1.html#g_t2_002e1_002e1"
+                      >2.1.1 Exemplo: Operações Aritméticas para Números
+                      Racionais</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Abstraction-Barriers"
+                      href="2_002e1.html#g_t2_002e1_002e2"
+                      >2.1.2 Barreiras de Abstração</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-What-Is-Meant-by-Data_003f"
+                      href="2_002e1.html#g_t2_002e1_002e3"
+                      >2.1.3 O que se Entende por Dados?</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Extended-Exercise_003a-Interval-Arithmetic"
+                      href="2_002e1.html#g_t2_002e1_002e4"
+                      >2.1.4 Exercício Estendido: Aritmética de Intervalos</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Hierarchical-Data-and-the-Closure-Property"
+                  href="2_002e2.html#g_t2_002e2"
+                  >2.2 Dados Hierárquicos e a Propriedade de Fechamento</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Representing-Sequences"
+                      href="2_002e2.html#g_t2_002e2_002e1"
+                      >2.2.1 Representando Sequências</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Hierarchical-Structures"
+                      href="2_002e2.html#g_t2_002e2_002e2"
+                      >2.2.2 Estruturas Hierárquicas</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Sequences-as-Conventional-Interfaces"
+                      href="2_002e2.html#g_t2_002e2_002e3"
+                      >2.2.3 Sequências como Interfaces Convencionais</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Example_003a-A-Picture-Language"
+                      href="2_002e2.html#g_t2_002e2_002e4"
+                      >2.2.4 Exemplo: Uma Linguagem de Imagens</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a id="toc-Symbolic-Data" href="2_002e3.html#g_t2_002e3"
+                  >2.3 Dados Simbólicos</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a id="toc-Quotation" href="2_002e3.html#g_t2_002e3_002e1"
+                      >2.3.1 Citação</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Example_003a-Symbolic-Differentiation"
+                      href="2_002e3.html#g_t2_002e3_002e2"
+                      >2.3.2 Exemplo: Diferenciação Simbólica</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Example_003a-Representing-Sets"
+                      href="2_002e3.html#g_t2_002e3_002e3"
+                      >2.3.3 Exemplo: Representando Conjuntos</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Example_003a-Huffman-Encoding-Trees"
+                      href="2_002e3.html#g_t2_002e3_002e4"
+                      >2.3.4 Exemplo: Árvores de Codificação de Huffman</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Multiple-Representations-for-Abstract-Data"
+                  href="2_002e4.html#g_t2_002e4"
+                  >2.4 Múltiplas Representações para Dados Abstratos</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Representations-for-Complex-Numbers"
+                      href="2_002e4.html#g_t2_002e4_002e1"
+                      >2.4.1 Representações para Números Complexos</a
+                    >
+                  </li>
+                  <li>
+                    <a id="toc-Tagged-data" href="2_002e4.html#g_t2_002e4_002e2"
+                      >2.4.2 Dados Marcados</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Data_002dDirected-Programming-and-Additivity"
+                      href="2_002e4.html#g_t2_002e4_002e3"
+                      >2.4.3 Programação Orientada a Dados e Aditividade</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Systems-with-Generic-Operations"
+                  href="2_002e5.html#g_t2_002e5"
+                  >2.5 Sistemas com Operações Genéricas</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Generic-Arithmetic-Operations"
+                      href="2_002e5.html#g_t2_002e5_002e1"
+                      >2.5.1 Operações Aritméticas Genéricas</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Combining-Data-of-Different-Types"
+                      href="2_002e5.html#g_t2_002e5_002e2"
+                      >2.5.2 Combinando Dados de Diferentes Tipos</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Example_003a-Symbolic-Algebra"
+                      href="2_002e5.html#g_t2_002e5_002e3"
+                      >2.5.3 Exemplo: Álgebra Simbólica</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a
+              id="toc-Modularity_002c-Objects_002c-and-State"
+              href="Chapter-3.html#Chapter-3"
+              >3 Modularidade, Objetos e Estado</a
+            >
+            <ul class="no-bullet">
+              <li>
+                <a
+                  id="toc-Assignment-and-Local-State"
+                  href="3_002e1.html#g_t3_002e1"
+                  >3.1 Atribuição e Estado Local</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Local-State-Variables"
+                      href="3_002e1.html#g_t3_002e1_002e1"
+                      >3.1.1 Variáveis de Estado Local</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-The-Benefits-of-Introducing-Assignment"
+                      href="3_002e1.html#g_t3_002e1_002e2"
+                      >3.1.2 Os Benefícios da Introdução da Atribuição</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-The-Costs-of-Introducing-Assignment"
+                      href="3_002e1.html#g_t3_002e1_002e3"
+                      >3.1.3 Os Custos da Introdução da Atribuição</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-The-Environment-Model-of-Evaluation"
+                  href="3_002e2.html#g_t3_002e2"
+                  >3.2 O Modelo de Ambiente de Avaliação</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-The-Rules-for-Evaluation"
+                      href="3_002e2.html#g_t3_002e2_002e1"
+                      >3.2.1 As Regras para Avaliação</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Applying-Simple-Procedures"
+                      href="3_002e2.html#g_t3_002e2_002e2"
+                      >3.2.2 Aplicando Procedimentos Simples</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Frames-as-the-Repository-of-Local-State"
+                      href="3_002e2.html#g_t3_002e2_002e3"
+                      >3.2.3 Quadros como o Repositório do Estado Local</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Internal-Definitions"
+                      href="3_002e2.html#g_t3_002e2_002e4"
+                      >3.2.4 Definições Internas</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Modeling-with-Mutable-Data"
+                  href="3_002e3.html#g_t3_002e3"
+                  >3.3 Modelagem com Dados Mutáveis</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Mutable-List-Structure"
+                      href="3_002e3.html#g_t3_002e3_002e1"
+                      >3.3.1 Estrutura de Lista Mutável</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Representing-Queues"
+                      href="3_002e3.html#g_t3_002e3_002e2"
+                      >3.3.2 Representando Filas</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Representing-Tables"
+                      href="3_002e3.html#g_t3_002e3_002e3"
+                      >3.3.3 Representando Tabelas</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-A-Simulator-for-Digital-Circuits"
+                      href="3_002e3.html#g_t3_002e3_002e4"
+                      >3.3.4 Um Simulador para Circuitos Digitais</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Propagation-of-Constraints"
+                      href="3_002e3.html#g_t3_002e3_002e5"
+                      >3.3.5 Propagação de Restrições</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Concurrency_003a-Time-Is-of-the-Essence"
+                  href="3_002e4.html#g_t3_002e4"
+                  >3.4 Concorrência: O Tempo é Essencial</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-The-Nature-of-Time-in-Concurrent-Systems"
+                      href="3_002e4.html#g_t3_002e4_002e1"
+                      >3.4.1 A Natureza do Tempo em Sistemas Concorrentes</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Mechanisms-for-Controlling-Concurrency"
+                      href="3_002e4.html#g_t3_002e4_002e2"
+                      >3.4.2 Mecanismos para Controle de Concorrência</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a id="toc-Streams" href="3_002e5.html#g_t3_002e5"
+                  >3.5 Fluxos</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Streams-Are-Delayed-Lists"
+                      href="3_002e5.html#g_t3_002e5_002e1"
+                      >3.5.1 Fluxos são Listas Atrasadas</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Infinite-Streams"
+                      href="3_002e5.html#g_t3_002e5_002e2"
+                      >3.5.2 Fluxos Infinitos</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Exploiting-the-Stream-Paradigm"
+                      href="3_002e5.html#g_t3_002e5_002e3"
+                      >3.5.3 Explorando o Paradigma de Fluxos</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Streams-and-Delayed-Evaluation"
+                      href="3_002e5.html#g_t3_002e5_002e4"
+                      >3.5.4 Fluxos e Avaliação Atrasada</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Modularity-of-Functional-Programs-and-Modularity-of-Objects"
+                      href="3_002e5.html#g_t3_002e5_002e5"
+                      >3.5.5 Modularidade de Programas Funcionais e Modularidade
+                      de Objetos</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a
+              id="toc-Metalinguistic-Abstraction"
+              href="Chapter-4.html#Chapter-4"
+              >4 Abstração Metalinguística</a
+            >
+            <ul class="no-bullet">
+              <li>
+                <a
+                  id="toc-The-Metacircular-Evaluator"
+                  href="4_002e1.html#g_t4_002e1"
+                  >4.1 O Avaliador Metacircular</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-The-Core-of-the-Evaluator"
+                      href="4_002e1.html#g_t4_002e1_002e1"
+                      >4.1.1 O Núcleo do Avaliador</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Representing-Expressions"
+                      href="4_002e1.html#g_t4_002e1_002e2"
+                      >4.1.2 Representando Expressões</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Evaluator-Data-Structures"
+                      href="4_002e1.html#g_t4_002e1_002e3"
+                      >4.1.3 Estruturas de Dados do Avaliador</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Running-the-Evaluator-as-a-Program"
+                      href="4_002e1.html#g_t4_002e1_002e4"
+                      >4.1.4 Executando o Avaliador como um Programa</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Data-as-Programs"
+                      href="4_002e1.html#g_t4_002e1_002e5"
+                      >4.1.5 Dados como Programas</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Internal-Definitions-1"
+                      href="4_002e1.html#g_t4_002e1_002e6"
+                      >4.1.6 Definições Internas</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Separating-Syntactic-Analysis-from-Execution"
+                      href="4_002e1.html#g_t4_002e1_002e7"
+                      >4.1.7 Separando Análise Sintática da Execução</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Variations-on-a-Scheme-_002d_002d_002d-Lazy-Evaluation"
+                  href="4_002e2.html#g_t4_002e2"
+                  >4.2 Variações em um Esquema — Avaliação Preguiçosa</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Normal-Order-and-Applicative-Order"
+                      href="4_002e2.html#g_t4_002e2_002e1"
+                      >4.2.1 Ordem Normal e Ordem Aplicativa</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-An-Interpreter-with-Lazy-Evaluation"
+                      href="4_002e2.html#g_t4_002e2_002e2"
+                      >4.2.2 Um Interpretador com Avaliação Preguiçosa</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Streams-as-Lazy-Lists"
+                      href="4_002e2.html#g_t4_002e2_002e3"
+                      >4.2.3 Fluxos como Listas Preguiçosas</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Variations-on-a-Scheme-_002d_002d_002d-Nondeterministic-Computing"
+                  href="4_002e3.html#g_t4_002e3"
+                  >4.3 Variações em um Esquema — Computação Não
+                  Determinística</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Amb-and-Search"
+                      href="4_002e3.html#g_t4_002e3_002e1"
+                      >4.3.1 Amb e Busca</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Examples-of-Nondeterministic-Programs"
+                      href="4_002e3.html#g_t4_002e3_002e2"
+                      >4.3.2 Exemplos de Programas Não Determinísticos</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Implementing-the-Amb-Evaluator"
+                      href="4_002e3.html#g_t4_002e3_002e3"
+                      >4.3.3 Implementando o Avaliador <code>Amb</code></a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a id="toc-Logic-Programming" href="4_002e4.html#g_t4_002e4"
+                  >4.4 Programação Lógica</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Deductive-Information-Retrieval"
+                      href="4_002e4.html#g_t4_002e4_002e1"
+                      >4.4.1 Recuperação de Informação Dedutiva</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-How-the-Query-System-Works"
+                      href="4_002e4.html#g_t4_002e4_002e2"
+                      >4.4.2 Como o Sistema de Consulta Funciona</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Is-Logic-Programming-Mathematical-Logic_003f"
+                      href="4_002e4.html#g_t4_002e4_002e3"
+                      >4.4.3 A Programação Lógica é Lógica Matemática?</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Implementing-the-Query-System"
+                      href="4_002e4.html#g_t4_002e4_002e4"
+                      >4.4.4 Implementando o Sistema de Consulta</a
+                    >
+                    <ul class="no-bullet">
+                      <li>
+                        <a
+                          id="toc-The-Driver-Loop-and-Instantiation"
+                          href="4_002e4.html#g_t4_002e4_002e4_002e1"
+                          >4.4.4.1 O Loop de Controle e Instanciação</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          id="toc-The-Evaluator"
+                          href="4_002e4.html#g_t4_002e4_002e4_002e2"
+                          >4.4.4.2 O Avaliador</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          id="toc-Finding-Assertions-by-Pattern-Matching"
+                          href="4_002e4.html#g_t4_002e4_002e4_002e3"
+                          >4.4.4.3 Encontrando Asserções por Correspondência de
+                          Padrões</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          id="toc-Rules-and-Unification"
+                          href="4_002e4.html#g_t4_002e4_002e4_002e4"
+                          >4.4.4.4 Regras e Unificação</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          id="toc-Maintaining-the-Data-Base"
+                          href="4_002e4.html#g_t4_002e4_002e4_002e5"
+                          >4.4.4.5 Mantendo o Banco de Dados</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          id="toc-Stream-Operations"
+                          href="4_002e4.html#g_t4_002e4_002e4_002e6"
+                          >4.4.4.6 Operações de Fluxo</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          id="toc-Query-Syntax-Procedures"
+                          href="4_002e4.html#g_t4_002e4_002e4_002e7"
+                          >4.4.4.7 Procedimentos de Sintaxe de Consulta</a
+                        >
+                      </li>
+                      <li>
+                        <a
+                          id="toc-Frames-and-Bindings"
+                          href="4_002e4.html#g_t4_002e4_002e4_002e8"
+                          >4.4.4.8 Quadros e Ligações</a
+                        >
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a
+              id="toc-Computing-with-Register-Machines"
+              href="Chapter-5.html#Chapter-5"
+              >5 Computação com Máquinas de Registradores</a
+            >
+            <ul class="no-bullet">
+              <li>
+                <a
+                  id="toc-Designing-Register-Machines"
+                  href="5_002e1.html#g_t5_002e1"
+                  >5.1 Projetando Máquinas de Registradores</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-A-Language-for-Describing-Register-Machines"
+                      href="5_002e1.html#g_t5_002e1_002e1"
+                      >5.1.1 Uma Linguagem para Descrever Máquinas de
+                      Registradores</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Abstraction-in-Machine-Design"
+                      href="5_002e1.html#g_t5_002e1_002e2"
+                      >5.1.2 Abstração no Projeto de Máquinas</a
+                    >
+                  </li>
+                  <li>
+                    <a id="toc-Subroutines" href="5_002e1.html#g_t5_002e1_002e3"
+                      >5.1.3 Sub-rotinas</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Using-a-Stack-to-Implement-Recursion"
+                      href="5_002e1.html#g_t5_002e1_002e4"
+                      >5.1.4 Usando uma Pilha para Implementar Recursão</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Instruction-Summary"
+                      href="5_002e1.html#g_t5_002e1_002e5"
+                      >5.1.5 Resumo das Instruções</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-A-Register_002dMachine-Simulator"
+                  href="5_002e2.html#g_t5_002e2"
+                  >5.2 Um Simulador de Máquina de Registradores</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-The-Machine-Model"
+                      href="5_002e2.html#g_t5_002e2_002e1"
+                      >5.2.1 O Modelo de Máquina</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-The-Assembler"
+                      href="5_002e2.html#g_t5_002e2_002e2"
+                      >5.2.2 O Montador</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Generating-Execution-Procedures-for-Instructions"
+                      href="5_002e2.html#g_t5_002e2_002e3"
+                      >5.2.3 Gerando Procedimentos de Execução para
+                      Instruções</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Monitoring-Machine-Performance"
+                      href="5_002e2.html#g_t5_002e2_002e4"
+                      >5.2.4 Monitorando o Desempenho da Máquina</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-Storage-Allocation-and-Garbage-Collection"
+                  href="5_002e3.html#g_t5_002e3"
+                  >5.3 Alocação de Armazenamento e Coleta de Lixo</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Memory-as-Vectors"
+                      href="5_002e3.html#g_t5_002e3_002e1"
+                      >5.3.1 Memória como Vetores</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Maintaining-the-Illusion-of-Infinite-Memory"
+                      href="5_002e3.html#g_t5_002e3_002e2"
+                      >5.3.2 Mantendo a Ilusão de Memória Infinita</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a
+                  id="toc-The-Explicit_002dControl-Evaluator"
+                  href="5_002e4.html#g_t5_002e4"
+                  >5.4 O Avaliador de Controle Explícito</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-The-Core-of-the-Explicit_002dControl-Evaluator"
+                      href="5_002e4.html#g_t5_002e4_002e1"
+                      >5.4.1 O Núcleo do Avaliador de Controle Explícito</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Sequence-Evaluation-and-Tail-Recursion"
+                      href="5_002e4.html#g_t5_002e4_002e2"
+                      >5.4.2 Avaliação de Sequência e Recursão em Cauda</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Conditionals_002c-Assignments_002c-and-Definitions"
+                      href="5_002e4.html#g_t5_002e4_002e3"
+                      >5.4.3 Condicionais, Atribuições e Definições</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Running-the-Evaluator"
+                      href="5_002e4.html#g_t5_002e4_002e4"
+                      >5.4.4 Executando o Avaliador</a
+                    >
+                  </li>
+                </ul>
+              </li>
+              <li>
+                <a id="toc-Compilation" href="5_002e5.html#g_t5_002e5"
+                  >5.5 Compilação</a
+                >
+                <ul class="no-bullet">
+                  <li>
+                    <a
+                      id="toc-Structure-of-the-Compiler"
+                      href="5_002e5.html#g_t5_002e5_002e1"
+                      >5.5.1 Estrutura do Compilador</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Compiling-Expressions"
+                      href="5_002e5.html#g_t5_002e5_002e2"
+                      >5.5.2 Compilando Expressões</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Compiling-Combinations"
+                      href="5_002e5.html#g_t5_002e5_002e3"
+                      >5.5.3 Compilando Combinações</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Combining-Instruction-Sequences"
+                      href="5_002e5.html#g_t5_002e5_002e4"
+                      >5.5.4 Combinando Sequências de Instruções</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-An-Example-of-Compiled-Code"
+                      href="5_002e5.html#g_t5_002e5_002e5"
+                      >5.5.5 Um Exemplo de Código Compilado</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Lexical-Addressing"
+                      href="5_002e5.html#g_t5_002e5_002e6"
+                      >5.5.6 Endereçamento Léxico</a
+                    >
+                  </li>
+                  <li>
+                    <a
+                      id="toc-Interfacing-Compiled-Code-to-the-Evaluator"
+                      href="5_002e5.html#g_t5_002e5_002e7"
+                      >5.5.7 Interfaceando Código Compilado com o Avaliador</a
+                    >
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>
+            <a id="toc-References-1" href="References.html#References"
+              >Referências</a
+            >
+          </li>
+          <li>
+            <a id="toc-List-of-Exercises" href="Exercises.html#Exercises"
+              >Lista de Exercícios</a
+            >
+          </li>
+          <li>
+            <a id="toc-List-of-Figures" href="Figures.html#Figures"
+              >Lista de Figuras</a
+            >
+          </li>
+          <li>
+            <a id="toc-Term-Index-1" href="Term-Index.html#Term-Index"
+              >Índice de Termos</a
+            >
+          </li>
+          <li>
+            <a id="toc-Colophon-1" href="Colophon.html#Colophon">Colofão</a>
+          </li>
+        </ul>
+      </div>
+
+      <h1 class="node-heading">Topo</h1>
+
+      <nav class="header">
+        <p>
+          Próximo: <a href="UTF.html#UTF" accesskey="n" rel="next">UTF</a>,
+          Anterior: <a href="../index.html" accesskey="p" rel="prev">(dir)</a>,
+          Acima: <a href="../index.html" accesskey="u" rel="prev">(dir)</a> [<a
+            href="#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump"><a href="#pagebottom" accesskey="b">⇣</a></span>
+    <a id="pagebottom"></a>
+  </body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo
+      4
+    </title>
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo 4"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: Capítulo 4"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/prettify.css" />
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <nav class="header">
+        <p>
+          Próximo: <a href="4_002e1.html" rel="next">4.1</a>, Anterior:
+          <a href="3_002e5.html" rel="prev">3.5</a>, Acima:
+          <a href="index.html" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            rel="contents"
+            >Conteúdos</a
+          >]
+        </p>
+      </nav>
+      <h2 class="chapter">
+        <span class="chapnum">4</span
+        ><span class="chaptitle">Abstração Metalinguística</span>
+      </h2>
+      <blockquote>
+        <p>
+          … A magia está nas palavras—Abracadabra, Abre-te Sésamo, e o resto—mas
+          as palavras mágicas em uma história não são mágicas na próxima. A
+          verdadeira magia é entender quais palavras funcionam, e quando, e para
+          quê; o truque é aprender o truque.
+        </p>
+        <p>
+          … E essas palavras são feitas das letras do nosso alfabeto: algumas
+          dúzias de rabiscos que podemos desenhar com a caneta. Esta é a chave!
+          E o tesouro também, se pudermos colocá-lo em nossas mãos! É como
+          se—como se a chave do tesouro <em>fosse</em> o tesouro!
+        </p>
+        <p>—John Barth, <cite>Quimera</cite></p>
+      </blockquote>
+      <p>
+        Em nosso estudo de design de programas, vimos que programadores
+        especialistas controlam a complexidade de seus designs com as mesmas
+        técnicas gerais usadas por designers de todos os sistemas complexos.
+        Eles combinam elementos primitivos para formar objetos compostos,
+        abstraem objetos compostos para formar blocos de construção de nível
+        superior e preservam a modularidade adotando visões de grande escala
+        apropriadas da estrutura do sistema. Ao ilustrar essas técnicas, usamos
+        Lisp como uma linguagem para descrever processos e para construir
+        objetos e processos computacionais que modelam fenômenos complexos no
+        mundo real. No entanto, à medida que enfrentamos problemas cada vez mais
+        complexos, descobriremos que Lisp, ou qualquer linguagem de programação
+        fixa, não é suficiente para nossas necessidades. Devemos constantemente
+        recorrer a novas linguagens para expressar nossas ideias de forma mais
+        eficaz. Estabelecer novas linguagens é uma estratégia poderosa para
+        controlar a complexidade no design de engenharia; muitas vezes podemos
+        melhorar nossa capacidade de lidar com um problema complexo adotando uma
+        nova linguagem que nos permita descrever (e, portanto, pensar sobre) o
+        problema de uma maneira diferente, usando primitivas, meios de
+        combinação e meios de abstração que são particularmente adequados ao
+        problema em questão.<a
+          class="footnote_link"
+          id="DOCF205"
+          href="#FOOT205"
+          ><sup>205</sup></a
+        >
+      </p>
+      <p>
+        A programação é dotada de uma multiplicidade de linguagens. Existem
+        linguagens físicas, como as linguagens de máquina para computadores
+        específicos. Essas linguagens estão preocupadas com a representação de
+        dados e controle em termos de bits individuais de armazenamento e
+        instruções primitivas de máquina. O programador de linguagem de máquina
+        está preocupado em usar o hardware fornecido para erguer sistemas e
+        utilitários para a implementação eficiente de computações com recursos
+        limitados. Linguagens de alto nível, erguidas sobre um substrato de
+        linguagem de máquina, escondem preocupações sobre a representação de
+        dados como coleções de bits e a representação de programas como
+        sequências de instruções primitivas. Essas linguagens têm meios de
+        combinação e abstração, como definição de procedimentos, que são
+        apropriados para a organização de sistemas em grande escala.
+      </p>
+      <a id="index-Metalinguistic-abstraction"></a>
+      <p>
+        <em>Abstração metalinguística</em>—estabelecer novas
+        linguagens—desempenha um papel importante em todos os ramos do design de
+        engenharia. É particularmente importante para a programação de
+        computadores, porque na programação não apenas podemos formular novas
+        linguagens, mas também podemos implementar essas linguagens construindo
+        avaliadores. Um <a id="index-evaluator"></a><em>avaliador</em> (ou
+        <a id="index-interpreter-1"></a><em>interpretador</em>) para uma
+        linguagem de programação é um procedimento que, quando aplicado a uma
+        expressão da linguagem, realiza as ações necessárias para avaliar essa
+        expressão.
+      </p>
+      <p>
+        Não é exagero considerar isso como a ideia mais fundamental na
+        programação:
+      </p>
+      <blockquote>
+        <p>
+          O avaliador, que determina o significado das expressões em uma
+          linguagem de programação, é apenas outro programa.
+        </p>
+      </blockquote>
+      <p>
+        Apreciar esse ponto é mudar nossa imagem de nós mesmos como
+        programadores. Passamos a nos ver como designers de linguagens, em vez
+        de apenas usuários de linguagens projetadas por outros.
+      </p>
+      <p>
+        Na verdade, podemos considerar quase qualquer programa como o avaliador
+        de alguma linguagem. Por exemplo, o sistema de manipulação de polinômios
+        de <a href="2_002e5.html#g_t2_002e5_002e3">2.5.3</a> incorpora as
+        regras da aritmética de polinômios e as implementa em termos de
+        operações sobre dados estruturados em listas. Se aumentarmos esse
+        sistema com procedimentos para ler e imprimir expressões polinomiais,
+        temos o núcleo de uma linguagem de propósito especial para lidar com
+        problemas em matemática simbólica. O simulador de lógica digital de
+        <a href="3_002e3.html#g_t3_002e3_002e4">3.3.4</a> e o propagador de
+        restrições de <a href="3_002e3.html#g_t3_002e3_002e5">3.3.5</a> são
+        linguagens legítimas por direito próprio, cada uma com suas próprias
+        primitivas, meios de combinação e meios de abstração. Vistas dessa
+        perspectiva, a tecnologia para lidar com sistemas de computação em
+        grande escala se funde com a tecnologia para construir novas linguagens
+        de computador, e a própria ciência da computação se torna nada mais (e
+        nada menos) do que a disciplina de construir linguagens descritivas
+        apropriadas.
+      </p>
+      <p>
+        Agora embarcamos em uma jornada pela tecnologia pela qual as linguagens
+        são estabelecidas em termos de outras linguagens. Neste capítulo,
+        usaremos Lisp como base, implementando avaliadores como procedimentos
+        Lisp. Lisp é particularmente adequado para essa tarefa, devido à sua
+        capacidade de representar e manipular expressões simbólicas. Daremos o
+        primeiro passo para entender como as linguagens são implementadas
+        construindo um avaliador para o próprio Lisp. A linguagem implementada
+        por nosso avaliador será um subconjunto do dialeto Scheme de Lisp que
+        usamos neste livro. Embora o avaliador descrito neste capítulo seja
+        escrito para um dialeto específico de Lisp, ele contém a estrutura
+        essencial de um avaliador para qualquer linguagem orientada a expressões
+        projetada para escrever programas para uma máquina sequencial. (Na
+        verdade, a maioria dos processadores de linguagem contém, no fundo, um
+        pequeno avaliador “Lisp”.) O avaliador foi simplificado para fins de
+        ilustração e discussão, e alguns recursos foram deixados de fora que
+        seriam importantes para incluir em um sistema Lisp de qualidade de
+        produção. No entanto, este avaliador simples é adequado para executar a
+        maioria dos programas deste livro.<a
+          class="footnote_link"
+          id="DOCF206"
+          href="#FOOT206"
+          ><sup>206</sup></a
+        >
+      </p>
+      <p>
+        Uma vantagem importante de tornar o avaliador acessível como um programa
+        Lisp é que podemos implementar regras de avaliação alternativas
+        descrevendo-as como modificações ao programa do avaliador. Um lugar onde
+        podemos usar esse poder com bom efeito é para obter controle extra sobre
+        as maneiras pelas quais os modelos computacionais incorporam a noção de
+        tempo, que foi tão central na discussão do
+        <a href="Chapter-3.html#Chapter-3">Capítulo 3</a>. Lá, mitigamos
+        algumas das complexidades de estado e atribuição usando fluxos para
+        desacoplar a representação do tempo no mundo do tempo no computador. No
+        entanto, nossos programas de fluxo às vezes eram incômodos, porque
+        estavam restritos pela avaliação em ordem aplicativa do Scheme. Em
+        <a href="4_002e2.html#g_t4_002e2">4.2</a>, mudaremos a linguagem
+        subjacente para fornecer uma abordagem mais elegante, modificando o
+        avaliador para fornecer <a id="index-normal_002dorder-evaluation-1"></a
+        ><em>avaliação em ordem normal</em>.
+      </p>
+      <p>
+        A seção <a href="4_002e3.html#g_t4_002e3">4.3</a> implementa uma
+        mudança linguística mais ambiciosa, na qual as expressões têm muitos
+        valores, em vez de apenas um único valor. Nesta linguagem de
+        <a id="index-nondeterministic-computing"></a
+        ><em>computação não determinística</em>, é natural expressar processos
+        que geram todos os valores possíveis para expressões e, em seguida,
+        pesquisam por aqueles valores que satisfazem certas restrições. Em
+        termos de modelos de computação e tempo, isso é como ter o tempo se
+        ramificando em um conjunto de “futuros possíveis” e, em seguida,
+        pesquisar por linhas de tempo apropriadas. Com nosso avaliador não
+        determinístico, o rastreamento de múltiplos valores e a execução de
+        pesquisas são tratados automaticamente pelo mecanismo subjacente da
+        linguagem.
+      </p>
+      <p>
+        Em <a href="4_002e4.html#g_t4_002e4">4.4</a>, implementamos uma
+        linguagem de <a id="index-logic_002dprogramming"></a
+        ><em>programação lógica</em> na qual o conhecimento é expresso em termos
+        de relações, em vez de em termos de computações com entradas e saídas.
+        Mesmo que isso torne a linguagem drasticamente diferente do Lisp, ou de
+        qualquer linguagem convencional, veremos que o avaliador de programação
+        lógica compartilha a estrutura essencial do avaliador Lisp.
+      </p>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+        <div id="FOOT205">
+          <p>
+            <a class="footnote_backlink" href="#DOCF205"><sup>205</sup></a> A
+            mesma ideia é difundida em toda a engenharia. Por exemplo,
+            engenheiros elétricos usam muitas linguagens diferentes para
+            descrever circuitos. Duas delas são a linguagem de
+            <a id="index-networks"></a><em>redes</em> elétricas e a linguagem de
+            <a id="index-systems"></a><em>sistemas</em> elétricos. A linguagem
+            de rede enfatiza a modelagem física de dispositivos em termos de
+            elementos elétricos discretos. Os objetos primitivos da linguagem de
+            rede são componentes elétricos primitivos, como resistores,
+            capacitores, indutores e transistores, que são caracterizados em
+            termos de variáveis físicas chamadas tensão e corrente. Ao descrever
+            circuitos na linguagem de rede, o engenheiro está preocupado com as
+            características físicas de um design. Em contraste, os objetos
+            primitivos da linguagem de sistema são módulos de processamento de
+            sinais, como filtros e amplificadores. Apenas o comportamento
+            funcional dos módulos é relevante, e os sinais são manipulados sem
+            preocupação com sua realização física como tensões e correntes. A
+            linguagem de sistema é erguida sobre a linguagem de rede, no sentido
+            de que os elementos dos sistemas de processamento de sinais são
+            construídos a partir de redes elétricas. Aqui, no entanto, as
+            preocupações são com a organização em grande escala de dispositivos
+            elétricos para resolver um determinado problema de aplicação; a
+            viabilidade física das partes é assumida. Esta coleção estratificada
+            de linguagens é outro exemplo da técnica de design estratificado
+            ilustrada pela linguagem de imagem de
+            <a href="2_002e2.html#g_t2_002e2_002e4">2.2.4</a>.
+          </p>
+        </div>
+        <div id="FOOT206">
+          <p>
+            <a class="footnote_backlink" href="#DOCF206"><sup>206</sup></a> Os
+            recursos mais importantes que nosso avaliador deixa de fora são
+            mecanismos para lidar com erros e suportar depuração. Para uma
+            discussão mais extensa sobre avaliadores, consulte
+            <a href="References.html#Friedman-et-al_002e-1992"
+              >Friedman et al. 1992</a
+            >, que fornece uma exposição de linguagens de programação que
+            prossegue via uma sequência de avaliadores escritos em Scheme.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo: <a href="4_002e1.html" rel="next">4.1</a>, Anterior:
+          <a href="3_002e5.html" rel="prev">3.5</a>, Acima:
+          <a href="index.html" rel="prev">Topo</a> [<a
+            href="index.html#SEC_Contents"
+            rel="contents"
+            >Conteúdos</a
+          >]
+        </p>
+      </nav>
+    </section>
+  </body>
+</html>

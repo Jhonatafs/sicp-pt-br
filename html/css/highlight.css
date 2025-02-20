@@ -1,0 +1,152 @@
+/*!
+  Tema: SICP
+  Descrição: Tema inspirado nas cores do arquivo de estilo feito por sarabander (https://github.com/sarabander/sicp/blob/master/html/css/prettify.css)
+  Autor: JhonFs
+  Mantenedor: JhonFs
+  Site: jhonfs.com
+  Modificado: 2025
+
+  Estilos base para o Highlight.js */
+
+.hljs {
+  display: block;
+  background: transparent;
+  color: #606060; /* .pln color from Prettify */
+  overflow-x: auto !important;
+}
+
+/* Plain text */
+.hljs-subst {
+  color: #606060; /* .pln color from Prettify */
+}
+
+/* Strings */
+.hljs-string {
+  color: #985098; /* .str color from Prettify */
+}
+
+/* Keywords */
+.hljs-keyword,
+.hljs-selector-tag,
+.hljs-meta-keyword {
+  color: #4070a0; /* .kwd color from Prettify */
+  font-weight: normal;
+}
+
+/* Comments */
+.hljs-comment {
+  color: #b08050; /* .com color from Prettify */
+  font-style: italic;
+}
+
+/* Types */
+.hljs-type,
+.hljs-class .hljs-title {
+  color: #606; /* .typ color from Prettify */
+}
+
+/* Literals */
+.hljs-number,
+.hljs-literal {
+  color: #509040; /* .lit color from Prettify */
+}
+
+/* Punctuation */
+.hljs-punctuation {
+  color: #909020; /* .pun color from Prettify */
+}
+
+/* Opening and closing brackets */
+.hljs-opn,
+.hljs-clo {
+  color: #989898; /* .opn and .clo colors from Prettify */
+}
+
+/* Errors */
+.hljs-err {
+  color: #c06050; /* .err color from Prettify */
+}
+
+/* Tags */
+.hljs-tag {
+  color: #008; /* .tag color from Prettify */
+}
+
+/* Attribute names */
+.hljs-attr {
+  color: #606; /* .atn color from Prettify */
+}
+
+/* Attribute values */
+.hljs-attribute {
+  color: #080; /* .atv color from Prettify */
+}
+
+/* Declarations and variables */
+.hljs-variable,
+.hljs-name {
+  color: #606; /* .dec and .var colors from Prettify */
+}
+
+/* Functions */
+.hljs-function .hljs-title {
+  color: red; /* .fun color from Prettify */
+}
+
+/* Titles and sections */
+.hljs-title,
+.hljs-section {
+  color: #880000; /* .title color from Prettify */
+  font-weight: bold;
+}
+
+/* Regular expressions, symbols, etc. */
+.hljs-regexp,
+.hljs-symbol,
+.hljs-template-variable,
+.hljs-link,
+.hljs-selector-attr,
+.hljs-operator,
+.hljs-selector-pseudo {
+  color: #ab5656; /* .regexp color from Prettify */
+}
+
+/* Built-in functions */
+.hljs-built_in {
+  color: #397300; /* .built_in color from Prettify */
+}
+
+/* Bullets, code, additions */
+.hljs-bullet,
+.hljs-code,
+.hljs-addition {
+  color: #397300; /* .bullet, .code, .addition colors from Prettify */
+}
+
+/* Meta information */
+.hljs-meta {
+  color: #1f7199; /* .meta color from Prettify */
+}
+
+.hljs-meta .hljs-string {
+  color: #38a; /* .meta .string color from Prettify */
+}
+
+/* Emphasis and strong */
+.hljs-emphasis {
+  font-style: italic;
+}
+
+.hljs-strong {
+  font-weight: bold;
+}
+
+pre {
+  display: inline-block !important;
+  margin: auto !important;
+  width: 100% !important;
+}
+
+code {
+  max-width: 100% !important;
+}
