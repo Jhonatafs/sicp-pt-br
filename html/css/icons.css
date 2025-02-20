@@ -3,6 +3,11 @@
   src: url("fonts/SymbolsNerdFont-Regular.ttf");
 }
 
+.icon_github::before {
+  font-family: "Icons";
+  content: "";
+}
+
 .icon_download::after {
   font-family: "Icons";
   content: "";

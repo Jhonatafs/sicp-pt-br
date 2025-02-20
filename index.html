@@ -20,6 +20,11 @@
         src: url("/html/css/fonts/linlib-r-subset.woff");
       }
 
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
       html {
         height: 100%;
       }
@@ -40,8 +45,9 @@
         align-items: center;
         justify-content: center;
         margin: 0 auto;
-        width: 90%;
+        width: max-content;
         border-radius: 15px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.342);
       }
 
       a {
@@ -54,6 +60,7 @@
         padding: 1.5rem 1rem;
         max-width: calc(100% - 3rem);
         margin: 0 auto;
+        border-radius: 15px;
       }
 
       div {
@@ -68,7 +75,7 @@
         color: rgb(0, 0, 0);
         opacity: 0.7;
         font-family: "default";
-        font-size: 110%;
+        font-size: 150%;
         transition: all 0.3s ease-in-out;
         padding: 1rem;
       }
@@ -81,6 +88,7 @@
       @media (max-width: 800px) {
         section {
           width: 96%;
+          margin: 0 auto;
         }
 
         div a {
@@ -92,7 +100,7 @@
   <body>
     <section>
       <a id="cover" href="/html/index.html">
-        <img src="/html/fig/coverpage.png" alt="" />
+        <img src="html/fig/coverpage.std.png" alt="" />
       </a>
     </section>
     <div>
