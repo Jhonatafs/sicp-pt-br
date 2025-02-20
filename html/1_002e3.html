@@ -1296,4 +1296,423 @@ e podemos, portanto, tentar calcular raízes quadradas como
     <mn>1</mn>
   </msub>
 </math>. A próxima estimativa é <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow class="MJX-Te
+  <mrow class="MJX-TeXAtom-ORD">
+    <msub>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msub>
+    <mo>=</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+  </mrow>
+</math> e a próxima estimativa é
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>3</mn>
+  </msub>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msub>
+      <mi>y</mi>
+      <mn>2</mn>
+    </msub>
+  </mrow>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <msub>
+      <mi>y</mi>
+      <mn>1</mn>
+    </msub>
+    <mo stretchy="false">)</mo>
+  </mrow>
+  <mo>=</mo>
+  <msub>
+    <mi>y</mi>
+    <mn>1</mn>
+  </msub>
+</math>. Isso resulta em um
+loop infinito em que as duas estimativas <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>1</mn>
+  </msub>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>y</mi>
+    <mn>2</mn>
+  </msub>
+</math> se repetem
+continuamente, oscilando em torno da resposta.
+</p>
+<p>Uma maneira de controlar essas oscilações é evitar que as estimativas mudem tanto.
+Como a resposta está sempre entre nossa estimativa <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, podemos
+fazer uma nova estimativa que não esteja tão longe de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> quanto <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math> calculando a média
+de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> com <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>, de modo que a próxima estimativa após <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> seja 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfrac>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> 
+em vez de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+  </mrow>
+</math>. O processo de fazer tal sequência de
+estimativas é simplesmente o processo de procurar um ponto fixo de 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+  <mo stretchy="false">↦<!-- ↦ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfrac>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>: 
+</p>
+<pre><code class="language-scheme">(define (sqrt x)
+  (fixed-point 
+   (lambda (y) (average y (/ x y)))
+   1.0))</code></pre>
+
+<p>(Note que <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+  <mo>=</mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mrow class="MJX-TeXAtom-ORD">
+      <mfrac>
+        <mn>1</mn>
+        <mn>2</mn>
+      </mfrac>
+    </mrow>
+    <mo stretchy="false">(</mo>
+    <mi>y</mi>
+    <mo>+</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math> é uma transformação simples da
+equação <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>y</mi>
+    <mo>=</mo>
+    <mi>x</mi>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>y</mi>
+    <mo>;</mo>
+  </mrow>
+</math> para derivá-la, adicione <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>y</mi>
+</math> a ambos os lados da
+equação e divida por 2.)
+</p>
+<p>Com essa modificação, o procedimento de raiz quadrada funciona. Na verdade, se
+desvendarmos as definições, podemos ver que a sequência de aproximações para a
+raiz quadrada gerada aqui é precisamente a mesma que a gerada por nosso
+procedimento original de raiz quadrada de <a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>. Essa abordagem de
+média de aproximações sucessivas para uma solução, uma técnica que chamamos de
+<a id="index-average-damping"></a>
+<em>amortecimento médio</em>, frequentemente ajuda a convergência de buscas por ponto fixo.
+</p>
+<blockquote>
+<p><strong><a id="Exercise-1_002e35"></a>Exercício 1.35:</strong> Mostre que a proporção áurea
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math> (<a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>) é um ponto fixo da transformação 
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>x</mi>
+    <mo stretchy="false">↦<!-- ↦ --></mo>
+    <mn>1</mn>
+    <mo>+</mo>
+    <mn>1</mn>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>x</mi>
+  </mrow>
+</math>, e use esse fato para calcular <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math> por meio 
+do procedimento <code>fixed-point</code>.
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e36"></a>Exercício 1.36:</strong> Modifique <code>fixed-point</code> para que
+ele imprima a sequência de aproximações que gera, usando as primitivas <code>newline</code>
+e <code>display</code> mostradas em <a href="1_002e2.xhtml#Exercise-1_002e22">Exercício 1.22</a>. Em seguida, encontre uma
+solução para <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <msup>
+      <mi>x</mi>
+      <mi>x</mi>
+    </msup>
+    <mo>=</mo>
+    <mn>1000</mn>
+  </mrow>
+</math> encontrando um ponto fixo de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>x</mi>
+  <mo stretchy="false">↦<!-- ↦ --></mo>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <mn>1000</mn>
+    <mo stretchy="false">)</mo>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <mi>x</mi>
+    <mo stretchy="false">)</mo>
+  </mrow>
+</math>. (Use a primitiva <code>log</code> do Scheme,
+que calcula logaritmos naturais.) Compare o número de passos
+que isso leva com e sem amortecimento médio. (Observe que você não pode começar
+<code>fixed-point</code> com uma estimativa de 1, pois isso causaria divisão por
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mi>log</mi>
+    <mo>⁡<!-- ⁡ --></mo>
+    <mo stretchy="false">(</mo>
+    <mn>1</mn>
+    <mo stretchy="false">)</mo>
+    <mo>=</mo>
+    <mn>0</mn>
+  </mrow>
+</math>.)
+</p></blockquote>
+
+<blockquote>
+<p><strong><a id="Exercise-1_002e37"></a>Exercício 1.37:</strong> 
+</p>
+<ol>
+<li> Uma <a id="index-continued-fraction"></a>
+<em>fração contínua</em> infinita é uma expressão da forma
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mi>f</mi>
+  <mspace width="thinmathspace"/>
+  <mo>=</mo>
+  <mspace width="thinmathspace"/>
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <msub>
+        <mi>N</mi>
+        <mn>1</mn>
+      </msub>
+      <mrow>
+        <msub>
+          <mi>D</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>+</mo>
+        <mfrac>
+          <msub>
+            <mi>N</mi>
+            <mn>2</mn>
+          </msub>
+          <mrow>
+            <msub>
+              <mi>D</mi>
+              <mn>2</mn>
+            </msub>
+            <mo>+</mo>
+            <mfrac>
+              <msub>
+                <mi>N</mi>
+                <mn>3</mn>
+              </msub>
+              <mrow>
+                <msub>
+                  <mi>D</mi>
+                  <mn>3</mn>
+                </msub>
+                <mo>+</mo>
+                <mo>…<!-- … --></mo>
+              </mrow>
+            </mfrac>
+          </mrow>
+        </mfrac>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+Como exemplo, pode-se mostrar que a expansão de fração contínua infinita com
+os <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>N</mi>
+    <mi>i</mi>
+  </msub>
+</math> e os <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>D</mi>
+    <mi>i</mi>
+  </msub>
+</math> todos iguais a 1 produz <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mn>1</mn>
+    <mrow class="MJX-TeXAtom-ORD">
+      <mo>/</mo>
+    </mrow>
+    <mi>φ<!-- φ --></mi>
+  </mrow>
+</math>, onde
+<math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>φ<!-- φ --></mi>
+</math> é a proporção áurea (descrita em <a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>). Uma maneira de
+aproximar uma fração contínua infinita é truncar a expansão após um
+dado número de termos. Tal truncamento—uma chamada <a id="index-k_002dterm"></a>
+fração contínua finita
+<em><i>k</i>-term
+finite continued fraction</em>—tem a forma
+
+<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+  <mrow class="MJX-TeXAtom-ORD">
+    <mfrac>
+      <msub>
+        <mi>N</mi>
+        <mn>1</mn>
+      </msub>
+      <mrow>
+        <msub>
+          <mi>D</mi>
+          <mn>1</mn>
+        </msub>
+        <mo>+</mo>
+        <mfrac>
+          <msub>
+            <mi>N</mi>
+            <mn>2</mn>
+          </msub>
+          <mrow>
+            <mo>⋱<!-- ⋱ --></mo>
+            <mo>+</mo>
+            <mfrac>
+              <msub>
+                <mi>N</mi>
+                <mi>k</mi>
+              </msub>
+              <msub>
+                <mi>D</mi>
+                <mi>k</mi>
+              </msub>
+            </mfrac>
+          </mrow>
+        </mfrac>
+      </mrow>
+    </mfrac>
+    <mo>.</mo>
+  </mrow>
+</math>
+
+Suponha que <code>n</code> e <code>d</code> sejam procedimentos de um argumento (o índice
+do termo <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>i</mi>
+</math>) que retornam o <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>N</mi>
+    <mi>i</mi>
+  </msub>
+</math> e o <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <msub>
+    <mi>D</mi>
+    <mi>i</mi>
+  </msub>
+</math> dos termos da
+fração contínua. Defina um procedimento <code>cont-frac</code> tal que avaliar
+<code>(cont-frac n d k)</code> calcule o valor da fração contínua finita de <math xmlns="http://www.w3.org/1998/Math/MathML">
+  <mi>k</mi>
+</math> termos.
+Verifique seu procedimento aproximando <math xmlns="http://

@@ -4,7 +4,7 @@
 
 Esta é Tradução do livro _Structure and Interpretation of Computer Programs_ (Estrutura e Interpretação de Programas de Computador) por Abelson, Sussman e Sussman, a partir da versão em xhtml de [sarabander](https://github.com/sarabander).
 
-**Para leitura online: [Livro em HTML](https://sarabander.github.io/sicp)**
+**Para leitura online: [Livro em HTML](https://jhonatafs.github.io/sicp-pt-br/)**
 
 ## Licença
 
