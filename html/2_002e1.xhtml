@@ -1,1301 +1,1156 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
-<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
+<html lang="pt-BR">
 <head>
-<title>Structure and Interpretation of Computer Programs, 2e: 2.1</title>
-
-<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 2.1" />
-<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 2.1" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="Generator" content="texi2any" />
-<meta charset="utf-8" />
-<link href="index.html#Top" rel="start" title="Top" />
-<link href="Term-Index.html#Term-Index" rel="index" title="Term Index" />
-<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents" />
-<link href="Chapter-2.html#Chapter-2" rel="prev" title="Chapter 2" />
-<link href="2_002e2.html#g_t2_002e2" rel="next" title="2.2" />
-<link href="Chapter-2.html#Chapter-2" rel="prev" title="Chapter 2" />
-
-<link href="css/style.css" rel="stylesheet" type="text/css" />
-<link href="css/prettify.css" rel="stylesheet" type="text/css" />
-
-<script src="js/jquery.min.js" type="text/javascript"></script>
-<script src="js/footnotes.js" type="text/javascript"></script>
-<script src="js/browsertest.js" type="text/javascript"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2">
+    <meta name="keywords" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2">
+    <title>Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/highlight.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>hljs.highlightAll();</script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
 </head>
+  <body>
+    <section>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t2_002e1"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="2_002e2.html#g_t2_002e2" accesskey="n" rel="next">2.2</a>,
+          Anterior:
+          <a href="Chapter-2.html#Chapter-2" accesskey="p" rel="prev"
+            >Capítulo 2</a
+          >, Acima:
+          <a href="Chapter-2.html#Chapter-2" accesskey="u" rel="prev"
+            >Capítulo 2</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+      <a id="Introduction-to-Data-Abstraction"></a>
+      <h3 class="section">
+        <span class="secnum">2.1</span
+        ><span class="sectitle">Introdução à Abstração de Dados</span>
+      </h3>
 
-<body>
-<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t2_002e1"></a>
-<nav class="header">
-<p>
-Next: <a href="2_002e2.html#g_t2_002e2" accesskey="n" rel="next">2.2</a>, Prev: <a href="Chapter-2.html#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="Chapter-2.html#Chapter-2" accesskey="u" rel="prev">Chapter 2</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
-</nav>
-<a id="Introduction-to-Data-Abstraction"></a>
-<h3 class="section"><span class="secnum">2.1</span><span class="sectitle">Introduction to Data Abstraction</span></h3>
+      <p>
+        Em <a href="1_002e1.html#g_t1_002e1_002e8">1.1.8</a>, observamos que um
+        procedimento usado como um elemento na criação de um procedimento mais
+        complexo poderia ser considerado não apenas como uma coleção de
+        operações específicas, mas também como uma abstração procedural. Ou
+        seja, os detalhes de como o procedimento foi implementado poderiam ser
+        suprimidos, e o próprio procedimento poderia ser substituído por
+        qualquer outro procedimento com o mesmo comportamento geral. Em outras
+        palavras, poderíamos fazer uma abstração que separaria a maneira como o
+        procedimento seria usado dos detalhes de como o procedimento seria
+        implementado em termos de procedimentos mais primitivos. A noção análoga
+        para dados compostos é chamada de <a id="index-data-abstraction-1"></a>
+        <em>abstração de dados</em>. A abstração de dados é uma metodologia que
+        nos permite isolar como um objeto de dados composto é usado dos detalhes
+        de como ele é construído a partir de objetos de dados mais primitivos.
+      </p>
+      <p>
+        A ideia básica da abstração de dados é estruturar os programas que usam
+        objetos de dados compostos para que operem em "dados abstratos". Ou
+        seja, nossos programas devem usar dados de forma a não fazer suposições
+        sobre os dados que não sejam estritamente necessárias para realizar a
+        tarefa em questão. Ao mesmo tempo, uma representação de dados "concreta"
+        é definida independentemente dos programas que usam os dados. A
+        interface entre essas duas partes do nosso sistema será um conjunto de
+        procedimentos, chamados <a id="index-selectors"></a>
+        <em>seletores</em> e <a id="index-constructors"></a>
+        <em>construtores</em>, que implementam os dados abstratos em termos da
+        representação concreta. Para ilustrar essa técnica, consideraremos como
+        projetar um conjunto de procedimentos para manipular números racionais.
+      </p>
 
-<p>In <a href="1_002e1.html#g_t1_002e1_002e8">1.1.8</a>, we noted that a procedure used as an element in
-creating a more complex procedure could be regarded not only as a collection of
-particular operations but also as a procedural abstraction.  That is, the
-details of how the procedure was implemented could be suppressed, and the
-particular procedure itself could be replaced by any other procedure with the
-same overall behavior.  In other words, we could make an abstraction that would
-separate the way the procedure would be used from the details of how the
-procedure would be implemented in terms of more primitive procedures.  The
-analogous notion for compound data is called <a id="index-data-abstraction-1"></a>
-<em>data abstraction</em>.  Data
-abstraction is a methodology that enables us to isolate how a compound data
-object is used from the details of how it is constructed from more primitive
-data objects.
-</p>
-<p>The basic idea of data abstraction is to structure the programs that are to use
-compound data objects so that they operate on “abstract data.” That is, our
-programs should use data in such a way as to make no assumptions about the data
-that are not strictly necessary for performing the task at hand.  At the same
-time, a “concrete” data representation is defined independent of the programs
-that use the data.  The interface between these two parts of our system will be
-a set of procedures, called <a id="index-selectors"></a>
-<em>selectors</em> and <a id="index-constructors"></a>
-<em>constructors</em>,
-that implement the abstract data in terms of the concrete representation.  To
-illustrate this technique, we will consider how to design a set of procedures
-for manipulating rational numbers.
-</p>
+      <a id="g_t2_002e1_002e1"></a>
+      <a id="Example_003a-Arithmetic-Operations-for-Rational-Numbers"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.1.1</span
+        ><span class="sectitle"
+          >Exemplo: Operações Aritméticas para Números Racionais</span
+        >
+      </h4>
 
-<a id="g_t2_002e1_002e1"></a>
-<a id="Example_003a-Arithmetic-Operations-for-Rational-Numbers"></a>
-<h4 class="subsection"><span class="secnum">2.1.1</span><span class="sectitle">Example: Arithmetic Operations for Rational Numbers</span></h4>
+      <p>
+        Suponha que queremos fazer aritmética com números racionais. Queremos
+        ser capazes de somar, subtrair, multiplicar e dividir eles e testar se
+        dois números racionais são iguais.
+      </p>
+      <p>
+        Vamos começar assumindo que já temos uma maneira de construir um número
+        racional a partir de um numerador e um denominador. Também assumimos
+        que, dado um número racional, temos uma maneira de extrair (ou
+        selecionar) seu numerador e seu denominador. Vamos ainda assumir que o
+        construtor e os seletores estão disponíveis como procedimentos:
+      </p>
+      <ul>
+        <li>
+          <code>(make-rat ⟨<var>n</var>⟩ ⟨<var>d</var>⟩)</code> retorna o número
+          racional cujo numerador é o inteiro <code>⟨<var>n</var>⟩</code> e cujo
+          denominador é o inteiro <code>⟨<var>d</var>⟩</code>.
+        </li>
+        <li>
+          <code>(numer ⟨<var>x</var>⟩)</code> retorna o numerador do número
+          racional <code>⟨<var>x</var>⟩</code>.
+        </li>
+        <li>
+          <code>(denom ⟨<var>x</var>⟩)</code> retorna o denominador do número
+          racional <code>⟨<var>x</var>⟩</code>.
+        </li>
+      </ul>
 
-<p>Suppose we want to do arithmetic with rational numbers.  We want to be able to
-add, subtract, multiply, and divide them and to test whether two rational
-numbers are equal.
-</p>
-<p>Let us begin by assuming that we already have a way of constructing a rational
-number from a numerator and a denominator.  We also assume that, given a
-rational number, we have a way of extracting (or selecting) its numerator and
-its denominator.  Let us further assume that the constructor and selectors are
-available as procedures:
-</p>
-<ul>
-<li> <code>(make-rat ⟨<var>n</var>⟩ ⟨<var>d</var>⟩)</code> returns the rational number whose numerator 
-is the integer <code>⟨<var>n</var>⟩</code> and whose denominator is the integer 
-<code>⟨<var>d</var>⟩</code>.
+      <p>
+        Estamos usando aqui uma poderosa estratégia de síntese:
+        <a id="index-wishful-thinking"></a> <em>pensamento desejoso</em>. Ainda
+        não dissemos como um número racional é representado, ou como os
+        procedimentos <code>numer</code>, <code>denom</code> e
+        <code>make-rat</code> devem ser implementados. Mesmo assim, se
+        tivéssemos esses três procedimentos, poderíamos então somar, subtrair,
+        multiplicar, dividir e testar a igualdade usando as seguintes relações:
+      </p>
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <!-- Fórmulas matemáticas aqui -->
+      </math>
+      <p>Podemos expressar essas regras como procedimentos:</p>
+      <pre><code class="language-scheme">(define (add-rat x y)
+  (make-rat (+ (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
 
-</li><li> <code>(numer ⟨<var>x</var>⟩)</code> returns the numerator of the rational number 
-<code>⟨<var>x</var>⟩</code>.
+(define (sub-rat x y)
+  (make-rat (- (* (numer x) (denom y))
+               (* (numer y) (denom x)))
+            (* (denom x) (denom y))))
 
-</li><li> <code>(denom ⟨<var>x</var>⟩)</code> returns the denominator of the rational number 
-<code>⟨<var>x</var>⟩</code>.
+(define (mul-rat x y)
+  (make-rat (* (numer x) (numer y))
+            (* (denom x) (denom y))))
 
-</li></ul>
+(define (div-rat x y)
+  (make-rat (* (numer x) (denom y))
+            (* (denom x) (numer y))))
 
-<p>We are using here a powerful strategy of synthesis: <a id="index-wishful-thinking"></a>
-<em>wishful thinking</em>.
-We haven’t yet said how a rational number is represented, or how the procedures
-<code>numer</code>, <code>denom</code>, and <code>make-rat</code> should be implemented.  Even
-so, if we did have these three procedures, we could then add, subtract,
-multiply, divide, and test equality by using the following relations:
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-  <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
-    <mtr>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <msub>
-              <mi>n</mi>
-              <mn>1</mn>
-            </msub>
-            <msub>
-              <mi>d</mi>
-              <mn>1</mn>
-            </msub>
-          </mfrac>
-        </mrow>
-        <mo>+</mo>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <msub>
-              <mi>n</mi>
-              <mn>2</mn>
-            </msub>
-            <msub>
-              <mi>d</mi>
-              <mn>2</mn>
-            </msub>
-          </mfrac>
-        </mrow>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-      </mtd>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <mrow>
-              <msub>
-                <mi>n</mi>
-                <mn>1</mn>
-              </msub>
-              <msub>
-                <mi>d</mi>
-                <mn>2</mn>
-              </msub>
-              <mo>+</mo>
-              <msub>
-                <mi>n</mi>
-                <mn>2</mn>
-              </msub>
-              <msub>
-                <mi>d</mi>
-                <mn>1</mn>
-              </msub>
-            </mrow>
-            <mrow>
-              <msub>
-                <mi>d</mi>
-                <mn>1</mn>
-              </msub>
-              <msub>
-                <mi>d</mi>
-                <mn>2</mn>
-              </msub>
-            </mrow>
-          </mfrac>
-        </mrow>
-        <mo>,</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <msub>
-              <mi>n</mi>
-              <mn>1</mn>
-            </msub>
-            <msub>
-              <mi>d</mi>
-              <mn>1</mn>
-            </msub>
-          </mfrac>
-        </mrow>
-        <mo>−<!-- − --></mo>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <msub>
-              <mi>n</mi>
-              <mn>2</mn>
-            </msub>
-            <msub>
-              <mi>d</mi>
-              <mn>2</mn>
-            </msub>
-          </mfrac>
-        </mrow>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-      </mtd>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <mrow>
-              <msub>
-                <mi>n</mi>
-                <mn>1</mn>
-              </msub>
-              <msub>
-                <mi>d</mi>
-                <mn>2</mn>
-              </msub>
-              <mo>−<!-- − --></mo>
-              <msub>
-                <mi>n</mi>
-                <mn>2</mn>
-              </msub>
-              <msub>
-                <mi>d</mi>
-                <mn>1</mn>
-              </msub>
-            </mrow>
-            <mrow>
-              <msub>
-                <mi>d</mi>
-                <mn>1</mn>
-              </msub>
-              <msub>
-                <mi>d</mi>
-                <mn>2</mn>
-              </msub>
-            </mrow>
-          </mfrac>
-        </mrow>
-        <mo>,</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <msub>
-              <mi>n</mi>
-              <mn>1</mn>
-            </msub>
-            <msub>
-              <mi>d</mi>
-              <mn>1</mn>
-            </msub>
-          </mfrac>
-        </mrow>
-        <mo>×<!-- × --></mo>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <msub>
-              <mi>n</mi>
-              <mn>2</mn>
-            </msub>
-            <msub>
-              <mi>d</mi>
-              <mn>2</mn>
-            </msub>
-          </mfrac>
-        </mrow>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-      </mtd>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <mrow>
-              <msub>
-                <mi>n</mi>
-                <mn>1</mn>
-              </msub>
-              <msub>
-                <mi>n</mi>
-                <mn>2</mn>
-              </msub>
-            </mrow>
-            <mrow>
-              <msub>
-                <mi>d</mi>
-                <mn>1</mn>
-              </msub>
-              <msub>
-                <mi>d</mi>
-                <mn>2</mn>
-              </msub>
-            </mrow>
-          </mfrac>
-        </mrow>
-        <mo>,</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mfrac>
+(define (equal-rat? x y)
+  (= (* (numer x) (denom y))
+     (* (numer y) (denom x))))</code></pre>
+
+      <p>
+        Agora temos as operações sobre números racionais definidas em termos dos
+        procedimentos seletor e construtor <code>numer</code>,
+        <code>denom</code> e <code>make-rat</code>. Mas ainda não definimos
+        esses procedimentos. O que precisamos é de alguma maneira de unir um
+        numerador e um denominador para formar um número racional.
+      </p>
+      <a id="Pairs"></a>
+      <h5 class="subsubheading">Pares</h5>
+
+      <p>
+        Para nos permitir implementar o nível concreto de nossa abstração de
+        dados, nossa linguagem fornece uma estrutura composta chamada
+        <a id="index-pair"></a> <em>par</em>, que pode ser construída com o
+        procedimento primitivo <code>cons</code>. Este procedimento recebe dois
+        argumentos e retorna um objeto de dados composto que contém os dois
+        argumentos como partes. Dado um par, podemos extrair as partes usando os
+        procedimentos primitivos <code>car</code> e <code>cdr</code>.<a
+          class="footnote_link"
+          id="DOCF68"
+          href="#FOOT68"
+          ><sup>68</sup></a
+        >
+        Assim, podemos usar <code>cons</code>, <code>car</code> e
+        <code>cdr</code> da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define x (cons 1 2))
+
+(car x)
+1
+
+(cdr x)
+2</code></pre>
+
+      <p>
+        Observe que um par é um objeto de dados que pode ser nomeado e
+        manipulado, assim como um objeto de dados primitivo. Além disso,
+        <code>cons</code> pode ser usado para formar pares cujos elementos são
+        pares, e assim por diante:
+      </p>
+      <pre><code class="language-scheme">(define x (cons 1 2))
+(define y (cons 3 4))
+(define z (cons x y))
+
+(car (car z))
+1
+
+(car (cdr z))
+3</code></pre>
+
+      <p>
+        Em <a href="2_002e2.html#g_t2_002e2">2.2</a> veremos como essa
+        capacidade de combinar pares significa que pares podem ser usados como
+        blocos de construção de propósito geral para criar todos os tipos de
+        estruturas de dados complexas. O único primitivo de dados compostos
+        <a id="index-pair-1"></a> <em>par</em>, implementado pelos procedimentos
+        <code>cons</code>, <code>car</code> e <code>cdr</code>, é a única cola
+        que precisamos. Objetos de dados construídos a partir de pares são
+        chamados de <a id="index-list_002dstructured"></a>
+        <em>dados estruturados em listas</em>.
+      </p>
+      <a id="Representing-rational-numbers"></a>
+      <h5 class="subsubheading">Representando números racionais</h5>
+
+      <p>
+        Pares oferecem uma maneira natural de completar o sistema de números
+        racionais. Simplesmente representamos um número racional como um par de
+        dois inteiros: um numerador e um denominador. Então
+        <code>make-rat</code>, <code>numer</code> e <code>denom</code> são
+        facilmente implementados da seguinte forma:<a
+          class="footnote_link"
+          id="DOCF69"
+          href="#FOOT69"
+          ><sup>69</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (make-rat n d) (cons n d))
+(define (numer x) (car x))
+(define (denom x) (cdr x))</code></pre>
+
+      <p>
+        Além disso, para exibir os resultados de nossas computações, podemos
+        imprimir números racionais imprimindo o numerador, uma barra e o
+        denominador:<a class="footnote_link" id="DOCF70" href="#FOOT70"
+          ><sup>70</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (print-rat x)
+  (newline)
+  (display (numer x))
+  (display "/")
+  (display (denom x)))</code></pre>
+
+      <p>Agora podemos testar nossos procedimentos de números racionais:</p>
+      <pre><code class="language-scheme">(define one-half (make-rat 1 2))
+(print-rat one-half)
+1/2
+
+(define one-third (make-rat 1 3))
+(print-rat
+ (add-rat one-half one-third))
+5/6
+
+(print-rat
+ (mul-rat one-half one-third))
+1/6
+
+(print-rat
+ (add-rat one-third one-third))
+6/9</code></pre>
+
+      <p>
+        Como o exemplo final mostra, nossa implementação de números racionais
+        não reduz números racionais aos termos mais baixos. Podemos remediar
+        isso mudando <code>make-rat</code>. Se tivermos um procedimento
+        <code>gcd</code> como o de
+        <a href="1_002e2.html#g_t1_002e2_002e5">1.2.5</a> que produz o maior
+        divisor comum de dois inteiros, podemos usar <code>gcd</code> para
+        reduzir o numerador e o denominador aos termos mais baixos antes de
+        construir o par:
+      </p>
+      <pre><code class="language-scheme">(define (make-rat n d)
+  (let ((g (gcd n d)))
+    (cons (/ n g) 
+          (/ d g))))</code></pre>
+
+      <p>Agora temos</p>
+      <pre><code class="language-scheme">(print-rat 
+ (add-rat one-third one-third))
+2/3</code></pre>
+
+      <p>
+        como desejado. Essa modificação foi realizada mudando o construtor
+        <code>make-rat</code> sem alterar nenhum dos procedimentos (como
+        <code>add-rat</code> e <code>mul-rat</code>) que implementam as
+        operações reais.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e1"></a>Exercício 2.1:</strong> Defina
+          uma versão melhor de <code>make-rat</code> que lida com argumentos
+          positivos e negativos. <code>Make-rat</code> deve normalizar o sinal
+          de forma que, se o número racional for positivo, tanto o numerador
+          quanto o denominador sejam positivos, e se o número racional for
+          negativo, apenas o numerador seja negativo.
+        </p>
+      </blockquote>
+
+      <a id="g_t2_002e1_002e2"></a>
+      <a id="Abstraction-Barriers"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.1.2</span
+        ><span class="sectitle">Barreiras de Abstração</span>
+      </h4>
+
+      <p>
+        Antes de continuar com mais exemplos de dados compostos e abstração de
+        dados, vamos considerar algumas das questões levantadas pelo exemplo dos
+        números racionais. Definimos as operações de números racionais em termos
+        de um construtor <code>make-rat</code> e seletores <code>numer</code> e
+        <code>denom</code>. Em geral, a ideia subjacente da abstração de dados é
+        identificar para cada tipo de objeto de dados um conjunto básico de
+        operações em termos das quais todas as manipulações de objetos de dados
+        desse tipo serão expressas, e então usar apenas essas operações na
+        manipulação dos dados.
+      </p>
+      <p>
+        Podemos visualizar a estrutura do sistema de números racionais como
+        mostrado na <a href="#Figure-2_002e1">Figura 2.1</a>. As linhas
+        horizontais representam <a id="index-abstraction-barriers-1"></a>
+        <em>barreiras de abstração</em> que isolam diferentes "níveis" do
+        sistema. Em cada nível, a barreira separa os programas (acima) que usam
+        a abstração de dados dos programas (abaixo) que implementam a abstração
+        de dados. Programas que usam números racionais os manipulam apenas em
+        termos dos procedimentos fornecidos "para uso público" pelo pacote de
+        números racionais: <code>add-rat</code>, <code>sub-rat</code>,
+        <code>mul-rat</code>, <code>div-rat</code> e <code>equal-rat?</code>.
+        Estes, por sua vez, são implementados apenas em termos do construtor e
+        dos seletores <code>make-rat</code>, <code>numer</code> e
+        <code>denom</code>, que por sua vez são implementados em termos de
+        pares. Os detalhes de como os pares são implementados são irrelevantes
+        para o restante do pacote de números racionais, desde que os pares
+        possam ser manipulados pelo uso de <code>cons</code>, <code>car</code> e
+        <code>cdr</code>. Na prática, os procedimentos em cada nível são as
+        interfaces que definem as barreiras de abstração e conectam os
+        diferentes níveis.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e1"></a>
+        <object
+          style="width: 48.87ex; height: 38.08ex"
+          data="fig/chap2/Fig2.1d.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.1:</strong> Barreiras de abstração de dados no
+            pacote de números racionais.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Essa ideia simples tem muitas vantagens. Uma vantagem é que torna os
+        programas muito mais fáceis de manter e modificar. Qualquer estrutura de
+        dados complexa pode ser representada de várias maneiras com as
+        estruturas de dados primitivas fornecidas por uma linguagem de
+        programação. É claro que a escolha da representação influencia os
+        programas que operam nela; assim, se a representação fosse alterada em
+        algum momento posterior, todos esses programas poderiam ter que ser
+        modificados de acordo. Essa tarefa poderia ser demorada e cara no caso
+        de programas grandes, a menos que a dependência da representação fosse
+        confinada por design a muito poucos módulos de programa.
+      </p>
+      <p>
+        Por exemplo, uma maneira alternativa de abordar o problema de reduzir
+        números racionais aos termos mais baixos é realizar a redução sempre que
+        acessamos as partes de um número racional, em vez de quando o
+        construímos. Isso leva a diferentes procedimentos construtores e
+        seletores:
+      </p>
+      <pre><code class="language-scheme">(define (make-rat n d)
+  (cons n d))
+
+(define (numer x)
+  (let ((g (gcd (car x) (cdr x))))
+    (/ (car x) g)))
+
+(define (denom x)
+  (let ((g (gcd (car x) (cdr x))))
+    (/ (cdr x) g)))</code></pre>
+
+      <p>
+        A diferença entre essa implementação e a anterior está em quando
+        calculamos o <code>gcd</code>. Se, em nosso uso típico de números
+        racionais, acessarmos os numeradores e denominadores dos mesmos números
+        racionais muitas vezes, seria preferível calcular o
+        <code>gcd</code> quando os números racionais são construídos. Caso
+        contrário, pode ser melhor esperar até o momento do acesso para calcular
+        o <code>gcd</code>. Em qualquer caso, quando mudamos de uma
+        representação para a outra, os procedimentos <code>add-rat</code>,
+        <code>sub-rat</code> e assim por diante não precisam ser modificados.
+      </p>
+      <p>
+        Restringir a dependência da representação a alguns poucos procedimentos
+        de interface nos ajuda a projetar programas, bem como a modificá-los,
+        porque nos permite manter a flexibilidade de considerar implementações
+        alternativas. Para continuar com nosso exemplo simples, suponha que
+        estamos projetando um pacote de números racionais e não podemos decidir
+        inicialmente se devemos realizar o <code>gcd</code> no momento da
+        construção ou no momento da seleção. A metodologia de abstração de dados
+        nos dá uma maneira de adiar essa decisão sem perder a capacidade de
+        progredir no restante do sistema.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e2"></a>Exercício 2.2:</strong> Considere
+          o problema de representar segmentos de linha em um plano. Cada
+          segmento é representado como um par de pontos: um ponto inicial e um
+          ponto final. Defina um construtor <code>make-segment</code> e
+          seletores <code>start-segment</code> e <code>end-segment</code> que
+          definem a representação de segmentos em termos de pontos. Além disso,
+          um ponto pode ser representado como um par de números: a coordenada
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> e a
+          coordenada
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math
+          >. Assim, especifique um construtor <code>make-point</code> e
+          seletores <code>x-point</code> e <code>y-point</code> que definem essa
+          representação. Finalmente, usando seus seletores e construtores,
+          defina um procedimento <code>midpoint-segment</code> que recebe um
+          segmento de linha como argumento e retorna seu ponto médio (o ponto
+          cujas coordenadas são a média das coordenadas dos pontos finais). Para
+          testar seus procedimentos, você precisará de uma maneira de imprimir
+          pontos:
+        </p>
+        <pre><code class="language-scheme">(define (print-point p)
+  (newline)
+  (display "(")
+  (display (x-point p))
+  (display ",")
+  (display (y-point p))
+  (display ")"))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e3"></a>Exercício 2.3:</strong>
+          Implemente uma representação para retângulos em um plano. (Dica: Você
+          pode querer fazer uso do
+          <a href="#Exercise-2_002e2">Exercício 2.2</a>.) Em termos de seus
+          construtores e seletores, crie procedimentos que calculem o perímetro
+          e a área de um retângulo dado. Agora implemente uma representação
+          diferente para retângulos. Você pode projetar seu sistema com
+          barreiras de abstração adequadas, de modo que os mesmos procedimentos
+          de perímetro e área funcionem usando qualquer representação?
+        </p>
+      </blockquote>
+
+      <a id="g_t2_002e1_002e3"></a>
+      <a id="What-Is-Meant-by-Data_003f"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.1.3</span
+        ><span class="sectitle">O Que Se Entende por Dados?</span>
+      </h4>
+
+      <p>
+        Começamos a implementação de números racionais em
+        <a href="#g_t2_002e1_002e1">2.1.1</a> implementando as operações de
+        números racionais <code>add-rat</code>, <code>sub-rat</code> e assim por
+        diante em termos de três procedimentos não especificados:
+        <code>make-rat</code>, <code>numer</code> e <code>denom</code>. Naquele
+        ponto, poderíamos pensar nas operações como sendo definidas em termos de
+        objetos de dados — numeradores, denominadores e números racionais — cujo
+        comportamento era especificado por esses três procedimentos.
+      </p>
+      <p>
+        Mas o que exatamente se entende por <a id="index-data-1"></a>
+        <em>dados</em>? Não basta dizer "o que quer que seja implementado pelos
+        seletores e construtores dados". Claramente, nem todo conjunto
+        arbitrário de três procedimentos pode servir como base apropriada para a
+        implementação de números racionais. Precisamos garantir que, se
+        construirmos um número racional <code>x</code> a partir de um par de
+        inteiros <code>n</code> e <code>d</code>, então extrair o
+        <code>numer</code> e o <code>denom</code> de <code>x</code> e dividi-los
+        deve produzir o mesmo resultado que dividir <code>n</code> por
+        <code>d</code>. Em outras palavras, <code>make-rat</code>,
+        <code>numer</code> e <code>denom</code> devem satisfazer a condição de
+        que, para qualquer inteiro <code>n</code> e qualquer inteiro não nulo
+        <code>d</code>, se <code>x</code> for <code>(make-rat n d)</code>, então
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
           <mrow class="MJX-TeXAtom-ORD">
-            <msub>
-              <mi>n</mi>
-              <mn>1</mn>
-            </msub>
-            <mspace width="thinmathspace"/>
+            <mfrac>
+              <mtext>(numer x)</mtext>
+              <mtext>(denom x)</mtext>
+            </mfrac>
+          </mrow>
+          <mo>=</mo>
+          <mrow class="MJX-TeXAtom-ORD">
             <mrow class="MJX-TeXAtom-ORD">
-              <mo>/</mo>
+              <mfrac>
+                <mtext>n</mtext>
+                <mtext>d</mtext>
+              </mfrac>
             </mrow>
-            <mspace width="thinmathspace"/>
-            <msub>
-              <mi>d</mi>
-              <mn>1</mn>
-            </msub>
+            <mo>.</mo>
           </mrow>
+        </math>
+        Na verdade, essa é a única condição que <code>make-rat</code>,
+        <code>numer</code> e <code>denom</code> devem cumprir para formar uma
+        base adequada para uma representação de números racionais. Em geral,
+        podemos pensar em dados como definidos por alguma coleção de seletores e
+        construtores, juntamente com condições especificadas que esses
+        procedimentos devem cumprir para ser uma representação válida.<a
+          class="footnote_link"
+          id="DOCF71"
+          href="#FOOT71"
+          ><sup>71</sup></a
+        >
+      </p>
+      <p>
+        Esse ponto de vista pode servir para definir não apenas objetos de dados
+        de "alto nível", como números racionais, mas também objetos de nível
+        mais baixo. Considere a noção de par, que usamos para definir nossos
+        números racionais. Nunca dissemos o que era um par, apenas que a
+        linguagem fornecia procedimentos <code>cons</code>, <code>car</code> e
+        <code>cdr</code> para operar em pares. Mas a única coisa que precisamos
+        saber sobre essas três operações é que, se colarmos dois objetos usando
+        <code>cons</code>, podemos recuperar os objetos usando
+        <code>car</code> e <code>cdr</code>. Ou seja, as operações satisfazem a
+        condição de que, para quaisquer objetos <code>x</code> e <code>y</code>,
+        se <code>z</code> for <code>(cons x y)</code>, então
+        <code>(car z)</code> é <code>x</code> e <code>(cdr z)</code> é
+        <code>y</code>. De fato, mencionamos que esses três procedimentos são
+        incluídos como primitivos em nossa linguagem. No entanto, qualquer
+        tripla de procedimentos que satisfaça a condição acima pode ser usada
+        como base para implementar pares. Esse ponto é ilustrado de forma
+        impressionante pelo fato de que poderíamos implementar
+        <code>cons</code>, <code>car</code> e <code>cdr</code> sem usar nenhuma
+        estrutura de dados, mas apenas usando procedimentos. Aqui estão as
+        definições:
+      </p>
+      <pre><code class="language-scheme">(define (cons x y)
+  (define (dispatch m)
+    (cond ((= m 0) x)
+          ((= m 1) y)
+          (else 
+           (error "Argument not 0 or 1:
+                   CONS" m))))
+  dispatch)
+
+(define (car z) (z 0))
+(define (cdr z) (z 1))</code></pre>
+
+      <p>
+        Esse uso de procedimentos não corresponde a nada parecido com nossa
+        noção intuitiva do que dados deveriam ser. No entanto, tudo o que
+        precisamos fazer para mostrar que essa é uma maneira válida de
+        representar pares é verificar que esses procedimentos satisfazem a
+        condição dada acima.
+      </p>
+      <p>
+        O ponto sutil a ser notado é que o valor retornado por
+        <code>(cons x y)</code> é um procedimento — ou seja, o procedimento
+        internamente definido <code>dispatch</code>, que recebe um argumento e
+        retorna <code>x</code> ou <code>y</code> dependendo de se o argumento é
+        0 ou 1. Correspondentemente, <code>(car z)</code> é definido para
+        aplicar <code>z</code> a 0. Portanto, se <code>z</code> for o
+        procedimento formado por <code>(cons x y)</code>, então
+        <code>z</code> aplicado a 0 retornará <code>x</code>. Assim, mostramos
+        que <code>(car (cons x y))</code> retorna <code>x</code>, como desejado.
+        Da mesma forma, <code>(cdr (cons x y))</code> aplica o procedimento
+        retornado por <code>(cons x y)</code> a 1, que retorna <code>y</code>.
+        Portanto, essa implementação procedural de pares é uma implementação
+        válida, e se acessarmos pares usando apenas <code>cons</code>,
+        <code>car</code> e <code>cdr</code>, não podemos distinguir essa
+        implementação de uma que usa estruturas de dados "reais".
+      </p>
+      <p>
+        O ponto de exibir a representação procedural de pares não é que nossa
+        linguagem funcione dessa maneira (Scheme, e sistemas Lisp em geral,
+        implementam pares diretamente, por razões de eficiência), mas que
+        poderia funcionar dessa maneira. A representação procedural, embora
+        obscura, é uma maneira perfeitamente adequada de representar pares, já
+        que cumpre as únicas condições que os pares precisam cumprir. Esse
+        exemplo também demonstra que a capacidade de manipular procedimentos
+        como objetos automaticamente fornece a capacidade de representar dados
+        compostos. Isso pode parecer uma curiosidade agora, mas as
+        representações procedurais de dados desempenharão um papel central em
+        nosso repertório de programação. Esse estilo de programação é
+        frequentemente chamado de <a id="index-message-passing"></a>
+        <em>passagem de mensagens</em>, e o usaremos como uma ferramenta básica
+        no <a href="Chapter-3.html#Chapter-3">Capítulo 3</a> quando abordarmos
+        as questões de modelagem e simulação.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e4"></a>Exercício 2.4:</strong> Aqui está
+          uma representação procedural alternativa de pares. Para essa
+          representação, verifique que <code>(car (cons x y))</code> retorna
+          <code>x</code> para quaisquer objetos <code>x</code> e <code>y</code>.
+        </p>
+        <pre><code class="language-scheme">(define (cons x y) 
+  (lambda (m) (m x y)))
+
+(define (car z) 
+  (z (lambda (p q) p)))</code></pre>
+
+        <p>
+          Qual é a definição correspondente de <code>cdr</code>? (Dica: Para
+          verificar que isso funciona, use o modelo de substituição de
+          <a href="1_002e1.html#g_t1_002e1_002e5">1.1.5</a>.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e5"></a>Exercício 2.5:</strong> Mostre
+          que podemos representar pares de inteiros não negativos usando apenas
+          números e operações aritméticas se representarmos o par
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>a</mi></math> e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>b</mi></math>
+          como o inteiro que é o produto
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><msup><mn>2</mn><mi>a</mi></msup
+              ><msup><mn>3</mn><mi>b</mi></msup></mrow
+            ></math
+          >. Dê as definições correspondentes dos procedimentos
+          <code>cons</code>, <code>car</code> e <code>cdr</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e6"></a>Exercício 2.6:</strong> No caso
+          de representar pares como procedimentos não ser suficientemente
+          surpreendente, considere que, em uma linguagem que pode manipular
+          procedimentos, podemos nos virar sem números (pelo menos no que diz
+          respeito a inteiros não negativos) implementando 0 e a operação de
+          adicionar 1 como
+        </p>
+        <pre><code class="language-scheme">(define zero (lambda (f) (lambda (x) x)))
+
+(define (add-1 n)
+  (lambda (f) (lambda (x) (f ((n f) x)))))</code></pre>
+
+        <p>
+          Essa representação é conhecida como
+          <a id="index-Church-numerals"></a> <em>numerais de Church</em>, em
+          homenagem ao seu inventor, Alonzo Church, o lógico que inventou o
+          λ-cálculo.
+        </p>
+        <p>
+          Defina <code>one</code> e <code>two</code> diretamente (não em termos
+          de <code>zero</code> e <code>add-1</code>). (Dica: Use substituição
+          para avaliar <code>(add-1 zero)</code>). Dê uma definição direta do
+          procedimento de adição <code>+</code> (não em termos de aplicação
+          repetida de <code>add-1</code>).
+        </p>
+      </blockquote>
+
+      <a id="g_t2_002e1_002e4"></a>
+      <a id="Extended-Exercise_003a-Interval-Arithmetic"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.1.4</span
+        ><span class="sectitle"
+          >Exercício Estendido: Aritmética de Intervalos</span
+        >
+      </h4>
+
+      <p>
+        Alyssa P. Hacker está projetando um sistema para ajudar as pessoas a
+        resolver problemas de engenharia. Uma das funcionalidades que ela deseja
+        fornecer em seu sistema é a capacidade de manipular quantidades inexatas
+        (como parâmetros medidos de dispositivos físicos) com precisão
+        conhecida, de modo que, quando os cálculos são feitos com essas
+        quantidades aproximadas, os resultados sejam números de precisão
+        conhecida.
+      </p>
+      <p>
+        Engenheiros elétricos estarão usando o sistema de Alyssa para calcular
+        quantidades elétricas. Às vezes, é necessário para eles calcular o valor
+        de uma resistência equivalente em paralelo
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>R</mi><mi>p</mi></msub></math
+        >
+        de dois resistores
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>R</mi><mn>1</mn></msub></math
+        >
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>R</mi><mn>2</mn></msub></math
+        >
+        usando a fórmula
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <msub>
+            <mi>R</mi>
+            <mi>p</mi>
+          </msub>
+          <mspace width="thinmathspace" />
+          <mo>=</mo>
+          <mspace width="thinmathspace" />
           <mrow class="MJX-TeXAtom-ORD">
-            <msub>
-              <mi>n</mi>
-              <mn>2</mn>
-            </msub>
-            <mspace width="thinmathspace"/>
             <mrow class="MJX-TeXAtom-ORD">
-              <mo>/</mo>
-            </mrow>
-            <mspace width="thinmathspace"/>
-            <msub>
-              <mi>d</mi>
-              <mn>2</mn>
-            </msub>
-          </mrow>
-        </mfrac>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-      </mtd>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <mrow>
-              <msub>
-                <mi>n</mi>
+              <mfrac>
                 <mn>1</mn>
-              </msub>
-              <msub>
-                <mi>d</mi>
-                <mn>2</mn>
-              </msub>
+                <mrow>
+                  <mn>1</mn>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mo>/</mo>
+                  </mrow>
+                  <msub>
+                    <mi>R</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo>+</mo>
+                  <mn>1</mn>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mo>/</mo>
+                  </mrow>
+                  <msub>
+                    <mi>R</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+              </mfrac>
             </mrow>
-            <mrow>
-              <msub>
-                <mi>d</mi>
-                <mn>1</mn>
-              </msub>
-              <msub>
-                <mi>n</mi>
-                <mn>2</mn>
-              </msub>
+            <mo>.</mo>
+          </mrow>
+        </math>
+        Os valores de resistência geralmente são conhecidos apenas até alguma
+        tolerância garantida pelo fabricante do resistor. Por exemplo, se você
+        comprar um resistor rotulado como "6,8 ohms com 10% de tolerância", você
+        só pode ter certeza de que o resistor tem uma resistência entre 6,8
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mo>−<!-- − --></mo></math
+        >
+        0,68 = 6,12 e 6,8 + 0,68 = 7,48 ohms. Assim, se você tiver um resistor
+        de 6,8 ohms com 10% de tolerância em paralelo com um resistor de 4,7
+        ohms com 5% de tolerância, a resistência da combinação pode variar de
+        cerca de 2,58 ohms (se os dois resistores estiverem nos limites
+        inferiores) a cerca de 2,97 ohms (se os dois resistores estiverem nos
+        limites superiores).
+      </p>
+      <p>
+        A ideia de Alyssa é implementar "aritmética de intervalos" como um
+        conjunto de operações aritméticas para combinar "intervalos" (objetos
+        que representam a faixa de valores possíveis de uma quantidade inexata).
+        O resultado de somar, subtrair, multiplicar ou dividir dois intervalos é
+        ele mesmo um intervalo, representando a faixa do resultado.
+      </p>
+      <p>
+        Alyssa postula a existência de um objeto abstrato chamado "intervalo"
+        que tem dois pontos finais: um limite inferior e um limite superior. Ela
+        também presume que, dados os pontos finais de um intervalo, ela pode
+        construir o intervalo usando o construtor de dados
+        <code>make-interval</code>. Alyssa primeiro escreve um procedimento para
+        somar dois intervalos. Ela raciocina que o valor mínimo que a soma
+        poderia ser é a soma dos dois limites inferiores e o valor máximo que
+        poderia ser é a soma dos dois limites superiores:
+      </p>
+      <pre><code class="language-scheme">(define (add-interval x y)
+  (make-interval (+ (lower-bound x) 
+                    (lower-bound y))
+                 (+ (upper-bound x) 
+                    (upper-bound y))))</code></pre>
+
+      <p>
+        Alyssa também trabalha no produto de dois intervalos encontrando o
+        mínimo e o máximo dos produtos dos limites e usando-os como os limites
+        do intervalo resultante. (<code>Min</code> e <code>max</code> são
+        primitivas que encontram o mínimo ou o máximo de qualquer número de
+        argumentos.)
+      </p>
+      <pre><code class="language-scheme">(define (mul-interval x y)
+  (let ((p1 (* (lower-bound x) 
+               (lower-bound y)))
+        (p2 (* (lower-bound x) 
+               (upper-bound y)))
+        (p3 (* (upper-bound x) 
+               (lower-bound y)))
+        (p4 (* (upper-bound x) 
+               (upper-bound y))))
+    (make-interval (min p1 p2 p3 p4)
+                   (max p1 p2 p3 p4))))</code></pre>
+
+      <p>
+        Para dividir dois intervalos, Alyssa multiplica o primeiro pelo inverso
+        do segundo. Observe que os limites do intervalo inverso são o inverso do
+        limite superior e o inverso do limite inferior, nessa ordem.
+      </p>
+      <pre><code class="language-scheme">(define (div-interval x y)
+  (mul-interval x 
+                (make-interval 
+                 (/ 1.0 (upper-bound y)) 
+                 (/ 1.0 (lower-bound y)))))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e7"></a>Exercício 2.7:</strong> O
+          programa de Alyssa está incompleto porque ela não especificou a
+          implementação da abstração de intervalo. Aqui está uma definição do
+          construtor de intervalo:
+        </p>
+        <pre><code class="language-scheme">(define (make-interval a b) (cons a b))</code></pre>
+
+        <p>
+          Defina seletores <code>upper-bound</code> e
+          <code>lower-bound</code> para completar a implementação.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e8"></a>Exercício 2.8:</strong> Usando
+          raciocínio análogo ao de Alyssa, descreva como a diferença de dois
+          intervalos pode ser calculada. Defina um procedimento de subtração
+          correspondente, chamado <code>sub-interval</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e9"></a>Exercício 2.9:</strong> A
+          <a id="index-width"></a> <em>largura</em> de um intervalo é metade da
+          diferença entre seus limites superior e inferior. A largura é uma
+          medida da incerteza do número especificado pelo intervalo. Para
+          algumas operações aritméticas, a largura do resultado da combinação de
+          dois intervalos é uma função apenas das larguras dos intervalos de
+          argumento, enquanto para outras a largura da combinação não é uma
+          função das larguras dos intervalos de argumento. Mostre que a largura
+          da soma (ou diferença) de dois intervalos é uma função apenas das
+          larguras dos intervalos sendo somados (ou subtraídos). Dê exemplos
+          para mostrar que isso não é verdade para multiplicação ou divisão.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e10"></a>Exercício 2.10:</strong> Ben
+          Bitdiddle, um programador de sistemas especialista, olha por cima do
+          ombro de Alyssa e comenta que não está claro o que significa dividir
+          por um intervalo que abrange zero. Modifique o código de Alyssa para
+          verificar essa condição e sinalizar um erro se ela ocorrer.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e11"></a>Exercício 2.11:</strong> De
+          passagem, Ben também comenta de forma críptica: "Ao testar os sinais
+          dos pontos finais dos intervalos, é possível dividir
+          <code>mul-interval</code> em nove casos, apenas um dos quais requer
+          mais de duas multiplicações." Reescreva esse procedimento usando a
+          sugestão de Ben.
+        </p>
+        <p>
+          Depois de depurar seu programa, Alyssa o mostra a um usuário
+          potencial, que reclama que seu programa resolve o problema errado. Ele
+          quer um programa que possa lidar com números representados como um
+          valor central e uma tolerância aditiva; por exemplo, ele quer
+          trabalhar com intervalos como 3,5
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mo>±<!-- ± --></mo></math
+          >
+          0,15 em vez de [3,35, 3,65]. Alyssa volta para sua mesa e corrige esse
+          problema fornecendo um construtor alternativo e seletores
+          alternativos:
+        </p>
+        <pre><code class="language-scheme">(define (make-center-width c w)
+  (make-interval (- c w) (+ c w)))
+
+(define (center i)
+  (/ (+ (lower-bound i) 
+        (upper-bound i)) 
+     2))
+
+(define (width i)
+  (/ (- (upper-bound i) 
+        (lower-bound i)) 
+     2))</code></pre>
+
+        <p>
+          Infelizmente, a maioria dos usuários de Alyssa são engenheiros.
+          Situações reais de engenharia geralmente envolvem medições com apenas
+          uma pequena incerteza, medida como a razão entre a largura do
+          intervalo e o ponto médio do intervalo. Engenheiros geralmente
+          especificam tolerâncias percentuais nos parâmetros de dispositivos,
+          como nas especificações de resistores dadas anteriormente.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e12"></a>Exercício 2.12:</strong> Defina
+          um construtor <code>make-center-percent</code> que recebe um centro e
+          uma tolerância percentual e produz o intervalo desejado. Você também
+          deve definir um seletor <code>percent</code> que produz a tolerância
+          percentual para um intervalo dado. O seletor <code>center</code> é o
+          mesmo mostrado acima.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e13"></a>Exercício 2.13:</strong> Mostre
+          que, sob a suposição de pequenas tolerâncias percentuais, há uma
+          fórmula simples para a tolerância percentual aproximada do produto de
+          dois intervalos em termos das tolerâncias dos fatores. Você pode
+          simplificar o problema assumindo que todos os números são positivos.
+        </p>
+        <p>
+          Após um trabalho considerável, Alyssa P. Hacker entrega seu sistema
+          finalizado. Vários anos depois, depois que ela esqueceu tudo sobre
+          isso, ela recebe uma ligação frenética de um usuário irritado, Lem E.
+          Tweakit. Parece que Lem notou que a fórmula para resistores em
+          paralelo pode ser escrita de duas maneiras algebricamente
+          equivalentes:
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <msub>
+                    <mi>R</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <msub>
+                    <mi>R</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mrow>
+                  <msub>
+                    <mi>R</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo>+</mo>
+                  <msub>
+                    <mi>R</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+              </mfrac>
             </mrow>
-          </mfrac>
-        </mrow>
-        <mo>,</mo>
-      </mtd>
-    </mtr>
-    <mtr>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <msub>
-              <mi>n</mi>
-              <mn>1</mn>
-            </msub>
-            <msub>
-              <mi>d</mi>
-              <mn>1</mn>
-            </msub>
-          </mfrac>
-        </mrow>
-      </mtd>
-      <mtd>
-        <mo>=</mo>
-      </mtd>
-      <mtd>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mfrac>
-            <msub>
-              <mi>n</mi>
-              <mn>2</mn>
-            </msub>
-            <msub>
-              <mi>d</mi>
-              <mn>2</mn>
-            </msub>
-          </mfrac>
-        </mrow>
-        <mspace width="1em"/>
-        <mrow class="MJX-TeXAtom-ORD">
-          <mtext> </mtext>
-          <mi mathvariant="normal">i</mi>
-          <mi mathvariant="normal">f</mi>
-          <mtext> </mtext>
-          <mi mathvariant="normal">a</mi>
-          <mi mathvariant="normal">n</mi>
-          <mi mathvariant="normal">d</mi>
-          <mtext> </mtext>
-          <mi mathvariant="normal">o</mi>
-          <mi mathvariant="normal">n</mi>
-          <mi mathvariant="normal">l</mi>
-          <mi mathvariant="normal">y</mi>
-          <mtext> </mtext>
-          <mi mathvariant="normal">i</mi>
-          <mi mathvariant="normal">f</mi>
-          <mspace width="1em"/>
-        </mrow>
-        <msub>
-          <mi>n</mi>
-          <mn>1</mn>
-        </msub>
-        <msub>
-          <mi>d</mi>
-          <mn>2</mn>
-        </msub>
-        <mo>=</mo>
-        <msub>
-          <mi>n</mi>
-          <mn>2</mn>
-        </msub>
-        <msub>
-          <mi>d</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>.</mo>
-      </mtd>
-    </mtr>
-  </mtable>
-</math>
-We can express these rules as procedures:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-rat x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
-               </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span><span class="pln">
-            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
+          </math>
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mfrac>
+                  <mn>1</mn>
+                  <mrow>
+                    <mn>1</mn>
+                    <mrow class="MJX-TeXAtom-ORD">
+                      <mo>/</mo>
+                    </mrow>
+                    <msub>
+                      <mi>R</mi>
+                      <mn>1</mn>
+                    </msub>
+                    <mo>+</mo>
+                    <mn>1</mn>
+                    <mrow class="MJX-TeXAtom-ORD">
+                      <mo>/</mo>
+                    </mrow>
+                    <msub>
+                      <mi>R</mi>
+                      <mn>2</mn>
+                    </msub>
+                  </mrow>
+                </mfrac>
+              </mrow>
+              <mo>.</mo>
+            </mrow>
+          </math>
+          Ele escreveu os dois programas a seguir, cada um dos quais calcula a
+          fórmula de resistores em paralelo de maneira diferente:
+        </p>
+        <pre><code class="language-scheme">(define (par1 r1 r2)
+  (div-interval 
+   (mul-interval r1 r2)
+   (add-interval r1 r2)))
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sub-rat x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
-               </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span><span class="pln">
-            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-rat x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">))</span><span class="pln">
-            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div-rat x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">make-rat </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
-            </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">))))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">equal-rat? x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom y</span><span class="clo">))</span><span class="pln">
-     </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">))))</span></pre></div>
-
-<p>Now we have the operations on rational numbers defined in terms of the selector
-and constructor procedures <code>numer</code>, <code>denom</code>, and <code>make-rat</code>.
-But we haven’t yet defined these.  What we need is some way to glue together a
-numerator and a denominator to form a rational number.
-</p>
-<a id="Pairs"></a>
-<h5 class="subsubheading">Pairs</h5>
-
-<p>To enable us to implement the concrete level of our data abstraction, our
-language provides a compound structure called a <a id="index-pair"></a>
-<em>pair</em>, which can be
-constructed with the primitive procedure <code>cons</code>.  This procedure takes two
-arguments and returns a compound data object that contains the two arguments as
-parts.  Given a pair, we can extract the parts using the primitive procedures
-<code>car</code> and <code>cdr</code>.<a class="footnote_link" id="DOCF68" href="#FOOT68"><sup>68</sup></a> Thus, we can use <code>cons</code>, <code>car</code>, and
-<code>cdr</code> as follows:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
-</span><i><span class="lit">1</span></i><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
-</span><i><span class="lit">2</span></i>
-</pre></div>
-
-<p>Notice that a pair is a data object that can be given a name and manipulated,
-just like a primitive data object.  Moreover, <code>cons</code> can be used to form
-pairs whose elements are pairs, and so on:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> y </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">3</span><span class="pln"> </span><span class="lit">4</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> z </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
-</span><i><span class="lit">1</span></i><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">))</span><span class="pln">
-</span><i><span class="lit">3</span></i>
-</pre></div>
-
-<p>In <a href="2_002e2.html#g_t2_002e2">2.2</a> we will see how this ability to combine pairs means that
-pairs can be used as general-purpose building blocks to create all sorts of
-complex data structures.  The single compound-data primitive <a id="index-pair-1"></a>
-<em>pair</em>,
-implemented by the procedures <code>cons</code>, <code>car</code>, and <code>cdr</code>, is the
-only glue we need.  Data objects constructed from pairs are called
-<a id="index-list_002dstructured"></a>
-<em>list-structured</em> data.
-</p>
-<a id="Representing-rational-numbers"></a>
-<h5 class="subsubheading">Representing rational numbers</h5>
-
-<p>Pairs offer a natural way to complete the rational-number system.  Simply
-represent a rational number as a pair of two integers: a numerator and a
-denominator.  Then <code>make-rat</code>, <code>numer</code>, and <code>denom</code> are readily
-implemented as follows:<a class="footnote_link" id="DOCF69" href="#FOOT69"><sup>69</sup></a>
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> n d</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))</span></pre></div>
-
-<p>Also, in order to display the results of our computations, we can print
-rational numbers by printing the numerator, a slash, and the
-denominator:<a class="footnote_link" id="DOCF70" href="#FOOT70"><sup>70</sup></a>
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">print-rat x</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">))</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">display </span><span class="str">"/"</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)))</span></pre></div>
-
-<p>Now we can try our rational-number procedures:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> one-half </span><span class="opn">(</span><span class="pln">make-rat </span><span class="lit">1</span><span class="pln"> </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="pln">print-rat one-half</span><span class="clo">)</span><span class="pln">
-</span><i><span class="lit">1/2</span></i><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> one-third </span><span class="opn">(</span><span class="pln">make-rat </span><span class="lit">1</span><span class="pln"> </span><span class="lit">3</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="pln">print-rat
- </span><span class="opn">(</span><span class="pln">add-rat one-half one-third</span><span class="clo">))</span><span class="pln">
-</span><i><span class="lit">5/6</span></i><span class="pln">
-
-</span><span class="opn">(</span><span class="pln">print-rat
- </span><span class="opn">(</span><span class="pln">mul-rat one-half one-third</span><span class="clo">))</span><span class="pln">
-</span><i><span class="lit">1/6</span></i><span class="pln">
-
-</span><span class="opn">(</span><span class="pln">print-rat
- </span><span class="opn">(</span><span class="pln">add-rat one-third one-third</span><span class="clo">))</span><span class="pln">
-</span><i><span class="lit">6/9</span></i>
-</pre></div>
-
-<p>As the final example shows, our rational-number implementation does not reduce
-rational numbers to lowest terms.  We can remedy this by changing
-<code>make-rat</code>. If we have a <code>gcd</code> procedure like the one in 
-<a href="1_002e2.html#g_t1_002e2_002e5">1.2.5</a> that produces the greatest common divisor of two integers, we can
-use <code>gcd</code> to reduce the numerator and the denominator to lowest terms
-before constructing the pair:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd n d</span><span class="clo">)))</span><span class="pln">
-    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> n g</span><span class="clo">)</span><span class="pln"> 
-          </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> d g</span><span class="clo">))))</span></pre></div>
-
-<p>Now we have
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">print-rat 
- </span><span class="opn">(</span><span class="pln">add-rat one-third one-third</span><span class="clo">))</span><span class="pln">
-</span><i><span class="lit">2/3</span></i>
-</pre></div>
-
-<p>as desired.  This modification was accomplished by changing the constructor
-<code>make-rat</code> without changing any of the procedures (such as <code>add-rat</code>
-and <code>mul-rat</code>) that implement the actual operations.
-</p>
-<blockquote>
-<p><strong><a id="Exercise-2_002e1"></a>Exercise 2.1:</strong> Define a better version of
-<code>make-rat</code> that handles both positive and negative arguments.
-<code>Make-rat</code> should normalize the sign so that if the rational number is
-positive, both the numerator and denominator are positive, and if the rational
-number is negative, only the numerator is negative.
-</p></blockquote>
-
-<a id="g_t2_002e1_002e2"></a>
-<a id="Abstraction-Barriers"></a>
-<h4 class="subsection"><span class="secnum">2.1.2</span><span class="sectitle">Abstraction Barriers</span></h4>
-
-<p>Before continuing with more examples of compound data and data abstraction, let
-us consider some of the issues raised by the rational-number example.  We
-defined the rational-number operations in terms of a constructor
-<code>make-rat</code> and selectors <code>numer</code> and <code>denom</code>.  In general, the
-underlying idea of data abstraction is to identify for each type of data object
-a basic set of operations in terms of which all manipulations of data objects
-of that type will be expressed, and then to use only those operations in
-manipulating the data.
-</p>
-<p>We can envision the structure of the rational-number system as shown in 
-<a href="#Figure-2_002e1">Figure 2.1</a>.  The horizontal lines represent <a id="index-abstraction-barriers-1"></a>
-<em>abstraction barriers</em> 
-that isolate different “levels” of the system.  At each level, the
-barrier separates the programs (above) that use the data abstraction from the
-programs (below) that implement the data abstraction.  Programs that use
-rational numbers manipulate them solely in terms of the procedures supplied
-“for public use” by the rational-number package: <code>add-rat</code>,
-<code>sub-rat</code>, <code>mul-rat</code>, <code>div-rat</code>, and <code>equal-rat?</code>. These,
-in turn, are implemented solely in terms of the constructor and selectors
-<code>make-rat</code>, <code>numer</code>, and <code>denom</code>, which themselves are
-implemented in terms of pairs.  The details of how pairs are implemented are
-irrelevant to the rest of the rational-number package so long as pairs can be
-manipulated by the use of <code>cons</code>, <code>car</code>, and <code>cdr</code>.  In effect,
-procedures at each level are the interfaces that define the abstraction
-barriers and connect the different levels.
-</p>
-<figure class="float">
-<a id="Figure-2_002e1"></a>
-<object style="width: 48.87ex; height: 38.08ex;" data="fig/chap2/Fig2.1d.std.svg" type="image/svg+xml">SVG</object>
-
-<figcaption class="float-caption">
-<p><strong>Figure 2.1:</strong> Data-abstraction barriers in the rational-number package.</p>
-</figcaption>
-</figure>
-
-<p>This simple idea has many advantages.  One advantage is that it makes programs
-much easier to maintain and to modify.  Any complex data structure can be
-represented in a variety of ways with the primitive data structures provided by
-a programming language.  Of course, the choice of representation influences the
-programs that operate on it; thus, if the representation were to be changed at
-some later time, all such programs might have to be modified accordingly.  This
-task could be time-consuming and expensive in the case of large programs unless
-the dependence on the representation were to be confined by design to a very
-few program modules.
-</p>
-<p>For example, an alternate way to address the problem of reducing rational
-numbers to lowest terms is to perform the reduction whenever we access the
-parts of a rational number, rather than when we construct it.  This leads to
-different constructor and selector procedures:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-rat n d</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> n d</span><span class="clo">))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">numer x</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))))</span><span class="pln">
-    </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> g</span><span class="clo">)))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">denom x</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">g </span><span class="opn">(</span><span class="pln">gcd </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">))))</span><span class="pln">
-    </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> g</span><span class="clo">)))</span></pre></div>
-
-<p>The difference between this implementation and the previous one lies in when we
-compute the <code>gcd</code>.  If in our typical use of rational numbers we access
-the numerators and denominators of the same rational numbers many times, it
-would be preferable to compute the <code>gcd</code> when the rational numbers are
-constructed.  If not, we may be better off waiting until access time to compute
-the <code>gcd</code>.  In any case, when we change from one representation to the
-other, the procedures <code>add-rat</code>, <code>sub-rat</code>, and so on do not have to
-be modified at all.
-</p>
-<p>Constraining the dependence on the representation to a few interface procedures
-helps us design programs as well as modify them, because it allows us to
-maintain the flexibility to consider alternate implementations.  To continue
-with our simple example, suppose we are designing a rational-number package and
-we can’t decide initially whether to perform the <code>gcd</code> at construction
-time or at selection time.  The data-abstraction methodology gives us a way to
-defer that decision without losing the ability to make progress on the rest of
-the system.
-</p>
-<blockquote>
-<p><strong><a id="Exercise-2_002e2"></a>Exercise 2.2:</strong> Consider the problem of
-representing line segments in a plane.  Each segment is represented as a pair
-of points: a starting point and an ending point.  Define a constructor
-<code>make-segment</code> and selectors <code>start-segment</code> and <code>end-segment</code>
-that define the representation of segments in terms of points.  Furthermore, a
-point can be represented as a pair of numbers: the <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>x</mi>
-</math> coordinate and the
-<math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>y</mi>
-</math> coordinate.  Accordingly, specify a constructor <code>make-point</code> and
-selectors <code>x-point</code> and <code>y-point</code> that define this representation.
-Finally, using your selectors and constructors, define a procedure
-<code>midpoint-segment</code> that takes a line segment as argument and returns its
-midpoint (the point whose coordinates are the average of the coordinates of the
-endpoints).  To try your procedures, you’ll need a way to print points:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">print-point p</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">display </span><span class="str">"("</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">x-point p</span><span class="clo">))</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">display </span><span class="str">","</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">display </span><span class="opn">(</span><span class="pln">y-point p</span><span class="clo">))</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">display </span><span class="str">")"</span><span class="clo">))</span></pre></div>
-</blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e3"></a>Exercise 2.3:</strong> Implement a representation for
-rectangles in a plane.  (Hint: You may want to make use of <a href="#Exercise-2_002e2">Exercise 2.2</a>.)
-In terms of your constructors and selectors, create procedures that compute the
-perimeter and the area of a given rectangle.  Now implement a different
-representation for rectangles.  Can you design your system with suitable
-abstraction barriers, so that the same perimeter and area procedures will work
-using either representation?
-</p></blockquote>
-
-<a id="g_t2_002e1_002e3"></a>
-<a id="What-Is-Meant-by-Data_003f"></a>
-<h4 class="subsection"><span class="secnum">2.1.3</span><span class="sectitle">What Is Meant by Data?</span></h4>
-
-<p>We began the rational-number implementation in <a href="#g_t2_002e1_002e1">2.1.1</a> by
-implementing the rational-number operations <code>add-rat</code>, <code>sub-rat</code>, and
-so on in terms of three unspecified procedures: <code>make-rat</code>, <code>numer</code>,
-and <code>denom</code>.  At that point, we could think of the operations as being
-defined in terms of data objects—numerators, denominators, and rational
-numbers—whose behavior was specified by the latter three procedures.
-</p>
-<p>But exactly what is meant by <a id="index-data-1"></a>
-<em>data</em>?  It is not enough to say
-“whatever is implemented by the given selectors and constructors.”  Clearly,
-not every arbitrary set of three procedures can serve as an appropriate basis
-for the rational-number implementation.  We need to guarantee that, if we
-construct a rational number <code>x</code> from a pair of integers <code>n</code> and
-<code>d</code>, then extracting the <code>numer</code> and the <code>denom</code> of <code>x</code> and
-dividing them should yield the same result as dividing <code>n</code> by <code>d</code>.
-In other words, <code>make-rat</code>, <code>numer</code>, and <code>denom</code> must satisfy
-the condition that, for any integer <code>n</code> and any non-zero integer <code>d</code>,
-if <code>x</code> is <code>(make-rat n d)</code>, then
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-  <mrow class="MJX-TeXAtom-ORD">
-    <mfrac>
-      <mtext>(numer x)</mtext>
-      <mtext>(denom x)</mtext>
-    </mfrac>
-  </mrow>
-  <mo>=</mo>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mrow class="MJX-TeXAtom-ORD">
-      <mfrac>
-        <mtext>n</mtext>
-        <mtext>d</mtext>
-      </mfrac>
-    </mrow>
-    <mo>.</mo>
-  </mrow>
-</math>
-In fact, this is the only condition <code>make-rat</code>, <code>numer</code>, and
-<code>denom</code> must fulfill in order to form a suitable basis for a
-rational-number representation.  In general, we can think of data as defined by
-some collection of selectors and constructors, together with specified
-conditions that these procedures must fulfill in order to be a valid
-representation.<a class="footnote_link" id="DOCF71" href="#FOOT71"><sup>71</sup></a>
-</p>
-<p>This point of view can serve to define not only “high-level” data objects,
-such as rational numbers, but lower-level objects as well.  Consider the notion
-of a pair, which we used in order to define our rational numbers.  We never
-actually said what a pair was, only that the language supplied procedures
-<code>cons</code>, <code>car</code>, and <code>cdr</code> for operating on pairs.  But the only
-thing we need to know about these three operations is that if we glue two
-objects together using <code>cons</code> we can retrieve the objects using <code>car</code>
-and <code>cdr</code>.  That is, the operations satisfy the condition that, for any
-objects <code>x</code> and <code>y</code>, if <code>z</code> is <code>(cons x y)</code> then <code>(car
-z)</code> is <code>x</code> and <code>(cdr z)</code> is <code>y</code>.  Indeed, we mentioned that
-these three procedures are included as primitives in our language.  However,
-any triple of procedures that satisfies the above condition can be used as the
-basis for implementing pairs.  This point is illustrated strikingly by the fact
-that we could implement <code>cons</code>, <code>car</code>, and <code>cdr</code> without using
-any data structures at all but only using procedures.  Here are the
-definitions:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">dispatch m</span><span class="clo">)</span><span class="pln">
-    </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> m </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
-          </span><span class="opn">((</span><span class="pun">=</span><span class="pln"> m </span><span class="lit">1</span><span class="clo">)</span><span class="pln"> y</span><span class="clo">)</span><span class="pln">
-          </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
-           </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Argument not 0 or 1:
-                   CONS"</span><span class="pln"> m</span><span class="clo">))))</span><span class="pln">
-  dispatch</span><span class="clo">)</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z </span><span class="lit">1</span><span class="clo">))</span></pre></div>
-
-<p>This use of procedures corresponds to nothing like our intuitive notion of what
-data should be.  Nevertheless, all we need to do to show that this is a valid
-way to represent pairs is to verify that these procedures satisfy the condition
-given above.
-</p>
-<p>The subtle point to notice is that the value returned by <code>(cons x y)</code> is a
-procedure—namely the internally defined procedure <code>dispatch</code>, which
-takes one argument and returns either <code>x</code> or <code>y</code> depending on whether
-the argument is 0 or 1.  Correspondingly, <code>(car z)</code> is defined to apply
-<code>z</code> to 0.  Hence, if <code>z</code> is the procedure formed by <code>(cons x
-y)</code>, then <code>z</code> applied to 0 will yield <code>x</code>. Thus, we have shown that
-<code>(car (cons x y))</code> yields <code>x</code>, as desired.  Similarly, <code>(cdr
-(cons x y))</code> applies the procedure returned by <code>(cons x y)</code> to 1, which
-returns <code>y</code>.  Therefore, this procedural implementation of pairs is a
-valid implementation, and if we access pairs using only <code>cons</code>,
-<code>car</code>, and <code>cdr</code> we cannot distinguish this implementation from one
-that uses “real” data structures.
-</p>
-<p>The point of exhibiting the procedural representation of pairs is not that our
-language works this way (Scheme, and Lisp systems in general, implement pairs
-directly, for efficiency reasons) but that it could work this way.  The
-procedural representation, although obscure, is a perfectly adequate way to
-represent pairs, since it fulfills the only conditions that pairs need to
-fulfill.  This example also demonstrates that the ability to manipulate
-procedures as objects automatically provides the ability to represent compound
-data.  This may seem a curiosity now, but procedural representations of data
-will play a central role in our programming repertoire.  This style of
-programming is often called <a id="index-message-passing"></a>
-<em>message passing</em>, and we will be using it
-as a basic tool in <a href="Chapter-3.html#Chapter-3">Chapter 3</a> when we address the issues of modeling and
-simulation.
-</p>
-<blockquote>
-<p><strong><a id="Exercise-2_002e4"></a>Exercise 2.4:</strong> Here is an alternative procedural
-representation of pairs.  For this representation, verify that <code>(car (cons
-x y))</code> yields <code>x</code> for any objects <code>x</code> and <code>y</code>.
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> 
-  </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">m</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">m x y</span><span class="clo">)))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> 
-  </span><span class="opn">(</span><span class="pln">z </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p q</span><span class="clo">)</span><span class="pln"> p</span><span class="clo">)))</span></pre></div>
-
-<p>What is the corresponding definition of <code>cdr</code>? (Hint: To verify that this
-works, make use of the substitution model of <a href="1_002e1.html#g_t1_002e1_002e5">1.1.5</a>.)
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e5"></a>Exercise 2.5:</strong> Show that we can represent pairs of
-nonnegative integers using only numbers and arithmetic operations if we
-represent the pair <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>a</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>b</mi>
-</math> as the integer that is the product <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow class="MJX-TeXAtom-ORD">
-    <msup>
-      <mn>2</mn>
-      <mi>a</mi>
-    </msup>
-    <msup>
-      <mn>3</mn>
-      <mi>b</mi>
-    </msup>
-  </mrow>
-</math>.
-Give the corresponding definitions of the procedures <code>cons</code>,
-<code>car</code>, and <code>cdr</code>.
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e6"></a>Exercise 2.6:</strong> In case representing pairs as
-procedures wasn’t mind-boggling enough, consider that, in a language that can
-manipulate procedures, we can get by without numbers (at least insofar as
-nonnegative integers are concerned) by implementing 0 and the operation of
-adding 1 as
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> zero </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-1 n</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f </span><span class="opn">((</span><span class="pln">n f</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)))))</span></pre></div>
-
-<p>This representation is known as <a id="index-Church-numerals"></a>
-<em>Church numerals</em>, after its inventor,
-Alonzo Church, the logician who invented the λ-calculus.
-</p>
-<p>Define <code>one</code> and <code>two</code> directly (not in terms of <code>zero</code> and
-<code>add-1</code>).  (Hint: Use substitution to evaluate <code>(add-1 zero)</code>).  Give
-a direct definition of the addition procedure <code>+</code> (not in terms of
-repeated application of <code>add-1</code>).
-</p></blockquote>
-
-<a id="g_t2_002e1_002e4"></a>
-<a id="Extended-Exercise_003a-Interval-Arithmetic"></a>
-<h4 class="subsection"><span class="secnum">2.1.4</span><span class="sectitle">Extended Exercise: Interval Arithmetic</span></h4>
-
-<p>Alyssa P. Hacker is designing a system to help people solve engineering
-problems.  One feature she wants to provide in her system is the ability to
-manipulate inexact quantities (such as measured parameters of physical devices)
-with known precision, so that when computations are done with such approximate
-quantities the results will be numbers of known precision.
-</p>
-<p>Electrical engineers will be using Alyssa’s system to compute electrical
-quantities.  It is sometimes necessary for them to compute the value of a
-parallel equivalent resistance <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msub>
-    <mi>R</mi>
-    <mi>p</mi>
-  </msub>
-</math> of two resistors <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msub>
-    <mi>R</mi>
-    <mn>1</mn>
-  </msub>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <msub>
-    <mi>R</mi>
-    <mn>2</mn>
-  </msub>
-</math>
-using the formula
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-  <msub>
-    <mi>R</mi>
-    <mi>p</mi>
-  </msub>
-  <mspace width="thinmathspace"/>
-  <mo>=</mo>
-  <mspace width="thinmathspace"/>
-  <mrow class="MJX-TeXAtom-ORD">
-    <mrow class="MJX-TeXAtom-ORD">
-      <mfrac>
-        <mn>1</mn>
-        <mrow>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo>/</mo>
-          </mrow>
-          <msub>
-            <mi>R</mi>
-            <mn>1</mn>
-          </msub>
-          <mo>+</mo>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo>/</mo>
-          </mrow>
-          <msub>
-            <mi>R</mi>
-            <mn>2</mn>
-          </msub>
-        </mrow>
-      </mfrac>
-    </mrow>
-    <mo>.</mo>
-  </mrow>
-</math>
-Resistance values are usually known only up to some tolerance guaranteed by the
-manufacturer of the resistor.  For example, if you buy a resistor labeled “6.8
-ohms with 10% tolerance” you can only be sure that the resistor has a
-resistance between 6.8 <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mo>−<!-- − --></mo>
-</math> 0.68 = 6.12 and 6.8 + 0.68 = 7.48 ohms.  Thus, if you
-have a 6.8-ohm 10% resistor in parallel with a 4.7-ohm 5% resistor, the
-resistance of the combination can range from about 2.58 ohms (if the two
-resistors are at the lower bounds) to about 2.97 ohms (if the two resistors are
-at the upper bounds).
-</p>
-<p>Alyssa’s idea is to implement “interval arithmetic” as a set of arithmetic
-operations for combining “intervals” (objects that represent the range of
-possible values of an inexact quantity).  The result of adding, subtracting,
-multiplying, or dividing two intervals is itself an interval, representing the
-range of the result.
-</p>
-<p>Alyssa postulates the existence of an abstract object called an “interval”
-that has two endpoints: a lower bound and an upper bound.  She also presumes
-that, given the endpoints of an interval, she can construct the interval using
-the data constructor <code>make-interval</code>.  Alyssa first writes a procedure for
-adding two intervals.  She reasons that the minimum value the sum could be is
-the sum of the two lower bounds and the maximum value it could be is the sum of
-the two upper bounds:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-interval x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">make-interval </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">lower-bound x</span><span class="clo">)</span><span class="pln"> 
-                    </span><span class="opn">(</span><span class="pln">lower-bound y</span><span class="clo">))</span><span class="pln">
-                 </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">upper-bound x</span><span class="clo">)</span><span class="pln"> 
-                    </span><span class="opn">(</span><span class="pln">upper-bound y</span><span class="clo">))))</span></pre></div>
-
-<p>Alyssa also works out the product of two intervals by finding the minimum and
-the maximum of the products of the bounds and using them as the bounds of the
-resulting interval.  (<code>Min</code> and <code>max</code> are primitives that find the
-minimum or maximum of any number of arguments.)
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">mul-interval x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">p1 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">lower-bound x</span><span class="clo">)</span><span class="pln"> 
-               </span><span class="opn">(</span><span class="pln">lower-bound y</span><span class="clo">)))</span><span class="pln">
-        </span><span class="opn">(</span><span class="pln">p2 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">lower-bound x</span><span class="clo">)</span><span class="pln"> 
-               </span><span class="opn">(</span><span class="pln">upper-bound y</span><span class="clo">)))</span><span class="pln">
-        </span><span class="opn">(</span><span class="pln">p3 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">upper-bound x</span><span class="clo">)</span><span class="pln"> 
-               </span><span class="opn">(</span><span class="pln">lower-bound y</span><span class="clo">)))</span><span class="pln">
-        </span><span class="opn">(</span><span class="pln">p4 </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> </span><span class="opn">(</span><span class="pln">upper-bound x</span><span class="clo">)</span><span class="pln"> 
-               </span><span class="opn">(</span><span class="pln">upper-bound y</span><span class="clo">))))</span><span class="pln">
-    </span><span class="opn">(</span><span class="pln">make-interval </span><span class="opn">(</span><span class="pln">min p1 p2 p3 p4</span><span class="clo">)</span><span class="pln">
-                   </span><span class="opn">(</span><span class="pln">max p1 p2 p3 p4</span><span class="clo">))))</span></pre></div>
-
-<p>To divide two intervals, Alyssa multiplies the first by the reciprocal of the
-second.  Note that the bounds of the reciprocal interval are the reciprocal of
-the upper bound and the reciprocal of the lower bound, in that order.
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">div-interval x y</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">mul-interval x 
-                </span><span class="opn">(</span><span class="pln">make-interval 
-                 </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pln">upper-bound y</span><span class="clo">))</span><span class="pln"> 
-                 </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1.0</span><span class="pln"> </span><span class="opn">(</span><span class="pln">lower-bound y</span><span class="clo">)))))</span></pre></div>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e7"></a>Exercise 2.7:</strong> Alyssa’s program is incomplete
-because she has not specified the implementation of the interval abstraction.
-Here is a definition of the interval constructor:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-interval a b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> a b</span><span class="clo">))</span></pre></div>
-
-<p>Define selectors <code>upper-bound</code> and <code>lower-bound</code> to complete the
-implementation.
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e8"></a>Exercise 2.8:</strong> Using reasoning analogous to
-Alyssa’s, describe how the difference of two intervals may be computed.  Define
-a corresponding subtraction procedure, called <code>sub-interval</code>.
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e9"></a>Exercise 2.9:</strong> The <a id="index-width"></a>
-<em>width</em> of an interval
-is half of the difference between its upper and lower bounds.  The width is a
-measure of the uncertainty of the number specified by the interval.  For some
-arithmetic operations the width of the result of combining two intervals is a
-function only of the widths of the argument intervals, whereas for others the
-width of the combination is not a function of the widths of the argument
-intervals.  Show that the width of the sum (or difference) of two intervals is
-a function only of the widths of the intervals being added (or subtracted).
-Give examples to show that this is not true for multiplication or division.
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e10"></a>Exercise 2.10:</strong> Ben Bitdiddle, an expert systems
-programmer, looks over Alyssa’s shoulder and comments that it is not clear what
-it means to divide by an interval that spans zero.  Modify Alyssa’s code to
-check for this condition and to signal an error if it occurs.
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e11"></a>Exercise 2.11:</strong> In passing, Ben also cryptically
-comments: “By testing the signs of the endpoints of the intervals, it is
-possible to break <code>mul-interval</code> into nine cases, only one of which
-requires more than two multiplications.”  Rewrite this procedure using Ben’s
-suggestion.
-</p>
-<p>After debugging her program, Alyssa shows it to a potential user, who complains
-that her program solves the wrong problem.  He wants a program that can deal
-with numbers represented as a center value and an additive tolerance; for
-example, he wants to work with intervals such as 3.5 <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mo>±<!-- ± --></mo>
-</math> 0.15 rather than
-[3.35, 3.65].  Alyssa returns to her desk and fixes this problem by supplying
-an alternate constructor and alternate selectors:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-center-width c w</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">make-interval </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> c w</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> c w</span><span class="clo">)))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">center i</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">lower-bound i</span><span class="clo">)</span><span class="pln"> 
-        </span><span class="opn">(</span><span class="pln">upper-bound i</span><span class="clo">))</span><span class="pln"> 
-     </span><span class="lit">2</span><span class="clo">))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">width i</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> </span><span class="opn">(</span><span class="pln">upper-bound i</span><span class="clo">)</span><span class="pln"> 
-        </span><span class="opn">(</span><span class="pln">lower-bound i</span><span class="clo">))</span><span class="pln"> 
-     </span><span class="lit">2</span><span class="clo">))</span></pre></div>
-
-<p>Unfortunately, most of Alyssa’s users are engineers.  Real engineering
-situations usually involve measurements with only a small uncertainty, measured
-as the ratio of the width of the interval to the midpoint of the interval.
-Engineers usually specify percentage tolerances on the parameters of devices,
-as in the resistor specifications given earlier.
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e12"></a>Exercise 2.12:</strong> Define a constructor
-<code>make-center-percent</code> that takes a center and a percentage tolerance and
-produces the desired interval.  You must also define a selector <code>percent</code>
-that produces the percentage tolerance for a given interval.  The <code>center</code>
-selector is the same as the one shown above.
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-2_002e13"></a>Exercise 2.13:</strong> Show that under the assumption of
-small percentage tolerances there is a simple formula for the approximate
-percentage tolerance of the product of two intervals in terms of the tolerances
-of the factors.  You may simplify the problem by assuming that all numbers are
-positive.
-</p>
-<p>After considerable work, Alyssa P. Hacker delivers her finished system.
-Several years later, after she has forgotten all about it, she gets a frenzied
-call from an irate user, Lem E. Tweakit.  It seems that Lem has noticed that
-the formula for parallel resistors can be written in two algebraically
-equivalent ways:
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-  <mrow class="MJX-TeXAtom-ORD">
-    <mfrac>
-      <mrow>
-        <msub>
-          <mi>R</mi>
-          <mn>1</mn>
-        </msub>
-        <msub>
-          <mi>R</mi>
-          <mn>2</mn>
-        </msub>
-      </mrow>
-      <mrow>
-        <msub>
-          <mi>R</mi>
-          <mn>1</mn>
-        </msub>
-        <mo>+</mo>
-        <msub>
-          <mi>R</mi>
-          <mn>2</mn>
-        </msub>
-      </mrow>
-    </mfrac>
-  </mrow>
-</math>
-and
-<math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-  <mrow class="MJX-TeXAtom-ORD">
-    <mrow class="MJX-TeXAtom-ORD">
-      <mfrac>
-        <mn>1</mn>
-        <mrow>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo>/</mo>
-          </mrow>
-          <msub>
-            <mi>R</mi>
-            <mn>1</mn>
-          </msub>
-          <mo>+</mo>
-          <mn>1</mn>
-          <mrow class="MJX-TeXAtom-ORD">
-            <mo>/</mo>
-          </mrow>
-          <msub>
-            <mi>R</mi>
-            <mn>2</mn>
-          </msub>
-        </mrow>
-      </mfrac>
-    </mrow>
-    <mo>.</mo>
-  </mrow>
-</math>
-He has written the following two programs, each of which computes the
-parallel-resistors formula differently:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">par1 r1 r2</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">div-interval 
-   </span><span class="opn">(</span><span class="pln">mul-interval r1 r2</span><span class="clo">)</span><span class="pln">
-   </span><span class="opn">(</span><span class="pln">add-interval r1 r2</span><span class="clo">)))</span><span class="pln">
-
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">par2 r1 r2</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">one </span><span class="opn">(</span><span class="pln">make-interval </span><span class="lit">1</span><span class="pln"> </span><span class="lit">1</span><span class="clo">)))</span><span class="pln">
-    </span><span class="opn">(</span><span class="pln">div-interval 
+(define (par2 r1 r2)
+  (let ((one (make-interval 1 1)))
+    (div-interval 
      one
-     </span><span class="opn">(</span><span class="pln">add-interval 
-      </span><span class="opn">(</span><span class="pln">div-interval one r1</span><span class="clo">)</span><span class="pln"> 
-      </span><span class="opn">(</span><span class="pln">div-interval one r2</span><span class="clo">)))))</span></pre></div>
+     (add-interval 
+      (div-interval one r1) 
+      (div-interval one r2)))))</code></pre>
 
-<p>Lem complains that Alyssa’s program gives different answers for the two ways of
-computing. This is a serious complaint.
-</p></blockquote>
+        <p>
+          Lem reclama que o programa de Alyssa dá respostas diferentes para as
+          duas maneiras de calcular. Essa é uma reclamação séria.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-2_002e14"></a>Exercise 2.14:</strong> Demonstrate that Lem is right.
-Investigate the behavior of the system on a variety of arithmetic
-expressions. Make some intervals <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>A</mi>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>B</mi>
-</math>, and use them in computing the
-expressions <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow class="MJX-TeXAtom-ORD">
-    <mi>A</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo>/</mo>
-    </mrow>
-    <mi>A</mi>
-  </mrow>
-</math> and <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mrow class="MJX-TeXAtom-ORD">
-    <mi>A</mi>
-    <mrow class="MJX-TeXAtom-ORD">
-      <mo>/</mo>
-    </mrow>
-    <mi>B</mi>
-  </mrow>
-</math>.  You will get the most insight by
-using intervals whose width is a small percentage of the center value. Examine
-the results of the computation in center-percent form (see <a href="#Exercise-2_002e12">Exercise 2.12</a>).
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e14"></a>Exercício 2.14:</strong>
+          Demonstre que Lem está certo. Investigue o comportamento do sistema em
+          uma variedade de expressões aritméticas. Crie alguns intervalos
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi></math> e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>B</mi></math
+          >, e use-os para calcular as expressões
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>A</mi><mrow class="MJX-TeXAtom-ORD"><mo>/</mo></mrow
+              ><mi>A</mi></mrow
+            ></math
+          >
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>A</mi><mrow class="MJX-TeXAtom-ORD"><mo>/</mo></mrow
+              ><mi>B</mi></mrow
+            ></math
+          >. Você obterá mais insights usando intervalos cuja largura é uma
+          pequena porcentagem do valor central. Examine os resultados da
+          computação na forma de centro e porcentagem (veja
+          <a href="#Exercise-2_002e12">Exercício 2.12</a>).
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-2_002e15"></a>Exercise 2.15:</strong> Eva Lu Ator, another user, has
-also noticed the different intervals computed by different but algebraically
-equivalent expressions. She says that a formula to compute with intervals using
-Alyssa’s system will produce tighter error bounds if it can be written in such
-a form that no variable that represents an uncertain number is repeated.  Thus,
-she says, <code>par2</code> is a “better” program for parallel resistances than
-<code>par1</code>.  Is she right?  Why?
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e15"></a>Exercício 2.15:</strong> Eva Lu
+          Ator, outra usuária, também notou os diferentes intervalos computados
+          por expressões algebricamente equivalentes. Ela diz que uma fórmula
+          para computar com intervalos usando o sistema de Alyssa produzirá
+          limites de erro mais apertados se puder ser escrita de forma que
+          nenhuma variável que represente um número incerto seja repetida.
+          Assim, ela diz, <code>par2</code> é um programa "melhor" para
+          resistências em paralelo do que <code>par1</code>. Ela está certa? Por
+          quê?
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-2_002e16"></a>Exercise 2.16:</strong> Explain, in general, why
-equivalent algebraic expressions may lead to different answers.  Can you devise
-an interval-arithmetic package that does not have this shortcoming, or is this
-task impossible?  (Warning: This problem is very difficult.)
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e16"></a>Exercício 2.16:</strong>
+          Explique, em geral, por que expressões algébricas equivalentes podem
+          levar a respostas diferentes. Você pode criar um pacote de aritmética
+          de intervalos que não tenha essa deficiência, ou essa tarefa é
+          impossível? (Aviso: Este problema é muito difícil.)
+        </p>
+      </blockquote>
 
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de Rodapé</h4>
 
-<div class="footnote">
-<h4 class="footnotes-heading">Footnotes</h4>
+        <div id="FOOT68">
+          <p>
+            <a class="footnote_backlink" href="#DOCF68"><sup>68</sup></a> O nome
+            <code>cons</code> significa "construir". Os nomes <code>car</code> e
+            <code>cdr</code> derivam da implementação original do Lisp no IBM
+            704. Essa máquina tinha um esquema de endereçamento que permitia
+            referenciar as partes "endereço" e "decremento" de uma localização
+            de memória. <code>Car</code> significa "Conteúdo da parte de
+            Endereço do Registro" e <code>cdr</code> (pronunciado "cú-der")
+            significa "Conteúdo da parte de Decremento do Registro".
+          </p>
+        </div>
+        <div id="FOOT69">
+          <p>
+            <a class="footnote_backlink" href="#DOCF69"><sup>69</sup></a>
+            Outra maneira de definir os seletores e o construtor é
+          </p>
+          <pre><code class="language-scheme">(define make-rat cons)
+(define numer car)
+(define denom cdr)</code></pre>
 
-<div id="FOOT68"><p><a class="footnote_backlink" href="#DOCF68"><sup>68</sup></a>
-The name <code>cons</code> stands for
-“construct.”  The names <code>car</code> and <code>cdr</code> derive from the original
-implementation of Lisp on the IBM 704.  That machine had an addressing scheme
-that allowed one to reference the “address” and “decrement” parts of a
-memory location.  <code>Car</code> stands for “Contents of Address part of
-Register” and <code>cdr</code> (pronounced “could-er”) stands for “Contents of
-Decrement part of Register.”</p>
-</div>
-<div id="FOOT69"><p><a class="footnote_backlink" href="#DOCF69"><sup>69</sup></a>
-Another way to define the selectors and
-constructor is
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> make-rat </span><span class="kwd">cons</span><span class="clo">)</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> numer </span><span class="kwd">car</span><span class="clo">)</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> denom </span><span class="kwd">cdr</span><span class="clo">)</span></pre></div>
-
-<p>The first definition associates the name <code>make-rat</code> with the value of the
-expression <code>cons</code>, which is the primitive procedure that constructs pairs.
-Thus <code>make-rat</code> and <code>cons</code> are names for the same primitive
-constructor.
-</p>
-<p>Defining selectors and constructors in this way is efficient: Instead of
-<code>make-rat</code> <em>calling</em> <code>cons</code>, <code>make-rat</code> <em>is</em>
-<code>cons</code>, so there is only one procedure called, not two, when
-<code>make-rat</code> is called.  On the other hand, doing this defeats debugging
-aids that trace procedure calls or put breakpoints on procedure calls: You may
-want to watch <code>make-rat</code> being called, but you certainly don’t want to
-watch every call to <code>cons</code>.
-</p>
-<p>We have chosen not to use this style of definition in this book.</p>
-</div>
-<div id="FOOT70"><p><a class="footnote_backlink" href="#DOCF70"><sup>70</sup></a>
-<code>Display</code> is the Scheme primitive for printing data.
-The Scheme primitive <code>newline</code> starts a new line for printing.  Neither of
-these procedures returns a useful value, so in the uses of <code>print-rat</code>
-below, we show only what <code>print-rat</code> prints, not what the interpreter
-prints as the value returned by <code>print-rat</code>.</p>
-</div>
-<div id="FOOT71"><p><a class="footnote_backlink" href="#DOCF71"><sup>71</sup></a>
-Surprisingly, this idea is very difficult to formulate
-rigorously. There are two approaches to giving such a formulation.  One,
-pioneered by C. A. R. <a href="References.html#Hoare-_00281972_0029">Hoare (1972)</a>, is known as the method of <a id="index-abstract-models"></a>
-<em>abstract models</em>.  
-It formalizes the “procedures plus conditions” specification as
-outlined in the rational-number example above.  Note that the condition on the
-rational-number representation was stated in terms of facts about integers
-(equality and division).  In general, abstract models define new kinds of data
-objects in terms of previously defined types of data objects.  Assertions about
-data objects can therefore be checked by reducing them to assertions about
-previously defined data objects.  Another approach, introduced by Zilles at
-<abbr>MIT</abbr>, by Goguen, Thatcher, Wagner, and Wright at IBM 
-(see <a href="References.html#Thatcher-et-al_002e-1978">Thatcher et al. 1978</a>), 
-and by Guttag at Toronto (see <a href="References.html#Guttag-1977">Guttag 1977</a>), is called
-<a id="index-algebraic-specification"></a>
-<em>algebraic specification</em>.  It regards the “procedures” as elements
-of an abstract algebraic system whose behavior is specified by axioms that
-correspond to our “conditions,” and uses the techniques of abstract algebra
-to check assertions about data objects.  Both methods are surveyed in the paper
-by <a href="References.html#Liskov-and-Zilles-_00281975_0029">Liskov and Zilles (1975)</a>.</p>
-</div>
-</div>
-<nav class="header">
-<p>
-Next: <a href="2_002e2.html#g_t2_002e2" accesskey="n" rel="next">2.2</a>, Prev: <a href="Chapter-2.html#Chapter-2" accesskey="p" rel="prev">Chapter 2</a>, Up: <a href="#g_t2_002e1" accesskey="u" rel="prev">2.1</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
-</nav>
-
-
-</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
-</body>
+          <p>
+            A primeira definição associa o nome <code>make-rat</code> ao valor
+            da expressão <code>cons</code>, que é o procedimento primitivo que
+            constrói pares. Assim, <code>make-rat</code> e <code>cons</code> são
+            nomes para o mesmo construtor primitivo.
+          </p>
+          <p>
+            Definir seletores e construtores dessa maneira é eficiente: Em vez
+            de <code>make-rat</code> <em>chamar</em> <code>cons</code>,
+            <code>make-rat</code> <em>é</em> <code>cons</code>, então há apenas
+            um procedimento chamado, não dois, quando <code>make-rat</code> é
+            chamado. Por outro lado, fazer isso derrota ferramentas de depuração
+            que rastreiam chamadas de procedimentos ou colocam pontos de
+            interrupção em chamadas de procedimentos: Você pode querer observar
+            <code>make-rat</code> sendo chamado, mas certamente não quer
+            observar todas as chamadas para <code>cons</code>.
+          </p>
+          <p>Escolhemos não usar esse estilo de definição neste livro.</p>
+        </div>
+        <div id="FOOT70">
+          <p>
+            <a class="footnote_backlink" href="#DOCF70"><sup>70</sup></a>
+            <code>Display</code> é o primitivo do Scheme para imprimir dados. O
+            primitivo do Scheme <code>newline</code> inicia uma nova linha para
+            impressão. Nenhum desses procedimentos retorna um valor útil, então
+            nos usos de <code>print-rat</code> abaixo, mostramos apenas o que
+            <code>print-rat</code> imprime, não o que o interpretador imprime
+            como o valor retornado por <code>print-rat</code>.
+          </p>
+        </div>
+        <div id="FOOT71">
+          <p>
+            <a class="footnote_backlink" href="#DOCF71"><sup>71</sup></a>
+            Surpreendentemente, essa ideia é muito difícil de formular
+            rigorosamente. Existem duas abordagens para dar tal formulação. Uma,
+            pioneira de C. A. R.
+            <a href="References.html#Hoare-_00281972_0029">Hoare (1972)</a>, é
+            conhecida como o método de <a id="index-abstract-models"></a>
+            <em>modelos abstratos</em>. Ele formaliza a especificação de
+            "procedimentos mais condições" como esboçado no exemplo de números
+            racionais acima. Observe que a condição sobre a representação de
+            números racionais foi declarada em termos de fatos sobre inteiros
+            (igualdade e divisão). Em geral, modelos abstratos definem novos
+            tipos de objetos de dados em termos de tipos de objetos de dados
+            previamente definidos. Afirmações sobre objetos de dados podem,
+            portanto, ser verificadas reduzindo-as a afirmações sobre objetos de
+            dados previamente definidos. Outra abordagem, introduzida por Zilles
+            no <abbr>MIT</abbr>, por Goguen, Thatcher, Wagner e Wright na IBM
+            (veja
+            <a href="References.html#Thatcher-et-al_002e-1978"
+              >Thatcher et al. 1978</a
+            >), e por Guttag em Toronto (veja
+            <a href="References.html#Guttag-1977">Guttag 1977</a>), é chamada
+            de <a id="index-algebraic-specification"></a>
+            <em>especificação algébrica</em>. Ela considera os "procedimentos"
+            como elementos de um sistema algébrico abstrato cujo comportamento é
+            especificado por axiomas que correspondem às nossas "condições", e
+            usa as técnicas de álgebra abstrata para verificar afirmações sobre
+            objetos de dados. Ambos os métodos são examinados no artigo de
+            <a href="References.html#Liskov-and-Zilles-_00281975_0029"
+              >Liskov e Zilles (1975)</a
+            >.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="2_002e2.html#g_t2_002e2" accesskey="n" rel="next">2.2</a>,
+          Anterior:
+          <a href="Chapter-2.html#Chapter-2" accesskey="p" rel="prev"
+            >Capítulo 2</a
+          >, Acima: <a href="#g_t2_002e1" accesskey="u" rel="prev">2.1</a> [<a
+            href="index.html#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Ir para o final"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    >
+    <a id="pagebottom"></a>
+  </body>
 </html>
