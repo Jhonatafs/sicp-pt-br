@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t3_002e1"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e2.html#g_t3_002e2" accesskey="n" rel="next">3.2</a>,
+          Anterior:
+          <a href="Chapter-3.html#Chapter-3" accesskey="p" rel="prev"
+            >Capítulo 3</a
+          >, Acima:
+          <a href="Chapter-3.html#Chapter-3" accesskey="u" rel="prev"
+            >Capítulo 3</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+      <a id="Assignment-and-Local-State"></a>
+      <h3 class="section">
+        <span class="secnum">3.1</span
+        ><span class="sectitle">Atribuição e Estado Local</span>
+      </h3>
+
+      <p>
+        Normalmente vemos o mundo como povoado por objetos independentes, cada
+        um dos quais tem um estado que muda ao longo do tempo. Diz-se que um
+        objeto "tem estado" se seu comportamento é influenciado por sua
+        história. Uma conta bancária, por exemplo, tem estado, pois a resposta à
+        pergunta "Posso sacar $100?" depende do histórico de transações de
+        depósito e saque. Podemos caracterizar o estado de um objeto por uma ou
+        mais <a id="index-state-variables-1"></a> <em>variáveis de estado</em>,
+        que mantêm informações suficientes sobre o histórico para determinar o
+        comportamento atual do objeto. Em um sistema bancário simples,
+        poderíamos caracterizar o estado de uma conta pelo saldo atual, em vez
+        de lembrar todo o histórico de transações da conta.
+      </p>
+      <p>
+        Em um sistema composto por muitos objetos, os objetos raramente são
+        completamente independentes. Cada um pode influenciar os estados dos
+        outros por meio de interações, que servem para acoplar as variáveis de
+        estado de um objeto às de outros objetos. De fato, a visão de que um
+        sistema é composto por objetos separados é mais útil quando as variáveis
+        de estado do sistema podem ser agrupadas em subsistemas fortemente
+        acoplados que são apenas fracamente acoplados a outros subsistemas.
+      </p>
+      <p>
+        Essa visão de um sistema pode ser uma estrutura poderosa para organizar
+        modelos computacionais do sistema. Para que tal modelo seja modular, ele
+        deve ser decomposto em objetos computacionais que modelam os objetos
+        reais do sistema. Cada objeto computacional deve ter suas próprias
+        <a id="index-local-state-variables"></a>
+        <em>variáveis de estado locais</em> que descrevem o estado do objeto
+        real. Como os estados dos objetos no sistema que está sendo modelado
+        mudam ao longo do tempo, as variáveis de estado dos objetos
+        computacionais correspondentes também devem mudar. Se escolhermos
+        modelar o fluxo do tempo no sistema pelo tempo decorrido no computador,
+        então devemos ter uma maneira de construir objetos computacionais cujos
+        comportamentos mudam à medida que nossos programas são executados. Em
+        particular, se quisermos modelar variáveis de estado por nomes
+        simbólicos comuns na linguagem de programação, então a linguagem deve
+        fornecer um <a id="index-assignment-operator"></a>
+        <em>operador de atribuição</em> para nos permitir alterar o valor
+        associado a um nome.
+      </p>
+
+      <a id="g_t3_002e1_002e1"></a>
+      <a id="Local-State-Variables"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.1.1</span
+        ><span class="sectitle">Variáveis de Estado Local</span>
+      </h4>
+
+      <p>
+        Para ilustrar o que queremos dizer com um objeto computacional com
+        estado que varia no tempo, vamos modelar a situação de sacar dinheiro de
+        uma conta bancária. Faremos isso usando um procedimento
+        <code>withdraw</code>, que recebe como argumento um
+        <code>amount</code> a ser sacado. Se houver dinheiro suficiente na conta
+        para acomodar o saque, então <code>withdraw</code> deve retornar o saldo
+        restante após o saque. Caso contrário, <code>withdraw</code> deve
+        retornar a mensagem <em>Fundos insuficientes</em>. Por exemplo, se
+        começarmos com $100 na conta, devemos obter a seguinte sequência de
+        respostas usando <code>withdraw</code>:
+      </p>
+      <pre><code class="language-scheme">(withdraw 25)
+75
+
+(withdraw 25)
+50
+
+(withdraw 60)
+"Insufficient funds"
+
+(withdraw 15)
+35</code></pre>
+
+      <p>
+        Observe que a expressão <code>(withdraw 25)</code>, avaliada duas vezes,
+        produz valores diferentes. Este é um novo tipo de comportamento para um
+        procedimento. Até agora, todos os nossos procedimentos podiam ser vistos
+        como especificações para calcular funções matemáticas. Uma chamada a um
+        procedimento calculava o valor da função aplicada aos argumentos
+        fornecidos, e duas chamadas ao mesmo procedimento com os mesmos
+        argumentos sempre produziam o mesmo resultado.<a
+          class="footnote_link"
+          id="DOCF129"
+          href="#FOOT129"
+          ><sup>129</sup></a
+        >
+      </p>
+      <p>
+        Para implementar <code>withdraw</code>, podemos usar uma variável
+        <code>balance</code> para indicar o saldo de dinheiro na conta e definir
+        <code>withdraw</code> como um procedimento que acessa
+        <code>balance</code>. O procedimento <code>withdraw</code> verifica se
+        <code>balance</code> é pelo menos tão grande quanto o
+        <code>amount</code> solicitado. Se for, <code>withdraw</code> decrementa
+        <code>balance</code> por <code>amount</code> e retorna o novo valor de
+        <code>balance</code>. Caso contrário, <code>withdraw</code> retorna a
+        mensagem <em>Fundos insuficientes</em>. Aqui estão as definições de
+        <code>balance</code> e <code>withdraw</code>:
+      </p>
+      <pre><code class="language-scheme">(define balance 100)
+
+(define (withdraw amount)
+  (if (>= balance amount)
+      (begin (set! balance (- balance amount))
+             balance)
+      "Insufficient funds"))</code></pre>
+
+      <p>Decrementar <code>balance</code> é realizado pela expressão</p>
+      <pre><code class="language-scheme">(set! balance (- balance amount))</code></pre>
+
+      <p>Isso usa a forma especial <code>set!</code>, cuja sintaxe é</p>
+      <pre><code class="language-scheme">(set! ⟨name⟩ ⟨new-value⟩)</code></pre>
+
+      <p>
+        Aqui <code>⟨name⟩</code> é um símbolo e <code>⟨new-value⟩</code> é
+        qualquer expressão. <code>Set!</code> altera <code>⟨name⟩</code> para
+        que seu valor seja o resultado obtido ao avaliar
+        <code>⟨new-value⟩</code>. No caso em questão, estamos alterando
+        <code>balance</code> para que seu novo valor seja o resultado de
+        subtrair <code>amount</code> do valor anterior de
+        <code>balance</code>.<a
+          class="footnote_link"
+          id="DOCF130"
+          href="#FOOT130"
+          ><sup>130</sup></a
+        >
+      </p>
+      <p>
+        <code>Withdraw</code> também usa a forma especial
+        <code>begin</code> para fazer com que duas expressões sejam avaliadas no
+        caso em que o teste <code>if</code> é verdadeiro: primeiro decrementando
+        <code>balance</code> e depois retornando o valor de
+        <code>balance</code>. Em geral, avaliar a expressão
+      </p>
+      <pre><code class="language-scheme">(begin ⟨exp₁⟩ ⟨exp₂⟩ … ⟨expₖ⟩)</code></pre>
+
+      <p>
+        faz com que as expressões
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mi>e</mi>
+            <mi>x</mi>
+            <msub>
+              <mi>p</mi>
+              <mn>1</mn>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        até
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mi>e</mi>
+            <mi>x</mi>
+            <msub>
+              <mi>p</mi>
+              <mi>k</mi>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        sejam avaliadas em sequência, e o valor da expressão final
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mi>e</mi>
+            <mi>x</mi>
+            <msub>
+              <mi>p</mi>
+              <mi>k</mi>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        seja retornado como o valor de toda a forma <code>begin</code>.<a
+          class="footnote_link"
+          id="DOCF131"
+          href="#FOOT131"
+          ><sup>131</sup></a
+        >
+      </p>
+      <p>
+        Embora <code>withdraw</code> funcione como desejado, a variável
+        <code>balance</code> apresenta um problema. Conforme especificado acima,
+        <code>balance</code> é um nome definido no ambiente global e é
+        livremente acessível para ser examinado ou modificado por qualquer
+        procedimento. Seria muito melhor se pudéssemos de alguma forma tornar
+        <code>balance</code> interno a <code>withdraw</code>, de modo que
+        <code>withdraw</code> fosse o único procedimento que pudesse acessar
+        <code>balance</code> diretamente e qualquer outro procedimento pudesse
+        acessar <code>balance</code> apenas indiretamente (por meio de chamadas
+        a <code>withdraw</code>). Isso modelaria mais precisamente a noção de
+        que <code>balance</code> é uma variável de estado local usada por
+        <code>withdraw</code> para acompanhar o estado da conta.
+      </p>
+      <p>
+        Podemos tornar <code>balance</code> interno a
+        <code>withdraw</code> reescrevendo a definição da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define new-withdraw
+  (let ((balance 100))
+    (lambda (amount)
+      (if (>= balance amount)
+          (begin (set! balance (- balance amount))
+                 balance)
+          "Insufficient funds"))))</code></pre>
+
+      <p>
+        O que fizemos aqui foi usar <code>let</code> para estabelecer um
+        ambiente com uma variável local <code>balance</code>, vinculada ao valor
+        inicial 100. Dentro desse ambiente local, usamos
+        <code>lambda</code> para criar um procedimento que recebe
+        <code>amount</code> como argumento e se comporta como nosso procedimento
+        <code>withdraw</code> anterior. Este procedimento — retornado como
+        resultado da avaliação da expressão <code>let</code> — é
+        <code>new-withdraw</code>, que se comporta exatamente da mesma forma que
+        <code>withdraw</code>, mas cuja variável <code>balance</code> não é
+        acessível por qualquer outro procedimento.<a
+          class="footnote_link"
+          id="DOCF132"
+          href="#FOOT132"
+          ><sup>132</sup></a
+        >
+      </p>
+      <p>
+        Combinar <code>set!</code> com variáveis locais é a técnica de
+        programação geral que usaremos para construir objetos computacionais com
+        estado local. Infelizmente, usar essa técnica levanta um problema sério:
+        Quando introduzimos procedimentos, também introduzimos o modelo de
+        substituição de avaliação (<a href="1_002e1.html#g_t1_002e1_002e5"
+          >1.1.5</a
+        >) para fornecer uma interpretação do que significa a aplicação de um
+        procedimento. Dissemos que aplicar um procedimento deve ser interpretado
+        como avaliar o corpo do procedimento com os parâmetros formais
+        substituídos por seus valores. O problema é que, assim que introduzimos
+        atribuição em nossa linguagem, a substituição não é mais um modelo
+        adequado para a aplicação de procedimentos. (Veremos por que isso
+        acontece em <a href="#g_t3_002e1_002e3">3.1.3</a>.) Como consequência,
+        tecnicamente não temos, neste momento, uma maneira de entender por que o
+        procedimento <code>new-withdraw</code> se comporta como afirmado acima.
+        Para realmente entender um procedimento como <code>new-withdraw</code>,
+        precisaremos desenvolver um novo modelo de aplicação de procedimentos.
+        Em <a href="3_002e2.html#g_t3_002e2">3.2</a>, introduziremos tal modelo,
+        junto com uma explicação de <code>set!</code> e variáveis locais.
+        Primeiro, no entanto, examinaremos algumas variações sobre o tema
+        estabelecido por <code>new-withdraw</code>.
+      </p>
+      <p>
+        O seguinte procedimento, <code>make-withdraw</code>, cria "processadores
+        de saque". O parâmetro formal <code>balance</code> em
+        <code>make-withdraw</code> especifica a quantidade inicial de dinheiro
+        na conta.<a class="footnote_link" id="DOCF133" href="#FOOT133"
+          ><sup>133</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (make-withdraw balance)
+  (lambda (amount)
+    (if (>= balance amount)
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds")))</code></pre>
+
+      <p>
+        <code>Make-withdraw</code> pode ser usado da seguinte forma para criar
+        dois objetos <code>W1</code> e <code>W2</code>:
+      </p>
+      <pre><code class="language-scheme">(define W1 (make-withdraw 100))
+(define W2 (make-withdraw 100))
+
+(W1 50)
+50
+
+(W2 70)
+30
+
+(W2 40)
+"Insufficient funds"
+
+(W1 40)
+10</code></pre>
+
+      <p>
+        Observe que <code>W1</code> e <code>W2</code> são objetos completamente
+        independentes, cada um com sua própria variável de estado local
+        <code>balance</code>. Saques de um não afetam o outro.
+      </p>
+      <p>
+        Também podemos criar objetos que lidam com depósitos e saques, e assim
+        podemos representar contas bancárias simples. Aqui está um procedimento
+        que retorna um "objeto de conta bancária" com um saldo inicial
+        especificado:
+      </p>
+      <pre><code class="language-scheme">(define (make-account balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin (set! balance (- balance amount))
+               balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (define (dispatch m)
+    (cond ((eq? m 'withdraw) withdraw)
+          ((eq? m 'deposit) deposit)
+          (else (error "Unknown request: MAKE-ACCOUNT" m))))
+  dispatch)</code></pre>
+
+      <p>
+        Cada chamada a <code>make-account</code> configura um ambiente com uma
+        variável de estado local <code>balance</code>. Dentro desse ambiente,
+        <code>make-account</code> define os procedimentos <code>deposit</code> e
+        <code>withdraw</code> que acessam <code>balance</code> e um procedimento
+        adicional <code>dispatch</code> que recebe uma "mensagem" como entrada e
+        retorna um dos dois procedimentos locais. O procedimento
+        <code>dispatch</code> em si é retornado como o valor que representa o
+        objeto de conta bancária. Este é precisamente o estilo de programação
+        <a id="index-message_002dpassing"></a>
+        <em>passagem de mensagens</em> que vimos em
+        <a href="2_002e4.html#g_t2_002e4_002e3">2.4.3</a>, embora aqui estejamos
+        usando-o em conjunto com a capacidade de modificar variáveis locais.
+      </p>
+      <p><code>Make-account</code> pode ser usado da seguinte forma:</p>
+      <pre><code class="language-scheme">(define acc (make-account 100))
+
+((acc 'withdraw) 50)
+50
+
+((acc 'withdraw) 60)
+"Insufficient funds"
+
+((acc 'deposit) 40)
+90
+
+((acc 'withdraw) 60)
+30</code></pre>
+
+      <p>
+        Cada chamada a <code>acc</code> retorna o procedimento
+        <code>deposit</code> ou <code>withdraw</code> definido localmente, que é
+        então aplicado ao <code>amount</code> especificado. Como foi o caso com
+        <code>make-withdraw</code>, outra chamada a <code>make-account</code>
+      </p>
+      <pre><code class="language-scheme">(define acc2 (make-account 100))</code></pre>
+
+      <p>
+        produzirá um objeto de conta completamente separado, que mantém seu
+        próprio <code>balance</code> local.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e1"></a>Exercício 3.1:</strong> Um
+          <a id="index-accumulator-1"></a> <em>acumulador</em> é um procedimento
+          que é chamado repetidamente com um único argumento numérico e acumula
+          seus argumentos em uma soma. Cada vez que é chamado, ele retorna a
+          soma acumulada atualmente. Escreva um procedimento
+          <code>make-accumulator</code> que gera acumuladores, cada um mantendo
+          uma soma independente. A entrada para
+          <code>make-accumulator</code> deve especificar o valor inicial da
+          soma; por exemplo
+        </p>
+        <pre><code class="language-scheme">(define A (make-accumulator 5))
+
+(A 10)
+15
+
+(A 10)
+25</code></pre>
+      </blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e2"></a>Exercício 3.2:</strong> Em
+          aplicações de teste de software, é útil poder contar o número de vezes
+          que um determinado procedimento é chamado durante o curso de uma
+          computação. Escreva um procedimento <code>make-monitored</code> que
+          recebe como entrada um procedimento, <code>f</code>, que por sua vez
+          recebe uma entrada. O resultado retornado por
+          <code>make-monitored</code> é um terceiro procedimento, digamos
+          <code>mf</code>, que mantém um contador interno do número de vezes que
+          foi chamado. Se a entrada para <code>mf</code> for o símbolo especial
+          <code>how-many-calls?</code>, então <code>mf</code> retorna o valor do
+          contador. Se a entrada for o símbolo especial
+          <code>reset-count</code>, então <code>mf</code> redefine o contador
+          para zero. Para qualquer outra entrada, <code>mf</code> retorna o
+          resultado de chamar <code>f</code> nessa entrada e incrementa o
+          contador. Por exemplo, poderíamos fazer uma versão monitorada do
+          procedimento <code>sqrt</code>:
+        </p>
+        <pre><code class="language-scheme">(define s (make-monitored sqrt))
+
+(s 100)
+10
+
+(s 'how-many-calls?)
+1</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e3"></a>Exercício 3.3:</strong> Modifique
+          o procedimento <code>make-account</code> para que ele crie contas
+          protegidas por senha. Ou seja, <code>make-account</code> deve receber
+          um símbolo como argumento adicional, como em
+        </p>
+        <pre><code class="language-scheme">(define acc 
+(make-account 100 'secret-password))</code></pre>
+
+        <p>
+          O objeto de conta resultante deve processar uma solicitação apenas se
+          ela for acompanhada pela senha com a qual a conta foi criada, e deve
+          retornar uma reclamação caso contrário:
+        </p>
+        <pre><code class="language-scheme">((acc 'secret-password 'withdraw) 40)
+60
+
+((acc 'some-other-password 'deposit) 50)
+"Incorrect password"</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e4"></a>Exercício 3.4:</strong> Modifique
+          o procedimento <code>make-account</code> do
+          <a href="#Exercise-3_002e3">Exercício 3.3</a> adicionando outra
+          variável de estado local para que, se uma conta for acessada mais de
+          sete vezes consecutivas com uma senha incorreta, ela invoque o
+          procedimento <code>call-the-cops</code>.
+        </p>
+      </blockquote>
+
+      <a id="g_t3_002e1_002e2"></a>
+      <a id="The-Benefits-of-Introducing-Assignment"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.1.2</span
+        ><span class="sectitle">Os Benefícios de Introduzir Atribuição</span>
+      </h4>
+
+      <p>
+        Como veremos, introduzir atribuição em nossa linguagem de programação
+        nos leva a uma série de questões conceituais difíceis. No entanto, ver
+        sistemas como coleções de objetos com estado local é uma técnica
+        poderosa para manter um design modular. Como um exemplo simples,
+        considere o design de um procedimento <code>rand</code> que, sempre que
+        for chamado, retorna um inteiro escolhido aleatoriamente.
+      </p>
+      <p>
+        Não está claro o que significa "escolhido aleatoriamente". O que
+        presumivelmente queremos é que chamadas sucessivas a
+        <code>rand</code> produzam uma sequência de números que tenha
+        propriedades estatísticas de distribuição uniforme. Não discutiremos
+        métodos para gerar sequências adequadas aqui. Em vez disso, vamos
+        assumir que temos um procedimento <code>rand-update</code> que tem a
+        propriedade de que, se começarmos com um número dado
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <msub>
+            <mi>x</mi>
+            <mn>1</mn>
+          </msub>
+        </math>
+        e formarmos
+      </p>
+      <pre><code class="language-scheme">x₂ = (rand-update x₁)
+x₃ = (rand-update x₂)</code></pre>
+
+      <p>
+        então a sequência de valores
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <msub>
+            <mi>x</mi>
+            <mn>1</mn>
+          </msub> </math
+        >,
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <msub>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msub> </math
+        >,
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <msub>
+            <mi>x</mi>
+            <mn>3</mn>
+          </msub> </math
+        >, … terá as propriedades estatísticas desejadas.<a
+          class="footnote_link"
+          id="DOCF134"
+          href="#FOOT134"
+          ><sup>134</sup></a
+        >
+      </p>
+      <p>
+        Podemos implementar <code>rand</code> como um procedimento com uma
+        variável de estado local <code>x</code> que é inicializada com algum
+        valor fixo <code>random-init</code>. Cada chamada a
+        <code>rand</code> calcula <code>rand-update</code> do valor atual de
+        <code>x</code>, retorna isso como o número aleatório e também armazena
+        isso como o novo valor de <code>x</code>.
+      </p>
+      <pre><code class="language-scheme">(define rand
+(let ((x random-init))
+  (lambda () (set! x (rand-update x)) x)))</code></pre>
+
+      <p>
+        Claro, poderíamos gerar a mesma sequência de números aleatórios sem usar
+        atribuição simplesmente chamando <code>rand-update</code> diretamente.
+        No entanto, isso significaria que qualquer parte do nosso programa que
+        usasse números aleatórios teria que lembrar explicitamente o valor atual
+        de <code>x</code> para ser passado como argumento para
+        <code>rand-update</code>. Para perceber o quanto isso seria incômodo,
+        considere usar números aleatórios para implementar uma técnica chamada
+        <a id="index-Monte-Carlo-simulation"></a>
+        <em>simulação de Monte Carlo</em>.
+      </p>
+      <p>
+        O método de Monte Carlo consiste em escolher experimentos de amostra
+        aleatoriamente de um grande conjunto e, em seguida, fazer deduções com
+        base nas probabilidades estimadas a partir da tabulação dos resultados
+        desses experimentos. Por exemplo, podemos aproximar
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>π</mi>
+        </math>
+        usando o fato de que
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>6</mn>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo>/</mo>
+            </mrow>
+            <msup>
+              <mi>π</mi>
+              <mn>2</mn>
+            </msup>
+          </mrow>
+        </math>
+        é a probabilidade de que dois inteiros escolhidos aleatoriamente não
+        tenham fatores em comum; ou seja, que seu máximo divisor comum seja 1.<a
+          class="footnote_link"
+          id="DOCF135"
+          href="#FOOT135"
+          ><sup>135</sup></a
+        >
+        Para obter a aproximação de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>π</mi> </math>,
+        realizamos um grande número de experimentos. Em cada experimento,
+        escolhemos dois inteiros aleatoriamente e realizamos um teste para ver
+        se seu <abbr>GCD</abbr> é 1. A fração de vezes que o teste é passado nos
+        dá nossa estimativa de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>6</mn>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo>/</mo>
+            </mrow>
+            <msup>
+              <mi>π</mi>
+              <mn>2</mn>
+            </msup>
+          </mrow> </math
+        >, e a partir disso obtemos nossa aproximação de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>π</mi> </math>.
+      </p>
+      <p>
+        O coração do nosso programa é um procedimento <code>monte-carlo</code>,
+        que recebe como argumentos o número de vezes para tentar um experimento,
+        juntamente com o experimento, representado como um procedimento sem
+        argumentos que retorna verdadeiro ou falso cada vez que é executado.
+        <code>Monte-carlo</code> executa o experimento pelo número designado de
+        tentativas e retorna um número informando a fração das tentativas em que
+        o experimento foi considerado verdadeiro.
+      </p>
+      <pre><code class="language-scheme">(define (estimate-pi trials)
+(sqrt (/ 6 (monte-carlo trials cesaro-test))))
+
+(define (cesaro-test)
+ (= (gcd (rand) (rand)) 1))
+
+(define (monte-carlo trials experiment)
+(define (iter trials-remaining trials-passed)
+  (cond ((= trials-remaining 0)
+         (/ trials-passed trials))
+        ((experiment)
+         (iter (- trials-remaining 1) 
+               (+ trials-passed 1)))
+        (else
+         (iter (- trials-remaining 1) 
+               trials-passed))))
+(iter trials 0))</code></pre>
+
+      <p>
+        Agora vamos tentar a mesma computação usando
+        <code>rand-update</code> diretamente em vez de <code>rand</code>, da
+        forma como seríamos forçados a proceder se não usássemos atribuição para
+        modelar estado local:
+      </p>
+      <pre><code class="language-scheme">(define (estimate-pi trials)
+(sqrt (/ 6 (random-gcd-test trials random-init))))
+
+(define (random-gcd-test trials initial-x)
+(define (iter trials-remaining trials-passed x)
+  (let ((x1 (rand-update x)))
+    (let ((x2 (rand-update x1)))
+      (cond ((= trials-remaining 0)
+             (/ trials-passed trials))
+            ((= (gcd x1 x2) 1)
+             (iter (- trials-remaining 1)
+                   (+ trials-passed 1)
+                   x2))
+            (else
+             (iter (- trials-remaining 1)
+                   trials-passed
+                   x2))))))
+(iter trials 0 initial-x))</code></pre>
+
+      <p>
+        Embora o programa ainda seja simples, ele revela algumas violações
+        dolorosas de modularidade. Em nossa primeira versão do programa, usando
+        <code>rand</code>, podemos expressar o método de Monte Carlo diretamente
+        como um procedimento geral <code>monte-carlo</code> que recebe como
+        argumento um procedimento <code>experiment</code> arbitrário. Em nossa
+        segunda versão do programa, sem estado local para o gerador de números
+        aleatórios, <code>random-gcd-test</code> deve manipular explicitamente
+        os números aleatórios <code>x1</code> e <code>x2</code> e reciclar
+        <code>x2</code> através do loop iterativo como a nova entrada para
+        <code>rand-update</code>. Esse manuseio explícito dos números aleatórios
+        entrelaça a estrutura de acumulação de resultados de teste com o fato de
+        que nosso experimento específico usa dois números aleatórios, enquanto
+        outros experimentos de Monte Carlo podem usar um número aleatório ou
+        três. Até o procedimento de nível superior <code>estimate-pi</code> tem
+        que se preocupar em fornecer um número aleatório inicial. O fato de que
+        as entranhas do gerador de números aleatórios estão vazando para outras
+        partes do programa torna difícil para nós isolar a ideia de Monte Carlo
+        para que ela possa ser aplicada a outras tarefas. Na primeira versão do
+        programa, a atribuição encapsula o estado do gerador de números
+        aleatórios dentro do procedimento <code>rand</code>, de modo que os
+        detalhes da geração de números aleatórios permanecem independentes do
+        resto do programa.
+      </p>
+      <p>
+        O fenômeno geral ilustrado pelo exemplo de Monte Carlo é este: Do ponto
+        de vista de uma parte de um processo complexo, as outras partes parecem
+        mudar com o tempo. Elas têm estado local oculto que varia com o tempo.
+        Se desejamos escrever programas de computador cuja estrutura reflita
+        essa decomposição, fazemos objetos computacionais (como contas bancárias
+        e geradores de números aleatórios) cujo comportamento muda com o tempo.
+        Modelamos estado com variáveis de estado locais e modelamos as mudanças
+        de estado com atribuições a essas variáveis.
+      </p>
+      <p>
+        É tentador concluir esta discussão dizendo que, ao introduzir atribuição
+        e a técnica de ocultar estado em variáveis locais, somos capazes de
+        estruturar sistemas de uma forma mais modular do que se todo o estado
+        tivesse que ser manipulado explicitamente, passando parâmetros
+        adicionais. Infelizmente, como veremos, a história não é tão simples.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e5"></a>Exercício 3.5:</strong>
+          <a id="index-Monte-Carlo-integration"></a>
+          <em>Integração de Monte Carlo</em> é um método de estimar integrais
+          definidas por meio de simulação de Monte Carlo. Considere calcular a
+          área de uma região do espaço descrita por um predicado
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>P</mi>
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo>,</mo>
+              <mi>y</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+          </math>
+          que é verdadeiro para pontos
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo>,</mo>
+              <mi>y</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+          </math>
+          na região e falso para pontos fora da região. Por exemplo, a região
+          contida dentro de um círculo de raio 3 centrado em (5, 7) é descrita
+          pelo predicado que testa se
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo>−</mo>
+              <mn>5</mn>
+              <msup>
+                <mo stretchy="false">)</mo>
+                <mn>2</mn>
+              </msup>
+            </mrow>
+            <mo>+</mo>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo stretchy="false">(</mo>
+              <mi>y</mi>
+              <mo>−</mo>
+              <mn>7</mn>
+              <msup>
+                <mo stretchy="false">)</mo>
+                <mn>2</mn>
+              </msup>
+              <mo>≤</mo>
+              <msup>
+                <mn>3</mn>
+                <mn>2</mn>
+              </msup>
+            </mrow> </math
+          >. Para estimar a área da região descrita por tal predicado, comece
+          escolhendo um retângulo que contenha a região. Por exemplo, um
+          retângulo com cantos diagonalmente opostos em (2, 4) e (8, 10) contém
+          o círculo acima. A integral desejada é a área da porção do retângulo
+          que está na região. Podemos estimar a integral escolhendo,
+          aleatoriamente, pontos
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo>,</mo>
+              <mi>y</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+          </math>
+          que estão no retângulo e testando
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>P</mi>
+              <mo stretchy="false">(</mo>
+              <mi>x</mi>
+              <mo>,</mo>
+              <mi>y</mi>
+              <mo stretchy="false">)</mo>
+            </mrow>
+          </math>
+          para cada ponto para determinar se o ponto está na região. Se
+          tentarmos isso com muitos pontos, então a fração de pontos que caem na
+          região deve dar uma estimativa da proporção do retângulo que está na
+          região. Portanto, multiplicando essa fração pela área de todo o
+          retângulo, devemos produzir uma estimativa da integral.
+        </p>
+        <p>
+          Implemente a integração de Monte Carlo como um procedimento
+          <code>estimate-integral</code> que recebe como argumentos um predicado
+          <code>P</code>, limites superiores e inferiores <code>x1</code>,
+          <code>x2</code>, <code>y1</code> e <code>y2</code> para o retângulo, e
+          o número de tentativas a serem realizadas para produzir a estimativa.
+          Seu procedimento deve usar o mesmo procedimento
+          <code>monte-carlo</code> que foi usado acima para estimar
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>π</mi> </math>.
+          Use seu <code>estimate-integral</code> para produzir uma estimativa de
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>π</mi>
+          </math>
+          medindo a área de um círculo unitário.
+        </p>
+        <p>
+          Você achará útil ter um procedimento que retorna um número escolhido
+          aleatoriamente de um determinado intervalo. O seguinte procedimento
+          <code>random-in-range</code> implementa isso em termos do procedimento
+          <code>random</code> usado em
+          <a href="1_002e2.html#g_t1_002e2_002e6">1.2.6</a>, que retorna um
+          número não negativo menor que sua entrada.<a
+            class="footnote_link"
+            id="DOCF136"
+            href="#FOOT136"
+            ><sup>136</sup></a
+          >
+        </p>
+        <pre><code class="language-scheme">(define (random-in-range low high)
+(let ((range (- high low)))
+  (+ low (random range))))</code></pre>
+      </blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e6"></a>Exercício 3.6:</strong> É útil
+          poder redefinir um gerador de números aleatórios para produzir uma
+          sequência começando de um determinado valor. Projete um novo
+          procedimento <code>rand</code> que é chamado com um argumento que é o
+          símbolo <code>generate</code> ou o símbolo <code>reset</code> e se
+          comporta da seguinte forma: <code>(rand 'generate)</code> produz um
+          novo número aleatório;
+          <code>((rand 'reset) ⟨new-value⟩)</code> redefine a variável de estado
+          interno para o <code>⟨new-value⟩</code> designado. Assim, ao redefinir
+          o estado, pode-se gerar sequências repetíveis. Essas são muito úteis
+          ao testar e depurar programas que usam números aleatórios.
+        </p>
+      </blockquote>
+
+      <a id="g_t3_002e1_002e3"></a>
+      <a id="The-Costs-of-Introducing-Assignment"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.1.3</span
+        ><span class="sectitle">Os Custos de Introduzir Atribuição</span>
+      </h4>
+
+      <p>
+        Como vimos, a operação <code>set!</code> nos permite modelar objetos que
+        têm estado local. No entanto, essa vantagem tem um preço. Nossa
+        linguagem de programação não pode mais ser interpretada em termos do
+        modelo de substituição de aplicação de procedimentos que introduzimos em
+        <a href="1_002e1.html#g_t1_002e1_002e5">1.1.5</a>. Além disso, nenhum
+        modelo simples com propriedades matemáticas "agradáveis" pode ser uma
+        estrutura adequada para lidar com objetos e atribuição em linguagens de
+        programação.
+      </p>
+      <p>
+        Enquanto não usarmos atribuições, duas avaliações do mesmo procedimento
+        com os mesmos argumentos produzirão o mesmo resultado, de modo que os
+        procedimentos podem ser vistos como computando funções matemáticas.
+        Programar sem usar atribuições, como fizemos ao longo dos dois primeiros
+        capítulos deste livro, é conhecido como
+        <a id="index-functional-programming"></a>
+        <em>programação funcional</em>.
+      </p>
+      <p>
+        Para entender como a atribuição complica as coisas, considere uma versão
+        simplificada do procedimento <code>make-withdraw</code> de
+        <a href="#g_t3_002e1_002e1">3.1.1</a> que não se preocupa em verificar
+        uma quantia insuficiente:
+      </p>
+      <pre><code class="language-scheme">(define (make-simplified-withdraw balance)
+(lambda (amount)
+(set! balance (- balance amount))
+balance))
+
+(define W (make-simplified-withdraw 25))
+
+(W 20)
+5
+
+(W 10)
+-5</code></pre>
+
+      <p>
+        Compare este procedimento com o seguinte procedimento
+        <code>make-decrementer</code>, que não usa <code>set!</code>:
+      </p>
+      <pre><code class="language-scheme">(define (make-decrementer balance)
+(lambda (amount)
+(- balance amount)))</code></pre>
+
+      <p>
+        <code>Make-decrementer</code> retorna um procedimento que subtrai sua
+        entrada de uma quantia designada <code>balance</code>, mas não há efeito
+        acumulado ao longo de chamadas sucessivas, como com
+        <code>make-simplified-withdraw</code>:
+      </p>
+      <pre><code class="language-scheme">(define D (make-decrementer 25))
+
+(D 20)
+5
+
+(D 10)
+15</code></pre>
+
+      <p>
+        Podemos usar o modelo de substituição para explicar como
+        <code>make-decrementer</code> funciona. Por exemplo, vamos analisar a
+        avaliação da expressão
+      </p>
+      <pre><code class="language-scheme">((make-decrementer 25) 20)</code></pre>
+
+      <p>
+        Primeiro simplificamos o operador da combinação substituindo 25 por
+        <code>balance</code> no corpo de <code>make-decrementer</code>. Isso
+        reduz a expressão para
+      </p>
+      <pre><code class="language-scheme">((lambda (amount) (- 25 amount)) 20)</code></pre>
+
+      <p>
+        Agora aplicamos o operador substituindo 20 por <code>amount</code> no
+        corpo da expressão <code>lambda</code>:
+      </p>
+      <pre><code class="language-scheme">(- 25 20)</code></pre>
+
+      <p>A resposta final é 5.</p>
+      <p>
+        Observe, no entanto, o que acontece se tentarmos uma análise de
+        substituição semelhante com <code>make-simplified-withdraw</code>:
+      </p>
+      <pre><code class="language-scheme">((make-simplified-withdraw 25) 20)</code></pre>
+
+      <p>
+        Primeiro simplificamos o operador substituindo 25 por
+        <code>balance</code> no corpo de <code>make-simplified-withdraw</code>.
+        Isso reduz a expressão para<a
+          class="footnote_link"
+          id="DOCF137"
+          href="#FOOT137"
+          ><sup>137</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">((lambda (amount) 
+(set! balance (- 25 amount)) 25)
+20)</code></pre>
+
+      <p>
+        Agora aplicamos o operador substituindo 20 por <code>amount</code> no
+        corpo da expressão <code>lambda</code>:
+      </p>
+      <pre><code class="language-scheme">(set! balance (- 25 20)) 25</code></pre>
+
+      <p>
+        Se aderíssemos ao modelo de substituição, teríamos que dizer que o
+        significado da aplicação do procedimento é primeiro definir
+        <code>balance</code> para 5 e depois retornar 25 como o valor da
+        expressão. Isso dá a resposta errada. Para obter a resposta correta,
+        teríamos que de alguma forma distinguir a primeira ocorrência de
+        <code>balance</code> (antes do efeito do <code>set!</code>) da segunda
+        ocorrência de <code>balance</code> (após o efeito do <code>set!</code>),
+        e o modelo de substituição não pode fazer isso.
+      </p>
+      <p>
+        O problema aqui é que a substituição é baseada fundamentalmente na noção
+        de que os símbolos em nossa linguagem são essencialmente nomes para
+        valores. Mas assim que introduzimos <code>set!</code> e a ideia de que o
+        valor de uma variável pode mudar, uma variável não pode mais ser
+        simplesmente um nome. Agora uma variável de alguma forma se refere a um
+        lugar onde um valor pode ser armazenado, e o valor armazenado nesse
+        lugar pode mudar. Em <a href="3_002e2.html#g_t3_002e2">3.2</a>, veremos
+        como os ambientes desempenham esse papel de "lugar" em nosso modelo
+        computacional.
+      </p>
+      <a id="Sameness-and-change"></a>
+      <h5 class="subsubheading">Identidade e Mudança</h5>
+
+      <p>
+        A questão que surge aqui é mais profunda do que o mero colapso de um
+        modelo particular de computação. Assim que introduzimos mudança em
+        nossos modelos computacionais, muitas noções que antes eram simples se
+        tornam problemáticas. Considere o conceito de duas coisas serem "a
+        mesma".
+      </p>
+      <p>
+        Suponha que chamemos <code>make-decrementer</code> duas vezes com o
+        mesmo argumento para criar dois procedimentos:
+      </p>
+      <pre><code class="language-scheme">(define D1 (make-decrementer 25))
+(define D2 (make-decrementer 25))</code></pre>
+
+      <p>
+        <code>D1</code> e <code>D2</code> são a mesma coisa? Uma resposta
+        aceitável é sim, porque <code>D1</code> e <code>D2</code> têm o mesmo
+        comportamento computacional — cada um é um procedimento que subtrai sua
+        entrada de 25. De fato, <code>D1</code> poderia ser substituído por
+        <code>D2</code> em qualquer computação sem alterar o resultado.
+      </p>
+      <p>
+        Compare isso com fazer duas chamadas a
+        <code>make-simplified-withdraw</code>:
+      </p>
+      <pre><code class="language-scheme">(define W1 (make-simplified-withdraw 25))
+(define W2 (make-simplified-withdraw 25))</code></pre>
+
+      <p>
+        <code>W1</code> e <code>W2</code> são a mesma coisa? Certamente não,
+        porque chamadas a <code>W1</code> e <code>W2</code> têm efeitos
+        distintos, como mostrado pela seguinte sequência de interações:
+      </p>
+      <pre><code class="language-scheme">(W1 20)
+5
+
+(W1 20)
+-15
+
+(W2 20)
+5</code></pre>
+
+      <p>
+        Embora <code>W1</code> e <code>W2</code> sejam "iguais" no sentido de
+        que ambos são criados avaliando a mesma expressão,
+        <code>(make-simplified-withdraw 25)</code>, não é verdade que
+        <code>W1</code> poderia ser substituído por <code>W2</code> em qualquer
+        expressão sem alterar o resultado da avaliação da expressão.
+      </p>
+      <p>
+        Uma linguagem que suporta o conceito de que "iguais podem ser
+        substituídos por iguais" em uma expressão sem alterar o valor da
+        expressão é dita <a id="index-referentially-transparent"></a>
+        <em>referencialmente transparente</em>. A transparência referencial é
+        violada quando incluímos <code>set!</code> em nossa linguagem de
+        computador. Isso torna complicado determinar quando podemos simplificar
+        expressões substituindo expressões equivalentes. Consequentemente,
+        raciocinar sobre programas que usam atribuição torna-se drasticamente
+        mais difícil.
+      </p>
+      <p>
+        Uma vez que abandonamos a transparência referencial, a noção do que
+        significa para objetos computacionais serem "a mesma coisa" torna-se
+        difícil de capturar de forma formal. De fato, o significado de "mesmo"
+        no mundo real que nossos programas modelam dificilmente é claro em si
+        mesmo. Em geral, podemos determinar que dois objetos aparentemente
+        idênticos são de fato "a mesma coisa" apenas modificando um objeto e
+        observando se o outro objeto mudou da mesma forma. Mas como podemos
+        dizer se um objeto "mudou" a não ser observando o "mesmo" objeto duas
+        vezes e vendo se alguma propriedade do objeto difere de uma observação
+        para a próxima? Assim, não podemos determinar "mudança" sem alguma noção
+        <em>a priori</em> de "mesmo".
+      </p>
+      <p>
+        Como um exemplo de como essa questão surge na programação, considere a
+        situação em que Pedro e Paulo têm uma conta bancária com $100. Há uma
+        diferença substancial entre modelar isso como
+      </p>
+      <pre><code class="language-scheme">(define peter-acc (make-account 100))
+(define paul-acc (make-account 100))</code></pre>
+
+      <p>e modelar isso como</p>
+      <pre><code class="language-scheme">(define peter-acc (make-account 100))
+(define paul-acc peter-acc)</code></pre>
+
+      <p>
+        Na primeira situação, as duas contas bancárias são distintas. Transações
+        feitas por Pedro não afetarão a conta de Paulo, e vice-versa. Na segunda
+        situação, no entanto, definimos <code>paul-acc</code> como
+        <em>a mesma coisa</em> que <code>peter-acc</code>. Efetivamente, Pedro e
+        Paulo agora têm uma conta bancária conjunta, e se Pedro fizer um saque
+        de <code>peter-acc</code>, Paulo observará menos dinheiro em
+        <code>paul-acc</code>. Essas duas situações semelhantes, mas distintas,
+        podem causar confusão na construção de modelos computacionais. Com a
+        conta compartilhada, em particular, pode ser especialmente confuso que
+        haja um objeto (a conta bancária) que tem dois nomes diferentes (<code
+          >peter-acc</code
+        >
+        e <code>paul-acc</code>); se estivermos procurando por todos os lugares
+        em nosso programa onde <code>paul-acc</code> pode ser alterado, devemos
+        lembrar de olhar também para coisas que alteram
+        <code>peter-acc</code>.<a
+          class="footnote_link"
+          id="DOCF138"
+          href="#FOOT138"
+          ><sup>138</sup></a
+        >
+      </p>
+      <p>
+        Com referência às observações acima sobre "mesmo" e "mudança", observe
+        que se Pedro e Paulo pudessem apenas examinar seus saldos bancários e
+        não pudessem realizar operações que alterassem o saldo, então a questão
+        de saber se as duas contas são distintas seria irrelevante. Em geral,
+        desde que nunca modifiquemos objetos de dados, podemos considerar um
+        objeto de dados composto como precisamente a totalidade de suas partes.
+        Por exemplo, um número racional é determinado por seu numerador e seu
+        denominador. Mas essa visão não é mais válida na presença de mudança,
+        onde um objeto de dados composto tem uma "identidade" que é algo
+        diferente das partes das quais é composto. Uma conta bancária ainda é "a
+        mesma" conta bancária mesmo que alteremos o saldo fazendo um saque;
+        inversamente, poderíamos ter duas contas bancárias diferentes com as
+        mesmas informações de estado. Essa complicação é uma consequência, não
+        de nossa linguagem de programação, mas de nossa percepção de uma conta
+        bancária como um objeto. Não consideramos, por exemplo, um número
+        racional como um objeto mutável com identidade, de modo que poderíamos
+        mudar o numerador e ainda ter "o mesmo" número racional.
+      </p>
+      <a id="Pitfalls-of-imperative-programming"></a>
+      <h5 class="subsubheading">Armadilhas da Programação Imperativa</h5>
+
+      <p>
+        Em contraste com a programação funcional, a programação que faz uso
+        extensivo de atribuição é conhecida como
+        <a id="index-imperative-programming"></a>
+        <em>programação imperativa</em>. Além de levantar complicações sobre
+        modelos computacionais, programas escritos em estilo imperativo são
+        suscetíveis a bugs que não podem ocorrer em programas funcionais. Por
+        exemplo, lembre-se do programa iterativo de fatorial de
+        <a href="1_002e2.html#g_t1_002e2_002e1">1.2.1</a>:
+      </p>
+      <pre><code class="language-scheme">(define (factorial n)
+(define (iter product counter)
+(if (> counter n)
+    product
+    (iter (* counter product)
+          (+ counter 1))))
+(iter 1 1))</code></pre>
+
+      <p>
+        Em vez de passar argumentos no loop iterativo interno, poderíamos adotar
+        um estilo mais imperativo usando atribuição explícita para atualizar os
+        valores das variáveis <code>product</code> e <code>counter</code>:
+      </p>
+      <pre><code class="language-scheme">(define (factorial n)
+(let ((product 1)
+    (counter 1))
+(define (iter)
+  (if (> counter n)
+      product
+      (begin (set! product (* counter product))
+             (set! counter (+ counter 1))
+             (iter))))
+(iter)))</code></pre>
+
+      <p>
+        Isso não altera os resultados produzidos pelo programa, mas introduz uma
+        armadilha sutil. Como decidimos a ordem das atribuições? Como está
+        escrito, o programa está correto. Mas escrever as atribuições na ordem
+        oposta
+      </p>
+      <pre><code class="language-scheme">(set! counter (+ counter 1))
+(set! product (* counter product))</code></pre>
+
+      <p>
+        teria produzido um resultado diferente e incorreto. Em geral, programar
+        com atribuição nos força a considerar cuidadosamente as ordens relativas
+        das atribuições para garantir que cada instrução esteja usando a versão
+        correta das variáveis que foram alteradas. Essa questão simplesmente não
+        surge em programas funcionais.<a
+          class="footnote_link"
+          id="DOCF139"
+          href="#FOOT139"
+          ><sup>139</sup></a
+        >
+      </p>
+      <p>
+        A complexidade dos programas imperativos torna-se ainda pior se
+        considerarmos aplicações em que vários processos executam
+        concorrentemente. Voltaremos a isso em
+        <a href="3_002e4.html#g_t3_002e4">3.4</a>. Primeiro, no entanto,
+        abordaremos a questão de fornecer um modelo computacional para
+        expressões que envolvem atribuição e exploraremos os usos de objetos com
+        estado local no design de simulações.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e7"></a>Exercício 3.7:</strong> Considere
+          os objetos de conta bancária criados por <code>make-account</code>,
+          com a modificação de senha descrita no
+          <a href="#Exercise-3_002e3">Exercício 3.3</a>. Suponha que nosso
+          sistema bancário exija a capacidade de fazer contas conjuntas. Defina
+          um procedimento <code>make-joint</code> que realiza isso.
+          <code>Make-joint</code> deve receber três argumentos. O primeiro é uma
+          conta protegida por senha. O segundo argumento deve corresponder à
+          senha com a qual a conta foi definida para que a operação
+          <code>make-joint</code> prossiga. O terceiro argumento é uma nova
+          senha. <code>Make-joint</code> deve criar um acesso adicional à conta
+          original usando a nova senha. Por exemplo, se <code>peter-acc</code> é
+          uma conta bancária com senha <code>open-sesame</code>, então
+        </p>
+        <pre><code class="language-scheme">(define paul-acc
+(make-joint peter-acc 
+          'open-sesame 
+          'rosebud))</code></pre>
+
+        <p>
+          permitirá que se façam transações em <code>peter-acc</code> usando o
+          nome <code>paul-acc</code> e a senha <code>rosebud</code>. Você pode
+          querer modificar sua solução para o
+          <a href="#Exercise-3_002e3">Exercício 3.3</a> para acomodar esse novo
+          recurso.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e8"></a>Exercício 3.8:</strong> Quando
+          definimos o modelo de avaliação em
+          <a href="1_002e1.html#g_t1_002e1_002e3">1.1.3</a>, dissemos que o
+          primeiro passo na avaliação de uma expressão é avaliar suas
+          subexpressões. Mas nunca especificamos a ordem em que as subexpressões
+          devem ser avaliadas (por exemplo, da esquerda para a direita ou da
+          direita para a esquerda). Quando introduzimos atribuição, a ordem em
+          que os argumentos para um procedimento são avaliados pode fazer
+          diferença no resultado. Defina um procedimento simples
+          <code>f</code> tal que avaliar
+        </p>
+        <pre><code class="language-scheme">(+ (f 0) (f 1))</code></pre>
+
+        <p>
+          retornará 0 se os argumentos para <code>+</code> forem avaliados da
+          esquerda para a direita, mas retornará 1 se os argumentos forem
+          avaliados da direita para a esquerda.
+        </p>
+      </blockquote>
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de Rodapé</h4>
+
+        <div id="FOOT129">
+          <p>
+            <a class="footnote_backlink" href="#DOCF129"><sup>129</sup></a> Na
+            verdade, isso não é exatamente verdade. Uma exceção foi o gerador de
+            números aleatórios em
+            <a href="1_002e2.html#g_t1_002e2_002e6">1.2.6</a>. Outra exceção
+            envolveu as tabelas de operação/tipo que introduzimos em
+            <a href="2_002e4.html#g_t2_002e4_002e3">2.4.3</a>, onde os valores
+            de duas chamadas para <code>get</code> com os mesmos argumentos
+            dependiam de chamadas intermediárias para <code>put</code>. Por
+            outro lado, até introduzirmos atribuição, não temos como criar tais
+            procedimentos nós mesmos.
+          </p>
+        </div>
+        <div id="FOOT130">
+          <p>
+            <a class="footnote_backlink" href="#DOCF130"><sup>130</sup></a> O
+            valor de uma expressão <code>set!</code> é dependente da
+            implementação. <code>Set!</code> deve ser usado apenas para seu
+            efeito, não para seu valor.
+          </p>
+          <p>
+            O nome <code>set!</code> reflete uma convenção de nomenclatura usada
+            em Scheme: Operações que alteram os valores de variáveis (ou que
+            alteram estruturas de dados, como veremos em
+            <a href="3_002e3.html#g_t3_002e3">3.3</a>) recebem nomes que
+            terminam com um ponto de exclamação. Isso é semelhante à convenção
+            de designar predicados por nomes que terminam com um ponto de
+            interrogação.
+          </p>
+        </div>
+        <div id="FOOT131">
+          <p>
+            <a class="footnote_backlink" href="#DOCF131"><sup>131</sup></a>
+            Já usamos
+            <code>begin</code> implicitamente em nossos programas, porque em
+            Scheme o corpo de um procedimento pode ser uma sequência de
+            expressões. Além disso, a parte <code>⟨</code><var>consequent</var
+            ><code>⟩</code> de cada cláusula em uma expressão
+            <code>cond</code> pode ser uma sequência de expressões em vez de uma
+            única expressão.
+          </p>
+        </div>
+        <div id="FOOT132">
+          <p>
+            <a class="footnote_backlink" href="#DOCF132"><sup>132</sup></a>
+            No jargão de linguagens de programação, a variável
+            <code>balance</code> é dita <a id="index-encapsulated"></a>
+            <em>encapsulada</em> dentro do procedimento
+            <code>new-withdraw</code>. O encapsulamento reflete o princípio
+            geral de design de sistemas conhecido como
+            <a id="index-hiding-principle"></a> <em>princípio de ocultação</em>:
+            Pode-se tornar um sistema mais modular e robusto protegendo partes
+            do sistema umas das outras; ou seja, fornecendo acesso à informação
+            apenas para aquelas partes do sistema que têm uma "necessidade de
+            saber".
+          </p>
+        </div>
+        <div id="FOOT133">
+          <p>
+            <a class="footnote_backlink" href="#DOCF133"><sup>133</sup></a>
+            Em contraste com
+            <code>new-withdraw</code> acima, não precisamos usar
+            <code>let</code> para tornar <code>balance</code> uma variável
+            local, já que parâmetros formais já são locais. Isso ficará mais
+            claro após a discussão do modelo de ambiente de avaliação em
+            <a href="3_002e2.html#g_t3_002e2">3.2</a>. (Veja também
+            <a href="3_002e2.html#Exercise-3_002e10">Exercício 3.10</a>.)
+          </p>
+        </div>
+        <div id="FOOT134">
+          <p>
+            <a class="footnote_backlink" href="#DOCF134"><sup>134</sup></a>
+            Uma maneira comum de implementar
+            <code>rand-update</code> é usar a regra de que
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>x</mi>
+            </math>
+            é atualizado para
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>a</mi>
+                <mi>x</mi>
+                <mo>+</mo>
+                <mi>b</mi>
+              </mrow>
+            </math>
+            módulo
+            <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>m</mi> </math
+            >, onde
+            <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>a</mi> </math
+            >,
+            <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>b</mi> </math
+            >, e
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>m</mi>
+            </math>
+            são inteiros escolhidos apropriadamente. O Capítulo 3 de
+            <a href="References.html#Knuth-1981">Knuth 1981</a> inclui uma
+            discussão extensa sobre técnicas para gerar sequências de números
+            aleatórios e estabelecer suas propriedades estatísticas. Observe que
+            o procedimento <code>rand-update</code> calcula uma função
+            matemática: Dada a mesma entrada duas vezes, ele produz a mesma
+            saída. Portanto, a sequência de números produzida por
+            <code>rand-update</code> certamente não é "aleatória", se por
+            "aleatória" insistirmos que cada número na sequência seja
+            independente do número anterior. A relação entre "aleatoriedade
+            real" e as chamadas <a id="index-pseudo_002drandom"></a>
+            <em>sequências pseudo-aleatórias</em>, que são produzidas por
+            computações bem determinadas e ainda assim têm propriedades
+            estatísticas adequadas, é uma questão complexa envolvendo questões
+            difíceis em matemática e filosofia. Kolmogorov, Solomonoff e Chaitin
+            fizeram grandes progressos em esclarecer essas questões; uma
+            discussão pode ser encontrada em
+            <a href="References.html#Chaitin-1975">Chaitin 1975</a>.
+          </p>
+        </div>
+        <div id="FOOT135">
+          <p>
+            <a class="footnote_backlink" href="#DOCF135"><sup>135</sup></a> Este
+            teorema é devido a E. Cesàro. Veja a seção 4.5.2 de
+            <a href="References.html#Knuth-1981">Knuth 1981</a> para uma
+            discussão e uma prova.
+          </p>
+        </div>
+        <div id="FOOT136">
+          <p>
+            <a class="footnote_backlink" href="#DOCF136"><sup>136</sup></a>
+            O Scheme do MIT fornece tal procedimento. Se
+            <code>random</code> receber um inteiro exato (como em
+            <a href="1_002e2.html#g_t1_002e2_002e6">1.2.6</a>), ele retorna um
+            inteiro exato, mas se receber um valor decimal (como neste
+            exercício), ele retorna um valor decimal.
+          </p>
+        </div>
+        <div id="FOOT137">
+          <p>
+            <a class="footnote_backlink" href="#DOCF137"><sup>137</sup></a> Não
+            substituímos a ocorrência de <code>balance</code> na expressão
+            <code>set!</code> porque o <code>⟨</code><var>name</var
+            ><code>⟩</code> em um <code>set!</code> não é avaliado. Se
+            substituíssemos por ele, obteríamos
+            <code>(set! 25 (- 25 amount))</code>, o que não faz sentido.
+          </p>
+        </div>
+        <div id="FOOT138">
+          <p>
+            <a class="footnote_backlink" href="#DOCF138"><sup>138</sup></a> O
+            fenômeno de um único objeto computacional ser acessado por mais de
+            um nome é conhecido como <a id="index-aliasing"></a>
+            <em>aliasing</em>. A situação da conta bancária conjunta ilustra um
+            exemplo muito simples de um alias. Em
+            <a href="3_002e3.html#g_t3_002e3">3.3</a> veremos exemplos muito
+            mais complexos, como estruturas de dados compostas "distintas" que
+            compartilham partes. Bugs podem ocorrer em nossos programas se
+            esquecermos que uma mudança em um objeto também pode, como um
+            "efeito colateral", alterar um "objeto diferente" porque os dois
+            "objetos diferentes" são na verdade um único objeto aparecendo sob
+            diferentes aliases. Esses chamados
+            <a id="index-side_002deffect-bugs"></a>
+            <em>bugs de efeito colateral</em> são tão difíceis de localizar e
+            analisar que algumas pessoas propuseram que linguagens de
+            programação sejam projetadas de forma a não permitir efeitos
+            colaterais ou aliasing (<a
+              href="References.html#Lampson-et-al_002e-1981"
+              >Lampson et al. 1981</a
+            >;
+            <a href="References.html#Morris-et-al_002e-1980"
+              >Morris et al. 1980</a
+            >).
+          </p>
+        </div>
+        <div id="FOOT139">
+          <p>
+            <a class="footnote_backlink" href="#DOCF139"><sup>139</sup></a> Em
+            vista disso, é irônico que a programação introdutória seja mais
+            frequentemente ensinada em um estilo altamente imperativo. Isso pode
+            ser um vestígio de uma crença, comum durante as décadas de 1960 e
+            1970, de que programas que chamam procedimentos devem ser
+            inerentemente menos eficientes do que programas que realizam
+            atribuições. (<a href="References.html#Steele-1977">Steele 1977</a>
+            desmascara esse argumento.) Alternativamente, pode refletir uma
+            visão de que a atribuição passo a passo é mais fácil para iniciantes
+            visualizarem do que a chamada de procedimento. Seja qual for o
+            motivo, muitas vezes sobrecarrega programadores iniciantes com
+            preocupações do tipo "devo definir esta variável antes ou depois
+            daquela" que podem complicar a programação e obscurecer as ideias
+            importantes.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e2.html#g_t3_002e2" accesskey="n" rel="next">3.2</a>,
+          Anterior:
+          <a href="Chapter-3.html#Chapter-3" accesskey="p" rel="prev"
+            >Capítulo 3</a
+          >, Acima: <a href="#g_t3_002e1" accesskey="u" rel="prev">3.1</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Ir para o final"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    >
+    <a id="pagebottom"></a>
+  </body>
+</html>
