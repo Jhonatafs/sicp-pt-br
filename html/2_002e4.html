@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 2.4">
+    <meta name="keywords" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 2.4">
+    <title>Estrutura e Interpretação de Programas de Computador, 2ª edição: 2.4</title>
+    <link href="index.xhtml#Top" rel="start" title="Topo">
+    <link href="Term-Index.xhtml#Term-Index" rel="index" title="Índice de Termos">
+    <link href="index.xhtml#SEC_Contents" rel="contents" title="Sumário">
+    <link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Capítulo 2">
+    <link href="2_002e5.xhtml#g_t2_002e5" rel="next" title="2.5">
+    <link href="2_002e3.xhtml#g_t2_002e3_002e4" rel="prev" title="2.3.4">
+    <link href="css/style.css" rel="stylesheet" type="text/css">
+    <link href="css/prettify.css" rel="stylesheet" type="text/css">
+    <script src="js/jquery.min.js" type="text/javascript"></script>
+    <script src="js/footnotes.js" type="text/javascript"></script>
+    <script src="js/browsertest.js" type="text/javascript"></script>
+</head>
+<body>
+    <section>
+        <span class="top jump" title="Ir para o topo"><a href="#pagetop" accesskey="t">⇡</a></span>
+        <a id="pagetop"></a>
+        <a id="g_t2_002e4"></a>
+        <nav class="header">
+            <p>
+                Próximo: <a href="2_002e5.xhtml#g_t2_002e5" accesskey="n" rel="next">2.5</a>, Anterior: <a href="2_002e3.xhtml#g_t2_002e3" accesskey="p" rel="prev">2.3</a>, Acima: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Capítulo 2</a>   [<a href="index.xhtml#SEC_Contents" title="Sumário" accesskey="c" rel="contents">Sumário</a>]
+            </p>
+        </nav>
+        <a id="Multiple-Representations-for-Abstract-Data"></a>
+        <h3 class="section"><span class="secnum">2.4</span><span class="sectitle">Múltiplas Representações para Dados Abstratos</span></h3>
+
+        <p>
+            Introduzimos a abstração de dados, uma metodologia para estruturar sistemas de forma que grande parte de um programa possa ser especificada independentemente das escolhas envolvidas na implementação dos objetos de dados que o programa manipula. Por exemplo, vimos em <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a> como separar a tarefa de projetar um programa que usa números racionais da tarefa de implementar números racionais em termos dos mecanismos primitivos da linguagem de computador para construir dados compostos. A ideia principal foi erguer uma barreira de abstração – neste caso, os seletores e construtores para números racionais (<code>make-rat</code>, <code>numer</code>, <code>denom</code>) – que isola a forma como os números racionais são usados de sua representação subjacente em termos de estrutura de lista. Uma barreira de abstração semelhante isola os detalhes dos procedimentos que realizam aritmética racional (<code>add-rat</code>, <code>sub-rat</code>, <code>mul-rat</code> e <code>div-rat</code>) dos procedimentos de "nível superior" que usam números racionais. O programa resultante tem a estrutura mostrada em <a href="2_002e1.xhtml#Figure-2_002e1">Figura 2.1</a>.
+        </p>
+        <p>
+            Essas barreiras de abstração de dados são ferramentas poderosas para controlar a complexidade. Ao isolar as representações subjacentes dos objetos de dados, podemos dividir a tarefa de projetar um grande programa em tarefas menores que podem ser realizadas separadamente. Mas esse tipo de abstração de dados ainda não é poderoso o suficiente, porque nem sempre faz sentido falar de "a representação subjacente" para um objeto de dados.
+        </p>
+        <p>
+            Por um lado, pode haver mais de uma representação útil para um objeto de dados, e podemos querer projetar sistemas que possam lidar com múltiplas representações. Para dar um exemplo simples, números complexos podem ser representados de duas formas quase equivalentes: na forma retangular (partes real e imaginária) e na forma polar (magnitude e ângulo). Às vezes, a forma retangular é mais apropriada e, às vezes, a forma polar é mais apropriada. De fato, é perfeitamente plausível imaginar um sistema em que os números complexos são representados de ambas as formas, e em que os procedimentos para manipular números complexos funcionam com qualquer representação.
+        </p>
+        <p>
+            Mais importante, os sistemas de programação são frequentemente projetados por muitas pessoas trabalhando por longos períodos de tempo, sujeitos a requisitos que mudam com o tempo. Em tal ambiente, simplesmente não é possível que todos concordem antecipadamente sobre as escolhas de representação de dados. Portanto, além das barreiras de abstração de dados que isolam a representação do uso, precisamos de barreiras de abstração que isolem diferentes escolhas de design umas das outras e permitam que diferentes escolhas coexistam em um único programa. Além disso, como grandes programas são frequentemente criados combinando módulos pré-existentes que foram projetados isoladamente, precisamos de convenções que permitam aos programadores incorporar módulos em sistemas maiores <a id="index-additively-1"></a> <em>aditivamente</em>, ou seja, sem precisar redesenhar ou reimplementar esses módulos.
+        </p>
+        <p>
+            Nesta seção, aprenderemos como lidar com dados que podem ser representados de diferentes maneiras por diferentes partes de um programa. Isso requer a construção de <a id="index-generic-procedures-1"></a> <em>procedimentos genéricos</em> – procedimentos que podem operar em dados que podem ser representados de mais de uma maneira. Nossa principal técnica para construir procedimentos genéricos será trabalhar em termos de objetos de dados que possuem <a id="index-type-tags"></a> <em>etiquetas de tipo</em>, ou seja, objetos de dados que incluem informações explícitas sobre como devem ser processados. Também discutiremos <a id="index-data_002ddirected"></a> <em>programação orientada a dados</em>, uma estratégia de implementação poderosa e conveniente para montar sistemas aditivamente com operações genéricas.
+        </p>
+        <p>
+            Começamos com o exemplo simples de números complexos. Veremos como as etiquetas de tipo e o estilo orientado a dados nos permitem projetar representações retangulares e polares separadas para números complexos, mantendo a noção de um objeto de dados abstrato "número complexo". Conseguiremos isso definindo procedimentos aritméticos para números complexos (<code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> e <code>div-complex</code>) em termos de seletores genéricos que acessam partes de um número complexo independentemente de como o número é representado. O sistema de números complexos resultante, como mostrado em <a href="#Figure-2_002e19">Figura 2.19</a>, contém dois tipos diferentes de barreiras de abstração. As barreiras de abstração "horizontais" desempenham o mesmo papel que as da <a href="2_002e1.xhtml#Figure-2_002e1">Figura 2.1</a>. Elas isolam operações de "nível superior" de representações de "nível inferior". Além disso, há uma barreira "vertical" que nos dá a capacidade de projetar e instalar representações alternativas separadamente.
+        </p>
+        <figure class="float">
+            <a id="Figure-2_002e19"></a>
+            <object style="width: 40.41ex; height: 33.41ex;" data="fig/chap2/Fig2.19a.std.svg" type="image/svg+xml">SVG</object>
+            <figcaption class="float-caption">
+                <p><strong>Figura 2.19:</strong> Barreiras de abstração de dados no sistema de números complexos.</p>
+            </figcaption>
+        </figure>
+
+        <p>
+            Em <a href="2_002e5.xhtml#g_t2_002e5">2.5</a>, mostraremos como usar etiquetas de tipo e o estilo orientado a dados para desenvolver um pacote aritmético genérico. Isso fornece procedimentos (<code>add</code>, <code>mul</code>, e assim por diante) que podem ser usados para manipular todos os tipos de "números" e podem ser facilmente estendidos quando um novo tipo de número é necessário. Em <a href="2_002e5.xhtml#g_t2_002e5_002e3">2.5.3</a>, mostraremos como usar aritmética genérica em um sistema que realiza álgebra simbólica.
+        </p>
+
+        <a id="g_t2_002e4_002e1"></a>
+        <a id="Representations-for-Complex-Numbers"></a>
+        <h4 class="subsection"><span class="secnum">2.4.1</span><span class="sectitle">Representações para Números Complexos</span></h4>
+
+        <p>
+            Desenvolveremos um sistema que realiza operações aritméticas em números complexos como um exemplo simples, mas irrealista, de um programa que usa operações genéricas. Começamos discutindo duas representações plausíveis para números complexos como pares ordenados: a forma retangular (parte real e parte imaginária) e a forma polar (magnitude e ângulo).<a class="footnote_link" id="DOCF109" href="#FOOT109"><sup>109</sup></a> A seção <a href="#g_t2_002e4_002e2">2.4.2</a> mostrará como ambas as representações podem coexistir em um único sistema por meio do uso de etiquetas de tipo e operações genéricas.
+        </p>
+        <p>
+            Assim como os números racionais, os números complexos são naturalmente representados como pares ordenados. O conjunto de números complexos pode ser pensado como um espaço bidimensional com dois eixos ortogonais, o eixo "real" e o eixo "imaginário". (Veja <a href="#Figure-2_002e20">Figura 2.20</a>.) Desse ponto de vista, o número complexo <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mrow class="MJX-TeXAtom-ORD">
+                    <mi>z</mi>
+                    <mo>=</mo>
+                    <mi>x</mi>
+                    <mo>+</mo>
+                    <mi>i</mi>
+                    <mi>y</mi>
+                </mrow>
+            </math> (onde <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mrow class="MJX-TeXAtom-ORD">
+                    <msup>
+                        <mi>i</mi>
+                        <mrow class="MJX-TeXAtom-ORD">
+                            <mspace width="0.1em"/>
+                            <mn>2</mn>
+                        </mrow>
+                    </msup>
+                    <mo>=</mo>
+                    <mtext>−1</mtext>
+                </mrow>
+            </math>) pode ser pensado como o ponto no plano cuja coordenada real é <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mi>x</mi>
+            </math> e cuja coordenada imaginária é <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mi>y</mi>
+            </math>. A adição de números complexos reduz-se, nesta representação, à adição de coordenadas:
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+                    <mtr>
+                        <mtd>
+                            <mtext>Parte Real</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mo>+</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>2</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                        </mtd>
+                        <mtd>
+                            <mo>=</mo>
+                        </mtd>
+                        <mtd>
+                            <mtext>Parte Real</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                            <mo>+</mo>
+                        </mtd>
+                    </mtr>
+                    <mtr>
+                        <mtd/>
+                        <mtd/>
+                        <mtd>
+                            <mtext>Parte Real</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>2</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                            <mo>,</mo>
+                        </mtd>
+                    </mtr>
+                    <mtr>
+                        <mtd>
+                            <mtext>Parte Imaginária</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mo>+</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>2</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                        </mtd>
+                        <mtd>
+                            <mo>=</mo>
+                        </mtd>
+                        <mtd>
+                            <mtext>Parte Imaginária</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                            <mo>+</mo>
+                        </mtd>
+                    </mtr>
+                    <mtr>
+                        <mtd/>
+                        <mtd/>
+                        <mtd>
+                            <mtext>Parte Imaginária</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>2</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                            <mo>.</mo>
+                        </mtd>
+                    </mtr>
+                </mtable>
+            </math>
+        </p>
+        <figure class="float">
+            <a id="Figure-2_002e20"></a>
+            <object style="width: 51.98ex; height: 30.74ex;" data="fig/chap2/Fig2.20.std.svg" type="image/svg+xml">SVG</object>
+            <figcaption class="float-caption">
+                <p><strong>Figura 2.20:</strong> Números complexos como pontos no plano.</p>
+            </figcaption>
+        </figure>
+
+        <p>
+            Ao multiplicar números complexos, é mais natural pensar em termos de representar um número complexo na forma polar, como uma magnitude e um ângulo (<math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mi>r</mi>
+            </math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mi>A</mi>
+            </math> na <a href="#Figure-2_002e20">Figura 2.20</a>). O produto de dois números complexos é o vetor obtido esticando um número complexo pelo comprimento do outro e depois girando-o pelo ângulo do outro:
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+                <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+                    <mtr>
+                        <mtd>
+                            <mtext>Magnitude</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mo>⋅<!-- ⋅ --></mo>
+                            <msub
