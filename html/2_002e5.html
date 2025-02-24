@@ -1,0 +1,2671 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª Edição: 2.5
+    </title>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t2_002e5"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="Chapter-3.html#Chapter-3" accesskey="n" rel="next"
+            >Capítulo 3</a
+          >, Anterior:
+          <a href="2_002e4.html#g_t2_002e4" accesskey="p" rel="prev">2.4</a>,
+          Acima:
+          <a href="Chapter-2.html#Chapter-2" accesskey="u" rel="prev"
+            >Capítulo 2</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+      <a id="Systems-with-Generic-Operations"></a>
+      <h3 class="section">
+        <span class="secnum">2.5</span
+        ><span class="sectitle">Sistemas com Operações Genéricas</span>
+      </h3>
+
+      <p>
+        Na seção anterior, vimos como projetar sistemas nos quais objetos de
+        dados podem ser representados de mais de uma maneira. A ideia chave é
+        vincular o código que especifica as operações de dados às várias
+        representações por meio de procedimentos de interface genérica. Agora
+        veremos como usar essa mesma ideia não apenas para definir operações que
+        são genéricas sobre diferentes representações, mas também para definir
+        operações que são genéricas sobre diferentes tipos de argumentos. Já
+        vimos vários pacotes diferentes de operações aritméticas: a aritmética
+        primitiva (<code>+</code>, <code>-</code>, <code>*</code>,
+        <code>/</code>) embutida em nossa linguagem, a aritmética de números
+        racionais (<code>add-rat</code>, <code>sub-rat</code>,
+        <code>mul-rat</code>, <code>div-rat</code>) de
+        <a href="2_002e1.html#g_t2_002e1_002e1">2.1.1</a>, e a aritmética de
+        números complexos que implementamos em
+        <a href="2_002e4.html#g_t2_002e4_002e3">2.4.3</a>. Agora usaremos
+        técnicas dirigidas por dados para construir um pacote de operações
+        aritméticas que incorpora todos os pacotes aritméticos que já
+        construímos.
+      </p>
+      <p>
+        <a href="#Figure-2_002e23">Figura 2.23</a> mostra a estrutura do sistema
+        que construiremos. Observe as barreiras de abstração. Da perspectiva de
+        alguém que usa "números", há um único procedimento <code>add</code> que
+        opera sobre quaisquer números fornecidos. <code>Add</code> faz parte de
+        uma interface genérica que permite que os pacotes separados de
+        aritmética ordinária, aritmética racional e aritmética complexa sejam
+        acessados uniformemente por programas que usam números. Qualquer pacote
+        aritmético individual (como o pacote complexo) pode ser acessado por
+        meio de procedimentos genéricos (como <code>add-complex</code>) que
+        combinam pacotes projetados para diferentes representações (como
+        retangular e polar). Além disso, a estrutura do sistema é aditiva, de
+        modo que se pode projetar os pacotes aritméticos individuais
+        separadamente e combiná-los para produzir um sistema aritmético
+        genérico.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e23"></a>
+        <object
+          style="width: 59.4ex; height: 54.22ex"
+          data="fig/chap2/Fig2.23b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p><strong>Figura 2.23:</strong> Sistema aritmético genérico.</p>
+        </figcaption>
+      </figure>
+
+      <a id="g_t2_002e5_002e1"></a>
+      <a id="Generic-Arithmetic-Operations"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.5.1</span
+        ><span class="sectitle">Operações Aritméticas Genéricas</span>
+      </h4>
+
+      <p>
+        A tarefa de projetar operações aritméticas genéricas é análoga à de
+        projetar as operações genéricas de números complexos. Gostaríamos, por
+        exemplo, de ter um procedimento de adição genérico <code>add</code> que
+        age como a adição primitiva ordinária <code>+</code> sobre números
+        ordinários, como <code>add-rat</code> sobre números racionais e como
+        <code>add-complex</code> sobre números complexos. Podemos implementar
+        <code>add</code> e as outras operações aritméticas genéricas seguindo a
+        mesma estratégia que usamos em
+        <a href="2_002e4.html#g_t2_002e4_002e3">2.4.3</a> para implementar os
+        seletores genéricos para números complexos. Anexaremos uma etiqueta de
+        tipo a cada tipo de número e faremos com que o procedimento genérico
+        despache para um pacote apropriado de acordo com o tipo de dados de seus
+        argumentos.
+      </p>
+      <p>
+        Os procedimentos aritméticos genéricos são definidos da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define (add x y) (apply-generic 'add x y))
+(define (sub x y) (apply-generic 'sub x y))
+(define (mul x y) (apply-generic 'mul x y))
+(define (div x y) (apply-generic 'div x y))</code></pre>
+
+      <p>
+        Começamos instalando um pacote para lidar com números
+        <a id="index-ordinary"></a> <em>ordinários</em>, ou seja, os números
+        primitivos de nossa linguagem. Vamos marcar esses números com o símbolo
+        <code>scheme-number</code>. As operações aritméticas neste pacote são os
+        procedimentos aritméticos primitivos (portanto, não há necessidade de
+        definir procedimentos extras para lidar com os números não marcados).
+        Como essas operações recebem dois argumentos, elas são instaladas na
+        tabela com a chave <code>(scheme-number scheme-number)</code>:
+      </p>
+      <pre><code class="language-scheme">(define (install-scheme-number-package)
+  (define (tag x)
+    (attach-tag 'scheme-number x))
+  (put 'add '(scheme-number scheme-number)
+       (lambda (x y) (tag (+ x y))))
+  (put 'sub '(scheme-number scheme-number)
+       (lambda (x y) (tag (- x y))))
+  (put 'mul '(scheme-number scheme-number)
+       (lambda (x y) (tag (* x y))))
+  (put 'div '(scheme-number scheme-number)
+       (lambda (x y) (tag (/ x y))))
+  (put 'make 'scheme-number
+       (lambda (x) (tag x)))
+  'done)</code></pre>
+
+      <p>
+        Os usuários do pacote Scheme-number criarão números ordinários
+        (marcados) por meio do procedimento:
+      </p>
+      <pre><code class="language-scheme">(define (make-scheme-number n)
+  ((get 'make 'scheme-number) n))</code></pre>
+
+      <p>
+        Agora que a estrutura do sistema aritmético genérico está em vigor,
+        podemos facilmente incluir novos tipos de números. Aqui está um pacote
+        que realiza aritmética racional. Observe que, como benefício da
+        aditividade, podemos usar sem modificação o código de números racionais
+        de <a href="2_002e1.html#g_t2_002e1_002e1">2.1.1</a> como os
+        procedimentos internos do pacote:
+      </p>
+      <pre><code class="language-scheme">(define (install-rational-package)
+  ;; procedimentos internos
+  (define (numer x) (car x))
+  (define (denom x) (cdr x))
+  (define (make-rat n d)
+    (let ((g (gcd n d)))
+      (cons (/ n g) (/ d g))))
+  (define (add-rat x y)
+    (make-rat (+ (* (numer x) (denom y))
+                 (* (numer y) (denom x)))
+              (* (denom x) (denom y))))
+  (define (sub-rat x y)
+    (make-rat (- (* (numer x) (denom y))
+                 (* (numer y) (denom x)))
+              (* (denom x) (denom y))))
+  (define (mul-rat x y)
+    (make-rat (* (numer x) (numer y))
+              (* (denom x) (denom y))))
+  (define (div-rat x y)
+    (make-rat (* (numer x) (denom y))
+              (* (denom x) (numer y))))
+  ;; interface para o resto do sistema
+  (define (tag x) (attach-tag 'rational x))
+  (put 'add '(rational rational)
+       (lambda (x y) (tag (add-rat x y))))
+  (put 'sub '(rational rational)
+       (lambda (x y) (tag (sub-rat x y))))
+  (put 'mul '(rational rational)
+       (lambda (x y) (tag (mul-rat x y))))
+  (put 'div '(rational rational)
+       (lambda (x y) (tag (div-rat x y))))
+  (put 'make 'rational
+       (lambda (n d) (tag (make-rat n d))))
+  'done)
+
+(define (make-rational n d)
+  ((get 'make 'rational) n d))</code></pre>
+
+      <p>
+        Podemos instalar um pacote semelhante para lidar com números complexos,
+        usando a etiqueta <code>complex</code>. Ao criar o pacote, extraímos da
+        tabela as operações <code>make-from-real-imag</code> e
+        <code>make-from-mag-ang</code> que foram definidas pelos pacotes
+        retangular e polar. A aditividade nos permite usar, como operações
+        internas, os mesmos procedimentos <code>add-complex</code>,
+        <code>sub-complex</code>, <code>mul-complex</code> e
+        <code>div-complex</code> de
+        <a href="2_002e4.html#g_t2_002e4_002e1">2.4.1</a>.
+      </p>
+      <pre><code class="language-scheme">(define (install-complex-package)
+  ;; procedimentos importados dos pacotes retangular e polar
+  (define (make-from-real-imag x y)
+    ((get 'make-from-real-imag 
+          'rectangular) 
+     x y))
+  (define (make-from-mag-ang r a)
+    ((get 'make-from-mag-ang 'polar) 
+     r a))
+  ;; procedimentos internos
+  (define (add-complex z1 z2)
+    (make-from-real-imag 
+     (+ (real-part z1) (real-part z2))
+     (+ (imag-part z1) (imag-part z2))))
+  (define (sub-complex z1 z2)
+    (make-from-real-imag 
+     (- (real-part z1) (real-part z2))
+     (- (imag-part z1) (imag-part z2))))
+  (define (mul-complex z1 z2)
+    (make-from-mag-ang 
+     (* (magnitude z1) (magnitude z2))
+     (+ (angle z1) (angle z2))))
+  (define (div-complex z1 z2)
+    (make-from-mag-ang 
+     (/ (magnitude z1) (magnitude z2))
+     (- (angle z1) (angle z2))))
+  ;; interface para o resto do sistema
+  (define (tag z) (attach-tag 'complex z))
+  (put 'add '(complex complex)
+       (lambda (z1 z2) 
+         (tag (add-complex z1 z2))))
+  (put 'sub '(complex complex)
+       (lambda (z1 z2) 
+         (tag (sub-complex z1 z2))))
+  (put 'mul '(complex complex)
+       (lambda (z1 z2) 
+         (tag (mul-complex z1 z2))))
+  (put 'div '(complex complex)
+       (lambda (z1 z2) 
+         (tag (div-complex z1 z2))))
+  (put 'make-from-real-imag 'complex
+       (lambda (x y) 
+         (tag (make-from-real-imag x y))))
+  (put 'make-from-mag-ang 'complex
+       (lambda (r a) 
+         (tag (make-from-mag-ang r a))))
+  'done)</code></pre>
+
+      <p>
+        Programas fora do pacote de números complexos podem construir números
+        complexos a partir de partes reais e imaginárias ou de magnitudes e
+        ângulos. Observe como os procedimentos subjacentes, originalmente
+        definidos nos pacotes retangular e polar, são exportados para o pacote
+        complexo e exportados de lá para o mundo exterior.
+      </p>
+      <pre><code class="language-scheme">(define (make-complex-from-real-imag x y)
+  ((get 'make-from-real-imag 'complex) x y))
+(define (make-complex-from-mag-ang r a)
+  ((get 'make-from-mag-ang 'complex) r a))</code></pre>
+
+      <p>
+        O que temos aqui é um sistema de etiquetas de dois níveis. Um número
+        complexo típico, como
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>3</mn>
+            <mo>+</mo>
+            <mn>4</mn>
+            <mi>i</mi>
+          </mrow>
+        </math>
+        na forma retangular, seria representado como mostrado na
+        <a href="#Figure-2_002e24">Figura 2.24</a>. A etiqueta externa
+        (<code>complex</code>) é usada para direcionar o número para o pacote
+        complexo. Uma vez dentro do pacote complexo, a próxima etiqueta
+        (<code>rectangular</code>) é usada para direcionar o número para o
+        pacote retangular. Em um sistema grande e complicado, pode haver muitos
+        níveis, cada um interfaciado com o próximo por meio de operações
+        genéricas. À medida que um objeto de dados é passado "para baixo", a
+        etiqueta externa que é usada para direcioná-lo para o pacote apropriado
+        é removida (aplicando <code>contents</code>) e o próximo nível de
+        etiqueta (se houver) se torna visível para ser usado para despacho
+        adicional.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e24"></a>
+        <object
+          style="width: 41.53ex; height: 12ex"
+          data="fig/chap2/Fig2.24d.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.24:</strong> Representação de
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mn>3</mn>
+                <mo>+</mo>
+                <mn>4</mn>
+                <mi>i</mi>
+              </mrow>
+            </math>
+            na forma retangular.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Nos pacotes acima, usamos <code>add-rat</code>,
+        <code>add-complex</code> e os outros procedimentos aritméticos
+        exatamente como foram originalmente escritos. Uma vez que essas
+        definições são internas a diferentes procedimentos de instalação, no
+        entanto, elas não precisam mais de nomes distintos entre si: poderíamos
+        simplesmente nomeá-los <code>add</code>, <code>sub</code>,
+        <code>mul</code> e <code>div</code> em ambos os pacotes.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e77"></a>Exercício 2.77:</strong> Louis
+          Reasoner tenta avaliar a expressão <code>(magnitude z)</code> onde
+          <code>z</code> é o objeto mostrado na
+          <a href="#Figure-2_002e24">Figura 2.24</a>. Para sua surpresa, em vez
+          da resposta 5, ele recebe uma mensagem de erro de
+          <code>apply-generic</code>, dizendo que não há método para a operação
+          <code>magnitude</code> nos tipos <code>(complex)</code>. Ele mostra
+          essa interação para Alyssa P. Hacker, que diz: "O problema é que os
+          seletores de números complexos nunca foram definidos para números
+          <code>complex</code>, apenas para números <code>polar</code> e
+          <code>rectangular</code>. Tudo o que você precisa fazer para fazer
+          isso funcionar é adicionar o seguinte ao pacote <code>complex</code>:"
+        </p>
+        <pre><code class="language-scheme">(put 'real-part '(complex) real-part)
+(put 'imag-part '(complex) imag-part)
+(put 'magnitude '(complex) magnitude)
+(put 'angle '(complex) angle)</code></pre>
+
+        <p>
+          Descreva em detalhes por que isso funciona. Como exemplo, trace todos
+          os procedimentos chamados na avaliação da expressão
+          <code>(magnitude z)</code> onde <code>z</code> é o objeto mostrado na
+          <a href="#Figure-2_002e24">Figura 2.24</a>. Em particular, quantas
+          vezes <code>apply-generic</code> é invocado? Qual procedimento é
+          despachado em cada caso?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e78"></a>Exercício 2.78:</strong> Os
+          procedimentos internos no pacote <code>scheme-number</code> são
+          essencialmente nada mais do que chamadas para os procedimentos
+          primitivos <code>+</code>, <code>-</code>, etc. Não foi possível usar
+          os primitivos da linguagem diretamente porque nosso sistema de
+          etiquetas de tipo exige que cada objeto de dados tenha um tipo anexado
+          a ele. Na verdade, no entanto, todas as implementações de Lisp têm um
+          sistema de tipos, que usam internamente. Predicados primitivos como
+          <code>symbol?</code> e <code>number?</code> determinam se objetos de
+          dados têm tipos particulares. Modifique as definições de
+          <code>type-tag</code>, <code>contents</code> e
+          <code>attach-tag</code> de
+          <a href="2_002e4.html#g_t2_002e4_002e2">2.4.2</a> para que nosso
+          sistema genérico aproveite o sistema de tipos interno do Scheme. Ou
+          seja, o sistema deve funcionar como antes, exceto que números
+          ordinários devem ser representados simplesmente como números do
+          Scheme, em vez de como pares cujo <code>car</code> é o símbolo
+          <code>scheme-number</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e79"></a>Exercício 2.79:</strong> Defina
+          um predicado de igualdade genérico <code>equ?</code> que testa a
+          igualdade de dois números e instale-o no pacote aritmético genérico.
+          Esta operação deve funcionar para números ordinários, números
+          racionais e números complexos.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e80"></a>Exercício 2.80:</strong> Defina
+          um predicado genérico <code>=zero?</code> que testa se seu argumento é
+          zero e instale-o no pacote aritmético genérico. Esta operação deve
+          funcionar para números ordinários, números racionais e números
+          complexos.
+        </p>
+      </blockquote>
+
+      <a id="g_t2_002e5_002e2"></a>
+      <a id="Combining-Data-of-Different-Types"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.5.2</span
+        ><span class="sectitle">Combinando Dados de Diferentes Tipos</span>
+      </h4>
+
+      <p>
+        Vimos como definir um sistema aritmético unificado que abrange números
+        ordinários, números complexos, números racionais e qualquer outro tipo
+        de número que possamos decidir inventar, mas ignoramos uma questão
+        importante. As operações que definimos até agora tratam os diferentes
+        tipos de dados como sendo completamente independentes. Assim, há pacotes
+        separados para adicionar, digamos, dois números ordinários ou dois
+        números complexos. O que ainda não consideramos é o fato de que é
+        significativo definir operações que cruzam os limites de tipo, como a
+        adição de um número complexo a um número ordinário. Fizemos grandes
+        esforços para introduzir barreiras entre partes de nossos programas para
+        que possam ser desenvolvidas e entendidas separadamente. Gostaríamos de
+        introduzir as operações entre tipos de forma cuidadosamente controlada,
+        de modo que possamos suportá-las sem violar seriamente nossos limites de
+        módulo.
+      </p>
+      <p>
+        Uma maneira de lidar com operações entre tipos é projetar um
+        procedimento diferente para cada combinação possível de tipos para os
+        quais a operação é válida. Por exemplo, poderíamos estender o pacote de
+        números complexos para que ele forneça um procedimento para adicionar
+        números complexos a números ordinários e instalar isso na tabela usando
+        a etiqueta <code>(complex scheme-number)</code>:<a
+          class="footnote_link"
+          id="DOCF115"
+          href="#FOOT115"
+          ><sup>115</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (add-complex-to-schemenum z x)
+  (make-from-real-imag (+ (real-part z) x)
+                       (imag-part z)))
+
+(put 'add 
+     '(complex scheme-number)
+     (lambda (z x) 
+       (tag (add-complex-to-schemenum z x))))</code></pre>
+
+      <p>
+        Esta técnica funciona, mas é incômoda. Com tal sistema, o custo de
+        introduzir um novo tipo não é apenas a construção do pacote de
+        procedimentos para esse tipo, mas também a construção e instalação dos
+        procedimentos que implementam as operações entre tipos. Isso pode
+        facilmente ser muito mais código do que o necessário para definir as
+        operações no próprio tipo. O método também mina nossa capacidade de
+        combinar pacotes separados de forma aditiva, ou pelo menos de limitar a
+        extensão em que os implementadores dos pacotes individuais precisam
+        levar em conta outros pacotes. Por exemplo, no exemplo acima, parece
+        razoável que a responsabilidade de lidar com operações mistas em números
+        complexos e números ordinários seja do pacote de números complexos.
+        Combinar números racionais e números complexos, no entanto, pode ser
+        feito pelo pacote complexo, pelo pacote racional ou por algum terceiro
+        pacote que use operações extraídas desses dois pacotes. Formular
+        políticas coerentes sobre a divisão de responsabilidade entre pacotes
+        pode ser uma tarefa esmagadora ao projetar sistemas com muitos pacotes e
+        muitas operações entre tipos.
+      </p>
+      <a id="Coercion"></a>
+      <h5 class="subsubheading">Coerção</h5>
+
+      <p>
+        Na situação geral de operações completamente não relacionadas agindo
+        sobre tipos completamente não relacionados, implementar operações
+        explícitas entre tipos, embora incômodo, é o melhor que se pode esperar.
+        Felizmente, geralmente podemos fazer melhor aproveitando estruturas
+        adicionais que podem estar latentes em nosso sistema de tipos. Muitas
+        vezes, os diferentes tipos de dados não são completamente independentes,
+        e pode haver maneiras pelas quais objetos de um tipo podem ser vistos
+        como sendo de outro tipo. Esse processo é chamado de
+        <a id="index-coercion"></a> <em>coerção</em>. Por exemplo, se nos
+        pedirem para combinar aritmeticamente um número ordinário com um número
+        complexo, podemos ver o número ordinário como um número complexo cuja
+        parte imaginária é zero. Isso transforma o problema em combinar dois
+        números complexos, que pode ser tratado da maneira usual pelo pacote de
+        aritmética complexa.
+      </p>
+      <p>
+        Em geral, podemos implementar essa ideia projetando procedimentos de
+        coerção que transformam um objeto de um tipo em um objeto equivalente de
+        outro tipo. Aqui está um procedimento de coerção típico, que transforma
+        um número ordinário dado em um número complexo com essa parte real e
+        parte imaginária zero:
+      </p>
+      <pre><code class="language-scheme">(define (scheme-number->complex n)
+  (make-complex-from-real-imag 
+   (contents n) 0))</code></pre>
+
+      <p>
+        Instalamos esses procedimentos de coerção em uma tabela de coerção
+        especial, indexada sob os nomes dos dois tipos:
+      </p>
+      <pre><code class="language-scheme">(put-coercion 'scheme-number 'complex 
+              scheme-number->complex)</code></pre>
+
+      <p>
+        (Assumimos que há procedimentos <code>put-coercion</code> e
+        <code>get-coercion</code> disponíveis para manipular essa tabela.)
+        Geralmente, alguns dos slots na tabela estarão vazios, porque não é
+        geralmente possível coagir um objeto de dados arbitrário de cada tipo
+        para todos os outros tipos. Por exemplo, não há como coagir um número
+        complexo arbitrário para um número ordinário, então não haverá um
+        procedimento geral <code>complex->scheme-number</code> incluído na
+        tabela.
+      </p>
+      <p>
+        Uma vez que a tabela de coerção foi configurada, podemos lidar com a
+        coerção de forma uniforme modificando o procedimento
+        <code>apply-generic</code> de
+        <a href="2_002e4.html#g_t2_002e4_002e3">2.4.3</a>. Quando solicitado a
+        aplicar uma operação, primeiro verificamos se a operação é definida para
+        os tipos dos argumentos, como antes. Se for, despachamos para o
+        procedimento encontrado na tabela de operação e tipo. Caso contrário,
+        tentamos a coerção. Para simplificar, consideramos apenas o caso em que
+        há dois argumentos.<a class="footnote_link" id="DOCF116" href="#FOOT116"
+          ><sup>116</sup></a
+        >
+        Verificamos a tabela de coerção para ver se objetos do primeiro tipo
+        podem ser coagidos para o segundo tipo. Se puderem, coagimos o primeiro
+        argumento e tentamos a operação novamente. Se objetos do primeiro tipo
+        não puderem ser coagidos para o segundo tipo, tentamos a coerção ao
+        contrário para ver se há uma maneira de coagir o segundo argumento para
+        o tipo do primeiro argumento. Finalmente, se não houver uma maneira
+        conhecida de coagir nenhum dos tipos para o outro, desistimos. Aqui está
+        o procedimento:
+      </p>
+      <pre><code class="language-scheme">(define (apply-generic op . args)
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+          (apply proc (map contents args))
+          (if (= (length args) 2)
+              (let ((type1 (car type-tags))
+                    (type2 (cadr type-tags))
+                    (a1 (car args))
+                    (a2 (cadr args)))
+                (let ((t1->t2 
+                       (get-coercion type1
+                                     type2))
+                      (t2->t1 
+                       (get-coercion type2 
+                                     type1)))
+                  (cond (t1->t2
+                         (apply-generic 
+                          op (t1->t2 a1) a2))
+                        (t2->t1
+                         (apply-generic 
+                          op a1 (t2->t1 a2)))
+                        (else
+                         (error 
+                          "No method for 
+                           these types"
+                          (list 
+                           op 
+                           type-tags))))))
+              (error 
+               "No method for these types"
+               (list op type-tags)))))))</code></pre>
+
+      <p>
+        Este esquema de coerção tem muitas vantagens sobre o método de definir
+        operações explícitas entre tipos, como descrito acima. Embora ainda
+        precisemos escrever procedimentos de coerção para relacionar os tipos
+        (possivelmente
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <msup>
+            <mi>n</mi>
+            <mn>2</mn>
+          </msup>
+        </math>
+        procedimentos para um sistema com
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>n</mi>
+        </math>
+        tipos), precisamos escrever apenas um procedimento para cada par de
+        tipos, em vez de um procedimento diferente para cada coleção de tipos e
+        cada operação genérica.<a
+          class="footnote_link"
+          id="DOCF117"
+          href="#FOOT117"
+          ><sup>117</sup></a
+        >
+        O que estamos contando aqui é o fato de que a transformação apropriada
+        entre tipos depende apenas dos tipos em si, não da operação a ser
+        aplicada.
+      </p>
+      <p>
+        Por outro lado, pode haver aplicações para as quais nosso esquema de
+        coerção não seja suficientemente geral. Mesmo quando nenhum dos objetos
+        a serem combinados pode ser convertido para o tipo do outro, ainda pode
+        ser possível realizar a operação convertendo ambos os objetos para um
+        terceiro tipo. Para lidar com essa complexidade e ainda preservar a
+        modularidade em nossos programas, geralmente é necessário construir
+        sistemas que aproveitem estruturas ainda mais complexas nas relações
+        entre tipos, como discutiremos a seguir.
+      </p>
+      <a id="Hierarchies-of-types"></a>
+      <h5 class="subsubheading">Hierarquias de tipos</h5>
+
+      <p>
+        O esquema de coerção apresentado acima dependia da existência de
+        relações naturais entre pares de tipos. Muitas vezes, há uma estrutura
+        mais "global" em como os diferentes tipos se relacionam entre si. Por
+        exemplo, suponha que estamos construindo um sistema aritmético genérico
+        para lidar com inteiros, números racionais, números reais e números
+        complexos. Em tal sistema, é bastante natural considerar um inteiro como
+        um tipo especial de número racional, que por sua vez é um tipo especial
+        de número real, que por sua vez é um tipo especial de número complexo. O
+        que realmente temos é uma chamada <a id="index-hierarchy-of-types"></a>
+        <em>hierarquia de tipos</em>, na qual, por exemplo, inteiros são um
+        <a id="index-subtype"></a> <em>subtipo</em> de números racionais (ou
+        seja, qualquer operação que pode ser aplicada a um número racional pode
+        automaticamente ser aplicada a um inteiro). Inversamente, dizemos que
+        números racionais formam um <a id="index-supertype"></a>
+        <em>supertipo</em> de inteiros. A hierarquia particular que temos aqui é
+        de um tipo muito simples, na qual cada tipo tem no máximo um supertipo e
+        no máximo um subtipo. Tal estrutura, chamada de
+        <a id="index-tower"></a> <em>torre</em>, é ilustrada na
+        <a href="#Figure-2_002e25">Figura 2.25</a>.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e25"></a>
+        <object
+          style="width: 8.46ex; height: 22.71ex"
+          data="fig/chap2/Fig2.25.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p><strong>Figura 2.25:</strong> Uma torre de tipos.</p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Se tivermos uma estrutura de torre, podemos simplificar muito o problema
+        de adicionar um novo tipo à hierarquia, pois precisamos apenas
+        especificar como o novo tipo é incorporado ao próximo supertipo acima
+        dele e como ele é o supertipo do tipo abaixo dele. Por exemplo, se
+        quisermos adicionar um inteiro a um número complexo, não precisamos
+        definir explicitamente um procedimento de coerção
+        <code>integer->complex</code>. Em vez disso, definimos como um inteiro
+        pode ser transformado em um número racional, como um número racional é
+        transformado em um número real e como um número real é transformado em
+        um número complexo. Em seguida, permitimos que o sistema transforme o
+        inteiro em um número complexo por meio dessas etapas e, em seguida,
+        adicione os dois números complexos.
+      </p>
+      <p>
+        Podemos redesenhar nosso procedimento <code>apply-generic</code> da
+        seguinte maneira: Para cada tipo, precisamos fornecer um procedimento
+        <code>raise</code>, que "eleva" objetos desse tipo um nível na torre.
+        Então, quando o sistema é solicitado a operar sobre objetos de
+        diferentes tipos, ele pode elevar sucessivamente os tipos inferiores até
+        que todos os objetos estejam no mesmo nível na torre. (<a
+          href="#Exercise-2_002e83"
+          >Exercício 2.83</a
+        >
+        e <a href="#Exercise-2_002e84">Exercício 2.84</a> tratam dos detalhes de
+        implementar tal estratégia.)
+      </p>
+      <p>
+        Outra vantagem de uma torre é que podemos facilmente implementar a noção
+        de que todo tipo "herda" todas as operações definidas em um supertipo.
+        Por exemplo, se não fornecemos um procedimento especial para encontrar a
+        parte real de um inteiro, devemos esperar que
+        <code>real-part</code> seja definido para inteiros em virtude do fato de
+        que inteiros são um subtipo de números complexos. Em uma torre, podemos
+        organizar isso de forma uniforme modificando <code>apply-generic</code>.
+        Se a operação necessária não for diretamente definida para o tipo do
+        objeto fornecido, elevamos o objeto para seu supertipo e tentamos
+        novamente. Assim, rastejamos pela torre, transformando nosso argumento à
+        medida que avançamos, até encontrarmos um nível no qual a operação
+        desejada pode ser realizada ou atingirmos o topo (caso em que
+        desistimos).
+      </p>
+      <p>
+        Outra vantagem de uma torre sobre uma hierarquia mais geral é que ela
+        nos dá uma maneira simples de "rebaixar" um objeto de dados para a
+        representação mais simples. Por exemplo, se adicionarmos
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>2</mn>
+            <mo>+</mo>
+            <mn>3</mn>
+            <mi>i</mi>
+          </mrow>
+        </math>
+        a
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>4</mn>
+            <mo>−<!-- − --></mo>
+            <mn>3</mn>
+            <mi>i</mi>
+          </mrow> </math
+        >, seria bom obter a resposta como o inteiro 6 em vez de como o número
+        complexo
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>6</mn>
+            <mo>+</mo>
+            <mn>0</mn>
+            <mi>i</mi>
+          </mrow> </math
+        >. <a href="#Exercise-2_002e85">Exercício 2.85</a> discute uma maneira
+        de implementar tal operação de rebaixamento. (O truque é que precisamos
+        de uma maneira geral de distinguir aqueles objetos que podem ser
+        rebaixados, como
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>6</mn>
+            <mo>+</mo>
+            <mn>0</mn>
+            <mi>i</mi>
+          </mrow> </math
+        >, daqueles que não podem, como
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>6</mn>
+            <mo>+</mo>
+            <mn>2</mn>
+            <mi>i</mi>
+          </mrow> </math
+        >.)
+      </p>
+      <a id="Inadequacies-of-hierarchies"></a>
+      <h5 class="subsubheading">Inadequações das hierarquias</h5>
+
+      <p>
+        Se os tipos de dados em nosso sistema puderem ser naturalmente
+        organizados em uma torre, isso simplifica muito os problemas de lidar
+        com operações genéricas em diferentes tipos, como vimos. Infelizmente,
+        isso geralmente não é o caso.
+        <a href="#Figure-2_002e26">Figura 2.26</a> ilustra um arranjo mais
+        complexo de tipos mistos, mostrando relações entre diferentes tipos de
+        figuras geométricas. Vemos que, em geral, um tipo pode ter mais de um
+        subtipo. Triângulos e quadriláteros, por exemplo, são ambos subtipos de
+        polígonos. Além disso, um tipo pode ter mais de um supertipo. Por
+        exemplo, um triângulo retângulo isósceles pode ser considerado tanto
+        como um triângulo isósceles quanto como um triângulo retângulo. Essa
+        questão de múltiplos supertipos é particularmente espinhosa, pois
+        significa que não há uma maneira única de "elevar" um tipo na
+        hierarquia. Encontrar o supertipo "correto" no qual aplicar uma operação
+        a um objeto pode envolver uma busca considerável por toda a rede de
+        tipos por parte de um procedimento como <code>apply-generic</code>. Como
+        geralmente há múltiplos subtipos para um tipo, há um problema semelhante
+        em coagir um valor "para baixo" na hierarquia de tipos. Lidar com
+        grandes números de tipos inter-relacionados enquanto ainda preserva a
+        modularidade no design de grandes sistemas é muito difícil e é uma área
+        de muita pesquisa atual.<a
+          class="footnote_link"
+          id="DOCF118"
+          href="#FOOT118"
+          ><sup>118</sup></a
+        >
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e26"></a>
+        <object
+          style="width: 68.12ex; height: 44.21ex"
+          data="fig/chap2/Fig2.26f.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.26:</strong> Relações entre tipos de figuras
+            geométricas.
+          </p>
+        </figcaption>
+      </figure>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e81"></a>Exercício 2.81:</strong> Louis
+          Reasoner notou que <code>apply-generic</code> pode tentar coagir os
+          argumentos para os tipos um do outro, mesmo que eles já tenham o mesmo
+          tipo. Portanto, ele raciocina, precisamos colocar procedimentos na
+          tabela de coerção para <a id="index-coerce"></a>
+          <em>coagir</em> argumentos de cada tipo para seu próprio tipo. Por
+          exemplo, além da coerção <code>scheme-number->complex</code> mostrada
+          acima, ele faria:
+        </p>
+        <pre><code class="language-scheme">(define (scheme-number->scheme-number n) n)
+(define (complex->complex z) z)
+
+(put-coercion 'scheme-number 'scheme-number
+              scheme-number->scheme-number)
+
+(put-coercion 'complex 'complex 
+              complex->complex)</code></pre>
+
+        <ol>
+          <li>
+            Com os procedimentos de coerção de Louis instalados, o que acontece
+            se <code>apply-generic</code> for chamado com dois argumentos do
+            tipo <code>scheme-number</code> ou dois argumentos do tipo
+            <code>complex</code> para uma operação que não é encontrada na
+            tabela para esses tipos? Por exemplo, suponha que definimos uma
+            operação genérica de exponenciação:
+
+            <pre><code class="language-scheme">(define (exp x y) 
+  (apply-generic 'exp x y))</code></pre>
+
+            <p>
+              e colocamos um procedimento para exponenciação no pacote
+              Scheme-number, mas não em nenhum outro pacote:
+            </p>
+            <pre><code class="language-scheme">;; seguinte adicionado ao pacote Scheme-number
+(put 'exp 
+     '(scheme-number scheme-number)
+     (lambda (x y) 
+       (tag (expt x y)))) 
+       ;; usando o primitivo expt</code></pre>
+
+            <p>
+              O que acontece se chamarmos <code>exp</code> com dois números
+              complexos como argumentos?
+            </p>
+          </li>
+          <li>
+            Louis está correto que algo precisava ser feito sobre coerção com
+            argumentos do mesmo tipo, ou <code>apply-generic</code> funciona
+            corretamente como está?
+          </li>
+          <li>
+            Modifique <code>apply-generic</code> para que ele não tente coerção
+            se os dois argumentos tiverem o mesmo tipo.
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e82"></a>Exercício 2.82:</strong> Mostre
+          como generalizar <code>apply-generic</code> para lidar com coerção no
+          caso geral de múltiplos argumentos. Uma estratégia é tentar coagir
+          todos os argumentos para o tipo do primeiro argumento, depois para o
+          tipo do segundo argumento, e assim por diante. Dê um exemplo de uma
+          situação em que essa estratégia (e da mesma forma a versão de dois
+          argumentos dada acima) não é suficientemente geral. (Dica: Considere o
+          caso em que há algumas operações mistas adequadas presentes na tabela
+          que não serão tentadas.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e83"></a>Exercício 2.83:</strong> Suponha
+          que você está projetando um sistema aritmético genérico para lidar com
+          a torre de tipos mostrada na
+          <a href="#Figure-2_002e25">Figura 2.25</a>: inteiro, racional, real,
+          complexo. Para cada tipo (exceto complexo), projete um procedimento
+          que eleva objetos desse tipo um nível na torre. Mostre como instalar
+          uma operação genérica <code>raise</code> que funcionará para cada tipo
+          (exceto complexo).
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e84"></a>Exercício 2.84:</strong> Usando
+          a operação <code>raise</code> do
+          <a href="#Exercise-2_002e83">Exercício 2.83</a>, modifique o
+          procedimento <code>apply-generic</code> para que ele coage seus
+          argumentos a terem o mesmo tipo pelo método de elevação sucessiva,
+          como discutido nesta seção. Você precisará conceber uma maneira de
+          testar qual dos dois tipos está mais alto na torre. Faça isso de uma
+          maneira que seja "compatível" com o resto do sistema e não leve a
+          problemas ao adicionar novos níveis à torre.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e85"></a>Exercício 2.85:</strong> Esta
+          seção mencionou um método para "simplificar" um objeto de dados
+          rebaixando-o na torre de tipos o máximo possível. Projete um
+          procedimento <code>drop</code> que realiza isso para a torre descrita
+          no <a href="#Exercise-2_002e83">Exercício 2.83</a>. A chave é decidir,
+          de alguma forma geral, se um objeto pode ser rebaixado. Por exemplo, o
+          número complexo
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mn>1.5</mn>
+              <mo>+</mo>
+              <mn>0</mn>
+              <mi>i</mi>
+            </mrow>
+          </math>
+          pode ser rebaixado até <code>real</code>, o número complexo
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mn>1</mn>
+              <mo>+</mo>
+              <mn>0</mn>
+              <mi>i</mi>
+            </mrow>
+          </math>
+          pode ser rebaixado até <code>integer</code>, e o número complexo
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mn>2</mn>
+              <mo>+</mo>
+              <mn>3</mn>
+              <mi>i</mi>
+            </mrow>
+          </math>
+          não pode ser rebaixado. Aqui está um plano para determinar se um
+          objeto pode ser rebaixado: Comece definindo uma operação genérica
+          <code>project</code> que "empurra" um objeto para baixo na torre. Por
+          exemplo, projetar um número complexo envolveria descartar a parte
+          imaginária. Então, um número pode ser rebaixado se, quando o
+          projetarmos e elevarmos o resultado de volta ao tipo que começamos,
+          terminarmos com algo igual ao que começamos. Mostre como implementar
+          essa ideia em detalhes, escrevendo um procedimento
+          <code>drop</code> que rebaixa um objeto o máximo possível. Você
+          precisará projetar as várias operações de projeção<a
+            class="footnote_link"
+            id="DOCF119"
+            href="#FOOT119"
+            ><sup>119</sup></a
+          >
+          e instalar <code>project</code> como uma operação genérica no sistema.
+          Você também precisará fazer uso de um predicado de igualdade genérico,
+          como descrito no <a href="#Exercise-2_002e79">Exercício 2.79</a>.
+          Finalmente, use <code>drop</code> para reescrever
+          <code>apply-generic</code> do
+          <a href="#Exercise-2_002e84">Exercício 2.84</a> para que ele
+          "simplifique" suas respostas.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e86"></a>Exercício 2.86:</strong> Suponha
+          que queremos lidar com números complexos cujas partes reais, partes
+          imaginárias, magnitudes e ângulos podem ser números ordinários,
+          números racionais ou outros números que possamos desejar adicionar ao
+          sistema. Descreva e implemente as mudanças necessárias no sistema para
+          acomodar isso. Você terá que definir operações como
+          <code>sine</code> e <code>cosine</code> que são genéricas sobre
+          números ordinários e números racionais.
+        </p>
+      </blockquote>
+
+      <a id="g_t2_002e5_002e3"></a>
+      <a id="Example_003a-Symbolic-Algebra"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.5.3</span
+        ><span class="sectitle">Exemplo: Álgebra Simbólica</span>
+      </h4>
+
+      <p>
+        A manipulação de expressões algébricas simbólicas é um processo complexo
+        que ilustra muitos dos problemas mais difíceis que ocorrem no design de
+        sistemas de grande escala. Uma expressão algébrica, em geral, pode ser
+        vista como uma estrutura hierárquica, uma árvore de operadores aplicados
+        a operandos. Podemos construir expressões algébricas começando com um
+        conjunto de objetos primitivos, como constantes e variáveis, e
+        combinando-os por meio de operadores algébricos, como adição e
+        multiplicação. Como em outras linguagens, formamos abstrações que nos
+        permitem nos referir a objetos compostos em termos simples. Abstrações
+        típicas em álgebra simbólica são ideias como combinação linear,
+        polinômio, função racional ou função trigonométrica. Podemos considerar
+        essas como "tipos" compostos, que são frequentemente úteis para
+        direcionar o processamento de expressões. Por exemplo, poderíamos
+        descrever a expressão
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mrow class="MJX-TeXAtom-ORD">
+            <msup>
+              <mi>x</mi>
+              <mn>2</mn>
+            </msup>
+            <mi>sin</mi>
+            <mo>⁡<!-- ⁡ --></mo>
+            <mo stretchy="false">(</mo>
+            <msup>
+              <mi>y</mi>
+              <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mn>1</mn>
+            <mo stretchy="false">)</mo>
+          </mrow>
+          <mo>+</mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>x</mi>
+            <mi>cos</mi>
+            <mo>⁡<!-- ⁡ --></mo>
+            <mn>2</mn>
+            <mi>y</mi>
+          </mrow>
+          <mo>+</mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>cos</mi>
+            <mo>⁡<!-- ⁡ --></mo>
+            <mo stretchy="false">(</mo>
+            <msup>
+              <mi>y</mi>
+              <mn>3</mn>
+            </msup>
+            <mo>−<!-- − --></mo>
+            <mn>2</mn>
+            <msup>
+              <mi>y</mi>
+              <mn>2</mn>
+            </msup>
+            <mo stretchy="false">)</mo>
+          </mrow>
+        </math>
+        como um polinômio em
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>x</mi>
+        </math>
+        com coeficientes que são funções trigonométricas de polinômios em
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>y</mi>
+        </math>
+        cujos coeficientes são inteiros.
+      </p>
+      <p>
+        Não tentaremos desenvolver um sistema completo de manipulação algébrica
+        aqui. Tais sistemas são programas extremamente complexos, incorporando
+        conhecimento algébrico profundo e algoritmos elegantes. O que faremos é
+        olhar para uma parte simples, mas importante, da manipulação algébrica:
+        a aritmética de polinômios. Ilustraremos os tipos de decisões que o
+        designer de tal sistema enfrenta e como aplicar as ideias de dados
+        abstratos e operações genéricas para ajudar a organizar esse esforço.
+      </p>
+      <a id="Arithmetic-on-polynomials"></a>
+      <h5 class="subsubheading">Aritmética em polinômios</h5>
+
+      <p>
+        Nossa primeira tarefa ao projetar um sistema para realizar aritmética em
+        polinômios é decidir exatamente o que é um polinômio. Polinômios são
+        normalmente definidos em relação a certas variáveis (os
+        <em>indeterminados</em> do polinômio). Para simplificar, vamos nos
+        restringir a polinômios com apenas um indeterminado (<em
+          >polinômios univariados</em
+        >). Definiremos um polinômio como uma soma de termos, cada um dos quais
+        é um coeficiente, uma potência do indeterminado, ou um produto de um
+        coeficiente e uma potência do indeterminado. Um coeficiente é definido
+        como uma expressão algébrica que não depende do indeterminado do
+        polinômio. Por exemplo,
+      </p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>5</mn>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>3</mn>
+          <mi>x</mi>
+        </mrow>
+        <mo>+</mo>
+        <mn>7</mn>
+      </math>
+
+      <p>
+        é um polinômio simples em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math
+        >, e
+      </p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo stretchy="false">(</mo>
+          <msup>
+            <mi>y</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>1</mn>
+          <mo stretchy="false">)</mo>
+          <msup>
+            <mi>x</mi>
+            <mn>3</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo stretchy="false">(</mo>
+          <mn>2</mn>
+          <mi>y</mi>
+          <mo stretchy="false">)</mo>
+          <mi>x</mi>
+          <mo>+</mo>
+          <mn>1</mn>
+        </mrow>
+      </math>
+
+      <p>
+        é um polinômio em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> cujos
+        coeficientes são polinômios em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math
+        >.
+      </p>
+
+      <p>
+        Já estamos lidando com algumas questões espinhosas. O primeiro desses
+        polinômios é o mesmo que o polinômio
+      </p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>5</mn>
+          <msup>
+            <mi>y</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>3</mn>
+          <mi>y</mi>
+          <mo>+</mo>
+          <mn>7</mn>
+        </mrow>
+      </math>
+
+      <p>
+        ou não? Uma resposta razoável pode ser "sim, se estivermos considerando
+        um polinômio puramente como uma função matemática, mas não, se
+        estivermos considerando um polinômio como uma forma sintática." O
+        segundo polinômio é algebricamente equivalente a um polinômio em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math> cujos
+        coeficientes são polinômios em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math
+        >. Nosso sistema deve reconhecer isso ou não? Além disso, existem outras
+        maneiras de representar um polinômio—por exemplo, como um produto de
+        fatores, ou (para um polinômio univariado) como o conjunto de raízes, ou
+        como uma lista dos valores do polinômio em um conjunto especificado de
+        pontos. Podemos contornar essas questões decidindo que, em nosso sistema
+        de manipulação algébrica, um "polinômio" será uma forma sintática
+        específica, e não seu significado matemático subjacente.
+      </p>
+
+      <p>
+        Agora devemos considerar como realizar aritmética em polinômios. Neste
+        sistema simples, consideraremos apenas adição e multiplicação. Além
+        disso, insistiremos que dois polinômios a serem combinados devem ter o
+        mesmo indeterminado.
+      </p>
+
+      <p>
+        Vamos abordar o projeto do nosso sistema seguindo a disciplina familiar
+        de abstração de dados. Representaremos polinômios usando uma estrutura
+        de dados chamada <em>poly</em>, que consiste em uma variável e uma
+        coleção de termos. Assumimos que temos seletores <code>variable</code> e
+        <code>term-list</code> que extraem essas partes de um poly e um
+        construtor <code>make-poly</code> que monta um poly a partir de uma
+        variável e uma lista de termos. Uma variável será apenas um símbolo,
+        então podemos usar o procedimento <code>same-variable?</code> da seção
+        <a href="2_002e3.xhtml#g_t2_002e3_002e2">2.3.2</a> para comparar
+        variáveis. Os seguintes procedimentos definem adição e multiplicação de
+        polys:
+      </p>
+
+      <pre><code class="language-scheme">(define (add-poly p1 p2)
+  (if (same-variable? (variable p1) 
+                      (variable p2))
+      (make-poly 
+       (variable p1)
+       (add-terms (term-list p1)
+                  (term-list p2)))
+      (error "Polys not in same var: 
+              ADD-POLY"
+             (list p1 p2))))
+
+(define (mul-poly p1 p2)
+  (if (same-variable? (variable p1) 
+                      (variable p2))
+      (make-poly 
+       (variable p1)
+       (mul-terms (term-list p1)
+                  (term-list p2)))
+      (error "Polys not in same var: 
+              MUL-POLY"
+             (list p1 p2))))</code></pre>
+
+      <p>
+        Para incorporar polinômios em nosso sistema de aritmética genérica,
+        precisamos fornecer a eles tags de tipo. Usaremos a tag
+        <code>polynomial</code> e instalaremos operações apropriadas em
+        polinômios marcados na tabela de operações. Vamos incorporar todo o
+        nosso código em um procedimento de instalação para o pacote de
+        polinômios, semelhante aos da seção
+        <a href="#g_t2_002e5_002e1">2.5.1</a>:
+      </p>
+
+      <pre><code class="language-scheme">(define (install-polynomial-package)
+  ;; procedimentos internos
+  ;; representação de poly
+  (define (make-poly variable term-list)
+    (cons variable term-list))
+  (define (variable p) (car p))
+  (define (term-list p) (cdr p))
+  ⟨procedimentos same-variable? 
+   e variable? da seção 2.3.2⟩
+
+  ;; representação de termos e listas de termos
+  ⟨procedimentos adjoin-term … coeff 
+  do texto abaixo⟩
+
+  (define (add-poly p1 p2) …)
+  ⟨procedimentos usados por add-poly⟩
+  (define (mul-poly p1 p2) …)
+  ⟨procedimentos usados por mul-poly⟩
+
+  ;; interface para o resto do sistema
+  (define (tag p) (attach-tag 'polynomial p))
+  (put 'add '(polynomial polynomial)
+       (lambda (p1 p2) 
+         (tag (add-poly p1 p2))))
+  (put 'mul '(polynomial polynomial)
+       (lambda (p1 p2) 
+         (tag (mul-poly p1 p2))))
+  (put 'make 'polynomial
+       (lambda (var terms) 
+         (tag (make-poly var terms))))
+  'done)</code></pre>
+
+      <p>
+        A adição de polinômios é realizada termo a termo. Termos da mesma ordem
+        (ou seja, com a mesma potência do indeterminado) devem ser combinados.
+        Isso é feito formando um novo termo da mesma ordem cujo coeficiente é a
+        soma dos coeficientes dos termos somados. Termos em um dos polinômios
+        para os quais não há termos da mesma ordem no outro polinômio são
+        simplesmente acumulados no polinômio soma que está sendo construído.
+      </p>
+
+      <p>
+        Para manipular listas de termos, assumiremos que temos um construtor
+        <code>the-empty-termlist</code> que retorna uma lista de termos vazia e
+        um construtor <code>adjoin-term</code> que adiciona um novo termo a uma
+        lista de termos. Também assumiremos que temos um predicado
+        <code>empty-termlist?</code> que diz se uma lista de termos dada está
+        vazia, um seletor <code>first-term</code> que extrai o termo de maior
+        ordem de uma lista de termos, e um seletor <code>rest-terms</code> que
+        retorna todos os termos, exceto o de maior ordem. Para manipular termos,
+        suporemos que temos um construtor <code>make-term</code> que constrói um
+        termo com uma ordem e coeficiente dados, e seletores
+        <code>order</code> e <code>coeff</code> que retornam, respectivamente, a
+        ordem e o coeficiente do termo. Essas operações nos permitem considerar
+        tanto termos quanto listas de termos como abstrações de dados, cujas
+        representações concretas podemos nos preocupar separadamente.
+      </p>
+
+      <p>
+        Aqui está o procedimento que constrói a lista de termos para a soma de
+        dois polinômios:
+      </p>
+
+      <pre><code class="language-scheme">(define (add-terms L1 L2)
+  (cond ((empty-termlist? L1) L2)
+        ((empty-termlist? L2) L1)
+        (else
+         (let ((t1 (first-term L1)) 
+               (t2 (first-term L2)))
+           (cond ((> (order t1) (order t2))
+                  (adjoin-term
+                   t1 
+                   (add-terms (rest-terms L1) 
+                              L2)))
+                 ((< (order t1) (order t2))
+                  (adjoin-term
+                   t2 
+                   (add-terms 
+                    L1 
+                    (rest-terms L2))))
+                 (else
+                  (adjoin-term
+                   (make-term 
+                    (order t1)
+                    (add (coeff t1) 
+                         (coeff t2)))
+                   (add-terms 
+                    (rest-terms L1)
+                    (rest-terms L2))))))))</code></pre>
+
+      <p>
+        O ponto mais importante a ser observado aqui é que usamos o procedimento
+        genérico de adição <code>add</code> para somar os coeficientes dos
+        termos que estão sendo combinados. Isso tem consequências poderosas,
+        como veremos abaixo.
+      </p>
+
+      <p>
+        Para multiplicar duas listas de termos, multiplicamos cada termo da
+        primeira lista por todos os termos da outra lista, repetidamente usando
+        <code>mul-term-by-all-terms</code>, que multiplica um termo dado por
+        todos os termos em uma lista de termos dada. As listas de termos
+        resultantes (uma para cada termo da primeira lista) são acumuladas em
+        uma soma. Multiplicar dois termos forma um termo cuja ordem é a soma das
+        ordens dos fatores e cujo coeficiente é o produto dos coeficientes dos
+        fatores:
+      </p>
+
+      <pre><code class="language-scheme">(define (mul-terms L1 L2)
+  (if (empty-termlist? L1)
+      (the-empty-termlist)
+      (add-terms 
+       (mul-term-by-all-terms 
+        (first-term L1) L2)
+       (mul-terms (rest-terms L1) L2))))
+
+(define (mul-term-by-all-terms t1 L)
+  (if (empty-termlist? L)
+      (the-empty-termlist)
+      (let ((t2 (first-term L)))
+        (adjoin-term
+         (make-term 
+          (+ (order t1) (order t2))
+          (mul (coeff t1) (coeff t2)))
+         (mul-term-by-all-terms 
+          t1 
+          (rest-terms L))))))</code></pre>
+
+      <p>
+        Isso é realmente tudo o que há para adição e multiplicação de
+        polinômios. Observe que, como operamos em termos usando os procedimentos
+        genéricos <code>add</code> e <code>mul</code>, nosso pacote de
+        polinômios é automaticamente capaz de lidar com qualquer tipo de
+        coeficiente conhecido pelo pacote de aritmética genérica. Se incluirmos
+        um mecanismo de coerção, como um dos discutidos na seção
+        <a href="#g_t2_002e5_002e2">2.5.2</a>, então também seremos
+        automaticamente capazes de lidar com operações em polinômios de
+        diferentes tipos de coeficientes, como
+      </p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo stretchy="false">[</mo>
+          <mn>3</mn>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mo stretchy="false">(</mo>
+          <mn>2</mn>
+          <mo>+</mo>
+          <mn>3</mn>
+          <mi>i</mi>
+          <mo stretchy="false">)</mo>
+          <mi>x</mi>
+          <mo>+</mo>
+          <mn>7</mn>
+          <mo stretchy="false">]</mo>
+          <mo>⋅<!-- ⋅ --></mo>
+        </mrow>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mrow>
+            <mo>[</mo>
+            <msup>
+              <mi>x</mi>
+              <mn>4</mn>
+            </msup>
+            <mo>+</mo>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mn>2</mn>
+                <mn>3</mn>
+              </mfrac>
+            </mrow>
+            <msup>
+              <mi>x</mi>
+              <mn>2</mn>
+            </msup>
+            <mo>+</mo>
+            <mo stretchy="false">(</mo>
+            <mn>5</mn>
+            <mo>+</mo>
+            <mn>3</mn>
+            <mi>i</mi>
+            <mo stretchy="false">)</mo>
+            <mo>]</mo>
+          </mrow>
+          <mo>.</mo>
+        </mrow>
+      </math>
+
+      <p>
+        Como instalamos os procedimentos de adição e multiplicação de polinômios
+        <code>add-poly</code> e <code>mul-poly</code> no sistema de aritmética
+        genérica como as operações <code>add</code> e <code>mul</code> para o
+        tipo <code>polynomial</code>, nosso sistema também é automaticamente
+        capaz de lidar com operações em polinômios como
+      </p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo maxsize="1.623em" minsize="1.623em">[</mo>
+          </mrow>
+          <mo stretchy="false">(</mo>
+          <mi>y</mi>
+          <mo>+</mo>
+          <mn>1</mn>
+          <mo stretchy="false">)</mo>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo stretchy="false">(</mo>
+          <msup>
+            <mi>y</mi>
+            <mn>2</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>1</mn>
+          <mo stretchy="false">)</mo>
+          <mi>x</mi>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo stretchy="false">(</mo>
+          <mi>y</mi>
+          <mo>−<!-- − --></mo>
+          <mn>1</mn>
+          <mo stretchy="false">)</mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo maxsize="1.623em" minsize="1.623em">]</mo>
+          </mrow>
+          <mo>⋅<!-- ⋅ --></mo>
+        </mrow>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo maxsize="1.623em" minsize="1.623em">[</mo>
+          </mrow>
+          <mo stretchy="false">(</mo>
+          <mi>y</mi>
+          <mo>−<!-- − --></mo>
+          <mn>2</mn>
+          <mo stretchy="false">)</mo>
+          <mi>x</mi>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo stretchy="false">(</mo>
+          <msup>
+            <mi>y</mi>
+            <mn>3</mn>
+          </msup>
+          <mo>+</mo>
+          <mn>7</mn>
+          <mo stretchy="false">)</mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo maxsize="1.623em" minsize="1.623em">]</mo>
+          </mrow>
+          <mo>.</mo>
+        </mrow>
+      </math>
+
+      <p>
+        A razão para isso é que, quando o sistema tenta combinar coeficientes,
+        ele despachará através de <code>add</code> e <code>mul</code>. Como os
+        coeficientes são eles mesmos polinômios (em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math
+        >), eles serão combinados usando <code>add-poly</code> e
+        <code>mul-poly</code>. O resultado é uma espécie de "recursão dirigida
+        por dados" em que, por exemplo, uma chamada para
+        <code>mul-poly</code> resultará em chamadas recursivas para
+        <code>mul-poly</code> para multiplicar os coeficientes. Se os
+        coeficientes dos coeficientes fossem eles mesmos polinômios (como
+        poderia ser usado para representar polinômios em três variáveis), a
+        direção dos dados garantiria que o sistema seguiria outro nível de
+        chamadas recursivas, e assim por diante, através de quantos níveis a
+        estrutura dos dados ditar.
+      </p>
+
+      <h5 class="subsubheading">Representando listas de termos</h5>
+
+      <p>
+        Finalmente, devemos enfrentar o trabalho de implementar uma boa
+        representação para listas de termos. Uma lista de termos é, na verdade,
+        um conjunto de coeficientes indexados pela ordem do termo. Portanto,
+        qualquer um dos métodos para representar conjuntos, como discutido na
+        seção <a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a>, pode ser
+        aplicado a essa tarefa. Por outro lado, nossos procedimentos
+        <code>add-terms</code> e <code>mul-terms</code> sempre acessam listas de
+        termos sequencialmente, da maior para a menor ordem. Assim, usaremos
+        algum tipo de representação de lista ordenada.
+      </p>
+
+      <p>
+        Como devemos estruturar a lista que representa uma lista de termos? Uma
+        consideração é a "densidade" dos polinômios que pretendemos manipular.
+        Um polinômio é dito <em>denso</em> se tiver coeficientes diferentes de
+        zero na maioria das ordens. Se tiver muitos termos zero, é dito
+        <em>esparso</em>. Por exemplo,
+      </p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mi>A</mi>
+        <mo>:</mo>
+        <mspace width="1em" />
+        <mrow class="MJX-TeXAtom-ORD">
+          <msup>
+            <mi>x</mi>
+            <mn>5</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>2</mn>
+          <msup>
+            <mi>x</mi>
+            <mn>4</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>3</mn>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+        </mrow>
+        <mo>−<!-- − --></mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>2</mn>
+          <mi>x</mi>
+        </mrow>
+        <mo>−<!-- − --></mo>
+        <mn>5</mn>
+      </math>
+
+      <p>é um polinômio denso, enquanto</p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mi>B</mi>
+        <mo>:</mo>
+        <mspace width="1em" />
+        <msup>
+          <mi>x</mi>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>100</mn>
+          </mrow>
+        </msup>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mn>2</mn>
+          <msup>
+            <mi>x</mi>
+            <mn>2</mn>
+          </msup>
+        </mrow>
+        <mo>+</mo>
+        <mn>1</mn>
+      </math>
+
+      <p>é esparso.</p>
+
+      <p>
+        As listas de termos de polinômios densos são mais eficientemente
+        representadas como listas dos coeficientes. Por exemplo,
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi></math> acima
+        seria bem representado como <code>(1 2 0 3 -2 -5)</code>. A ordem de um
+        termo nessa representação é o comprimento da sublista começando com o
+        coeficiente desse termo, decrementado por 1. Essa seria uma
+        representação terrível para um polinômio esparso como
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>B</mi></math
+        >: haveria uma lista gigante de zeros pontuada por alguns termos não
+        nulos solitários. Uma representação mais razoável da lista de termos de
+        um polinômio esparso é como uma lista dos termos não nulos, onde cada
+        termo é uma lista contendo a ordem do termo e o coeficiente para essa
+        ordem. Nesse esquema, o polinômio
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>B</mi></math> é
+        eficientemente representado como <code>((100 1) (2 2) (0 1))</code>.
+        Como a maioria das manipulações de polinômios é realizada em polinômios
+        esparsos, usaremos esse método. Assumiremos que as listas de termos são
+        representadas como listas de termos, organizadas do termo de maior ordem
+        para o de menor ordem. Uma vez que tomamos essa decisão, implementar os
+        seletores e construtores para termos e listas de termos é direto:
+      </p>
+
+      <pre><code class="language-scheme">(define (adjoin-term term term-list)
+  (if (=zero? (coeff term))
+      term-list
+      (cons term term-list)))
+(define (the-empty-termlist) '())
+(define (first-term term-list) (car term-list))
+(define (rest-terms term-list) (cdr term-list))
+(define (empty-termlist? term-list) 
+  (null? term-list))
+(define (make-term order coeff) 
+  (list order coeff))
+(define (order term) (car term))
+(define (coeff term) (cadr term))</code></pre>
+
+      <p>
+        onde <code>=zero?</code> é como definido no
+        <a href="#Exercise-2_002e80">Exercício 2.80</a>. (Veja também o
+        <a href="#Exercise-2_002e87">Exercício 2.87</a> abaixo.)
+      </p>
+
+      <p>
+        Os usuários do pacote de polinômios criarão polinômios (marcados) por
+        meio do procedimento:
+      </p>
+
+      <pre><code class="language-scheme">(define (make-polynomial var terms)
+  ((get 'make 'polynomial) var terms))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e87"></a>Exercício 2.87:</strong> Instale
+          <code>=zero?</code> para polinômios no pacote de aritmética genérica.
+          Isso permitirá que <code>adjoin-term</code> funcione para polinômios
+          com coeficientes que são eles mesmos polinômios.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e88"></a>Exercício 2.88:</strong> Estenda
+          o sistema de polinômios para incluir subtração de polinômios. (Dica:
+          Você pode achar útil definir uma operação de negação genérica.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e89"></a>Exercício 2.89:</strong> Defina
+          procedimentos que implementem a representação de listas de termos
+          descrita acima como apropriada para polinômios densos.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e90"></a>Exercício 2.90:</strong> Suponha
+          que queremos ter um sistema de polinômios que seja eficiente tanto
+          para polinômios esparsos quanto densos. Uma maneira de fazer isso é
+          permitir ambos os tipos de representação de listas de termos em nosso
+          sistema. A situação é análoga ao exemplo de números complexos da seção
+          <a href="2_002e4.xhtml#g_t2_002e4">2.4</a>, onde permitimos
+          representações retangulares e polares. Para fazer isso, devemos
+          distinguir diferentes tipos de listas de termos e tornar as operações
+          em listas de termos genéricas. Redesenhe o sistema de polinômios para
+          implementar essa generalização. Este é um esforço importante, não uma
+          mudança local.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e91"></a>Exercício 2.91:</strong> Um
+          polinômio univariado pode ser dividido por outro para produzir um
+          quociente polinomial e um resto polinomial. Por exemplo,
+        </p>
+
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mfrac>
+              <mrow>
+                <msup>
+                  <mi>x</mi>
+                  <mn>5</mn>
+                </msup>
+                <mo>−<!-- − --></mo>
+                <mn>1</mn>
+              </mrow>
+              <mrow>
+                <msup>
+                  <mi>x</mi>
+                  <mn>2</mn>
+                </msup>
+                <mo>−<!-- − --></mo>
+                <mn>1</mn>
+              </mrow>
+            </mfrac>
+          </mrow>
+          <mspace width="thinmathspace" />
+          <mo>=</mo>
+          <mspace width="thinmathspace" />
+          <mrow class="MJX-TeXAtom-ORD">
+            <msup>
+              <mi>x</mi>
+              <mn>3</mn>
+            </msup>
+            <mo>+</mo>
+            <mi>x</mi>
+            <mo>,</mo>
+          </mrow>
+          <mtext> resto </mtext>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>x</mi>
+            <mo>−<!-- − --></mo>
+            <mn>1.</mn>
+          </mrow>
+        </math>
+
+        <p>
+          A divisão pode ser realizada via divisão longa. Ou seja, divida o
+          termo de maior ordem do dividendo pelo termo de maior ordem do
+          divisor. O resultado é o primeiro termo do quociente. Em seguida,
+          multiplique o resultado pelo divisor, subtraia isso do dividendo e
+          produza o resto da resposta dividindo recursivamente a diferença pelo
+          divisor. Pare quando a ordem do divisor exceder a ordem do dividendo e
+          declare o dividendo como o resto. Além disso, se o dividendo se tornar
+          zero, retorne zero como quociente e resto.
+        </p>
+
+        <p>
+          Podemos projetar um procedimento <code>div-poly</code> no modelo de
+          <code>add-poly</code> e <code>mul-poly</code>. O procedimento verifica
+          se os dois polinômios têm a mesma variável. Se sim,
+          <code>div-poly</code> remove a variável e passa o problema para
+          <code>div-terms</code>, que realiza a operação de divisão em listas de
+          termos. <code>Div-poly</code> finalmente reanexa a variável ao
+          resultado fornecido por <code>div-terms</code>. É conveniente projetar
+          <code>div-terms</code> para calcular tanto o quociente quanto o resto
+          de uma divisão. <code>Div-terms</code> pode receber duas listas de
+          termos como argumentos e retornar uma lista da lista de termos do
+          quociente e a lista de termos do resto.
+        </p>
+
+        <p>
+          Complete a seguinte definição de <code>div-terms</code> preenchendo as
+          expressões ausentes. Use isso para implementar <code>div-poly</code>,
+          que recebe dois polinômios como argumentos e retorna uma lista do
+          quociente e do resto polinomial.
+        </p>
+
+        <pre><code class="language-scheme">(define (div-terms L1 L2)
+  (if (empty-termlist? L1)
+      (list (the-empty-termlist) 
+            (the-empty-termlist))
+      (let ((t1 (first-term L1))
+            (t2 (first-term L2)))
+        (if (> (order t2) (order t1))
+            (list (the-empty-termlist) L1)
+            (let ((new-c (div (coeff t1) 
+                              (coeff t2)))
+                  (new-o (- (order t1) 
+                            (order t2))))
+              (let ((rest-of-result
+                     ⟨compute rest of result 
+                     recursively⟩ )))
+                ⟨form complete result⟩ )))))</code></pre>
+      </blockquote>
+
+      <h5 class="subsubheading">Hierarquias de tipos em álgebra simbólica</h5>
+
+      <p>
+        Nosso sistema de polinômios ilustra como objetos de um tipo (polinômios)
+        podem, na verdade, ser objetos complexos que têm objetos de muitos tipos
+        diferentes como partes. Isso não apresenta dificuldade real na definição
+        de operações genéricas. Precisamos apenas instalar operações genéricas
+        apropriadas para realizar as manipulações necessárias das partes dos
+        tipos compostos. Na verdade, vimos que os polinômios formam uma espécie
+        de "abstração de dados recursiva", em que partes de um polinômio podem
+        ser elas mesmas polinômios. Nossas operações genéricas e nosso estilo de
+        programação dirigida por dados podem lidar com essa complicação sem
+        muitos problemas.
+      </p>
+
+      <p>
+        Por outro lado, a álgebra de polinômios é um sistema para o qual os
+        tipos de dados não podem ser naturalmente organizados em uma torre. Por
+        exemplo, é possível ter polinômios em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> cujos
+        coeficientes são polinômios em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math
+        >. Também é possível ter polinômios em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math> cujos
+        coeficientes são polinômios em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math
+        >. Nenhum desses tipos está "acima" do outro de forma natural, mas
+        muitas vezes é necessário somar elementos de cada conjunto. Existem
+        várias maneiras de fazer isso. Uma possibilidade é converter um
+        polinômio para o tipo do outro, expandindo e reorganizando os termos
+        para que ambos os polinômios tenham a mesma variável principal. Pode-se
+        impor uma estrutura semelhante a uma torre sobre isso, ordenando as
+        variáveis e, assim, sempre convertendo qualquer polinômio para uma
+        "forma canônica" com a variável de maior prioridade dominante e as
+        variáveis de menor prioridade enterradas nos coeficientes. Essa
+        estratégia funciona razoavelmente bem, exceto que a conversão pode
+        expandir um polinômio desnecessariamente, tornando-o difícil de ler e
+        talvez menos eficiente para trabalhar. A estratégia da torre certamente
+        não é natural para este domínio ou para qualquer domínio onde o usuário
+        possa inventar novos tipos dinamicamente usando tipos antigos em várias
+        formas combinadas, como funções trigonométricas, séries de potências e
+        integrais.
+      </p>
+
+      <p>
+        Não deve ser surpresa que controlar a coerção seja um problema sério no
+        projeto de sistemas de manipulação algébrica em grande escala. Muito da
+        complexidade de tais sistemas está preocupada com as relações entre
+        diversos tipos. De fato, é justo dizer que ainda não entendemos
+        completamente a coerção. Na verdade, ainda não entendemos completamente
+        o conceito de tipo de dados. No entanto, o que sabemos nos fornece
+        princípios poderosos de estruturação e modularidade para apoiar o
+        projeto de grandes sistemas.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e92"></a>Exercício 2.92:</strong> Ao
+          impor uma ordenação nas variáveis, estenda o pacote de polinômios para
+          que a adição e multiplicação de polinômios funcione para polinômios em
+          diferentes variáveis. (Isso não é fácil!)
+        </p>
+      </blockquote>
+
+      <h5 class="subsubheading">Exercício estendido: Funções racionais</h5>
+
+      <p>
+        Podemos estender nosso sistema de aritmética genérica para incluir
+        <em>funções racionais</em>. Estas são "frações" cujo numerador e
+        denominador são polinômios, como
+      </p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mfrac>
+              <mrow>
+                <mi>x</mi>
+                <mo>+</mo>
+                <mn>1</mn>
+              </mrow>
+              <mrow>
+                <msup>
+                  <mi>x</mi>
+                  <mn>3</mn>
+                </msup>
+                <mo>−<!-- − --></mo>
+                <mn>1</mn>
+              </mrow>
+            </mfrac>
+          </mrow>
+          <mo>.</mo>
+        </mrow>
+      </math>
+
+      <p>
+        O sistema deve ser capaz de somar, subtrair, multiplicar e dividir
+        funções racionais, e realizar cálculos como
+      </p>
+
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>x</mi>
+              <mo>+</mo>
+              <mn>1</mn>
+            </mrow>
+            <mrow>
+              <msup>
+                <mi>x</mi>
+                <mn>3</mn>
+              </msup>
+              <mo>−<!-- − --></mo>
+              <mn>1</mn>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mo>+</mo>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mi>x</mi>
+            <mrow>
+              <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+              </msup>
+              <mo>−<!-- − --></mo>
+              <mn>1</mn>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mspace width="thinmathspace" />
+        <mo>=</mo>
+        <mspace width="thinmathspace" />
+        <mrow class="MJX-TeXAtom-ORD">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mfrac>
+              <mrow>
+                <msup>
+                  <mi>x</mi>
+                  <mn>3</mn>
+                </msup>
+                <mo>+</mo>
+                <mn>2</mn>
+                <msup>
+                  <mi>x</mi>
+                  <mn>2</mn>
+                </msup>
+                <mo>+</mo>
+                <mn>3</mn>
+                <mi>x</mi>
+                <mo>+</mo>
+                <mn>1</mn>
+              </mrow>
+              <mrow>
+                <msup>
+                  <mi>x</mi>
+                  <mn>4</mn>
+                </msup>
+                <mo>+</mo>
+                <msup>
+                  <mi>x</mi>
+                  <mn>3</mn>
+                </msup>
+                <mo>−<!-- − --></mo>
+                <mi>x</mi>
+                <mo>−<!-- − --></mo>
+                <mn>1</mn>
+              </mrow>
+            </mfrac>
+          </mrow>
+          <mo>.</mo>
+        </mrow>
+      </math>
+
+      <p>
+        (Aqui a soma foi simplificada removendo fatores comuns. A multiplicação
+        cruzada comum teria produzido um polinômio de quarto grau sobre um
+        polinômio de quinto grau.)
+      </p>
+
+      <p>
+        Se modificarmos nosso pacote de aritmética racional para usar operações
+        genéricas, ele fará o que queremos, exceto pelo problema de reduzir
+        frações aos termos mais baixos.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e93"></a>Exercício 2.93:</strong>
+          Modifique o pacote de aritmética racional para usar operações
+          genéricas, mas mude <code>make-rat</code> para que ele não tente
+          reduzir frações aos termos mais baixos. Teste seu sistema chamando
+          <code>make-rational</code> em dois polinômios para produzir uma função
+          racional:
+        </p>
+
+        <pre><code class="language-scheme">(define p1 (make-polynomial 'x '((2 1) (0 1))))
+(define p2 (make-polynomial 'x '((3 1) (0 1))))
+(define rf (make-rational p2 p1))</code></pre>
+
+        <p>
+          Agora adicione <code>rf</code> a si mesmo, usando <code>add</code>.
+          Você observará que esse procedimento de adição não reduz frações aos
+          termos mais baixos.
+        </p>
+      </blockquote>
+
+      <p>
+        Podemos reduzir frações polinomiais aos termos mais baixos usando a
+        mesma ideia que usamos com inteiros: modificando
+        <code>make-rat</code> para dividir tanto o numerador quanto o
+        denominador por seu maior divisor comum. A noção de "maior divisor
+        comum" faz sentido para polinômios. De fato, podemos calcular o
+        <abbr>GCD</abbr> de dois polinômios usando essencialmente o mesmo
+        Algoritmo de Euclides que funciona para inteiros. A versão inteira é
+      </p>
+
+      <pre><code class="language-scheme">(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))</code></pre>
+
+      <p>
+        Usando isso, poderíamos fazer a modificação óbvia para definir uma
+        operação <abbr>GCD</abbr> que funciona em listas de termos:
+      </p>
+
+      <pre><code class="language-scheme">(define (gcd-terms a b)
+  (if (empty-termlist? b)
+      a
+      (gcd-terms b (remainder-terms a b))))</code></pre>
+
+      <p>
+        onde <code>remainder-terms</code> seleciona o componente do resto da
+        lista retornada pela operação de divisão de listas de termos
+        <code>div-terms</code> que foi implementada no
+        <a href="#Exercise-2_002e91">Exercício 2.91</a>.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e94"></a>Exercício 2.94:</strong> Usando
+          <code>div-terms</code>, implemente o procedimento
+          <code>remainder-terms</code> e use isso para definir
+          <code>gcd-terms</code> como acima. Agora escreva um procedimento
+          <code>gcd-poly</code> que calcula o <abbr>GCD</abbr> polinomial de
+          dois polinômios. (O procedimento deve sinalizar um erro se os dois
+          polinômios não estiverem na mesma variável.) Instale no sistema uma
+          operação genérica <code>greatest-common-divisor</code> que reduz a
+          <code>gcd-poly</code> para polinômios e a <code>gcd</code> comum para
+          números comuns. Como teste, tente
+        </p>
+
+        <pre><code class="language-scheme">(define p1 
+  (make-polynomial 
+   'x '((4 1) (3 -1) (2 -2) (1 2))))
+
+(define p2 
+  (make-polynomial 
+   'x '((3 1) (1 -1))))
+
+(greatest-common-divisor p1 p2)</code></pre>
+
+        <p>e verifique seu resultado manualmente.</p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e95"></a>Exercício 2.95:</strong> Defina
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>P</mi><mn>1</mn></msub></math
+          >,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>P</mi><mn>2</mn></msub></math
+          >
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>P</mi><mn>3</mn></msub></math
+          >
+          como os polinômios
+        </p>
+
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mtable columnalign="right left" rowspacing="4pt" columnspacing="1em">
+            <mtr>
+              <mtd>
+                <msub>
+                  <mi>P</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo>:</mo>
+              </mtd>
+              <mtd>
+                <msup>
+                  <mi>x</mi>
+                  <mn>2</mn>
+                </msup>
+                <mo>−<!-- − --></mo>
+                <mn>2</mn>
+                <mi>x</mi>
+                <mo>+</mo>
+                <mn>1</mn>
+                <mo>,</mo>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <msub>
+                  <mi>P</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo>:</mo>
+              </mtd>
+              <mtd>
+                <mn>11</mn>
+                <msup>
+                  <mi>x</mi>
+                  <mn>2</mn>
+                </msup>
+                <mo>+</mo>
+                <mn>7</mn>
+                <mo>,</mo>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <msub>
+                  <mi>P</mi>
+                  <mn>3</mn>
+                </msub>
+                <mo>:</mo>
+              </mtd>
+              <mtd>
+                <mn>13</mn>
+                <mi>x</mi>
+                <mo>+</mo>
+                <mn>5.</mn>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+
+        <p>
+          Agora defina
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>Q</mi><mn>1</mn></msub></math
+          >
+          como o produto de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>P</mi><mn>1</mn></msub></math
+          >
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>P</mi><mn>2</mn></msub></math
+          >, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>Q</mi><mn>2</mn></msub></math
+          >
+          como o produto de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>P</mi><mn>1</mn></msub></math
+          >
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>P</mi><mn>3</mn></msub></math
+          >, e use <code>greatest-common-divisor</code> (<a
+            href="#Exercise-2_002e94"
+            >Exercício 2.94</a
+          >) para calcular o <abbr>GCD</abbr> de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>Q</mi><mn>1</mn></msub></math
+          >
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>Q</mi><mn>2</mn></msub></math
+          >. Observe que a resposta não é a mesma que
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>P</mi><mn>1</mn></msub></math
+          >. Este exemplo introduz operações não inteiras na computação,
+          causando dificuldades com o algoritmo <abbr>GCD</abbr>. Para entender
+          o que está acontecendo, tente rastrear <code>gcd-terms</code> enquanto
+          calcula o <abbr>GCD</abbr> ou tente realizar a divisão manualmente.
+        </p>
+      </blockquote>
+
+      <p>
+        Podemos resolver o problema exibido no
+        <a href="#Exercise-2_002e95">Exercício 2.95</a> se usarmos a seguinte
+        modificação do algoritmo <abbr>GCD</abbr> (que realmente funciona apenas
+        no caso de polinômios com coeficientes inteiros). Antes de realizar
+        qualquer divisão polinomial na computação do <abbr>GCD</abbr>,
+        multiplicamos o dividendo por um fator constante inteiro, escolhido para
+        garantir que nenhuma fração surja durante o processo de divisão. Nossa
+        resposta, portanto, diferirá do <abbr>GCD</abbr> real por um fator
+        constante inteiro, mas isso não importa no caso de reduzir funções
+        racionais aos termos mais baixos; o <abbr>GCD</abbr> será usado para
+        dividir tanto o numerador quanto o denominador, então o fator constante
+        inteiro será cancelado.
+      </p>
+
+      <p>
+        Mais precisamente, se
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math> e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>Q</mi></math> são
+        polinômios, seja
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>O</mi><mn>1</mn></msub></math
+        >
+        a ordem de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math> (ou
+        seja, a ordem do maior termo de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math
+        >) e seja
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>O</mi><mn>2</mn></msub></math
+        >
+        a ordem de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>Q</mi></math
+        >. Seja
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>c</mi></math> o
+        coeficiente líder de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>Q</mi></math
+        >. Então, pode-se mostrar que, se multiplicarmos
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math> pelo
+        <em>fator de inteirização</em>
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msup
+            ><mi>c</mi
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mn>1</mn><mo>+</mo><msub><mi>O</mi><mn>1</mn></msub
+              ><mo>−<!-- − --></mo><msub><mi>O</mi><mn>2</mn></msub></mrow
+            ></msup
+          ></math
+        >, o polinômio resultante pode ser dividido por
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>Q</mi></math>
+        usando o algoritmo <code>div-terms</code> sem introduzir nenhuma fração.
+        A operação de multiplicar o dividendo por essa constante e depois
+        dividir é às vezes chamada de <em>pseudodivisão</em> de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>P</mi></math> por
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>Q</mi></math
+        >. O resto da divisão é chamado de <em>pseudoresto</em>.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e96"></a>Exercício 2.96:</strong>
+        </p>
+        <ol>
+          <li>
+            Implemente o procedimento <code>pseudoremainder-terms</code>, que é
+            como <code>remainder-terms</code>, exceto que ele multiplica o
+            dividendo pelo fator de inteirização descrito acima antes de chamar
+            <code>div-terms</code>. Modifique <code>gcd-terms</code> para usar
+            <code>pseudoremainder-terms</code> e verifique que
+            <code>greatest-common-divisor</code> agora produz uma resposta com
+            coeficientes inteiros no exemplo do
+            <a href="#Exercise-2_002e95">Exercício 2.95</a>.
+          </li>
+          <li>
+            O <abbr>GCD</abbr> agora tem coeficientes inteiros, mas eles são
+            maiores que os de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><msub><mi>P</mi><mn>1</mn></msub></math
+            >. Modifique <code>gcd-terms</code> para que ele remova fatores
+            comuns dos coeficientes da resposta, dividindo todos os coeficientes
+            por seu maior divisor comum (inteiro).
+          </li>
+        </ol>
+      </blockquote>
+
+      <p>
+        Assim, aqui está como reduzir uma função racional aos termos mais
+        baixos:
+      </p>
+      <ul>
+        <li>
+          Calcule o <abbr>GCD</abbr> do numerador e do denominador, usando a
+          versão de <code>gcd-terms</code> do
+          <a href="#Exercise-2_002e96">Exercício 2.96</a>.
+        </li>
+        <li>
+          Quando você obtiver o <abbr>GCD</abbr>, multiplique tanto o numerador
+          quanto o denominador pelo mesmo fator de inteirização antes de dividir
+          pelo <abbr>GCD</abbr>, para que a divisão pelo <abbr>GCD</abbr> não
+          introduza coeficientes não inteiros. Como fator, você pode usar o
+          coeficiente líder do <abbr>GCD</abbr> elevado à potência
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mn>1</mn><mo>+</mo><msub><mi>O</mi><mn>1</mn></msub
+              ><mo>−<!-- − --></mo><msub><mi>O</mi><mn>2</mn></msub></mrow
+            ></math
+          >, onde
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>O</mi><mn>2</mn></msub></math
+          >
+          é a ordem do <abbr>GCD</abbr> e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>O</mi><mn>1</mn></msub></math
+          >
+          é o máximo das ordens do numerador e do denominador. Isso garantirá
+          que a divisão do numerador e do denominador pelo <abbr>GCD</abbr> não
+          introduza frações.
+        </li>
+        <li>
+          O resultado dessa operação será um numerador e um denominador com
+          coeficientes inteiros. Os coeficientes normalmente serão muito grandes
+          devido a todos os fatores de inteirização, então o último passo é
+          remover os fatores redundantes, calculando o maior divisor comum
+          (inteiro) de todos os coeficientes do numerador e do denominador e
+          dividindo por esse fator.
+        </li>
+      </ul>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e97"></a>Exercício 2.97:</strong>
+        </p>
+        <ol>
+          <li>
+            Implemente esse algoritmo como um procedimento
+            <code>reduce-terms</code> que recebe duas listas de termos
+            <code>n</code> e <code>d</code> como argumentos e retorna uma lista
+            <code>nn</code>, <code>dd</code>, que são <code>n</code> e
+            <code>d</code> reduzidos aos termos mais baixos via o algoritmo dado
+            acima. Também escreva um procedimento <code>reduce-poly</code>,
+            análogo a <code>add-poly</code>, que verifica se os dois polinômios
+            têm a mesma variável. Se sim, <code>reduce-poly</code> remove a
+            variável e passa o problema para <code>reduce-terms</code>, então
+            reanexa a variável às duas listas de termos fornecidas por
+            <code>reduce-terms</code>.
+          </li>
+          <li>
+            Defina um procedimento análogo a <code>reduce-terms</code> que faz o
+            que o <code>make-rat</code> original fazia para inteiros:
+          </li>
+        </ol>
+
+        <pre><code class="language-scheme">(define (reduce-integers n d)
+  (let ((g (gcd n d)))
+    (list (/ n g) (/ d g))))</code></pre>
+
+        <p>
+          e defina <code>reduce</code> como uma operação genérica que chama
+          <code>apply-generic</code> para despachar para
+          <code>reduce-poly</code> (para argumentos <code>polynomial</code>) ou
+          <code>reduce-integers</code> (para argumentos
+          <code>scheme-number</code>). Agora você pode facilmente fazer o pacote
+          de aritmética racional reduzir frações aos termos mais baixos, tendo
+          <code>make-rat</code> chamar <code>reduce</code> antes de combinar o
+          numerador e o denominador dados para formar um número racional. O
+          sistema agora lida com expressões racionais em inteiros ou polinômios.
+          Para testar seu programa, tente o exemplo no início deste exercício
+          estendido:
+        </p>
+
+        <pre><code class="language-scheme">(define p1 
+  (make-polynomial 'x '((1 1) (0 1))))
+(define p2 
+  (make-polynomial 'x '((3 1) (0 -1))))
+(define p3 
+  (make-polynomial 'x '((1 1))))
+(define p4 
+  (make-polynomial 'x '((2 1) (0 -1))))
+(define rf1 (make-rational p1 p2))
+(define rf2 (make-rational p3 p4))
+(add rf1 rf2)</code></pre>
+
+        <p>
+          Veja se você obtém a resposta correta, corretamente reduzida aos
+          termos mais baixos.
+        </p>
+      </blockquote>
+
+      <p>
+        O cálculo do <abbr>GCD</abbr> está no coração de qualquer sistema que
+        faz operações em funções racionais. O algoritmo usado acima, embora
+        matematicamente direto, é extremamente lento. A lentidão se deve em
+        parte ao grande número de operações de divisão e em parte ao enorme
+        tamanho dos coeficientes intermediários gerados pelas pseudodivisões.
+        Uma das áreas ativas no desenvolvimento de sistemas de manipulação
+        algébrica é o projeto de algoritmos melhores para calcular
+        <abbr>GCD</abbr>s polinomiais.
+      </p>
+
+      <!--Aqui-->
+      <p>
+        O cálculo do <abbr>GCD</abbr> está no coração de qualquer sistema que
+        faz operações em funções racionais. O algoritmo usado acima, embora
+        matematicamente direto, é extremamente lento. A lentidão se deve em
+        parte ao grande número de operações de divisão e em parte ao enorme
+        tamanho dos coeficientes intermediários gerados pelas pseudodivisões.
+        Uma das áreas ativas no desenvolvimento de sistemas de manipulação
+        algébrica é o projeto de algoritmos melhores para calcular
+        <abbr>GCD</abbr>s polinomiais.
+      </p>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+
+        <div id="FOOT115">
+          <p>
+            <a class="footnote_backlink" href="#DOCF115"><sup>115</sup></a>
+            Também temos que fornecer um procedimento quase idêntico para lidar
+            com os tipos <code>(scheme-number complex)</code>.
+          </p>
+        </div>
+        <div id="FOOT116">
+          <p>
+            <a class="footnote_backlink" href="#DOCF116"><sup>116</sup></a> Veja
+            o <a href="#Exercise-2_002e82">Exercício 2.82</a> para
+            generalizações.
+          </p>
+        </div>
+        <div id="FOOT117">
+          <p>
+            <a class="footnote_backlink" href="#DOCF117"><sup>117</sup></a> Se
+            formos espertos, geralmente podemos nos virar com menos de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><msup><mi>n</mi><mn>2</mn></msup></math
+            >
+            procedimentos de coerção. Por exemplo, se soubermos como converter
+            do tipo 1 para o tipo 2 e do tipo 2 para o tipo 3, então podemos
+            usar esse conhecimento para converter do tipo 1 para o tipo 3. Isso
+            pode diminuir bastante o número de procedimentos de coerção que
+            precisamos fornecer explicitamente quando adicionamos um novo tipo
+            ao sistema. Se estivermos dispostos a construir a sofisticação
+            necessária em nosso sistema, podemos fazê-lo pesquisar o "grafo" de
+            relações entre tipos e gerar automaticamente os procedimentos de
+            coerção que podem ser inferidos a partir dos que são fornecidos
+            explicitamente.
+          </p>
+        </div>
+        <div id="FOOT118">
+          <p>
+            <a class="footnote_backlink" href="#DOCF118"><sup>118</sup></a> Esta
+            afirmação, que também aparece na primeira edição deste livro, é tão
+            verdadeira agora quanto era quando a escrevemos doze anos atrás.
+            Desenvolver uma estrutura útil e geral para expressar as relações
+            entre diferentes tipos de entidades (o que os filósofos chamam de
+            "ontologia") parece intratavelmente difícil. A principal diferença
+            entre a confusão que existia dez anos atrás e a confusão que existe
+            agora é que agora uma variedade de teorias ontológicas inadequadas
+            foi incorporada em uma infinidade de linguagens de programação
+            igualmente inadequadas. Por exemplo, grande parte da complexidade
+            das linguagens de programação orientadas a objetos—e as diferenças
+            sutis e confusas entre as linguagens orientadas a objetos
+            contemporâneas—centra-se no tratamento de operações genéricas em
+            tipos inter-relacionados. Nossa própria discussão de objetos
+            computacionais no
+            <a href="Chapter-3.xhtml#Chapter-3">Capítulo 3</a> evita essas
+            questões inteiramente. Leitores familiarizados com programação
+            orientada a objetos notarão que temos muito a dizer no capítulo 3
+            sobre estado local, mas nem sequer mencionamos "classes" ou
+            "herança". Na verdade, suspeitamos que esses problemas não podem ser
+            adequadamente abordados apenas em termos de design de linguagem de
+            computador, sem também recorrer a trabalhos em representação de
+            conhecimento e raciocínio automatizado.
+          </p>
+        </div>
+        <div id="FOOT119">
+          <p>
+            <a class="footnote_backlink" href="#DOCF119"><sup>119</sup></a> Um
+            número real pode ser projetado para um inteiro usando o primitivo
+            <code>round</code>, que retorna o inteiro mais próximo de seu
+            argumento.
+          </p>
+        </div>
+        <div id="FOOT120">
+          <p>
+            <a class="footnote_backlink" href="#DOCF120"><sup>120</sup></a> Por
+            outro lado, permitiremos polinômios cujos coeficientes são eles
+            mesmos polinômios em outras variáveis. Isso nos dará essencialmente
+            o mesmo poder de representação que um sistema multivariado completo,
+            embora leve a problemas de coerção, como discutido abaixo.
+          </p>
+        </div>
+        <div id="FOOT121">
+          <p>
+            <a class="footnote_backlink" href="#DOCF121"><sup>121</sup></a> Para
+            polinômios univariados, dar o valor de um polinômio em um
+            determinado conjunto de pontos pode ser uma representação
+            particularmente boa. Isso torna a aritmética polinomial extremamente
+            simples. Para obter, por exemplo, a soma de dois polinômios
+            representados dessa forma, precisamos apenas somar os valores dos
+            polinômios nos pontos correspondentes. Para transformar de volta em
+            uma representação mais familiar, podemos usar a fórmula de
+            interpolação de Lagrange, que mostra como recuperar os coeficientes
+            de um polinômio de grau
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+            dados os valores do polinômio em
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>n</mi><mo>+</mo><mn>1</mn></mrow
+              ></math
+            >
+            pontos.
+          </p>
+        </div>
+        <div id="FOOT122">
+          <p>
+            <a class="footnote_backlink" href="#DOCF122"><sup>122</sup></a> Esta
+            operação é muito semelhante à operação
+            <code>union-set</code> ordenada que desenvolvemos no
+            <a href="2_002e3.xhtml#Exercise-2_002e62">Exercício 2.62</a>. Na
+            verdade, se pensarmos nos termos do polinômio como um conjunto
+            ordenado de acordo com a potência do indeterminado, então o programa
+            que produz a lista de termos para uma soma é quase idêntico a
+            <code>union-set</code>.
+          </p>
+        </div>
+        <div id="FOOT123">
+          <p>
+            <a class="footnote_backlink" href="#DOCF123"><sup>123</sup></a> Para
+            fazer isso funcionar completamente sem problemas, também devemos
+            adicionar ao nosso sistema de aritmética genérica a capacidade de
+            coagir um "número" para um polinômio, considerando-o como um
+            polinômio de grau zero cujo coeficiente é o número. Isso é
+            necessário se formos realizar operações como
+          </p>
+
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo stretchy="false">[</mo>
+              <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+              </msup>
+              <mo>+</mo>
+              <mo stretchy="false">(</mo>
+              <mi>y</mi>
+              <mo>+</mo>
+              <mn>1</mn>
+              <mo stretchy="false">)</mo>
+              <mi>x</mi>
+              <mo>+</mo>
+              <mn>5</mn>
+              <mo stretchy="false">]</mo>
+            </mrow>
+            <mo>+</mo>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo stretchy="false">[</mo>
+              <msup>
+                <mi>x</mi>
+                <mn>2</mn>
+              </msup>
+              <mo>+</mo>
+              <mn>2</mn>
+              <mi>x</mi>
+              <mo>+</mo>
+              <mn>1</mn>
+              <mo stretchy="false">]</mo>
+              <mo>,</mo>
+            </mrow>
+          </math>
+
+          <p>
+            que requer somar o coeficiente
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>y</mi><mo>+</mo><mn>1</mn></mrow
+              ></math
+            >
+            ao coeficiente 2.
+          </p>
+        </div>
+        <div id="FOOT124">
+          <p>
+            <a class="footnote_backlink" href="#DOCF124"><sup>124</sup></a>
+            Nesses exemplos de polinômios, assumimos que implementamos o sistema
+            de aritmética genérica usando o mecanismo de tipo sugerido no
+            <a href="#Exercise-2_002e78">Exercício 2.78</a>. Assim, coeficientes
+            que são números comuns serão representados como os próprios números,
+            em vez de pares cujo <code>car</code> é o símbolo
+            <code>scheme-number</code>.
+          </p>
+        </div>
+        <div id="FOOT125">
+          <p>
+            <a class="footnote_backlink" href="#DOCF125"><sup>125</sup></a>
+            Embora assumamos que as listas de termos são ordenadas,
+            implementamos <code>adjoin-term</code> para simplesmente
+            <code>cons</code> o novo termo na lista de termos existente. Podemos
+            nos safar com isso, desde que garantamos que os procedimentos (como
+            <code>add-terms</code>) que usam <code>adjoin-term</code> sempre o
+            chamem com um termo de ordem maior do que aparece na lista. Se não
+            quiséssemos fazer tal garantia, poderíamos ter implementado
+            <code>adjoin-term</code> para ser semelhante ao construtor
+            <code>adjoin-set</code> para a representação de conjuntos como
+            listas ordenadas (<a href="2_002e3.xhtml#Exercise-2_002e61"
+              >Exercício 2.61</a
+            >).
+          </p>
+        </div>
+        <div id="FOOT126">
+          <p>
+            <a class="footnote_backlink" href="#DOCF126"><sup>126</sup></a> O
+            fato de o Algoritmo de Euclides funcionar para polinômios é
+            formalizado em álgebra dizendo que os polinômios formam um tipo de
+            domínio algébrico chamado <em>anel euclidiano</em>. Um anel
+            euclidiano é um domínio que admite adição, subtração e multiplicação
+            comutativa, junto com uma maneira de atribuir a cada elemento
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math>
+            do anel uma "medida" inteira positiva
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>m</mi><mo stretchy="false">(</mo><mi>x</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >
+            com as propriedades de que
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>m</mi><mo stretchy="false">(</mo><mi>x</mi><mi>y</mi
+                ><mo stretchy="false">)</mo><mo>≥<!-- ≥ --></mo><mi>m</mi
+                ><mo stretchy="false">(</mo><mi>x</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >
+            para quaisquer
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> e
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math>
+            não nulos e que, dados quaisquer
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> e
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>y</mi></math
+            >, existe um
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>q</mi></math>
+            tal que
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>y</mi><mo>=</mo><mi>q</mi><mi>x</mi><mo>+</mo
+                ><mi>r</mi></mrow
+              ></math
+            >
+            e ou
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>r</mi><mo>=</mo><mn>0</mn></mrow
+              ></math
+            >
+            ou
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>m</mi><mo stretchy="false">(</mo><mi>r</mi
+                ><mo stretchy="false">)</mo><mo>&lt;</mo><mi>m</mi
+                ><mo stretchy="false">(</mo><mi>x</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >. Do ponto de vista abstrato, isso é o que é necessário para provar
+            que o Algoritmo de Euclides funciona. Para o domínio dos inteiros, a
+            medida
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>m</mi></math>
+            de um inteiro é o valor absoluto do próprio inteiro. Para o domínio
+            dos polinômios, a medida de um polinômio é seu grau.
+          </p>
+        </div>
+        <div id="FOOT127">
+          <p>
+            <a class="footnote_backlink" href="#DOCF127"><sup>127</sup></a> Em
+            uma implementação como o <abbr>MIT</abbr> Scheme, isso produz um
+            polinômio que é de fato um divisor de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><msub><mi>Q</mi><mn>1</mn></msub></math
+            >
+            e
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><msub><mi>Q</mi><mn>2</mn></msub></math
+            >, mas com coeficientes racionais. Em muitos outros sistemas Scheme,
+            nos quais a divisão de inteiros pode produzir números decimais de
+            precisão limitada, podemos falhar em obter um divisor válido.
+          </p>
+        </div>
+        <div id="FOOT128">
+          <p>
+            <a class="footnote_backlink" href="#DOCF128"><sup>128</sup></a> Um
+            método extremamente eficiente e elegante para calcular
+            <abbr>GCD</abbr>s polinomiais foi descoberto por Richard
+            <a href="References.xhtml#Zippel-_00281979_0029">Zippel (1979)</a>.
+            O método é um algoritmo probabilístico, assim como o teste rápido de
+            primalidade que discutimos no
+            <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>. O livro de
+            Zippel (<a href="References.xhtml#Zippel-1993">Zippel 1993</a>)
+            descreve esse método, junto com outras maneiras de calcular
+            <abbr>GCD</abbr>s polinomiais.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="Chapter-3.xhtml#Chapter-3" accesskey="n" rel="next"
+            >Capítulo 3</a
+          >, Anterior:
+          <a href="2_002e4.xhtml#g_t2_002e4" accesskey="p" rel="prev">2.4</a>,
+          Acima: <a href="#g_t2_002e5" accesskey="u" rel="prev">2.5</a> [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Jump to bottom"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
+</html>
