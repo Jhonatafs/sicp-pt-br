@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2">
+    <meta name="keywords" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2">
+    <title>Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/highlight.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+</head>
+<body>
+<section>
+    <span class="top jump" title="Ir para o topo"><a href="#pagetop" accesskey="t">⇡</a></span>
+    <a id="pagetop"></a>
+    <a id="g_t2_002e3"></a>
+    <nav class="header">
+        <p>
+            Próximo: <a href="2_002e4.html#g_t2_002e4" accesskey="n" rel="next">2.4</a>, Anterior: <a href="2_002e2.html#g_t2_002e2" accesskey="p" rel="prev">2.2</a>, Acima: <a href="Chapter-2.html#Chapter-2" accesskey="u" rel="prev">Capítulo 2</a>   [<a href="index.html#SEC_Contents" title="Índice" accesskey="c" rel="contents">Índice</a>]
+        </p>
+    </nav>
+    <a id="Symbolic-Data"></a>
+    <h3 class="section"><span class="secnum">2.3</span><span class="sectitle">Dados Simbólicos</span></h3>
+
+    <p>Todos os objetos de dados compostos que usamos até agora foram construídos, em última instância, a partir de números. Nesta seção, estendemos a capacidade de representação de nossa linguagem, introduzindo a capacidade de trabalhar com símbolos arbitrários como dados.</p>
+
+    <a id="g_t2_002e3_002e1"></a>
+    <a id="Quotation"></a>
+    <h4 class="subsection"><span class="secnum">2.3.1</span><span class="sectitle">Citação</span></h4>
+
+    <p>Se pudermos formar dados compostos usando símbolos, podemos ter listas como:</p>
+    <pre><code class="language-scheme">(a b c d)
+(23 45 17)
+((Norah 12) 
+ (Molly 9) 
+ (Anna 7) 
+ (Lauren 6) 
+ (Charlotte 4))</code></pre>
+
+    <p>Listas contendo símbolos podem parecer exatamente como as expressões de nossa linguagem:</p>
+    <pre><code class="language-scheme">(* (+ 23 45) (+ x 9))
+(define (fact n) 
+  (if (= n 1) 
+      1 
+      (* n (fact (- n 1)))))</code></pre>
+
+    <p>Para manipular símbolos, precisamos de um novo elemento em nossa linguagem: a capacidade de <em>citar</em> um objeto de dados. Suponha que queremos construir a lista <code>(a b)</code>. Não podemos fazer isso com <code>(list a b)</code>, porque essa expressão constrói uma lista dos <em>valores</em> de <code>a</code> e <code>b</code> em vez dos próprios símbolos. Esse problema é bem conhecido no contexto de linguagens naturais, onde palavras e frases podem ser consideradas como entidades semânticas ou como cadeias de caracteres (entidades sintáticas). A prática comum em linguagens naturais é usar aspas para indicar que uma palavra ou frase deve ser tratada literalmente como uma cadeia de caracteres. Por exemplo, a primeira letra de "John" é claramente "J". Se dissermos a alguém "diga seu nome em voz alta", esperamos ouvir o nome dessa pessoa. No entanto, se dissermos "diga 'seu nome' em voz alta", esperamos ouvir as palavras "seu nome". Observe que somos forçados a aninhar aspas para descrever o que outra pessoa pode dizer.<a class="footnote_link" id="DOCF98" href="#FOOT98"><sup>98</sup></a></p>
+
+    <p>Podemos seguir a mesma prática para identificar listas e símbolos que devem ser tratados como objetos de dados, em vez de expressões a serem avaliadas. No entanto, nosso formato para citação difere daquele das linguagens naturais, pois colocamos uma marca de citação (tradicionalmente, o símbolo de aspas simples <code>'</code>) apenas no início do objeto a ser citado. Podemos fazer isso na sintaxe do Scheme porque dependemos de espaços e parênteses para delimitar objetos. Assim, o significado do caractere de aspas simples é citar o próximo objeto.<a class="footnote_link" id="DOCF99" href="#FOOT99"><sup>99</sup></a></p>
+
+    <p>Agora podemos distinguir entre símbolos e seus valores:</p>
+    <pre><code class="language-scheme">(define a 1)
+(define b 2)
+
+(list a b)
+<i>(1 2)</i>
+
+(list 'a 'b)
+<i>(a b)</i>
+
+(list 'a b)
+<i>(a 2)</i></code></pre>
+
+    <p>A citação também nos permite digitar objetos compostos, usando a representação impressa convencional para listas:<a class="footnote_link" id="DOCF100" href="#FOOT100"><sup>100</sup></a></p>
+    <pre><code class="language-scheme">(car '(a b c))
+<i>a</i>
+
+(cdr '(a b c))
+<i>(b c)</i></code></pre>
+
+    <p>De acordo com isso, podemos obter a lista vazia avaliando <code>'()</code>, e assim dispensar a variável <code>nil</code>.</p>
+
+    <p>Um primitivo adicional usado na manipulação de símbolos é <code>eq?</code>, que recebe dois símbolos como argumentos e testa se eles são iguais.<a class="footnote_link" id="DOCF101" href="#FOOT101"><sup>101</sup></a> Usando <code>eq?</code>, podemos implementar um procedimento útil chamado <code>memq</code>. Este procedimento recebe dois argumentos, um símbolo e uma lista. Se o símbolo não estiver contido na lista (ou seja, não for <code>eq?</code> a nenhum item da lista), então <code>memq</code> retorna falso. Caso contrário, ele retorna a sublista da lista começando com a primeira ocorrência do símbolo:</p>
+    <pre><code class="language-scheme">(define (memq item x)
+  (cond ((null? x) false)
+        ((eq? item (car x)) x)
+        (else (memq item (cdr x)))))</code></pre>
+
+    <p>Por exemplo, o valor de</p>
+    <pre><code class="language-scheme">(memq 'apple '(pear banana prune))</code></pre>
+
+    <p>é falso, enquanto o valor de</p>
+    <pre><code class="language-scheme">(memq 'apple '(x (apple sauce) y apple pear))</code></pre>
+
+    <p>é <code>(apple pear)</code>.</p>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e53"></a>Exercício 2.53:</strong> O que o interpretador imprimiria em resposta à avaliação de cada uma das seguintes expressões?</p>
+        <pre><code class="language-scheme">(list 'a 'b 'c)
+(list (list 'george))
+(cdr '((x1 x2) (y1 y2)))
+(cadr '((x1 x2) (y1 y2)))
+(pair? (car '(a short list)))
+(memq 'red '((red shoes) (blue socks)))
+(memq 'red '(red shoes blue socks))</code></pre>
+    </blockquote>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e54"></a>Exercício 2.54:</strong> Duas listas são ditas <code>equal?</code> se contêm elementos iguais dispostos na mesma ordem. Por exemplo,</p>
+        <pre><code class="language-scheme">(equal? '(this is a list) 
+        '(this is a list))</code></pre>
+
+        <p>é verdadeiro, mas</p>
+        <pre><code class="language-scheme">(equal? '(this is a list) 
+        '(this (is a) list))</code></pre>
+
+        <p>é falso. Para ser mais preciso, podemos definir <code>equal?</code> recursivamente em termos da igualdade básica <code>eq?</code> de símbolos, dizendo que <code>a</code> e <code>b</code> são <code>equal?</code> se ambos são símbolos e os símbolos são <code>eq?</code>, ou se ambos são listas tais que <code>(car a)</code> é <code>equal?</code> a <code>(car b)</code> e <code>(cdr a)</code> é <code>equal?</code> a <code>(cdr b)</code>. Usando essa ideia, implemente <code>equal?</code> como um procedimento.<a class="footnote_link" id="DOCF102" href="#FOOT102"><sup>102</sup></a></p>
+    </blockquote>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e55"></a>Exercício 2.55:</strong> Eva Lu Ator digita no interpretador a expressão</p>
+        <pre><code class="language-scheme">(car ''abracadabra)</code></pre>
+
+        <p>Para sua surpresa, o interpretador imprime <code>quote</code>. Explique.</p>
+    </blockquote>
+
+    <a id="g_t2_002e3_002e2"></a>
+    <a id="Example_003a-Symbolic-Differentiation"></a>
+    <h4 class="subsection"><span class="secnum">2.3.2</span><span class="sectitle">Exemplo: Diferenciação Simbólica</span></h4>
+
+    <p>Como uma ilustração da manipulação de símbolos e uma nova ilustração da abstração de dados, considere o projeto de um procedimento que realiza a diferenciação simbólica de expressões algébricas. Gostaríamos que o procedimento recebesse como argumentos uma expressão algébrica e uma variável e retornasse a derivada da expressão em relação à variável. Por exemplo, se os argumentos para o procedimento forem <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>a</mi>
+        <msup>
+          <mi>x</mi>
+          <mn>2</mn>
+        </msup>
+        <mo>+</mo>
+        <mi>b</mi>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mi>c</mi>
+      </mrow>
+    </math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>x</mi>
+    </math>, o procedimento deve retornar <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mn>2</mn>
+        <mi>a</mi>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mi>b</mi>
+      </mrow>
+    </math>. A diferenciação simbólica é de especial importância histórica em Lisp. Foi um dos exemplos motivadores por trás do desenvolvimento de uma linguagem de computador para manipulação de símbolos. Além disso, marcou o início de uma linha de pesquisa que levou ao desenvolvimento de sistemas poderosos para trabalhos matemáticos simbólicos, que atualmente são usados por um número crescente de matemáticos aplicados e físicos.</p>
+
+    <p>No desenvolvimento do programa de diferenciação simbólica, seguiremos a mesma estratégia de abstração de dados que seguimos no desenvolvimento do sistema de números racionais em <a href="2_002e1.html#g_t2_002e1_002e1">2.1.1</a>. Ou seja, primeiro definiremos um algoritmo de diferenciação que opera em objetos abstratos como "somas", "produtos" e "variáveis" sem nos preocuparmos com como esses objetos são representados. Somente depois abordaremos o problema de representação.</p>
+
+    <a id="The-differentiation-program-with-abstract-data"></a>
+    <h5 class="subsubheading">O programa de diferenciação com dados abstratos</h5>
+
+    <p>Para manter as coisas simples, consideraremos um programa de diferenciação simbólica muito simples que lida com expressões que são construídas usando apenas as operações de adição e multiplicação com dois argumentos. A diferenciação de qualquer expressão desse tipo pode ser realizada aplicando as seguintes regras de redução:</p>
+    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mrow class="MJX-TeXAtom-ORD">
+          <mfrac>
+            <mrow>
+              <mi>d</mi>
+              <mi>c</mi>
+            </mrow>
+            <mrow>
+              <mi>d</mi>
+              <mi>x</mi>
+            </mrow>
+          </mfrac>
+        </mrow>
+        <mspace width="thinmathspace"/>
+        <mo>=</mo>
+        <mspace width="thinmathspace"/>
+        <mn>0</mn>
+        <mo>,</mo>
+      </mrow>
+      <mspace width="1em"/>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mtext>para </mtext>
+        <mi>c</mi>
+        <mtext> uma constante </mtext>
+      </mrow>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mtext>ou uma variável </mtext>
+      </mrow>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mtext>diferente de </mtext>
+        <mi>x</mi>
+        <mo>,</mo>
+      </mrow>
+    </math>
+    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+      <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+        <mtr>
+          <mtd>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+          </mtd>
+          <mtd>
+            <mo>=</mo>
+          </mtd>
+          <mtd>
+            <mn>1</mn>
+            <mo>,</mo>
+          </mtd>
+        </mtr>
+        <mtr>
+          <mtd>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mo stretchy="false">(</mo>
+                  <mi>u</mi>
+                  <mo>+</mo>
+                  <mi>v</mi>
+                  <mo stretchy="false">)</mo>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+          </mtd>
+          <mtd>
+            <mo>=</mo>
+          </mtd>
+          <mtd>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>u</mi>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+            <mo>+</mo>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>v</mi>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+            <mo>,</mo>
+          </mtd>
+        </mtr>
+        <mtr>
+          <mtd>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mo stretchy="false">(</mo>
+                  <mi>u</mi>
+                  <mi>v</mi>
+                  <mo stretchy="false">)</mo>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+          </mtd>
+          <mtd>
+            <mo>=</mo>
+          </mtd>
+          <mtd>
+            <mi>u</mi>
+            <mspace width="0.1em"/>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>v</mi>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+            <mo>+</mo>
+            <mi>v</mi>
+            <mspace width="0.1em"/>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>u</mi>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+            <mo>.</mo>
+          </mtd>
+        </mtr>
+      </mtable>
+    </math>
+    <p>Observe que as duas últimas regras são recursivas por natureza. Ou seja, para obter a derivada de uma soma, primeiro encontramos as derivadas dos termos e as somamos. Cada um dos termos pode, por sua vez, ser uma expressão que precisa ser decomposta. A decomposição em partes cada vez menores eventualmente produzirá partes que são constantes ou variáveis, cujas derivadas serão 0 ou 1.</p>
+
+    <p>Para incorporar essas regras em um procedimento, nos permitimos um pouco de pensamento desejoso, como fizemos ao projetar a implementação de números racionais. Se tivéssemos uma maneira de representar expressões algébricas, deveríamos ser capazes de dizer se uma expressão é uma soma, um produto, uma constante ou uma variável. Deveríamos ser capazes de extrair as partes de uma expressão. Para uma soma, por exemplo, queremos ser capazes de extrair o adendo (primeiro termo) e o aumentando (segundo termo). Também deveríamos ser capazes de construir expressões a partir de partes. Vamos supor que já temos procedimentos para implementar os seguintes seletores, construtores e predicados:</p>
+    <pre><code class="language-scheme">(variable? e)          <span class="roman">É <code>e</code> uma variável?</span>
+(same-variable? v1 v2) <span class="roman">São <code>v1</code> e <code>v2</code> a mesma variável?</span>
+(sum? e)               <span class="roman">É <code>e</code> uma soma?</span>
+(addend e)             <span class="roman">Adendo da soma <code>e</code>.</span>
+(augend e)             <span class="roman">Aumentando da soma <code>e</code>.</span>
+(make-sum a1 a2)       <span class="roman">Constrói a soma de <code>a1</code> e <code>a2</code>.</span>
+(product? e)           <span class="roman">É <code>e</code> um produto?</span>
+(multiplier e)         <span class="roman">Multiplicador do produto <code>e</code>.</span>
+(multiplicand e)       <span class="roman">Multiplicando do produto <code>e</code>.</span>
+(make-product m1 m2)   <span class="roman">Constrói o produto de <code>m1</code> e <code>m2</code>.</span></code></pre>
+
+    <p>Usando esses procedimentos e o predicado primitivo <code>number?</code>, que identifica números, podemos expressar as regras de diferenciação como o seguinte procedimento:</p>
+    <pre><code class="language-scheme">(define (deriv exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp)
+         (if (same-variable? exp var) 1 0))
+        ((sum? exp)
+         (make-sum (deriv (addend exp) var)
+                   (deriv (augend exp) var)))
+        ((product? exp)
+         (make-sum
+          (make-product 
+           (multiplier exp)
+           (deriv (multiplicand exp) var))
+          (make-product 
+           (deriv (multiplier exp) var)
+           (multiplicand exp))))
+        (else (error "unknown expression 
+                      type: DERIV" exp))))</code></pre>
+
+    <p>Este procedimento <code>deriv</code> incorpora o algoritmo completo de diferenciação. Como ele é expresso em termos de dados abstratos, ele funcionará independentemente de como escolhermos representar expressões algébricas, desde que projetemos um conjunto adequado de seletores e construtores. Este é o problema que devemos abordar a seguir.</p>
+
+    <a id="Representing-algebraic-expressions"></a>
+    <h5 class="subsubheading">Representando expressões algébricas</h5>
+
+    <p>Podemos imaginar muitas maneiras de usar a estrutura de lista para representar expressões algébricas. Por exemplo, poderíamos usar listas de símbolos que espelham a notação algébrica usual, representando <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>a</mi>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mi>b</mi>
+      </mrow>
+    </math> como a lista <code>(a * x + b)</code>. No entanto, uma escolha especialmente direta é usar a mesma notação prefixada entre parênteses que o Lisp usa para combinações; ou seja, representar <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>a</mi>
+        <mi>x</mi>
+        <mo>+</mo>
+        <mi>b</mi>
+      </mrow>
+    </math> como <code>(+ (* a x) b)</code>. Então, nossa representação de dados para o problema de diferenciação é a seguinte:</p>
+
+    <ul>
+        <li> As variáveis são símbolos. Elas são identificadas pelo predicado primitivo <code>symbol?</code>:
+            <pre><code class="language-scheme">(define (variable? x) (symbol? x))</code></pre>
+        </li>
+        <li> Duas variáveis são iguais se os símbolos que as representam são <code>eq?</code>:
+            <pre><code class="language-scheme">(define (same-variable? v1 v2)
+  (and (variable? v1)
+       (variable? v2)
+       (eq? v1 v2)))</code></pre>
+        </li>
+        <li> Somas e produtos são construídos como listas:
+            <pre><code class="language-scheme">(define (make-sum a1 a2) (list '+ a1 a2))
+(define (make-product m1 m2) (list '* m1 m2))</code></pre>
+        </li>
+        <li> Uma soma é uma lista cujo primeiro elemento é o símbolo <code>+</code>:
+            <pre><code class="language-scheme">(define (sum? x)
+  (and (pair? x) (eq? (car x) '+)))</code></pre>
+        </li>
+        <li> O adendo é o segundo item da lista de soma:
+            <pre><code class="language-scheme">(define (addend s) (cadr s))</code></pre>
+        </li>
+        <li> O aumentando é o terceiro item da lista de soma:
+            <pre><code class="language-scheme">(define (augend s) (caddr s))</code></pre>
+        </li>
+        <li> Um produto é uma lista cujo primeiro elemento é o símbolo <code>*</code>:
+            <pre><code class="language-scheme">(define (product? x)
+  (and (pair? x) (eq? (car x) '*)))</code></pre>
+        </li>
+        <li> O multiplicador é o segundo item da lista de produto:
+            <pre><code class="language-scheme">(define (multiplier p) (cadr p))</code></pre>
+        </li>
+        <li> O multiplicando é o terceiro item da lista de produto:
+            <pre><code class="language-scheme">(define (multiplicand p) (caddr p))</code></pre>
+        </li>
+    </ul>
+
+    <p>Assim, precisamos apenas combinar esses procedimentos com o algoritmo incorporado em <code>deriv</code> para ter um programa de diferenciação simbólica funcional. Vamos ver alguns exemplos de seu comportamento:</p>
+    <pre><code class="language-scheme">(deriv '(+ x 3) 'x)
+<i>(+ 1 0)</i>
+
+(deriv '(* x y) 'x)
+<i>(+ (* x 0) (* 1 y))</i>
+
+(deriv '(* (* x y) (+ x 3)) 'x)
+<i>(+ (* (* x y) (+ 1 0))</i>
+   <i>(* (+ (* x 0) (* 1 y))</i>
+      <i>(+  x 3)))</i></code></pre>
+
+    <p>O programa produz respostas corretas; no entanto, elas não são simplificadas. É verdade que
+    <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mfrac>
+          <mrow>
+            <mi>d</mi>
+            <mo stretchy="false">(</mo>
+            <mi>x</mi>
+            <mi>y</mi>
+            <mo stretchy="false">)</mo>
+          </mrow>
+          <mrow>
+            <mi>d</mi>
+            <mi>x</mi>
+          </mrow>
+        </mfrac>
+      </mrow>
+      <mspace width="thinmathspace"/>
+      <mo>=</mo>
+      <mspace width="thinmathspace"/>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>x</mi>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>0</mn>
+      </mrow>
+      <mo>+</mo>
+      <mrow class="MJX-TeXAtom-ORD">
+        <mn>1</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mi>y</mi>
+        <mo>,</mo>
+      </mrow>
+    </math>
+    mas gostaríamos que o programa soubesse que <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>x</mi>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mn>0</mn>
+        <mo>=</mo>
+        <mn>0</mn>
+      </mrow>
+    </math>, <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mn>1</mn>
+        <mo>⋅<!-- ⋅ --></mo>
+        <mi>y</mi>
+        <mo>=</mo>
+        <mi>y</mi>
+      </mrow>
+    </math>,
+    e <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mn>0</mn>
+        <mo>+</mo>
+        <mi>y</mi>
+        <mo>=</mo>
+        <mi>y</mi>
+      </mrow>
+    </math>. A resposta para o segundo exemplo deveria ter sido simplesmente <code>y</code>. Como o terceiro exemplo mostra, isso se torna um problema sério quando as expressões são complexas.</p>
+
+    <p>Nossa dificuldade é muito semelhante à que encontramos com a implementação de números racionais: não reduzimos as respostas à forma mais simples. Para realizar a redução de números racionais, precisamos mudar apenas os construtores e os seletores da implementação. Podemos adotar uma estratégia semelhante aqui. Não mudaremos <code>deriv</code> de forma alguma. Em vez disso, mudaremos <code>make-sum</code> para que, se ambos os somandos forem números, <code>make-sum</code> os some e retorne sua soma. Além disso, se um dos somandos for 0, então <code>make-sum</code> retornará o outro somando:</p>
+    <pre><code class="language-scheme">(define (make-sum a1 a2)
+  (cond ((=number? a1 0) a2)
+        ((=number? a2 0) a1)
+        ((and (number? a1) (number? a2)) 
+         (+ a1 a2))
+        (else (list '+ a1 a2))))</code></pre>
+
+    <p>Isso usa o procedimento <code>=number?</code>, que verifica se uma expressão é igual a um número dado:</p>
+    <pre><code class="language-scheme">(define (=number? exp num)
+  (and (number? exp) (= exp num)))</code></pre>
+
+    <p>Da mesma forma, mudaremos <code>make-product</code> para incorporar as regras de que 0 vezes qualquer coisa é 0 e 1 vezes qualquer coisa é a própria coisa:</p>
+    <pre><code class="language-scheme">(define (make-product m1 m2)
+  (cond ((or (=number? m1 0) 
+             (=number? m2 0)) 
+         0)
+        ((=number? m1 1) m2)
+        ((=number? m2 1) m1)
+        ((and (number? m1) (number? m2)) 
+         (* m1 m2))
+        (else (list '* m1 m2))))</code></pre>
+
+    <p>Aqui está como esta versão funciona em nossos três exemplos:</p>
+    <pre><code class="language-scheme">(deriv '(+ x 3) 'x)
+<i>1</i>
+
+(deriv '(* x y) 'x)
+<i>y</i>
+
+(deriv '(* (* x y) (+ x 3)) 'x)
+<i>(+ (* x y) (* y (+ x 3)))</i></code></pre>
+
+    <p>Embora isso seja uma melhoria considerável, o terceiro exemplo mostra que ainda há um longo caminho a percorrer antes de obtermos um programa que coloque as expressões em uma forma que possamos concordar que é a "mais simples". O problema da simplificação algébrica é complexo porque, entre outras razões, uma forma que pode ser mais simples para um propósito pode não ser para outro.</p>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e56"></a>Exercício 2.56:</strong> Mostre como estender o diferenciador básico para lidar com mais tipos de expressões. Por exemplo, implemente a regra de diferenciação
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mfrac>
+              <mrow>
+                <mi>d</mi>
+                <mo stretchy="false">(</mo>
+                <msup>
+                  <mi>u</mi>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mspace width="0.1ex"/>
+                    <mi>n</mi>
+                  </mrow>
+                </msup>
+                <mo stretchy="false">)</mo>
+              </mrow>
+              <mrow>
+                <mi>d</mi>
+                <mi>x</mi>
+              </mrow>
+            </mfrac>
+          </mrow>
+          <mspace width="thinmathspace"/>
+          <mo>=</mo>
+          <mspace width="thinmathspace"/>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <msup>
+              <mi>u</mi>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mspace width="0.1ex"/>
+                <mi>n</mi>
+                <mo>−<!-- − --></mo>
+                <mn>1</mn>
+              </mrow>
+            </msup>
+            <mspace width="thinmathspace"/>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mfrac>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>u</mi>
+                </mrow>
+                <mrow>
+                  <mi>d</mi>
+                  <mi>x</mi>
+                </mrow>
+              </mfrac>
+            </mrow>
+          </mrow>
+        </math>
+        adicionando uma nova cláusula ao programa <code>deriv</code> e definindo os procedimentos apropriados <code>exponentiation?</code>, <code>base</code>, <code>exponent</code> e <code>make-exponentiation</code>. (Você pode usar o símbolo <code>**</code> para denotar exponenciação.) Incorpore as regras de que qualquer coisa elevada à potência 0 é 1 e qualquer coisa elevada à potência 1 é a própria coisa.</p>
+    </blockquote>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e57"></a>Exercício 2.57:</strong> Estenda o programa de diferenciação para lidar com somas e produtos de um número arbitrário de (dois ou mais) termos. Então, o último exemplo acima poderia ser expresso como</p>
+        <pre><code class="language-scheme">(deriv '(* x y (+ x 3)) 'x)</code></pre>
+
+        <p>Tente fazer isso mudando apenas a representação para somas e produtos, sem alterar o procedimento <code>deriv</code>. Por exemplo, o <code>addend</code> de uma soma seria o primeiro termo, e o <code>augend</code> seria a soma dos demais termos.</p>
+    </blockquote>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e58"></a>Exercício 2.58:</strong> Suponha que queiramos modificar o programa de diferenciação para que ele funcione com a notação matemática comum, na qual <code>+</code> e <code>*</code> são operadores infixos em vez de prefixos. Como o programa de diferenciação é definido em termos de dados abstratos, podemos modificá-lo para trabalhar com diferentes representações de expressões apenas alterando os predicados, seletores e construtores que definem a representação das expressões algébricas nas quais o diferenciador deve operar.</p>
+        <ol>
+            <li> Mostre como fazer isso para diferenciar expressões algébricas apresentadas na forma infixa, como <code>(x + (3 * (x + (y + 2))))</code>. Para simplificar a tarefa, assuma que <code>+</code> e <code>*</code> sempre recebem dois argumentos e que as expressões são totalmente parentizadas.</li>
+            <li> O problema se torna substancialmente mais difícil se permitirmos a notação algébrica padrão, como <code>(x + 3 * (x + y + 2))</code>, que omite parênteses desnecessários e assume que a multiplicação é feita antes da adição. Você pode projetar predicados, seletores e construtores apropriados para essa notação de forma que nosso programa de derivada ainda funcione?</li>
+        </ol>
+    </blockquote>
+
+    <a id="g_t2_002e3_002e3"></a>
+    <a id="Example_003a-Representing-Sets"></a>
+    <h4 class="subsection"><span class="secnum">2.3.3</span><span class="sectitle">Exemplo: Representando Conjuntos</span></h4>
+
+    <p>Nos exemplos anteriores, construímos representações para dois tipos de objetos de dados compostos: números racionais e expressões algébricas. Em um desses exemplos, tivemos a escolha de simplificar (reduzir) as expressões no momento da construção ou no momento da seleção, mas, além disso, a escolha de uma representação para essas estruturas em termos de listas foi direta. Quando nos voltamos para a representação de conjuntos, a escolha de uma representação não é tão óbvia. De fato, há várias representações possíveis, e elas diferem significativamente umas das outras em vários aspectos.</p>
+
+    <p>Informalmente, um conjunto é simplesmente uma coleção de objetos distintos. Para dar uma definição mais precisa, podemos empregar o método de abstração de dados. Ou seja, definimos "conjunto" especificando as operações que devem ser usadas em conjuntos. Estas são <code>union-set</code>, <code>intersection-set</code>, <code>element-of-set?</code> e <code>adjoin-set</code>. <code>Element-of-set?</code> é um predicado que determina se um dado elemento é um membro de um conjunto. <code>Adjoin-set</code> recebe um objeto e um conjunto como argumentos e retorna um conjunto que contém os elementos do conjunto original e também o elemento adicionado. <code>Union-set</code> calcula a união de dois conjuntos, que é o conjunto contendo cada elemento que aparece em qualquer um dos argumentos. <code>Intersection-set</code> calcula a interseção de dois conjuntos, que é o conjunto contendo apenas elementos que aparecem em ambos os argumentos. Do ponto de vista da abstração de dados, somos livres para projetar qualquer representação que implemente essas operações de forma consistente com as interpretações dadas acima.<a class="footnote_link" id="DOCF103" href="#FOOT103"><sup>103</sup></a></p>
+
+    <a id="Sets-as-unordered-lists"></a>
+    <h5 class="subsubheading">Conjuntos como listas não ordenadas</h5>
+
+    <p>Uma maneira de representar um conjunto é como uma lista de seus elementos, na qual nenhum elemento aparece mais de uma vez. O conjunto vazio é representado pela lista vazia. Nessa representação, <code>element-of-set?</code> é semelhante ao procedimento <code>memq</code> de <a href="#g_t2_002e3_002e1">2.3.1</a>. Ele usa <code>equal?</code> em vez de <code>eq?</code> para que os elementos do conjunto não precisem ser símbolos:</p>
+    <pre><code class="language-scheme">(define (element-of-set? x set)
+  (cond ((null? set) false)
+        ((equal? x (car set)) true)
+        (else (element-of-set? x (cdr set)))))</code></pre>
+
+    <p>Usando isso, podemos escrever <code>adjoin-set</code>. Se o objeto a ser adicionado já estiver no conjunto, simplesmente retornamos o conjunto. Caso contrário, usamos <code>cons</code> para adicionar o objeto à lista que representa o conjunto:</p>
+    <pre><code class="language-scheme">(define (adjoin-set x set)
+  (if (element-of-set? x set)
+      set
+      (cons x set)))</code></pre>
+
+    <p>Para <code>intersection-set</code>, podemos usar uma estratégia recursiva. Se soubermos como formar a interseção de <code>set2</code> e o <code>cdr</code> de <code>set1</code>, só precisamos decidir se incluímos o <code>car</code> de <code>set1</code> nisso. Mas isso depende de <code>(car set1)</code> também estar em <code>set2</code>. Aqui está o procedimento resultante:</p>
+    <pre><code class="language-scheme">(define (intersection-set set1 set2)
+  (cond ((or (null? set1) (null? set2)) 
+         '())
+        ((element-of-set? (car set1) set2)
+         (cons (car set1)
+               (intersection-set (cdr set1) 
+                                 set2)))
+        (else (intersection-set (cdr set1) 
+                                set2))))</code></pre>
+
+    <p>Em termos de eficiência, considere o número de passos necessários para nossas operações de conjunto. Como todas usam <code>element-of-set?</code>, a velocidade dessa operação tem um grande impacto na eficiência da implementação do conjunto como um todo. Agora, para verificar se um objeto é um membro de um conjunto, <code>element-of-set?</code> pode ter que percorrer todo o conjunto. (No pior caso, o objeto não está no conjunto.) Portanto, se o conjunto tiver <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>n</mi>
+    </math> elementos, <code>element-of-set?</code> pode levar até <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>n</mi>
+    </math> passos. Assim, o número de passos necessários cresce como <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <mi>n</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math>. O número de passos necessários para <code>adjoin-set</code>, que usa essa operação, também cresce como <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <mi>n</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math>.
+    Para <code>intersection-set</code>, que faz uma verificação <code>element-of-set?</code> para cada elemento de <code>set1</code>, o número de passos necessários cresce como o produto dos tamanhos dos conjuntos envolvidos, ou <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <msup>
+          <mi>n</mi>
+          <mn>2</mn>
+        </msup>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math> para dois conjuntos de tamanho <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>n</mi>
+    </math>. O mesmo será verdadeiro para <code>union-set</code>.</p>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e59"></a>Exercício 2.59:</strong> Implemente a operação <code>union-set</code> para a representação de conjuntos como listas não ordenadas.</p>
+    </blockquote>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e60"></a>Exercício 2.60:</strong> Especificamos que um conjunto seria representado como uma lista sem duplicatas. Agora, suponha que permitamos duplicatas. Por exemplo, o conjunto <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo fence="false" stretchy="false">{</mo>
+            <mn>1</mn>
+            <mo>,</mo>
+            <mn>2</mn>
+            <mo>,</mo>
+            <mn>3</mn>
+            <mo fence="false" stretchy="false">}</mo>
+          </mrow>
+        </math> poderia ser representado como a lista <code>(2 3 2 1 3 2 2)</code>. Projete procedimentos <code>element-of-set?</code>, <code>adjoin-set</code>, <code>union-set</code> e <code>intersection-set</code> que operem nessa representação. Como a eficiência de cada um se compara com o procedimento correspondente para a representação sem duplicatas? Existem aplicações para as quais você usaria essa representação em preferência à representação sem duplicatas?</p>
+    </blockquote>
+
+    <a id="Sets-as-ordered-lists"></a>
+    <h5 class="subsubheading">Conjuntos como listas ordenadas</h5>
+
+    <p>Uma maneira de acelerar nossas operações de conjunto é mudar a representação para que os elementos do conjunto sejam listados em ordem crescente. Para fazer isso, precisamos de alguma maneira de comparar dois objetos para dizer qual é maior. Por exemplo, poderíamos comparar símbolos lexicograficamente, ou poderíamos concordar em algum método para atribuir um número único a um objeto e então comparar os elementos comparando os números correspondentes. Para manter nossa discussão simples, consideraremos apenas o caso em que os elementos do conjunto são números, para que possamos comparar elementos usando <code>&gt;</code> e <code>&lt;</code>. Representaremos um conjunto de números listando seus elementos em ordem crescente. Enquanto nossa primeira representação acima nos permitia representar o conjunto <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mo fence="false" stretchy="false">{</mo>
+        <mn>1</mn>
+        <mo>,</mo>
+        <mn>3</mn>
+        <mo>,</mo>
+        <mn>6</mn>
+        <mo>,</mo>
+        <mn>10</mn>
+        <mo fence="false" stretchy="false">}</mo>
+      </mrow>
+    </math> listando os elementos em qualquer ordem, nossa nova representação permite apenas a lista <code>(1 3 6 10)</code>.</p>
+
+    <p>Uma vantagem da ordenação aparece em <code>element-of-set?</code>: Ao verificar a presença de um item, não precisamos mais percorrer todo o conjunto. Se chegarmos a um elemento do conjunto que é maior que o item que estamos procurando, sabemos que o item não está no conjunto:</p>
+    <pre><code class="language-scheme">(define (element-of-set? x set)
+  (cond ((null? set) false)
+        ((= x (car set)) true)
+        ((< x (car set)) false)
+        (else (element-of-set? x (cdr set)))))</code></pre>
+
+    <p>Quantos passos isso economiza? No pior caso, o item que estamos procurando pode ser o maior do conjunto, então o número de passos é o mesmo que para a representação não ordenada. Por outro lado, se procurarmos itens de muitos tamanhos diferentes, podemos esperar que às vezes possamos parar a busca perto do início da lista e que outras vezes ainda precisaremos examinar a maior parte da lista. Em média, devemos esperar ter que examinar cerca de metade dos itens do conjunto. Assim, o número médio de passos necessários será cerca de <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo>/</mo>
+        </mrow>
+        <mn>2</mn>
+      </mrow>
+    </math>. Isso ainda é crescimento <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <mi>n</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math>, mas nos economiza, em média, um fator de 2 no número de passos em relação à implementação anterior.</p>
+
+    <p>Obtemos uma aceleração mais impressionante com <code>intersection-set</code>. Na representação não ordenada, essa operação exigia <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <msup>
+          <mi>n</mi>
+          <mn>2</mn>
+        </msup>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math> passos, porque realizamos uma varredura completa de <code>set2</code> para cada elemento de <code>set1</code>. Mas com a representação ordenada, podemos usar um método mais inteligente. Comece comparando os elementos iniciais, <code>x1</code> e <code>x2</code>, dos dois conjuntos. Se <code>x1</code> for igual a <code>x2</code>, isso dá um elemento da interseção, e o resto da interseção é a interseção dos <code>cdr</code>-s dos dois conjuntos. Suponha, no entanto, que <code>x1</code> seja menor que <code>x2</code>. Como <code>x2</code> é o menor elemento em <code>set2</code>, podemos concluir imediatamente que <code>x1</code> não pode aparecer em <code>set2</code> e, portanto, não está na interseção. Portanto, a interseção é igual à interseção de <code>set2</code> com o <code>cdr</code> de <code>set1</code>. Da mesma forma, se <code>x2</code> for menor que <code>x1</code>, a interseção é dada pela interseção de <code>set1</code> com o <code>cdr</code> de <code>set2</code>. Aqui está o procedimento:</p>
+    <pre><code class="language-scheme">(define (intersection
