@@ -211,4 +211,324 @@
                                 <mn>1</mn>
                             </msub>
                             <mo>⋅<!-- ⋅ --></mo>
-                            <msub
+                            <msub>
+                                <mi>z</mi>
+                                <mn>2</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                        </mtd>
+                        <mtd>
+                            <mo>=</mo>
+                        </mtd>
+                        <mtd>
+                            <mtext>Magnitude</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                            <mo>⋅<!-- ⋅ --></mo>
+                            <mtext>Magnitude</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>2</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                            <mo>,</mo>
+                        </mtd>
+                    </mtr>
+                    <mtr>
+                        <mtd>
+                            <mtext>Ângulo</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mo>⋅<!-- ⋅ --></mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>2</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                        </mtd>
+                        <mtd>
+                            <mo>=</mo>
+                        </mtd>
+                        <mtd>
+                            <mtext>Ângulo</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>1</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                            <mo>+</mo>
+                            <mtext>Ângulo</mtext>
+                            <mo stretchy="false">(</mo>
+                            <msub>
+                                <mi>z</mi>
+                                <mn>2</mn>
+                            </msub>
+                            <mo stretchy="false">)</mo>
+                            <mo>.</mo>
+                        </mtd>
+                    </mtr>
+                </mtable>
+            </math>
+        </p>
+        <p>
+            Assim, existem duas representações diferentes para números complexos, que são apropriadas para diferentes operações. No entanto, do ponto de vista de alguém escrevendo um programa que usa números complexos, o princípio da abstração de dados sugere que todas as operações para manipular números complexos devem estar disponíveis, independentemente de qual representação é usada pelo computador. Por exemplo, muitas vezes é útil poder encontrar a magnitude de um número complexo especificado por coordenadas retangulares. Da mesma forma, muitas vezes é útil determinar a parte real de um número complexo especificado por coordenadas polares.
+        </p>
+        <p>
+            Para projetar tal sistema, podemos seguir a mesma estratégia de abstração de dados que seguimos ao projetar o pacote de números racionais em <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>. Suponha que as operações em números complexos sejam implementadas em termos de quatro seletores: <code>real-part</code>, <code>imag-part</code>, <code>magnitude</code> e <code>angle</code>. Também suponha que temos dois procedimentos para construir números complexos: <code>make-from-real-imag</code> retorna um número complexo com partes real e imaginária especificadas, e <code>make-from-mag-ang</code> retorna um número complexo com magnitude e ângulo especificados. Esses procedimentos têm a propriedade de que, para qualquer número complexo <code>z</code>, ambos
+        </p>
+        <pre><code class="language-scheme">(make-from-real-imag (real-part z) 
+                     (imag-part z))</code></pre>
+
+        <p>e</p>
+        <pre><code class="language-scheme">(make-from-mag-ang (magnitude z) 
+                   (angle z))</code></pre>
+
+        <p>produzem números complexos que são iguais a <code>z</code>.</p>
+        <p>
+            Usando esses construtores e seletores, podemos implementar aritmética em números complexos usando os "dados abstratos" especificados pelos construtores e seletores, assim como fizemos para números racionais em <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>. Como mostrado nas fórmulas acima, podemos adicionar e subtrair números complexos em termos de partes real e imaginária, enquanto multiplicamos e dividimos números complexos em termos de magnitudes e ângulos:
+        </p>
+        <pre><code class="language-scheme">(define (add-complex z1 z2)
+  (make-from-real-imag 
+   (+ (real-part z1) (real-part z2))
+   (+ (imag-part z1) (imag-part z2))))
+
+(define (sub-complex z1 z2)
+  (make-from-real-imag 
+   (- (real-part z1) (real-part z2))
+   (- (imag-part z1) (imag-part z2))))
+
+(define (mul-complex z1 z2)
+  (make-from-mag-ang 
+   (* (magnitude z1) (magnitude z2))
+   (+ (angle z1) (angle z2))))
+
+(define (div-complex z1 z2)
+  (make-from-mag-ang 
+   (/ (magnitude z1) (magnitude z2))
+   (- (angle z1) (angle z2))))</code></pre>
+
+        <p>
+            Para completar o pacote de números complexos, devemos escolher uma representação e implementar os construtores e seletores em termos de números primitivos e estrutura de lista primitiva. Há duas maneiras óbvias de fazer isso: podemos representar um número complexo na "forma retangular" como um par (parte real, parte imaginária) ou na "forma polar" como um par (magnitude, ângulo). Qual devemos escolher?
+        </p>
+        <p>
+            Para tornar as diferentes escolhas concretas, imagine que há dois programadores, Ben Bitdiddle e Alyssa P. Hacker, que estão projetando independentemente representações para o sistema de números complexos. Ben escolhe representar números complexos na forma retangular. Com essa escolha, selecionar as partes real e imaginária de um número complexo é direto, assim como construir um número complexo com partes real e imaginária dadas. Para encontrar a magnitude e o ângulo, ou para construir um número complexo com uma magnitude e ângulo dados, ele usa as relações trigonométricas
+        </p>
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
+                <mtr>
+                    <mtd>
+                        <mi>x</mi>
+                    </mtd>
+                    <mtd>
+                        <mo>=</mo>
+                    </mtd>
+                    <mtd>
+                        <mi>r</mi>
+                        <mi>cos</mi>
+                        <mo>⁡<!-- ⁡ --></mo>
+                        <mi>A</mi>
+                        <mo>,</mo>
+                    </mtd>
+                </mtr>
+                <mtr>
+                    <mtd>
+                        <mi>y</mi>
+                    </mtd>
+                    <mtd>
+                        <mo>=</mo>
+                    </mtd>
+                    <mtd>
+                        <mi>r</mi>
+                        <mi>sin</mi>
+                        <mo>⁡<!-- ⁡ --></mo>
+                        <mi>A</mi>
+                        <mo>,</mo>
+                    </mtd>
+                </mtr>
+                <mtr>
+                    <mtd>
+                        <mi>r</mi>
+                    </mtd>
+                    <mtd>
+                        <mo>=</mo>
+                    </mtd>
+                    <mtd>
+                        <msqrt>
+                            <msup>
+                                <mi>x</mi>
+                                <mn>2</mn>
+                            </msup>
+                            <mo>+</mo>
+                            <msup>
+                                <mi>y</mi>
+                                <mn>2</mn>
+                            </msup>
+                            <mo>,</mo>
+                        </msqrt>
+                    </mtd>
+                </mtr>
+                <mtr>
+                    <mtd>
+                        <mi>A</mi>
+                    </mtd>
+                    <mtd>
+                        <mo>=</mo>
+                    </mtd>
+                    <mtd>
+                        <mi>arctan</mi>
+                        <mo>⁡<!-- ⁡ --></mo>
+                        <mo stretchy="false">(</mo>
+                        <mi>y</mi>
+                        <mo>,</mo>
+                        <mi>x</mi>
+                        <mo stretchy="false">)</mo>
+                        <mo>,</mo>
+                    </mtd>
+                </mtr>
+            </mtable>
+        </math>
+
+        <p>
+            que relacionam as partes real e imaginária <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mrow class="MJX-TeXAtom-ORD">
+                    <mo stretchy="false">(</mo>
+                    <mi>x</mi>
+                    <mo>,</mo>
+                    <mi>y</mi>
+                    <mo stretchy="false">)</mo>
+                </mrow>
+            </math> à magnitude e ao ângulo <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mrow class="MJX-TeXAtom-ORD">
+                    <mo stretchy="false">(</mo>
+                    <mi>r</mi>
+                    <mo>,</mo>
+                    <mi>A</mi>
+                    <mo stretchy="false">)</mo>
+                </mrow>
+            </math>.<a class="footnote_link" id="DOCF110" href="#FOOT110"><sup>110</sup></a> A representação de Ben é, portanto, dada pelos seguintes seletores e construtores:
+        </p>
+        <pre><code class="language-scheme">(define (real-part z) (car z))
+(define (imag-part z) (cdr z))
+
+(define (magnitude z)
+  (sqrt (+ (square (real-part z)) 
+           (square (imag-part z)))))
+
+(define (angle z)
+  (atan (imag-part z) (real-part z)))
+
+(define (make-from-real-imag x y) 
+  (cons x y))
+
+(define (make-from-mag-ang r a)
+  (cons (* r (cos a)) (* r (sin a))))</code></pre>
+
+        <p>
+            Alyssa, em contraste, escolhe representar números complexos na forma polar. Para ela, selecionar a magnitude e o ângulo é direto, mas ela precisa usar as relações trigonométricas para obter as partes real e imaginária. A representação de Alyssa é:
+        </p>
+        <pre><code class="language-scheme">(define (real-part z)
+  (* (magnitude z) (cos (angle z))))
+
+(define (imag-part z)
+  (* (magnitude z) (sin (angle z))))
+
+(define (magnitude z) (car z))
+(define (angle z) (cdr z))
+
+(define (make-from-real-imag x y)
+  (cons (sqrt (+ (square x) (square y)))
+        (atan y x)))
+
+(define (make-from-mag-ang r a) 
+  (cons r a))</code></pre>
+
+        <p>
+            A disciplina de abstração de dados garante que a mesma implementação de <code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> e <code>div-complex</code> funcionará com a representação de Ben ou a de Alyssa.
+        </p>
+        <a id="g_t2_002e4_002e2"></a>
+        <a id="Tagged-data"></a>
+        <h4 class="subsection"><span class="secnum">2.4.2</span><span class="sectitle">Dados Etiquetados</span></h4>
+
+        <p>
+            Uma maneira de ver a abstração de dados é como uma aplicação do "princípio do menor compromisso". Na implementação do sistema de números complexos em <a href="#g_t2_002e4_002e1">2.4.1</a>, podemos usar a representação retangular de Ben ou a representação polar de Alyssa. A barreira de abstração formada pelos seletores e construtores nos permite adiar até o último momento possível a escolha de uma representação concreta para nossos objetos de dados e, assim, manter a máxima flexibilidade no design do nosso sistema.
+        </p>
+        <p>
+            O princípio do menor compromisso pode ser levado a extremos ainda maiores. Se desejarmos, podemos manter a ambiguidade de representação mesmo <em>depois</em> de termos projetado os seletores e construtores, e optar por usar tanto a representação de Ben <em>quanto</em> a de Alyssa. Se ambas as representações estiverem incluídas em um único sistema, no entanto, precisaremos de alguma maneira de distinguir dados na forma polar de dados na forma retangular. Caso contrário, se nos pedissem, por exemplo, para encontrar a <code>magnitude</code> do par (3, 4), não saberíamos se responder 5 (interpretando o número na forma retangular) ou 3 (interpretando o número na forma polar). Uma maneira direta de realizar essa distinção é incluir uma <a id="index-type-tag"></a> <em>etiqueta de tipo</em> – o símbolo <code>rectangular</code> ou <code>polar</code> – como parte de cada número complexo. Então, quando precisarmos manipular um número complexo, podemos usar a etiqueta para decidir qual seletor aplicar.
+        </p>
+        <p>
+            Para manipular dados etiquetados, assumiremos que temos procedimentos <code>type-tag</code> e <code>contents</code> que extraem de um objeto de dados a etiqueta e o conteúdo real (as coordenadas polares ou retangulares, no caso de um número complexo). Também postularemos um procedimento <code>attach-tag</code> que recebe uma etiqueta e um conteúdo e produz um objeto de dados etiquetado. Uma maneira direta de implementar isso é usar a estrutura de lista comum:
+        </p>
+        <pre><code class="language-scheme">(define (attach-tag type-tag contents)
+  (cons type-tag contents))
+
+(define (type-tag datum)
+  (if (pair? datum)
+      (car datum)
+      (error "Bad tagged datum: 
+              TYPE-TAG" datum)))
+
+(define (contents datum)
+  (if (pair? datum)
+      (cdr datum)
+      (error "Bad tagged datum: 
+              CONTENTS" datum)))</code></pre>
+
+        <p>
+            Usando esses procedimentos, podemos definir predicados <code>rectangular?</code> e <code>polar?</code>, que reconhecem números retangulares e polares, respectivamente:
+        </p>
+        <pre><code class="language-scheme">(define (rectangular? z)
+  (eq? (type-tag z) 'rectangular))
+
+(define (polar? z)
+  (eq? (type-tag z) 'polar))</code></pre>
+
+        <p>
+            Com as etiquetas de tipo, Ben e Alyssa podem agora modificar seu código para que suas duas representações diferentes possam coexistir no mesmo sistema. Sempre que Ben constrói um número complexo, ele o etiqueta como retangular. Sempre que Alyssa constrói um número complexo, ela o etiqueta como polar. Além disso, Ben e Alyssa devem garantir que os nomes de seus procedimentos não entrem em conflito. Uma maneira de fazer isso é Ben anexar o sufixo <code>rectangular</code> ao nome de cada um de seus procedimentos de representação e Alyssa anexar <code>polar</code> aos nomes dos dela. Aqui está a representação retangular revisada de Ben de <a href="#g_t2_002e4_002e1">2.4.1</a>:
+        </p>
+        <pre><code class="language-scheme">(define (real-part-rectangular z) (car z))
+(define (imag-part-rectangular z) (cdr z))
+
+(define (magnitude-rectangular z)
+  (sqrt (+ (square (real-part-rectangular z))
+           (square (imag-part-rectangular z)))))
+
+(define (angle-rectangular z)
+  (atan (imag-part-rectangular z)
+        (real-part-rectangular z)))
+
+(define (make-from-real-imag-rectangular x y)
+  (attach-tag 'rectangular (cons x y)))
+
+(define (make-from-mag-ang-rectangular r a)
+  (attach-tag 
+   'rectangular
+   (cons (* r (cos a)) (* r (sin a)))))</code></pre>
+
+        <p>e aqui está a representação polar revisada de Alyssa:</p>
+        <pre><code class="language-scheme">(define (real-part-polar z)
+  (* (magnitude-polar z) 
+     (cos (angle-polar z))))
+
+(define (imag-part-polar z)
+  (* (magnitude-polar z) 
+     (sin (angle-polar z))))
+
+(define (magnitude-polar z) (car z))
+(define (angle-polar z) (cdr z))
+
+(define (make-from-real-imag-polar x y)
+  (attach-tag 
+   'polar
+   (cons (sqrt (+ (square x) (square y)))
+         (atan y x))))
+
+(define (make-from-m
