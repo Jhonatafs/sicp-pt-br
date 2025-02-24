@@ -531,4 +531,179 @@
    (cons (sqrt (+ (square x) (square y)))
          (atan y x))))
 
-(define (make-from-m
+(define (make-from-mag-ang-polar r a)
+  (attach-tag 'polar (cons r a)))</code></pre>
+
+        <p>
+            Cada seletor genérico é implementado como um procedimento que verifica a etiqueta de seu argumento e chama o procedimento apropriado para lidar com dados desse tipo. Por exemplo, para obter a parte real de um número complexo, <code>real-part</code> examina a etiqueta para determinar se deve usar o <code>real-part-rectangular</code> de Ben ou o <code>real-part-polar</code> de Alyssa. Em ambos os casos, usamos <code>contents</code> para extrair o dado bruto, sem etiqueta, e enviá-lo ao procedimento retangular ou polar conforme necessário:
+        </p>
+        <pre><code class="language-scheme">(define (real-part z)
+  (cond ((rectangular? z)
+         (real-part-rectangular (contents z)))
+        ((polar? z)
+         (real-part-polar (contents z)))
+        (else
+         (error "Unknown type: 
+               REAL-PART" z))))
+
+(define (imag-part z)
+  (cond ((rectangular? z)
+         (imag-part-rectangular (contents z)))
+        ((polar? z)
+         (imag-part-polar (contents z)))
+        (else
+         (error "Unknown type: 
+               IMAG-PART" z))))
+
+(define (magnitude z)
+  (cond ((rectangular? z)
+         (magnitude-rectangular (contents z)))
+        ((polar? z)
+         (magnitude-polar (contents z)))
+        (else
+         (error "Unknown type: 
+               MAGNITUDE" z))))
+
+(define (angle z)
+  (cond ((rectangular? z)
+         (angle-rectangular (contents z)))
+        ((polar? z)
+         (angle-polar (contents z)))
+        (else
+         (error "Unknown type: 
+               ANGLE" z))))</code></pre>
+
+        <p>
+            Para implementar as operações aritméticas de números complexos, podemos usar os mesmos procedimentos <code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> e <code>div-complex</code> de <a href="#g_t2_002e4_002e1">2.4.1</a>, porque os seletores que eles chamam são genéricos e, portanto, funcionarão com qualquer representação. Por exemplo, o procedimento <code>add-complex</code> ainda é
+        </p>
+        <pre><code class="language-scheme">(define (add-complex z1 z2)
+  (make-from-real-imag 
+   (+ (real-part z1) (real-part z2))
+   (+ (imag-part z1) (imag-part z2))))</code></pre>
+
+        <p>
+            Finalmente, devemos escolher se construímos números complexos usando a representação de Ben ou a de Alyssa. Uma escolha razoável é construir números retangulares sempre que tivermos partes real e imaginária e construir números polares sempre que tivermos magnitudes e ângulos:
+        </p>
+        <pre><code class="language-scheme">(define (make-from-real-imag x y)
+  (make-from-real-imag-rectangular x y))
+
+(define (make-from-mag-ang r a)
+  (make-from-mag-ang-polar r a))</code></pre>
+
+        <p>
+            O sistema de números complexos resultante tem a estrutura mostrada na <a href="#Figure-2_002e21">Figura 2.21</a>. O sistema foi decomposto em três partes relativamente independentes: as operações aritméticas de números complexos, a implementação polar de Alyssa e a implementação retangular de Ben. As implementações polar e retangular poderiam ter sido escritas por Ben e Alyssa trabalhando separadamente, e ambas podem ser usadas como representações subjacentes por um terceiro programador implementando os procedimentos aritméticos complexos em termos da interface abstrata de construtores/seletores.
+        </p>
+        <figure class="float">
+            <a id="Figure-2_002e21"></a>
+            <object style="width: 65.01ex; height: 33.59ex;" data="fig/chap2/Fig2.21a.std.svg" type="image/svg+xml">SVG</object>
+            <figcaption class="float-caption">
+                <p><strong>Figura 2.21:</strong> Estrutura do sistema genérico de aritmética complexa.</p>
+            </figcaption>
+        </figure>
+
+        <p>
+            Como cada objeto de dados é etiquetado com seu tipo, os seletores operam nos dados de maneira genérica. Ou seja, cada seletor é definido para ter um comportamento que depende do tipo específico de dados ao qual é aplicado. Observe o mecanismo geral para interfacear as representações separadas: Dentro de uma determinada implementação de representação (digamos, o pacote polar de Alyssa), um número complexo é um par sem tipo (magnitude, ângulo). Quando um seletor genérico opera em um número do tipo <code>polar</code>, ele remove a etiqueta e passa o conteúdo para o código de Alyssa. Por outro lado, quando Alyssa constrói um número para uso geral, ela o etiqueta com um tipo para que ele possa ser reconhecido apropriadamente pelos procedimentos de nível superior. Essa disciplina de remover e anexar etiquetas à medida que os objetos de dados são passados de nível para nível pode ser uma estratégia organizacional importante, como veremos em <a href="2_002e5.xhtml#g_t2_002e5">2.5</a>.
+        </p>
+        <a id="g_t2_002e4_002e3"></a>
+        <a id="Data_002dDirected-Programming-and-Additivity"></a>
+        <h4 class="subsection"><span class="secnum">2.4.3</span><span class="sectitle">Programação Orientada a Dados e Aditividade</span></h4>
+
+        <p>
+            A estratégia geral de verificar o tipo de um dado e chamar um procedimento apropriado é chamada de <a id="index-dispatching-on-type"></a> <em>despacho por tipo</em>. Essa é uma estratégia poderosa para obter modularidade no design de sistemas. Por outro lado, implementar o despacho como em <a href="#g_t2_002e4_002e2">2.4.2</a> tem duas fraquezas significativas. Uma fraqueza é que os procedimentos de interface genérica (<code>real-part</code>, <code>imag-part</code>, <code>magnitude</code> e <code>angle</code>) devem conhecer todas as diferentes representações. Por exemplo, suponha que quiséssemos incorporar uma nova representação para números complexos em nosso sistema de números complexos. Precisaríamos identificar essa nova representação com um tipo e, em seguida, adicionar uma cláusula a cada um dos procedimentos de interface genérica para verificar o novo tipo e aplicar o seletor apropriado para essa representação.
+        </p>
+        <p>
+            Outra fraqueza da técnica é que, embora as representações individuais possam ser projetadas separadamente, devemos garantir que nenhum dois procedimentos em todo o sistema tenham o mesmo nome. É por isso que Ben e Alyssa tiveram que mudar os nomes de seus procedimentos originais de <a href="#g_t2_002e4_002e1">2.4.1</a>.
+        </p>
+        <p>
+            A questão subjacente a ambas essas fraquezas é que a técnica para implementar interfaces genéricas não é <a id="index-additive"></a> <em>aditiva</em>. A pessoa que implementa os procedimentos de seletores genéricos deve modificar esses procedimentos cada vez que uma nova representação é instalada, e as pessoas que interfaceiam as representações individuais devem modificar seu código para evitar conflitos de nomes. Em cada um desses casos, as mudanças que devem ser feitas no código são diretas, mas devem ser feitas mesmo assim, e isso é uma fonte de inconveniência e erro. Isso não é um grande problema para o sistema de números complexos como ele está, mas suponha que houvesse não duas, mas centenas de diferentes representações para números complexos. E suponha que houvesse muitos seletores genéricos para serem mantidos na interface de dados abstratos. Suponha, de fato, que nenhum programador conhecesse todos os procedimentos de interface ou todas as representações. O problema é real e deve ser abordado em programas como sistemas de gerenciamento de banco de dados em grande escala.
+        </p>
+        <p>
+            O que precisamos é de um meio para modularizar ainda mais o design do sistema. Isso é fornecido pela técnica de programação conhecida como <a id="index-data_002ddirected-programming-1"></a> <em>programação orientada a dados</em>. Para entender como a programação orientada a dados funciona, comece com a observação de que sempre que lidamos com um conjunto de operações genéricas que são comuns a um conjunto de diferentes tipos, estamos, de fato, lidando com uma tabela bidimensional que contém as operações possíveis em um eixo e os tipos possíveis no outro eixo. As entradas na tabela são os procedimentos que implementam cada operação para cada tipo de argumento apresentado. No sistema de números complexos desenvolvido na seção anterior, a correspondência entre o nome da operação, o tipo de dados e o procedimento real foi espalhada entre as várias cláusulas condicionais nos procedimentos de interface genérica. Mas a mesma informação poderia ter sido organizada em uma tabela, como mostrado na <a href="#Figure-2_002e22">Figura 2.22</a>.
+        </p>
+        <figure class="float">
+            <a id="Figure-2_002e22"></a>
+            <object style="width: 63.29ex; height: 20.98ex;" data="fig/chap2/Fig2.22.std.svg" type="image/svg+xml">SVG</object>
+            <figcaption class="float-caption">
+                <p><strong>Figura 2.22:</strong> Tabela de operações para o sistema de números complexos.</p>
+            </figcaption>
+        </figure>
+
+        <p>
+            A programação orientada a dados é a técnica de projetar programas para trabalhar diretamente com essa tabela. Anteriormente, implementamos o mecanismo que interfaceia o código de aritmética complexa com os dois pacotes de representação como um conjunto de procedimentos que cada um realiza um despacho explícito por tipo. Aqui, implementaremos a interface como um único procedimento que procura a combinação do nome da operação e do tipo do argumento na tabela para encontrar o procedimento correto a ser aplicado e, em seguida, aplica-o ao conteúdo do argumento. Se fizermos isso, então, para adicionar um novo pacote de representação ao sistema, não precisamos mudar nenhum procedimento existente; precisamos apenas adicionar novas entradas à tabela.
+        </p>
+        <p>
+            Para implementar esse plano, assuma que temos dois procedimentos, <code>put</code> e <code>get</code>, para manipular a tabela de operações e tipos:
+        </p>
+        <ul>
+            <li> <code>(put ⟨<var>op</var>⟩ ⟨<var>type</var>⟩ ⟨<var>item</var>⟩)</code> instala o <code>⟨</code><var>item</var><code>⟩</code> na tabela, indexado pelo <code>⟨</code><var>op</var><code>⟩</code> e o <code>⟨</code><var>type</var><code>⟩</code>.</li>
+            <li> <code>(get ⟨<var>op</var>⟩ ⟨<var>type</var>⟩)</code> procura a entrada <code>⟨</code><var>op</var><code>⟩</code>, <code>⟨</code><var>type</var><code>⟩</code> na tabela e retorna o item encontrado lá. Se nenhum item for encontrado, <code>get</code> retorna falso.</li>
+        </ul>
+
+        <p>
+            Por enquanto, podemos assumir que <code>put</code> e <code>get</code> estão incluídos em nossa linguagem. Em <a href="Chapter-3.xhtml#Chapter-3">Capítulo 3</a> (<a href="3_002e3.xhtml#g_t3_002e3_002e3">3.3.3</a>), veremos como implementar essas e outras operações para manipular tabelas.
+        </p>
+        <p>
+            Aqui está como a programação orientada a dados pode ser usada no sistema de números complexos. Ben, que desenvolveu a representação retangular, implementa seu código exatamente como fez originalmente. Ele define uma coleção de procedimentos, ou um <a id="index-package"></a> <em>pacote</em>, e interfaceia esses procedimentos com o resto do sistema adicionando entradas à tabela que dizem ao sistema como operar em números retangulares. Isso é realizado chamando o seguinte procedimento:
+        </p>
+        <pre><code class="language-scheme">(define (install-rectangular-package)
+  ;; procedimentos internos
+  (define (real-part z) (car z))
+  (define (imag-part z) (cdr z))
+  (define (make-from-real-imag x y) 
+    (cons x y))
+  (define (magnitude z)
+    (sqrt (+ (square (real-part z))
+             (square (imag-part z)))))
+  (define (angle z)
+    (atan (imag-part z) (real-part z)))
+  (define (make-from-mag-ang r a)
+    (cons (* r (cos a)) (* r (sin a))))
+  ;; interface com o resto do sistema
+  (define (tag x) 
+    (attach-tag 'rectangular x))
+  (put 'real-part '(rectangular) real-part)
+  (put 'imag-part '(rectangular) imag-part)
+  (put 'magnitude '(rectangular) magnitude)
+  (put 'angle '(rectangular) angle)
+  (put 'make-from-real-imag 'rectangular
+       (lambda (x y) 
+         (tag (make-from-real-imag x y))))
+  (put 'make-from-mag-ang 'rectangular
+       (lambda (r a) 
+         (tag (make-from-mag-ang r a))))
+  'done)</code></pre>
+
+        <p>
+            Observe que os procedimentos internos aqui são os mesmos procedimentos de <a href="#g_t2_002e4_002e1">2.4.1</a> que Ben escreveu quando estava trabalhando isoladamente. Nenhuma mudança é necessária para interfaceá-los com o resto do sistema. Além disso, como essas definições de procedimentos são internas ao procedimento de instalação, Ben não precisa se preocupar com conflitos de nomes com outros procedimentos fora do pacote retangular. Para interfacear esses procedimentos com o resto do sistema, Ben instala seu procedimento <code>real-part</code> sob o nome de operação <code>real-part</code> e o tipo <code>(rectangular)</code>, e da mesma forma para os outros seletores.<a class="footnote_link" id="DOCF111" href="#FOOT111"><sup>111</sup></a> A interface também define os construtores a serem usados pelo sistema externo.<a class="footnote_link" id="DOCF112" href="#FOOT112"><sup>112</sup></a> Esses são idênticos aos construtores definidos internamente por Ben, exceto que eles anexam a etiqueta.
+        </p>
+        <p>
+            O pacote polar de Alyssa é análogo:
+        </p>
+        <pre><code class="language-scheme">(define (install-polar-package)
+  ;; procedimentos internos
+  (define (magnitude z) (car z))
+  (define (angle z) (cdr z))
+  (define (make-from-mag-ang r a) (cons r a))
+  (define (real-part z)
+    (* (magnitude z) (cos (angle z))))
+  (define (imag-part z)
+    (* (magnitude z) (sin (angle z))))
+  (define (make-from-real-imag x y)
+    (cons (sqrt (+ (square x) (square y)))
+          (atan y x)))
+  ;; interface com o resto do sistema
+  (define (tag x) (attach-tag 'polar x))
+  (put 'real-part '(polar) real-part)
+  (put 'imag-part '(polar) imag-part)
+  (put 'magnitude '(polar) magnitude)
+  (put 'angle '(polar) angle)
+  (put 'make-from-real-imag 'polar
+       (lambda (x y) 
+         (tag (make-from-real-imag x y))))
+  (put 'make-from-mag-ang 'polar
+       (lambda (r a) 
+         (tag (make-from-mag-ang r a))))
+  'done)</code></pre>
+
+        <p>
+            Mesmo que Ben e Alyssa ainda usem seus procedimentos originais definidos com os mesmos nomes que os do outro (por exemplo, <code>real-part</code>), essas definições agora são internas a diferentes procedimentos (veja <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.
