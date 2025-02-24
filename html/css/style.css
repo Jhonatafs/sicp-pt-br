@@ -579,3 +579,16 @@ a#References ~ p {
   bottom: 0;
   padding: 0.4ex 0ex;
 }
+
+@media screen and (max-width: 812px) {
+  figure {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  object {
+    max-width: 100%;
+    width: 100%;
+    object-fit: contain;
+  }
+}
