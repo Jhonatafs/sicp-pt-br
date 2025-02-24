@@ -13,11 +13,11 @@
     />
     <meta name="Generator" content="texi2any" />
     <title>Structure and Interpretation of Computer Programs, 2e</title>
-    <link rel="stylesheet" href="/html/css/icons.css" />
+    <link rel="stylesheet" href="html/css/icons.css" />
     <style>
       @font-face {
         font-family: "default";
-        src: url("/html/css/fonts/linlib-r-subset.woff");
+        src: url("html/css/fonts/linlib-r-subset.woff");
       }
 
       * {
@@ -35,93 +35,101 @@
         align-items: center;
         justify-content: center;
         gap: 1rem;
-        margin: 0 auto;
+        margin: auto;
         height: 100dvh;
         width: 100dvw;
-      }
-
-      section {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin: 0 auto;
-        padding: 0;
-        width: max-content;
-        height: calc(100dvh - 6rem);
-        border-radius: 0 0 15px 15px;
-        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.342);
-        position: fixed;
-        top: 0;
-      }
-
-      a {
-        display: inline-block !important;
-        max-width: 90dvw;
-        text-decoration: none;
-      }
-
-      img {
-        padding: 0 1rem;
-        max-width: calc(100% - 2rem);
-        margin: 0 auto;
-        border-radius: 15px;
-      }
-
-      div {
-        position: fixed;
-        bottom: 2rem;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: center;
-        margin: 0;
-        padding: 0;
-      }
-
-      div a,
-      div span {
-        color: rgb(0, 0, 0);
-        opacity: 0.7;
-        font-family: "default";
-        font-size: 150%;
-        transition: all 0.3s ease-in-out;
-        padding: 0;
-        margin: 0;
-      }
-
-      div a:hover {
-        color: #a02c2cff;
-        opacity: 1;
+        max-width: 100dvw;
+        max-height: 100dvw;
       }
 
       #cover {
-        display: block;
+        position: fixed;
+        top: 0;
+        width: 800px;
+        height: calc(100dvh - 6rem);
+        max-height: calc(100dvh - 6rem);
+        margin: auto;
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.342);
       }
 
-      @media (max-width: 800px) {
-        section {
-          width: 96%;
-          margin: 0 auto;
+      @media screen and (max-width: 812px) {
+        #cover {
+          width: 96dvw;
+        }
+      }
+
+      #cover-link {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        height: 100%;
+      }
+
+      #cover-img {
+        width: 600px;
+        max-width: calc(100% - 2rem);
+        max-height: calc(100% - 2rem);
+        padding: 1rem 0;
+        object-fit: contain;
+      }
+
+      @media screen and (max-width: 812px) {
+        #cover-img {
+          width: calc(100% - 2.5rem);
+          object-fit: contain;
+        }
+      }
+
+      #links {
+        position: fixed;
+        bottom: 2rem;
+        width: max-content;
+        font-size: 140%;
+        color: #000000;
+        font-family: "default";
+      }
+
+      .icon_github,
+      #links span {
+        transition: all 0.3s ease-in-out;
+        color: #a02c2c;
+        text-decoration: none;
+        opacity: 0.7;
+        padding: 0.5rem 0.7rem 0.4rem;
+        border: 2px dotted #a02c2c;
+        border-radius: 15px;
+      }
+
+      #links span {
+        color: #000000;
+      }
+
+      @media screen and (min-width: 813px) {
+        .icon_github {
+          color: #000000;
+          border: 2px dotted #000000;
         }
 
-        div a {
-          color: #a02c2cff;
+        .icon_github:hover {
+          color: #a02c2c;
+          border: 2px dotted #a02c2c;
+          opacity: 1;
         }
       }
     </style>
   </head>
   <body>
-    <section>
-      <a id="cover" href="./html/index.html">
-        <img src="html/fig/coverpage.png" alt="" />
+    <section id="cover">
+      <a id="cover-link" href="./html/index.html">
+        <img src="html/fig/coverpage.png" alt="" id="cover-img" />
       </a>
     </section>
-    <div>
+    <div id="links">
       <a href="https://github.com/Jhonatafs" target="_blank" class="icon_github"
         >&nbsp;&nbsp;Jhonfs</a
       >
-      <span>&nbsp;|&nbsp;</span>
       <a
         href="https://github.com/sarabander/sicp"
         target="_blank"
