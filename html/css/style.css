@@ -104,8 +104,8 @@ html {
 
 body {
   background-color: #f8f8f8;
-  margin: 0;
-  position: relative;
+  margin: 0 auto;
+  max-width: 100dvw !important;
 }
 
 section {
