@@ -1,302 +1,495 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 2.4">
-    <meta name="keywords" content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 2.4">
-    <title>Estrutura e Interpretação de Programas de Computador, 2ª edição: 2.4</title>
-    <link href="index.xhtml#Top" rel="start" title="Topo">
-    <link href="Term-Index.xhtml#Term-Index" rel="index" title="Índice de Termos">
-    <link href="index.xhtml#SEC_Contents" rel="contents" title="Sumário">
-    <link href="Chapter-2.xhtml#Chapter-2" rel="prev" title="Capítulo 2">
-    <link href="2_002e5.xhtml#g_t2_002e5" rel="next" title="2.5">
-    <link href="2_002e3.xhtml#g_t2_002e3_002e4" rel="prev" title="2.3.4">
-    <link href="css/style.css" rel="stylesheet" type="text/css">
-    <link href="css/prettify.css" rel="stylesheet" type="text/css">
-    <script src="js/jquery.min.js" type="text/javascript"></script>
-    <script src="js/footnotes.js" type="text/javascript"></script>
-    <script src="js/browsertest.js" type="text/javascript"></script>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
     <section>
-        <span class="top jump" title="Ir para o topo"><a href="#pagetop" accesskey="t">⇡</a></span>
-        <a id="pagetop"></a>
-        <a id="g_t2_002e4"></a>
-        <nav class="header">
-            <p>
-                Próximo: <a href="2_002e5.xhtml#g_t2_002e5" accesskey="n" rel="next">2.5</a>, Anterior: <a href="2_002e3.xhtml#g_t2_002e3" accesskey="p" rel="prev">2.3</a>, Acima: <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev">Capítulo 2</a>   [<a href="index.xhtml#SEC_Contents" title="Sumário" accesskey="c" rel="contents">Sumário</a>]
-            </p>
-        </nav>
-        <a id="Multiple-Representations-for-Abstract-Data"></a>
-        <h3 class="section"><span class="secnum">2.4</span><span class="sectitle">Múltiplas Representações para Dados Abstratos</span></h3>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t2_002e4"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="2_002e5.xhtml#g_t2_002e5" accesskey="n" rel="next">2.5</a>,
+          Anterior:
+          <a href="2_002e3.xhtml#g_t2_002e3" accesskey="p" rel="prev">2.3</a>,
+          Acima:
+          <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev"
+            >Capítulo 2</a
+          >
+          [<a
+            href="index.xhtml#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+      <a id="Multiple-Representations-for-Abstract-Data"></a>
+      <h3 class="section">
+        <span class="secnum">2.4</span
+        ><span class="sectitle"
+          >Múltiplas Representações para Dados Abstratos</span
+        >
+      </h3>
 
-        <p>
-            Introduzimos a abstração de dados, uma metodologia para estruturar sistemas de forma que grande parte de um programa possa ser especificada independentemente das escolhas envolvidas na implementação dos objetos de dados que o programa manipula. Por exemplo, vimos em <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a> como separar a tarefa de projetar um programa que usa números racionais da tarefa de implementar números racionais em termos dos mecanismos primitivos da linguagem de computador para construir dados compostos. A ideia principal foi erguer uma barreira de abstração – neste caso, os seletores e construtores para números racionais (<code>make-rat</code>, <code>numer</code>, <code>denom</code>) – que isola a forma como os números racionais são usados de sua representação subjacente em termos de estrutura de lista. Uma barreira de abstração semelhante isola os detalhes dos procedimentos que realizam aritmética racional (<code>add-rat</code>, <code>sub-rat</code>, <code>mul-rat</code> e <code>div-rat</code>) dos procedimentos de "nível superior" que usam números racionais. O programa resultante tem a estrutura mostrada em <a href="2_002e1.xhtml#Figure-2_002e1">Figura 2.1</a>.
-        </p>
-        <p>
-            Essas barreiras de abstração de dados são ferramentas poderosas para controlar a complexidade. Ao isolar as representações subjacentes dos objetos de dados, podemos dividir a tarefa de projetar um grande programa em tarefas menores que podem ser realizadas separadamente. Mas esse tipo de abstração de dados ainda não é poderoso o suficiente, porque nem sempre faz sentido falar de "a representação subjacente" para um objeto de dados.
-        </p>
-        <p>
-            Por um lado, pode haver mais de uma representação útil para um objeto de dados, e podemos querer projetar sistemas que possam lidar com múltiplas representações. Para dar um exemplo simples, números complexos podem ser representados de duas formas quase equivalentes: na forma retangular (partes real e imaginária) e na forma polar (magnitude e ângulo). Às vezes, a forma retangular é mais apropriada e, às vezes, a forma polar é mais apropriada. De fato, é perfeitamente plausível imaginar um sistema em que os números complexos são representados de ambas as formas, e em que os procedimentos para manipular números complexos funcionam com qualquer representação.
-        </p>
-        <p>
-            Mais importante, os sistemas de programação são frequentemente projetados por muitas pessoas trabalhando por longos períodos de tempo, sujeitos a requisitos que mudam com o tempo. Em tal ambiente, simplesmente não é possível que todos concordem antecipadamente sobre as escolhas de representação de dados. Portanto, além das barreiras de abstração de dados que isolam a representação do uso, precisamos de barreiras de abstração que isolem diferentes escolhas de design umas das outras e permitam que diferentes escolhas coexistam em um único programa. Além disso, como grandes programas são frequentemente criados combinando módulos pré-existentes que foram projetados isoladamente, precisamos de convenções que permitam aos programadores incorporar módulos em sistemas maiores <a id="index-additively-1"></a> <em>aditivamente</em>, ou seja, sem precisar redesenhar ou reimplementar esses módulos.
-        </p>
-        <p>
-            Nesta seção, aprenderemos como lidar com dados que podem ser representados de diferentes maneiras por diferentes partes de um programa. Isso requer a construção de <a id="index-generic-procedures-1"></a> <em>procedimentos genéricos</em> – procedimentos que podem operar em dados que podem ser representados de mais de uma maneira. Nossa principal técnica para construir procedimentos genéricos será trabalhar em termos de objetos de dados que possuem <a id="index-type-tags"></a> <em>etiquetas de tipo</em>, ou seja, objetos de dados que incluem informações explícitas sobre como devem ser processados. Também discutiremos <a id="index-data_002ddirected"></a> <em>programação orientada a dados</em>, uma estratégia de implementação poderosa e conveniente para montar sistemas aditivamente com operações genéricas.
-        </p>
-        <p>
-            Começamos com o exemplo simples de números complexos. Veremos como as etiquetas de tipo e o estilo orientado a dados nos permitem projetar representações retangulares e polares separadas para números complexos, mantendo a noção de um objeto de dados abstrato "número complexo". Conseguiremos isso definindo procedimentos aritméticos para números complexos (<code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> e <code>div-complex</code>) em termos de seletores genéricos que acessam partes de um número complexo independentemente de como o número é representado. O sistema de números complexos resultante, como mostrado em <a href="#Figure-2_002e19">Figura 2.19</a>, contém dois tipos diferentes de barreiras de abstração. As barreiras de abstração "horizontais" desempenham o mesmo papel que as da <a href="2_002e1.xhtml#Figure-2_002e1">Figura 2.1</a>. Elas isolam operações de "nível superior" de representações de "nível inferior". Além disso, há uma barreira "vertical" que nos dá a capacidade de projetar e instalar representações alternativas separadamente.
-        </p>
-        <figure class="float">
-            <a id="Figure-2_002e19"></a>
-            <object style="width: 40.41ex; height: 33.41ex;" data="fig/chap2/Fig2.19a.std.svg" type="image/svg+xml">SVG</object>
-            <figcaption class="float-caption">
-                <p><strong>Figura 2.19:</strong> Barreiras de abstração de dados no sistema de números complexos.</p>
-            </figcaption>
-        </figure>
+      <p>
+        Introduzimos a abstração de dados, uma metodologia para estruturar
+        sistemas de forma que grande parte de um programa possa ser especificada
+        independentemente das escolhas envolvidas na implementação dos objetos
+        de dados que o programa manipula. Por exemplo, vimos em
+        <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a> como separar a tarefa
+        de projetar um programa que usa números racionais da tarefa de
+        implementar números racionais em termos dos mecanismos primitivos da
+        linguagem de computador para construir dados compostos. A ideia
+        principal foi erguer uma barreira de abstração – neste caso, os
+        seletores e construtores para números racionais (<code>make-rat</code>,
+        <code>numer</code>, <code>denom</code>) – que isola a forma como os
+        números racionais são usados de sua representação subjacente em termos
+        de estrutura de lista. Uma barreira de abstração semelhante isola os
+        detalhes dos procedimentos que realizam aritmética racional
+        (<code>add-rat</code>, <code>sub-rat</code>, <code>mul-rat</code> e
+        <code>div-rat</code>) dos procedimentos de "nível superior" que usam
+        números racionais. O programa resultante tem a estrutura mostrada em
+        <a href="2_002e1.xhtml#Figure-2_002e1">Figura 2.1</a>.
+      </p>
+      <p>
+        Essas barreiras de abstração de dados são ferramentas poderosas para
+        controlar a complexidade. Ao isolar as representações subjacentes dos
+        objetos de dados, podemos dividir a tarefa de projetar um grande
+        programa em tarefas menores que podem ser realizadas separadamente. Mas
+        esse tipo de abstração de dados ainda não é poderoso o suficiente,
+        porque nem sempre faz sentido falar de "a representação subjacente" para
+        um objeto de dados.
+      </p>
+      <p>
+        Por um lado, pode haver mais de uma representação útil para um objeto de
+        dados, e podemos querer projetar sistemas que possam lidar com múltiplas
+        representações. Para dar um exemplo simples, números complexos podem ser
+        representados de duas formas quase equivalentes: na forma retangular
+        (partes real e imaginária) e na forma polar (magnitude e ângulo). Às
+        vezes, a forma retangular é mais apropriada e, às vezes, a forma polar é
+        mais apropriada. De fato, é perfeitamente plausível imaginar um sistema
+        em que os números complexos são representados de ambas as formas, e em
+        que os procedimentos para manipular números complexos funcionam com
+        qualquer representação.
+      </p>
+      <p>
+        Mais importante, os sistemas de programação são frequentemente
+        projetados por muitas pessoas trabalhando por longos períodos de tempo,
+        sujeitos a requisitos que mudam com o tempo. Em tal ambiente,
+        simplesmente não é possível que todos concordem antecipadamente sobre as
+        escolhas de representação de dados. Portanto, além das barreiras de
+        abstração de dados que isolam a representação do uso, precisamos de
+        barreiras de abstração que isolem diferentes escolhas de design umas das
+        outras e permitam que diferentes escolhas coexistam em um único
+        programa. Além disso, como grandes programas são frequentemente criados
+        combinando módulos pré-existentes que foram projetados isoladamente,
+        precisamos de convenções que permitam aos programadores incorporar
+        módulos em sistemas maiores <a id="index-additively-1"></a>
+        <em>aditivamente</em>, ou seja, sem precisar redesenhar ou reimplementar
+        esses módulos.
+      </p>
+      <p>
+        Nesta seção, aprenderemos como lidar com dados que podem ser
+        representados de diferentes maneiras por diferentes partes de um
+        programa. Isso requer a construção de
+        <a id="index-generic-procedures-1"></a>
+        <em>procedimentos genéricos</em> – procedimentos que podem operar em
+        dados que podem ser representados de mais de uma maneira. Nossa
+        principal técnica para construir procedimentos genéricos será trabalhar
+        em termos de objetos de dados que possuem <a id="index-type-tags"></a>
+        <em>etiquetas de tipo</em>, ou seja, objetos de dados que incluem
+        informações explícitas sobre como devem ser processados. Também
+        discutiremos <a id="index-data_002ddirected"></a>
+        <em>programação orientada a dados</em>, uma estratégia de implementação
+        poderosa e conveniente para montar sistemas aditivamente com operações
+        genéricas.
+      </p>
+      <p>
+        Começamos com o exemplo simples de números complexos. Veremos como as
+        etiquetas de tipo e o estilo orientado a dados nos permitem projetar
+        representações retangulares e polares separadas para números complexos,
+        mantendo a noção de um objeto de dados abstrato "número complexo".
+        Conseguiremos isso definindo procedimentos aritméticos para números
+        complexos (<code>add-complex</code>, <code>sub-complex</code>,
+        <code>mul-complex</code> e <code>div-complex</code>) em termos de
+        seletores genéricos que acessam partes de um número complexo
+        independentemente de como o número é representado. O sistema de números
+        complexos resultante, como mostrado em
+        <a href="#Figure-2_002e19">Figura 2.19</a>, contém dois tipos diferentes
+        de barreiras de abstração. As barreiras de abstração "horizontais"
+        desempenham o mesmo papel que as da
+        <a href="2_002e1.xhtml#Figure-2_002e1">Figura 2.1</a>. Elas isolam
+        operações de "nível superior" de representações de "nível inferior".
+        Além disso, há uma barreira "vertical" que nos dá a capacidade de
+        projetar e instalar representações alternativas separadamente.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e19"></a>
+        <object
+          style="width: 40.41ex; height: 33.41ex"
+          data="fig/chap2/Fig2.19a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.19:</strong> Barreiras de abstração de dados no
+            sistema de números complexos.
+          </p>
+        </figcaption>
+      </figure>
 
-        <p>
-            Em <a href="2_002e5.xhtml#g_t2_002e5">2.5</a>, mostraremos como usar etiquetas de tipo e o estilo orientado a dados para desenvolver um pacote aritmético genérico. Isso fornece procedimentos (<code>add</code>, <code>mul</code>, e assim por diante) que podem ser usados para manipular todos os tipos de "números" e podem ser facilmente estendidos quando um novo tipo de número é necessário. Em <a href="2_002e5.xhtml#g_t2_002e5_002e3">2.5.3</a>, mostraremos como usar aritmética genérica em um sistema que realiza álgebra simbólica.
-        </p>
+      <p>
+        Em <a href="2_002e5.xhtml#g_t2_002e5">2.5</a>, mostraremos como usar
+        etiquetas de tipo e o estilo orientado a dados para desenvolver um
+        pacote aritmético genérico. Isso fornece procedimentos
+        (<code>add</code>, <code>mul</code>, e assim por diante) que podem ser
+        usados para manipular todos os tipos de "números" e podem ser facilmente
+        estendidos quando um novo tipo de número é necessário. Em
+        <a href="2_002e5.xhtml#g_t2_002e5_002e3">2.5.3</a>, mostraremos como
+        usar aritmética genérica em um sistema que realiza álgebra simbólica.
+      </p>
 
-        <a id="g_t2_002e4_002e1"></a>
-        <a id="Representations-for-Complex-Numbers"></a>
-        <h4 class="subsection"><span class="secnum">2.4.1</span><span class="sectitle">Representações para Números Complexos</span></h4>
+      <a id="g_t2_002e4_002e1"></a>
+      <a id="Representations-for-Complex-Numbers"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.4.1</span
+        ><span class="sectitle">Representações para Números Complexos</span>
+      </h4>
 
-        <p>
-            Desenvolveremos um sistema que realiza operações aritméticas em números complexos como um exemplo simples, mas irrealista, de um programa que usa operações genéricas. Começamos discutindo duas representações plausíveis para números complexos como pares ordenados: a forma retangular (parte real e parte imaginária) e a forma polar (magnitude e ângulo).<a class="footnote_link" id="DOCF109" href="#FOOT109"><sup>109</sup></a> A seção <a href="#g_t2_002e4_002e2">2.4.2</a> mostrará como ambas as representações podem coexistir em um único sistema por meio do uso de etiquetas de tipo e operações genéricas.
-        </p>
-        <p>
-            Assim como os números racionais, os números complexos são naturalmente representados como pares ordenados. O conjunto de números complexos pode ser pensado como um espaço bidimensional com dois eixos ortogonais, o eixo "real" e o eixo "imaginário". (Veja <a href="#Figure-2_002e20">Figura 2.20</a>.) Desse ponto de vista, o número complexo <math xmlns="http://www.w3.org/1998/Math/MathML">
-                <mrow class="MJX-TeXAtom-ORD">
-                    <mi>z</mi>
-                    <mo>=</mo>
-                    <mi>x</mi>
-                    <mo>+</mo>
-                    <mi>i</mi>
-                    <mi>y</mi>
-                </mrow>
-            </math> (onde <math xmlns="http://www.w3.org/1998/Math/MathML">
-                <mrow class="MJX-TeXAtom-ORD">
-                    <msup>
-                        <mi>i</mi>
-                        <mrow class="MJX-TeXAtom-ORD">
-                            <mspace width="0.1em"/>
-                            <mn>2</mn>
-                        </mrow>
-                    </msup>
-                    <mo>=</mo>
-                    <mtext>−1</mtext>
-                </mrow>
-            </math>) pode ser pensado como o ponto no plano cuja coordenada real é <math xmlns="http://www.w3.org/1998/Math/MathML">
-                <mi>x</mi>
-            </math> e cuja coordenada imaginária é <math xmlns="http://www.w3.org/1998/Math/MathML">
-                <mi>y</mi>
-            </math>. A adição de números complexos reduz-se, nesta representação, à adição de coordenadas:
-            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-                <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
-                    <mtr>
-                        <mtd>
-                            <mtext>Parte Real</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>1</mn>
-                            </msub>
-                            <mo>+</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>2</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                        </mtd>
-                        <mtd>
-                            <mo>=</mo>
-                        </mtd>
-                        <mtd>
-                            <mtext>Parte Real</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>1</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                            <mo>+</mo>
-                        </mtd>
-                    </mtr>
-                    <mtr>
-                        <mtd/>
-                        <mtd/>
-                        <mtd>
-                            <mtext>Parte Real</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>2</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                            <mo>,</mo>
-                        </mtd>
-                    </mtr>
-                    <mtr>
-                        <mtd>
-                            <mtext>Parte Imaginária</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>1</mn>
-                            </msub>
-                            <mo>+</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>2</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                        </mtd>
-                        <mtd>
-                            <mo>=</mo>
-                        </mtd>
-                        <mtd>
-                            <mtext>Parte Imaginária</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>1</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                            <mo>+</mo>
-                        </mtd>
-                    </mtr>
-                    <mtr>
-                        <mtd/>
-                        <mtd/>
-                        <mtd>
-                            <mtext>Parte Imaginária</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>2</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                            <mo>.</mo>
-                        </mtd>
-                    </mtr>
-                </mtable>
-            </math>
-        </p>
-        <figure class="float">
-            <a id="Figure-2_002e20"></a>
-            <object style="width: 51.98ex; height: 30.74ex;" data="fig/chap2/Fig2.20.std.svg" type="image/svg+xml">SVG</object>
-            <figcaption class="float-caption">
-                <p><strong>Figura 2.20:</strong> Números complexos como pontos no plano.</p>
-            </figcaption>
-        </figure>
+      <p>
+        Desenvolveremos um sistema que realiza operações aritméticas em números
+        complexos como um exemplo simples, mas irrealista, de um programa que
+        usa operações genéricas. Começamos discutindo duas representações
+        plausíveis para números complexos como pares ordenados: a forma
+        retangular (parte real e parte imaginária) e a forma polar (magnitude e
+        ângulo).<a class="footnote_link" id="DOCF109" href="#FOOT109"
+          ><sup>109</sup></a
+        >
+        A seção <a href="#g_t2_002e4_002e2">2.4.2</a> mostrará como ambas as
+        representações podem coexistir em um único sistema por meio do uso de
+        etiquetas de tipo e operações genéricas.
+      </p>
+      <p>
+        Assim como os números racionais, os números complexos são naturalmente
+        representados como pares ordenados. O conjunto de números complexos pode
+        ser pensado como um espaço bidimensional com dois eixos ortogonais, o
+        eixo "real" e o eixo "imaginário". (Veja
+        <a href="#Figure-2_002e20">Figura 2.20</a>.) Desse ponto de vista, o
+        número complexo
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>z</mi>
+            <mo>=</mo>
+            <mi>x</mi>
+            <mo>+</mo>
+            <mi>i</mi>
+            <mi>y</mi>
+          </mrow>
+        </math>
+        (onde
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <msup>
+              <mi>i</mi>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mspace width="0.1em" />
+                <mn>2</mn>
+              </mrow>
+            </msup>
+            <mo>=</mo>
+            <mtext>−1</mtext>
+          </mrow> </math
+        >) pode ser pensado como o ponto no plano cuja coordenada real é
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>x</mi>
+        </math>
+        e cuja coordenada imaginária é
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>y</mi> </math
+        >. A adição de números complexos reduz-se, nesta representação, à adição
+        de coordenadas:
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mtable
+            columnalign="right center left"
+            rowspacing="3pt"
+            columnspacing="thickmathspace"
+          >
+            <mtr>
+              <mtd>
+                <mtext>Parte Real</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo>+</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+              </mtd>
+              <mtd>
+                <mo>=</mo>
+              </mtd>
+              <mtd>
+                <mtext>Parte Real</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+                <mo>+</mo>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd />
+              <mtd />
+              <mtd>
+                <mtext>Parte Real</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+                <mo>,</mo>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mtext>Parte Imaginária</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo>+</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+              </mtd>
+              <mtd>
+                <mo>=</mo>
+              </mtd>
+              <mtd>
+                <mtext>Parte Imaginária</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+                <mo>+</mo>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd />
+              <mtd />
+              <mtd>
+                <mtext>Parte Imaginária</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+                <mo>.</mo>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e20"></a>
+        <object
+          style="width: 51.98ex; height: 30.74ex"
+          data="fig/chap2/Fig2.20.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.20:</strong> Números complexos como pontos no
+            plano.
+          </p>
+        </figcaption>
+      </figure>
 
-        <p>
-            Ao multiplicar números complexos, é mais natural pensar em termos de representar um número complexo na forma polar, como uma magnitude e um ângulo (<math xmlns="http://www.w3.org/1998/Math/MathML">
-                <mi>r</mi>
-            </math> e <math xmlns="http://www.w3.org/1998/Math/MathML">
-                <mi>A</mi>
-            </math> na <a href="#Figure-2_002e20">Figura 2.20</a>). O produto de dois números complexos é o vetor obtido esticando um número complexo pelo comprimento do outro e depois girando-o pelo ângulo do outro:
-            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-                <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
-                    <mtr>
-                        <mtd>
-                            <mtext>Magnitude</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>1</mn>
-                            </msub>
-                            <mo>⋅<!-- ⋅ --></mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>2</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                        </mtd>
-                        <mtd>
-                            <mo>=</mo>
-                        </mtd>
-                        <mtd>
-                            <mtext>Magnitude</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>1</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                            <mo>⋅<!-- ⋅ --></mo>
-                            <mtext>Magnitude</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>2</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                            <mo>,</mo>
-                        </mtd>
-                    </mtr>
-                    <mtr>
-                        <mtd>
-                            <mtext>Ângulo</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>1</mn>
-                            </msub>
-                            <mo>⋅<!-- ⋅ --></mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>2</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                        </mtd>
-                        <mtd>
-                            <mo>=</mo>
-                        </mtd>
-                        <mtd>
-                            <mtext>Ângulo</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>1</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                            <mo>+</mo>
-                            <mtext>Ângulo</mtext>
-                            <mo stretchy="false">(</mo>
-                            <msub>
-                                <mi>z</mi>
-                                <mn>2</mn>
-                            </msub>
-                            <mo stretchy="false">)</mo>
-                            <mo>.</mo>
-                        </mtd>
-                    </mtr>
-                </mtable>
-            </math>
-        </p>
-        <p>
-            Assim, existem duas representações diferentes para números complexos, que são apropriadas para diferentes operações. No entanto, do ponto de vista de alguém escrevendo um programa que usa números complexos, o princípio da abstração de dados sugere que todas as operações para manipular números complexos devem estar disponíveis, independentemente de qual representação é usada pelo computador. Por exemplo, muitas vezes é útil poder encontrar a magnitude de um número complexo especificado por coordenadas retangulares. Da mesma forma, muitas vezes é útil determinar a parte real de um número complexo especificado por coordenadas polares.
-        </p>
-        <p>
-            Para projetar tal sistema, podemos seguir a mesma estratégia de abstração de dados que seguimos ao projetar o pacote de números racionais em <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>. Suponha que as operações em números complexos sejam implementadas em termos de quatro seletores: <code>real-part</code>, <code>imag-part</code>, <code>magnitude</code> e <code>angle</code>. Também suponha que temos dois procedimentos para construir números complexos: <code>make-from-real-imag</code> retorna um número complexo com partes real e imaginária especificadas, e <code>make-from-mag-ang</code> retorna um número complexo com magnitude e ângulo especificados. Esses procedimentos têm a propriedade de que, para qualquer número complexo <code>z</code>, ambos
-        </p>
-        <pre><code class="language-scheme">(make-from-real-imag (real-part z) 
+      <p>
+        Ao multiplicar números complexos, é mais natural pensar em termos de
+        representar um número complexo na forma polar, como uma magnitude e um
+        ângulo (<math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>r</mi>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>A</mi>
+        </math>
+        na <a href="#Figure-2_002e20">Figura 2.20</a>). O produto de dois
+        números complexos é o vetor obtido esticando um número complexo pelo
+        comprimento do outro e depois girando-o pelo ângulo do outro:
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mtable
+            columnalign="right center left"
+            rowspacing="3pt"
+            columnspacing="thickmathspace"
+          >
+            <mtr>
+              <mtd>
+                <mtext>Magnitude</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo>⋅<!-- ⋅ --></mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+              </mtd>
+              <mtd>
+                <mo>=</mo>
+              </mtd>
+              <mtd>
+                <mtext>Magnitude</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+                <mo>⋅<!-- ⋅ --></mo>
+                <mtext>Magnitude</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+                <mo>,</mo>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mtext>Ângulo</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo>⋅<!-- ⋅ --></mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+              </mtd>
+              <mtd>
+                <mo>=</mo>
+              </mtd>
+              <mtd>
+                <mtext>Ângulo</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>1</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+                <mo>+</mo>
+                <mtext>Ângulo</mtext>
+                <mo stretchy="false">(</mo>
+                <msub>
+                  <mi>z</mi>
+                  <mn>2</mn>
+                </msub>
+                <mo stretchy="false">)</mo>
+                <mo>.</mo>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+      <p>
+        Assim, existem duas representações diferentes para números complexos,
+        que são apropriadas para diferentes operações. No entanto, do ponto de
+        vista de alguém escrevendo um programa que usa números complexos, o
+        princípio da abstração de dados sugere que todas as operações para
+        manipular números complexos devem estar disponíveis, independentemente
+        de qual representação é usada pelo computador. Por exemplo, muitas vezes
+        é útil poder encontrar a magnitude de um número complexo especificado
+        por coordenadas retangulares. Da mesma forma, muitas vezes é útil
+        determinar a parte real de um número complexo especificado por
+        coordenadas polares.
+      </p>
+      <p>
+        Para projetar tal sistema, podemos seguir a mesma estratégia de
+        abstração de dados que seguimos ao projetar o pacote de números
+        racionais em <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>. Suponha
+        que as operações em números complexos sejam implementadas em termos de
+        quatro seletores: <code>real-part</code>, <code>imag-part</code>,
+        <code>magnitude</code> e <code>angle</code>. Também suponha que temos
+        dois procedimentos para construir números complexos:
+        <code>make-from-real-imag</code> retorna um número complexo com partes
+        real e imaginária especificadas, e
+        <code>make-from-mag-ang</code> retorna um número complexo com magnitude
+        e ângulo especificados. Esses procedimentos têm a propriedade de que,
+        para qualquer número complexo <code>z</code>, ambos
+      </p>
+      <pre><code class="language-scheme">(make-from-real-imag (real-part z) 
                      (imag-part z))</code></pre>
 
-        <p>e</p>
-        <pre><code class="language-scheme">(make-from-mag-ang (magnitude z) 
+      <p>e</p>
+      <pre><code class="language-scheme">(make-from-mag-ang (magnitude z) 
                    (angle z))</code></pre>
 
-        <p>produzem números complexos que são iguais a <code>z</code>.</p>
-        <p>
-            Usando esses construtores e seletores, podemos implementar aritmética em números complexos usando os "dados abstratos" especificados pelos construtores e seletores, assim como fizemos para números racionais em <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>. Como mostrado nas fórmulas acima, podemos adicionar e subtrair números complexos em termos de partes real e imaginária, enquanto multiplicamos e dividimos números complexos em termos de magnitudes e ângulos:
-        </p>
-        <pre><code class="language-scheme">(define (add-complex z1 z2)
+      <p>produzem números complexos que são iguais a <code>z</code>.</p>
+      <p>
+        Usando esses construtores e seletores, podemos implementar aritmética em
+        números complexos usando os "dados abstratos" especificados pelos
+        construtores e seletores, assim como fizemos para números racionais em
+        <a href="2_002e1.xhtml#g_t2_002e1_002e1">2.1.1</a>. Como mostrado nas
+        fórmulas acima, podemos adicionar e subtrair números complexos em termos
+        de partes real e imaginária, enquanto multiplicamos e dividimos números
+        complexos em termos de magnitudes e ângulos:
+      </p>
+      <pre><code class="language-scheme">(define (add-complex z1 z2)
   (make-from-real-imag 
    (+ (real-part z1) (real-part z2))
    (+ (imag-part z1) (imag-part z2))))
@@ -316,107 +509,131 @@
    (/ (magnitude z1) (magnitude z2))
    (- (angle z1) (angle z2))))</code></pre>
 
-        <p>
-            Para completar o pacote de números complexos, devemos escolher uma representação e implementar os construtores e seletores em termos de números primitivos e estrutura de lista primitiva. Há duas maneiras óbvias de fazer isso: podemos representar um número complexo na "forma retangular" como um par (parte real, parte imaginária) ou na "forma polar" como um par (magnitude, ângulo). Qual devemos escolher?
-        </p>
-        <p>
-            Para tornar as diferentes escolhas concretas, imagine que há dois programadores, Ben Bitdiddle e Alyssa P. Hacker, que estão projetando independentemente representações para o sistema de números complexos. Ben escolhe representar números complexos na forma retangular. Com essa escolha, selecionar as partes real e imaginária de um número complexo é direto, assim como construir um número complexo com partes real e imaginária dadas. Para encontrar a magnitude e o ângulo, ou para construir um número complexo com uma magnitude e ângulo dados, ele usa as relações trigonométricas
-        </p>
-        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
-            <mtable columnalign="right center left" rowspacing="3pt" columnspacing="thickmathspace">
-                <mtr>
-                    <mtd>
-                        <mi>x</mi>
-                    </mtd>
-                    <mtd>
-                        <mo>=</mo>
-                    </mtd>
-                    <mtd>
-                        <mi>r</mi>
-                        <mi>cos</mi>
-                        <mo>⁡<!-- ⁡ --></mo>
-                        <mi>A</mi>
-                        <mo>,</mo>
-                    </mtd>
-                </mtr>
-                <mtr>
-                    <mtd>
-                        <mi>y</mi>
-                    </mtd>
-                    <mtd>
-                        <mo>=</mo>
-                    </mtd>
-                    <mtd>
-                        <mi>r</mi>
-                        <mi>sin</mi>
-                        <mo>⁡<!-- ⁡ --></mo>
-                        <mi>A</mi>
-                        <mo>,</mo>
-                    </mtd>
-                </mtr>
-                <mtr>
-                    <mtd>
-                        <mi>r</mi>
-                    </mtd>
-                    <mtd>
-                        <mo>=</mo>
-                    </mtd>
-                    <mtd>
-                        <msqrt>
-                            <msup>
-                                <mi>x</mi>
-                                <mn>2</mn>
-                            </msup>
-                            <mo>+</mo>
-                            <msup>
-                                <mi>y</mi>
-                                <mn>2</mn>
-                            </msup>
-                            <mo>,</mo>
-                        </msqrt>
-                    </mtd>
-                </mtr>
-                <mtr>
-                    <mtd>
-                        <mi>A</mi>
-                    </mtd>
-                    <mtd>
-                        <mo>=</mo>
-                    </mtd>
-                    <mtd>
-                        <mi>arctan</mi>
-                        <mo>⁡<!-- ⁡ --></mo>
-                        <mo stretchy="false">(</mo>
-                        <mi>y</mi>
-                        <mo>,</mo>
-                        <mi>x</mi>
-                        <mo stretchy="false">)</mo>
-                        <mo>,</mo>
-                    </mtd>
-                </mtr>
-            </mtable>
-        </math>
+      <p>
+        Para completar o pacote de números complexos, devemos escolher uma
+        representação e implementar os construtores e seletores em termos de
+        números primitivos e estrutura de lista primitiva. Há duas maneiras
+        óbvias de fazer isso: podemos representar um número complexo na "forma
+        retangular" como um par (parte real, parte imaginária) ou na "forma
+        polar" como um par (magnitude, ângulo). Qual devemos escolher?
+      </p>
+      <p>
+        Para tornar as diferentes escolhas concretas, imagine que há dois
+        programadores, Ben Bitdiddle e Alyssa P. Hacker, que estão projetando
+        independentemente representações para o sistema de números complexos.
+        Ben escolhe representar números complexos na forma retangular. Com essa
+        escolha, selecionar as partes real e imaginária de um número complexo é
+        direto, assim como construir um número complexo com partes real e
+        imaginária dadas. Para encontrar a magnitude e o ângulo, ou para
+        construir um número complexo com uma magnitude e ângulo dados, ele usa
+        as relações trigonométricas
+      </p>
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+        <mtable
+          columnalign="right center left"
+          rowspacing="3pt"
+          columnspacing="thickmathspace"
+        >
+          <mtr>
+            <mtd>
+              <mi>x</mi>
+            </mtd>
+            <mtd>
+              <mo>=</mo>
+            </mtd>
+            <mtd>
+              <mi>r</mi>
+              <mi>cos</mi>
+              <mo>⁡<!-- ⁡ --></mo>
+              <mi>A</mi>
+              <mo>,</mo>
+            </mtd>
+          </mtr>
+          <mtr>
+            <mtd>
+              <mi>y</mi>
+            </mtd>
+            <mtd>
+              <mo>=</mo>
+            </mtd>
+            <mtd>
+              <mi>r</mi>
+              <mi>sin</mi>
+              <mo>⁡<!-- ⁡ --></mo>
+              <mi>A</mi>
+              <mo>,</mo>
+            </mtd>
+          </mtr>
+          <mtr>
+            <mtd>
+              <mi>r</mi>
+            </mtd>
+            <mtd>
+              <mo>=</mo>
+            </mtd>
+            <mtd>
+              <msqrt>
+                <msup>
+                  <mi>x</mi>
+                  <mn>2</mn>
+                </msup>
+                <mo>+</mo>
+                <msup>
+                  <mi>y</mi>
+                  <mn>2</mn>
+                </msup>
+                <mo>,</mo>
+              </msqrt>
+            </mtd>
+          </mtr>
+          <mtr>
+            <mtd>
+              <mi>A</mi>
+            </mtd>
+            <mtd>
+              <mo>=</mo>
+            </mtd>
+            <mtd>
+              <mi>arctan</mi>
+              <mo>⁡<!-- ⁡ --></mo>
+              <mo stretchy="false">(</mo>
+              <mi>y</mi>
+              <mo>,</mo>
+              <mi>x</mi>
+              <mo stretchy="false">)</mo>
+              <mo>,</mo>
+            </mtd>
+          </mtr>
+        </mtable>
+      </math>
 
-        <p>
-            que relacionam as partes real e imaginária <math xmlns="http://www.w3.org/1998/Math/MathML">
-                <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mi>x</mi>
-                    <mo>,</mo>
-                    <mi>y</mi>
-                    <mo stretchy="false">)</mo>
-                </mrow>
-            </math> à magnitude e ao ângulo <math xmlns="http://www.w3.org/1998/Math/MathML">
-                <mrow class="MJX-TeXAtom-ORD">
-                    <mo stretchy="false">(</mo>
-                    <mi>r</mi>
-                    <mo>,</mo>
-                    <mi>A</mi>
-                    <mo stretchy="false">)</mo>
-                </mrow>
-            </math>.<a class="footnote_link" id="DOCF110" href="#FOOT110"><sup>110</sup></a> A representação de Ben é, portanto, dada pelos seguintes seletores e construtores:
-        </p>
-        <pre><code class="language-scheme">(define (real-part z) (car z))
+      <p>
+        que relacionam as partes real e imaginária
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mi>x</mi>
+            <mo>,</mo>
+            <mi>y</mi>
+            <mo stretchy="false">)</mo>
+          </mrow>
+        </math>
+        à magnitude e ao ângulo
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mi>r</mi>
+            <mo>,</mo>
+            <mi>A</mi>
+            <mo stretchy="false">)</mo>
+          </mrow> </math
+        >.<a class="footnote_link" id="DOCF110" href="#FOOT110"
+          ><sup>110</sup></a
+        >
+        A representação de Ben é, portanto, dada pelos seguintes seletores e
+        construtores:
+      </p>
+      <pre><code class="language-scheme">(define (real-part z) (car z))
 (define (imag-part z) (cdr z))
 
 (define (magnitude z)
@@ -432,10 +649,13 @@
 (define (make-from-mag-ang r a)
   (cons (* r (cos a)) (* r (sin a))))</code></pre>
 
-        <p>
-            Alyssa, em contraste, escolhe representar números complexos na forma polar. Para ela, selecionar a magnitude e o ângulo é direto, mas ela precisa usar as relações trigonométricas para obter as partes real e imaginária. A representação de Alyssa é:
-        </p>
-        <pre><code class="language-scheme">(define (real-part z)
+      <p>
+        Alyssa, em contraste, escolhe representar números complexos na forma
+        polar. Para ela, selecionar a magnitude e o ângulo é direto, mas ela
+        precisa usar as relações trigonométricas para obter as partes real e
+        imaginária. A representação de Alyssa é:
+      </p>
+      <pre><code class="language-scheme">(define (real-part z)
   (* (magnitude z) (cos (angle z))))
 
 (define (imag-part z)
@@ -451,23 +671,56 @@
 (define (make-from-mag-ang r a) 
   (cons r a))</code></pre>
 
-        <p>
-            A disciplina de abstração de dados garante que a mesma implementação de <code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> e <code>div-complex</code> funcionará com a representação de Ben ou a de Alyssa.
-        </p>
-        <a id="g_t2_002e4_002e2"></a>
-        <a id="Tagged-data"></a>
-        <h4 class="subsection"><span class="secnum">2.4.2</span><span class="sectitle">Dados Etiquetados</span></h4>
+      <p>
+        A disciplina de abstração de dados garante que a mesma implementação de
+        <code>add-complex</code>, <code>sub-complex</code>,
+        <code>mul-complex</code> e <code>div-complex</code> funcionará com a
+        representação de Ben ou a de Alyssa.
+      </p>
+      <a id="g_t2_002e4_002e2"></a>
+      <a id="Tagged-data"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.4.2</span
+        ><span class="sectitle">Dados Etiquetados</span>
+      </h4>
 
-        <p>
-            Uma maneira de ver a abstração de dados é como uma aplicação do "princípio do menor compromisso". Na implementação do sistema de números complexos em <a href="#g_t2_002e4_002e1">2.4.1</a>, podemos usar a representação retangular de Ben ou a representação polar de Alyssa. A barreira de abstração formada pelos seletores e construtores nos permite adiar até o último momento possível a escolha de uma representação concreta para nossos objetos de dados e, assim, manter a máxima flexibilidade no design do nosso sistema.
-        </p>
-        <p>
-            O princípio do menor compromisso pode ser levado a extremos ainda maiores. Se desejarmos, podemos manter a ambiguidade de representação mesmo <em>depois</em> de termos projetado os seletores e construtores, e optar por usar tanto a representação de Ben <em>quanto</em> a de Alyssa. Se ambas as representações estiverem incluídas em um único sistema, no entanto, precisaremos de alguma maneira de distinguir dados na forma polar de dados na forma retangular. Caso contrário, se nos pedissem, por exemplo, para encontrar a <code>magnitude</code> do par (3, 4), não saberíamos se responder 5 (interpretando o número na forma retangular) ou 3 (interpretando o número na forma polar). Uma maneira direta de realizar essa distinção é incluir uma <a id="index-type-tag"></a> <em>etiqueta de tipo</em> – o símbolo <code>rectangular</code> ou <code>polar</code> – como parte de cada número complexo. Então, quando precisarmos manipular um número complexo, podemos usar a etiqueta para decidir qual seletor aplicar.
-        </p>
-        <p>
-            Para manipular dados etiquetados, assumiremos que temos procedimentos <code>type-tag</code> e <code>contents</code> que extraem de um objeto de dados a etiqueta e o conteúdo real (as coordenadas polares ou retangulares, no caso de um número complexo). Também postularemos um procedimento <code>attach-tag</code> que recebe uma etiqueta e um conteúdo e produz um objeto de dados etiquetado. Uma maneira direta de implementar isso é usar a estrutura de lista comum:
-        </p>
-        <pre><code class="language-scheme">(define (attach-tag type-tag contents)
+      <p>
+        Uma maneira de ver a abstração de dados é como uma aplicação do
+        "princípio do menor compromisso". Na implementação do sistema de números
+        complexos em <a href="#g_t2_002e4_002e1">2.4.1</a>, podemos usar a
+        representação retangular de Ben ou a representação polar de Alyssa. A
+        barreira de abstração formada pelos seletores e construtores nos permite
+        adiar até o último momento possível a escolha de uma representação
+        concreta para nossos objetos de dados e, assim, manter a máxima
+        flexibilidade no design do nosso sistema.
+      </p>
+      <p>
+        O princípio do menor compromisso pode ser levado a extremos ainda
+        maiores. Se desejarmos, podemos manter a ambiguidade de representação
+        mesmo <em>depois</em> de termos projetado os seletores e construtores, e
+        optar por usar tanto a representação de Ben <em>quanto</em> a de Alyssa.
+        Se ambas as representações estiverem incluídas em um único sistema, no
+        entanto, precisaremos de alguma maneira de distinguir dados na forma
+        polar de dados na forma retangular. Caso contrário, se nos pedissem, por
+        exemplo, para encontrar a <code>magnitude</code> do par (3, 4), não
+        saberíamos se responder 5 (interpretando o número na forma retangular)
+        ou 3 (interpretando o número na forma polar). Uma maneira direta de
+        realizar essa distinção é incluir uma <a id="index-type-tag"></a>
+        <em>etiqueta de tipo</em> – o símbolo <code>rectangular</code> ou
+        <code>polar</code> – como parte de cada número complexo. Então, quando
+        precisarmos manipular um número complexo, podemos usar a etiqueta para
+        decidir qual seletor aplicar.
+      </p>
+      <p>
+        Para manipular dados etiquetados, assumiremos que temos procedimentos
+        <code>type-tag</code> e <code>contents</code> que extraem de um objeto
+        de dados a etiqueta e o conteúdo real (as coordenadas polares ou
+        retangulares, no caso de um número complexo). Também postularemos um
+        procedimento <code>attach-tag</code> que recebe uma etiqueta e um
+        conteúdo e produz um objeto de dados etiquetado. Uma maneira direta de
+        implementar isso é usar a estrutura de lista comum:
+      </p>
+      <pre><code class="language-scheme">(define (attach-tag type-tag contents)
   (cons type-tag contents))
 
 (define (type-tag datum)
@@ -482,19 +735,30 @@
       (error "Bad tagged datum: 
               CONTENTS" datum)))</code></pre>
 
-        <p>
-            Usando esses procedimentos, podemos definir predicados <code>rectangular?</code> e <code>polar?</code>, que reconhecem números retangulares e polares, respectivamente:
-        </p>
-        <pre><code class="language-scheme">(define (rectangular? z)
+      <p>
+        Usando esses procedimentos, podemos definir predicados
+        <code>rectangular?</code> e <code>polar?</code>, que reconhecem números
+        retangulares e polares, respectivamente:
+      </p>
+      <pre><code class="language-scheme">(define (rectangular? z)
   (eq? (type-tag z) 'rectangular))
 
 (define (polar? z)
   (eq? (type-tag z) 'polar))</code></pre>
 
-        <p>
-            Com as etiquetas de tipo, Ben e Alyssa podem agora modificar seu código para que suas duas representações diferentes possam coexistir no mesmo sistema. Sempre que Ben constrói um número complexo, ele o etiqueta como retangular. Sempre que Alyssa constrói um número complexo, ela o etiqueta como polar. Além disso, Ben e Alyssa devem garantir que os nomes de seus procedimentos não entrem em conflito. Uma maneira de fazer isso é Ben anexar o sufixo <code>rectangular</code> ao nome de cada um de seus procedimentos de representação e Alyssa anexar <code>polar</code> aos nomes dos dela. Aqui está a representação retangular revisada de Ben de <a href="#g_t2_002e4_002e1">2.4.1</a>:
-        </p>
-        <pre><code class="language-scheme">(define (real-part-rectangular z) (car z))
+      <p>
+        Com as etiquetas de tipo, Ben e Alyssa podem agora modificar seu código
+        para que suas duas representações diferentes possam coexistir no mesmo
+        sistema. Sempre que Ben constrói um número complexo, ele o etiqueta como
+        retangular. Sempre que Alyssa constrói um número complexo, ela o
+        etiqueta como polar. Além disso, Ben e Alyssa devem garantir que os
+        nomes de seus procedimentos não entrem em conflito. Uma maneira de fazer
+        isso é Ben anexar o sufixo <code>rectangular</code> ao nome de cada um
+        de seus procedimentos de representação e Alyssa anexar
+        <code>polar</code> aos nomes dos dela. Aqui está a representação
+        retangular revisada de Ben de <a href="#g_t2_002e4_002e1">2.4.1</a>:
+      </p>
+      <pre><code class="language-scheme">(define (real-part-rectangular z) (car z))
 (define (imag-part-rectangular z) (cdr z))
 
 (define (magnitude-rectangular z)
@@ -513,8 +777,8 @@
    'rectangular
    (cons (* r (cos a)) (* r (sin a)))))</code></pre>
 
-        <p>e aqui está a representação polar revisada de Alyssa:</p>
-        <pre><code class="language-scheme">(define (real-part-polar z)
+      <p>e aqui está a representação polar revisada de Alyssa:</p>
+      <pre><code class="language-scheme">(define (real-part-polar z)
   (* (magnitude-polar z) 
      (cos (angle-polar z))))
 
@@ -534,10 +798,17 @@
 (define (make-from-mag-ang-polar r a)
   (attach-tag 'polar (cons r a)))</code></pre>
 
-        <p>
-            Cada seletor genérico é implementado como um procedimento que verifica a etiqueta de seu argumento e chama o procedimento apropriado para lidar com dados desse tipo. Por exemplo, para obter a parte real de um número complexo, <code>real-part</code> examina a etiqueta para determinar se deve usar o <code>real-part-rectangular</code> de Ben ou o <code>real-part-polar</code> de Alyssa. Em ambos os casos, usamos <code>contents</code> para extrair o dado bruto, sem etiqueta, e enviá-lo ao procedimento retangular ou polar conforme necessário:
-        </p>
-        <pre><code class="language-scheme">(define (real-part z)
+      <p>
+        Cada seletor genérico é implementado como um procedimento que verifica a
+        etiqueta de seu argumento e chama o procedimento apropriado para lidar
+        com dados desse tipo. Por exemplo, para obter a parte real de um número
+        complexo, <code>real-part</code> examina a etiqueta para determinar se
+        deve usar o <code>real-part-rectangular</code> de Ben ou o
+        <code>real-part-polar</code> de Alyssa. Em ambos os casos, usamos
+        <code>contents</code> para extrair o dado bruto, sem etiqueta, e
+        enviá-lo ao procedimento retangular ou polar conforme necessário:
+      </p>
+      <pre><code class="language-scheme">(define (real-part z)
   (cond ((rectangular? z)
          (real-part-rectangular (contents z)))
         ((polar? z)
@@ -573,79 +844,216 @@
          (error "Unknown type: 
                ANGLE" z))))</code></pre>
 
-        <p>
-            Para implementar as operações aritméticas de números complexos, podemos usar os mesmos procedimentos <code>add-complex</code>, <code>sub-complex</code>, <code>mul-complex</code> e <code>div-complex</code> de <a href="#g_t2_002e4_002e1">2.4.1</a>, porque os seletores que eles chamam são genéricos e, portanto, funcionarão com qualquer representação. Por exemplo, o procedimento <code>add-complex</code> ainda é
-        </p>
-        <pre><code class="language-scheme">(define (add-complex z1 z2)
+      <p>
+        Para implementar as operações aritméticas de números complexos, podemos
+        usar os mesmos procedimentos <code>add-complex</code>,
+        <code>sub-complex</code>, <code>mul-complex</code> e
+        <code>div-complex</code> de <a href="#g_t2_002e4_002e1">2.4.1</a>,
+        porque os seletores que eles chamam são genéricos e, portanto,
+        funcionarão com qualquer representação. Por exemplo, o procedimento
+        <code>add-complex</code> ainda é
+      </p>
+      <pre><code class="language-scheme">(define (add-complex z1 z2)
   (make-from-real-imag 
    (+ (real-part z1) (real-part z2))
    (+ (imag-part z1) (imag-part z2))))</code></pre>
 
-        <p>
-            Finalmente, devemos escolher se construímos números complexos usando a representação de Ben ou a de Alyssa. Uma escolha razoável é construir números retangulares sempre que tivermos partes real e imaginária e construir números polares sempre que tivermos magnitudes e ângulos:
-        </p>
-        <pre><code class="language-scheme">(define (make-from-real-imag x y)
+      <p>
+        Finalmente, devemos escolher se construímos números complexos usando a
+        representação de Ben ou a de Alyssa. Uma escolha razoável é construir
+        números retangulares sempre que tivermos partes real e imaginária e
+        construir números polares sempre que tivermos magnitudes e ângulos:
+      </p>
+      <pre><code class="language-scheme">(define (make-from-real-imag x y)
   (make-from-real-imag-rectangular x y))
 
 (define (make-from-mag-ang r a)
   (make-from-mag-ang-polar r a))</code></pre>
 
-        <p>
-            O sistema de números complexos resultante tem a estrutura mostrada na <a href="#Figure-2_002e21">Figura 2.21</a>. O sistema foi decomposto em três partes relativamente independentes: as operações aritméticas de números complexos, a implementação polar de Alyssa e a implementação retangular de Ben. As implementações polar e retangular poderiam ter sido escritas por Ben e Alyssa trabalhando separadamente, e ambas podem ser usadas como representações subjacentes por um terceiro programador implementando os procedimentos aritméticos complexos em termos da interface abstrata de construtores/seletores.
-        </p>
-        <figure class="float">
-            <a id="Figure-2_002e21"></a>
-            <object style="width: 65.01ex; height: 33.59ex;" data="fig/chap2/Fig2.21a.std.svg" type="image/svg+xml">SVG</object>
-            <figcaption class="float-caption">
-                <p><strong>Figura 2.21:</strong> Estrutura do sistema genérico de aritmética complexa.</p>
-            </figcaption>
-        </figure>
+      <p>
+        O sistema de números complexos resultante tem a estrutura mostrada na
+        <a href="#Figure-2_002e21">Figura 2.21</a>. O sistema foi decomposto em
+        três partes relativamente independentes: as operações aritméticas de
+        números complexos, a implementação polar de Alyssa e a implementação
+        retangular de Ben. As implementações polar e retangular poderiam ter
+        sido escritas por Ben e Alyssa trabalhando separadamente, e ambas podem
+        ser usadas como representações subjacentes por um terceiro programador
+        implementando os procedimentos aritméticos complexos em termos da
+        interface abstrata de construtores/seletores.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e21"></a>
+        <object
+          style="width: 65.01ex; height: 33.59ex"
+          data="fig/chap2/Fig2.21a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.21:</strong> Estrutura do sistema genérico de
+            aritmética complexa.
+          </p>
+        </figcaption>
+      </figure>
 
-        <p>
-            Como cada objeto de dados é etiquetado com seu tipo, os seletores operam nos dados de maneira genérica. Ou seja, cada seletor é definido para ter um comportamento que depende do tipo específico de dados ao qual é aplicado. Observe o mecanismo geral para interfacear as representações separadas: Dentro de uma determinada implementação de representação (digamos, o pacote polar de Alyssa), um número complexo é um par sem tipo (magnitude, ângulo). Quando um seletor genérico opera em um número do tipo <code>polar</code>, ele remove a etiqueta e passa o conteúdo para o código de Alyssa. Por outro lado, quando Alyssa constrói um número para uso geral, ela o etiqueta com um tipo para que ele possa ser reconhecido apropriadamente pelos procedimentos de nível superior. Essa disciplina de remover e anexar etiquetas à medida que os objetos de dados são passados de nível para nível pode ser uma estratégia organizacional importante, como veremos em <a href="2_002e5.xhtml#g_t2_002e5">2.5</a>.
-        </p>
-        <a id="g_t2_002e4_002e3"></a>
-        <a id="Data_002dDirected-Programming-and-Additivity"></a>
-        <h4 class="subsection"><span class="secnum">2.4.3</span><span class="sectitle">Programação Orientada a Dados e Aditividade</span></h4>
+      <p>
+        Como cada objeto de dados é etiquetado com seu tipo, os seletores operam
+        nos dados de maneira genérica. Ou seja, cada seletor é definido para ter
+        um comportamento que depende do tipo específico de dados ao qual é
+        aplicado. Observe o mecanismo geral para interfacear as representações
+        separadas: Dentro de uma determinada implementação de representação
+        (digamos, o pacote polar de Alyssa), um número complexo é um par sem
+        tipo (magnitude, ângulo). Quando um seletor genérico opera em um número
+        do tipo <code>polar</code>, ele remove a etiqueta e passa o conteúdo
+        para o código de Alyssa. Por outro lado, quando Alyssa constrói um
+        número para uso geral, ela o etiqueta com um tipo para que ele possa ser
+        reconhecido apropriadamente pelos procedimentos de nível superior. Essa
+        disciplina de remover e anexar etiquetas à medida que os objetos de
+        dados são passados de nível para nível pode ser uma estratégia
+        organizacional importante, como veremos em
+        <a href="2_002e5.xhtml#g_t2_002e5">2.5</a>.
+      </p>
+      <a id="g_t2_002e4_002e3"></a>
+      <a id="Data_002dDirected-Programming-and-Additivity"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.4.3</span
+        ><span class="sectitle"
+          >Programação Orientada a Dados e Aditividade</span
+        >
+      </h4>
 
-        <p>
-            A estratégia geral de verificar o tipo de um dado e chamar um procedimento apropriado é chamada de <a id="index-dispatching-on-type"></a> <em>despacho por tipo</em>. Essa é uma estratégia poderosa para obter modularidade no design de sistemas. Por outro lado, implementar o despacho como em <a href="#g_t2_002e4_002e2">2.4.2</a> tem duas fraquezas significativas. Uma fraqueza é que os procedimentos de interface genérica (<code>real-part</code>, <code>imag-part</code>, <code>magnitude</code> e <code>angle</code>) devem conhecer todas as diferentes representações. Por exemplo, suponha que quiséssemos incorporar uma nova representação para números complexos em nosso sistema de números complexos. Precisaríamos identificar essa nova representação com um tipo e, em seguida, adicionar uma cláusula a cada um dos procedimentos de interface genérica para verificar o novo tipo e aplicar o seletor apropriado para essa representação.
-        </p>
-        <p>
-            Outra fraqueza da técnica é que, embora as representações individuais possam ser projetadas separadamente, devemos garantir que nenhum dois procedimentos em todo o sistema tenham o mesmo nome. É por isso que Ben e Alyssa tiveram que mudar os nomes de seus procedimentos originais de <a href="#g_t2_002e4_002e1">2.4.1</a>.
-        </p>
-        <p>
-            A questão subjacente a ambas essas fraquezas é que a técnica para implementar interfaces genéricas não é <a id="index-additive"></a> <em>aditiva</em>. A pessoa que implementa os procedimentos de seletores genéricos deve modificar esses procedimentos cada vez que uma nova representação é instalada, e as pessoas que interfaceiam as representações individuais devem modificar seu código para evitar conflitos de nomes. Em cada um desses casos, as mudanças que devem ser feitas no código são diretas, mas devem ser feitas mesmo assim, e isso é uma fonte de inconveniência e erro. Isso não é um grande problema para o sistema de números complexos como ele está, mas suponha que houvesse não duas, mas centenas de diferentes representações para números complexos. E suponha que houvesse muitos seletores genéricos para serem mantidos na interface de dados abstratos. Suponha, de fato, que nenhum programador conhecesse todos os procedimentos de interface ou todas as representações. O problema é real e deve ser abordado em programas como sistemas de gerenciamento de banco de dados em grande escala.
-        </p>
-        <p>
-            O que precisamos é de um meio para modularizar ainda mais o design do sistema. Isso é fornecido pela técnica de programação conhecida como <a id="index-data_002ddirected-programming-1"></a> <em>programação orientada a dados</em>. Para entender como a programação orientada a dados funciona, comece com a observação de que sempre que lidamos com um conjunto de operações genéricas que são comuns a um conjunto de diferentes tipos, estamos, de fato, lidando com uma tabela bidimensional que contém as operações possíveis em um eixo e os tipos possíveis no outro eixo. As entradas na tabela são os procedimentos que implementam cada operação para cada tipo de argumento apresentado. No sistema de números complexos desenvolvido na seção anterior, a correspondência entre o nome da operação, o tipo de dados e o procedimento real foi espalhada entre as várias cláusulas condicionais nos procedimentos de interface genérica. Mas a mesma informação poderia ter sido organizada em uma tabela, como mostrado na <a href="#Figure-2_002e22">Figura 2.22</a>.
-        </p>
-        <figure class="float">
-            <a id="Figure-2_002e22"></a>
-            <object style="width: 63.29ex; height: 20.98ex;" data="fig/chap2/Fig2.22.std.svg" type="image/svg+xml">SVG</object>
-            <figcaption class="float-caption">
-                <p><strong>Figura 2.22:</strong> Tabela de operações para o sistema de números complexos.</p>
-            </figcaption>
-        </figure>
+      <p>
+        A estratégia geral de verificar o tipo de um dado e chamar um
+        procedimento apropriado é chamada de
+        <a id="index-dispatching-on-type"></a> <em>despacho por tipo</em>. Essa
+        é uma estratégia poderosa para obter modularidade no design de sistemas.
+        Por outro lado, implementar o despacho como em
+        <a href="#g_t2_002e4_002e2">2.4.2</a> tem duas fraquezas significativas.
+        Uma fraqueza é que os procedimentos de interface genérica
+        (<code>real-part</code>, <code>imag-part</code>,
+        <code>magnitude</code> e <code>angle</code>) devem conhecer todas as
+        diferentes representações. Por exemplo, suponha que quiséssemos
+        incorporar uma nova representação para números complexos em nosso
+        sistema de números complexos. Precisaríamos identificar essa nova
+        representação com um tipo e, em seguida, adicionar uma cláusula a cada
+        um dos procedimentos de interface genérica para verificar o novo tipo e
+        aplicar o seletor apropriado para essa representação.
+      </p>
+      <p>
+        Outra fraqueza da técnica é que, embora as representações individuais
+        possam ser projetadas separadamente, devemos garantir que nenhum dois
+        procedimentos em todo o sistema tenham o mesmo nome. É por isso que Ben
+        e Alyssa tiveram que mudar os nomes de seus procedimentos originais de
+        <a href="#g_t2_002e4_002e1">2.4.1</a>.
+      </p>
+      <p>
+        A questão subjacente a ambas essas fraquezas é que a técnica para
+        implementar interfaces genéricas não é <a id="index-additive"></a>
+        <em>aditiva</em>. A pessoa que implementa os procedimentos de seletores
+        genéricos deve modificar esses procedimentos cada vez que uma nova
+        representação é instalada, e as pessoas que interfaceiam as
+        representações individuais devem modificar seu código para evitar
+        conflitos de nomes. Em cada um desses casos, as mudanças que devem ser
+        feitas no código são diretas, mas devem ser feitas mesmo assim, e isso é
+        uma fonte de inconveniência e erro. Isso não é um grande problema para o
+        sistema de números complexos como ele está, mas suponha que houvesse não
+        duas, mas centenas de diferentes representações para números complexos.
+        E suponha que houvesse muitos seletores genéricos para serem mantidos na
+        interface de dados abstratos. Suponha, de fato, que nenhum programador
+        conhecesse todos os procedimentos de interface ou todas as
+        representações. O problema é real e deve ser abordado em programas como
+        sistemas de gerenciamento de banco de dados em grande escala.
+      </p>
+      <p>
+        O que precisamos é de um meio para modularizar ainda mais o design do
+        sistema. Isso é fornecido pela técnica de programação conhecida como
+        <a id="index-data_002ddirected-programming-1"></a>
+        <em>programação orientada a dados</em>. Para entender como a programação
+        orientada a dados funciona, comece com a observação de que sempre que
+        lidamos com um conjunto de operações genéricas que são comuns a um
+        conjunto de diferentes tipos, estamos, de fato, lidando com uma tabela
+        bidimensional que contém as operações possíveis em um eixo e os tipos
+        possíveis no outro eixo. As entradas na tabela são os procedimentos que
+        implementam cada operação para cada tipo de argumento apresentado. No
+        sistema de números complexos desenvolvido na seção anterior, a
+        correspondência entre o nome da operação, o tipo de dados e o
+        procedimento real foi espalhada entre as várias cláusulas condicionais
+        nos procedimentos de interface genérica. Mas a mesma informação poderia
+        ter sido organizada em uma tabela, como mostrado na
+        <a href="#Figure-2_002e22">Figura 2.22</a>.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e22"></a>
+        <object
+          style="width: 63.29ex; height: 20.98ex"
+          data="fig/chap2/Fig2.22.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.22:</strong> Tabela de operações para o sistema de
+            números complexos.
+          </p>
+        </figcaption>
+      </figure>
 
-        <p>
-            A programação orientada a dados é a técnica de projetar programas para trabalhar diretamente com essa tabela. Anteriormente, implementamos o mecanismo que interfaceia o código de aritmética complexa com os dois pacotes de representação como um conjunto de procedimentos que cada um realiza um despacho explícito por tipo. Aqui, implementaremos a interface como um único procedimento que procura a combinação do nome da operação e do tipo do argumento na tabela para encontrar o procedimento correto a ser aplicado e, em seguida, aplica-o ao conteúdo do argumento. Se fizermos isso, então, para adicionar um novo pacote de representação ao sistema, não precisamos mudar nenhum procedimento existente; precisamos apenas adicionar novas entradas à tabela.
-        </p>
-        <p>
-            Para implementar esse plano, assuma que temos dois procedimentos, <code>put</code> e <code>get</code>, para manipular a tabela de operações e tipos:
-        </p>
-        <ul>
-            <li> <code>(put ⟨<var>op</var>⟩ ⟨<var>type</var>⟩ ⟨<var>item</var>⟩)</code> instala o <code>⟨</code><var>item</var><code>⟩</code> na tabela, indexado pelo <code>⟨</code><var>op</var><code>⟩</code> e o <code>⟨</code><var>type</var><code>⟩</code>.</li>
-            <li> <code>(get ⟨<var>op</var>⟩ ⟨<var>type</var>⟩)</code> procura a entrada <code>⟨</code><var>op</var><code>⟩</code>, <code>⟨</code><var>type</var><code>⟩</code> na tabela e retorna o item encontrado lá. Se nenhum item for encontrado, <code>get</code> retorna falso.</li>
-        </ul>
+      <p>
+        A programação orientada a dados é a técnica de projetar programas para
+        trabalhar diretamente com essa tabela. Anteriormente, implementamos o
+        mecanismo que interfaceia o código de aritmética complexa com os dois
+        pacotes de representação como um conjunto de procedimentos que cada um
+        realiza um despacho explícito por tipo. Aqui, implementaremos a
+        interface como um único procedimento que procura a combinação do nome da
+        operação e do tipo do argumento na tabela para encontrar o procedimento
+        correto a ser aplicado e, em seguida, aplica-o ao conteúdo do argumento.
+        Se fizermos isso, então, para adicionar um novo pacote de representação
+        ao sistema, não precisamos mudar nenhum procedimento existente;
+        precisamos apenas adicionar novas entradas à tabela.
+      </p>
+      <p>
+        Para implementar esse plano, assuma que temos dois procedimentos,
+        <code>put</code> e <code>get</code>, para manipular a tabela de
+        operações e tipos:
+      </p>
+      <ul>
+        <li>
+          <code>(put ⟨<var>op</var>⟩ ⟨<var>type</var>⟩ ⟨<var>item</var>⟩)</code>
+          instala o <code>⟨</code><var>item</var><code>⟩</code> na tabela,
+          indexado pelo <code>⟨</code><var>op</var><code>⟩</code> e o
+          <code>⟨</code><var>type</var><code>⟩</code>.
+        </li>
+        <li>
+          <code>(get ⟨<var>op</var>⟩ ⟨<var>type</var>⟩)</code> procura a entrada
+          <code>⟨</code><var>op</var><code>⟩</code>, <code>⟨</code
+          ><var>type</var><code>⟩</code> na tabela e retorna o item encontrado
+          lá. Se nenhum item for encontrado, <code>get</code> retorna falso.
+        </li>
+      </ul>
 
-        <p>
-            Por enquanto, podemos assumir que <code>put</code> e <code>get</code> estão incluídos em nossa linguagem. Em <a href="Chapter-3.xhtml#Chapter-3">Capítulo 3</a> (<a href="3_002e3.xhtml#g_t3_002e3_002e3">3.3.3</a>), veremos como implementar essas e outras operações para manipular tabelas.
-        </p>
-        <p>
-            Aqui está como a programação orientada a dados pode ser usada no sistema de números complexos. Ben, que desenvolveu a representação retangular, implementa seu código exatamente como fez originalmente. Ele define uma coleção de procedimentos, ou um <a id="index-package"></a> <em>pacote</em>, e interfaceia esses procedimentos com o resto do sistema adicionando entradas à tabela que dizem ao sistema como operar em números retangulares. Isso é realizado chamando o seguinte procedimento:
-        </p>
-        <pre><code class="language-scheme">(define (install-rectangular-package)
+      <p>
+        Por enquanto, podemos assumir que <code>put</code> e
+        <code>get</code> estão incluídos em nossa linguagem. Em
+        <a href="Chapter-3.xhtml#Chapter-3">Capítulo 3</a> (<a
+          href="3_002e3.xhtml#g_t3_002e3_002e3"
+          >3.3.3</a
+        >), veremos como implementar essas e outras operações para manipular
+        tabelas.
+      </p>
+      <p>
+        Aqui está como a programação orientada a dados pode ser usada no sistema
+        de números complexos. Ben, que desenvolveu a representação retangular,
+        implementa seu código exatamente como fez originalmente. Ele define uma
+        coleção de procedimentos, ou um <a id="index-package"></a>
+        <em>pacote</em>, e interfaceia esses procedimentos com o resto do
+        sistema adicionando entradas à tabela que dizem ao sistema como operar
+        em números retangulares. Isso é realizado chamando o seguinte
+        procedimento:
+      </p>
+      <pre><code class="language-scheme">(define (install-rectangular-package)
   ;; procedimentos internos
   (define (real-part z) (car z))
   (define (imag-part z) (cdr z))
@@ -673,13 +1081,29 @@
          (tag (make-from-mag-ang r a))))
   'done)</code></pre>
 
-        <p>
-            Observe que os procedimentos internos aqui são os mesmos procedimentos de <a href="#g_t2_002e4_002e1">2.4.1</a> que Ben escreveu quando estava trabalhando isoladamente. Nenhuma mudança é necessária para interfaceá-los com o resto do sistema. Além disso, como essas definições de procedimentos são internas ao procedimento de instalação, Ben não precisa se preocupar com conflitos de nomes com outros procedimentos fora do pacote retangular. Para interfacear esses procedimentos com o resto do sistema, Ben instala seu procedimento <code>real-part</code> sob o nome de operação <code>real-part</code> e o tipo <code>(rectangular)</code>, e da mesma forma para os outros seletores.<a class="footnote_link" id="DOCF111" href="#FOOT111"><sup>111</sup></a> A interface também define os construtores a serem usados pelo sistema externo.<a class="footnote_link" id="DOCF112" href="#FOOT112"><sup>112</sup></a> Esses são idênticos aos construtores definidos internamente por Ben, exceto que eles anexam a etiqueta.
-        </p>
-        <p>
-            O pacote polar de Alyssa é análogo:
-        </p>
-        <pre><code class="language-scheme">(define (install-polar-package)
+      <p>
+        Observe que os procedimentos internos aqui são os mesmos procedimentos
+        de <a href="#g_t2_002e4_002e1">2.4.1</a> que Ben escreveu quando estava
+        trabalhando isoladamente. Nenhuma mudança é necessária para
+        interfaceá-los com o resto do sistema. Além disso, como essas definições
+        de procedimentos são internas ao procedimento de instalação, Ben não
+        precisa se preocupar com conflitos de nomes com outros procedimentos
+        fora do pacote retangular. Para interfacear esses procedimentos com o
+        resto do sistema, Ben instala seu procedimento
+        <code>real-part</code> sob o nome de operação <code>real-part</code> e o
+        tipo <code>(rectangular)</code>, e da mesma forma para os outros
+        seletores.<a class="footnote_link" id="DOCF111" href="#FOOT111"
+          ><sup>111</sup></a
+        >
+        A interface também define os construtores a serem usados pelo sistema
+        externo.<a class="footnote_link" id="DOCF112" href="#FOOT112"
+          ><sup>112</sup></a
+        >
+        Esses são idênticos aos construtores definidos internamente por Ben,
+        exceto que eles anexam a etiqueta.
+      </p>
+      <p>O pacote polar de Alyssa é análogo:</p>
+      <pre><code class="language-scheme">(define (install-polar-package)
   ;; procedimentos internos
   (define (magnitude z) (car z))
   (define (angle z) (cdr z))
@@ -705,5 +1129,407 @@
          (tag (make-from-mag-ang r a))))
   'done)</code></pre>
 
+      <p>
+        Mesmo que Ben e Alyssa ainda usem seus procedimentos originais definidos
+        com os mesmos nomes que os do outro (por exemplo,
+        <code>real-part</code>), essas definições agora são internas a
+        diferentes procedimentos (veja
+        <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a>), então não há
+        conflito de nomes.
+      </p>
+      <p>
+        Os seletores de aritmética complexa acessam a tabela por meio de um
+        procedimento geral de "operação" chamado <code>apply-generic</code>, que
+        aplica uma operação genérica a alguns argumentos.
+        <code>Apply-generic</code> procura na tabela sob o nome da operação e os
+        tipos dos argumentos e aplica o procedimento resultante, se um estiver
+        presente:<a class="footnote_link" id="DOCF113" href="#FOOT113"
+          ><sup>113</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (apply-generic op . args)
+  (let ((type-tags (map type-tag args)))
+    (let ((proc (get op type-tags)))
+      (if proc
+          (apply proc (map contents args))
+          (error
+            "No method for these types: 
+             APPLY-GENERIC"
+            (list op type-tags))))))</code></pre>
+
+      <p>
+        Usando <code>apply-generic</code>, podemos definir nossos seletores
+        genéricos da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define (real-part z) 
+  (apply-generic 'real-part z))
+(define (imag-part z) 
+  (apply-generic 'imag-part z))
+(define (magnitude z) 
+  (apply-generic 'magnitude z))
+(define (angle z) 
+  (apply-generic 'angle z))</code></pre>
+
+      <p>
+        Observe que esses procedimentos não mudam em nada se uma nova
+        representação for adicionada ao sistema.
+      </p>
+      <p>
+        Também podemos extrair da tabela os construtores a serem usados pelos
+        programas externos aos pacotes para fazer números complexos a partir de
+        partes real e imaginária e de magnitudes e ângulos. Como em
+        <a href="#g_t2_002e4_002e2">2.4.2</a>, construímos números retangulares
+        sempre que temos partes real e imaginária, e números polares sempre que
+        temos magnitudes e ângulos:
+      </p>
+      <pre><code class="language-scheme">(define (make-from-real-imag x y)
+  ((get 'make-from-real-imag 
+        'rectangular) 
+   x y))
+
+(define (make-from-mag-ang r a)
+  ((get 'make-from-mag-ang 
+        'polar) 
+   r a))</code></pre>
+
+      <blockquote>
         <p>
-            Mesmo que Ben e Alyssa ainda usem seus procedimentos originais definidos com os mesmos nomes que os do outro (por exemplo, <code>real-part</code>), essas definições agora são internas a diferentes procedimentos (veja <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.
+          <strong><a id="Exercise-2_002e73"></a>Exercício 2.73:</strong>
+          <a href="2_002e3.xhtml#g_t2_002e3_002e2">2.3.2</a> descreveu um
+          programa que realiza diferenciação simbólica:
+        </p>
+        <pre><code class="language-scheme">(define (deriv exp var)
+  (cond ((number? exp) 0)
+        ((variable? exp) 
+         (if (same-variable? exp var) 1 0))
+        ((sum? exp)
+         (make-sum (deriv (addend exp) var)
+                   (deriv (augend exp) var)))
+        ((product? exp)
+         (make-sum
+           (make-product 
+            (multiplier exp)
+            (deriv (multiplicand exp) var))
+           (make-product 
+            (deriv (multiplier exp) var)
+            (multiplicand exp))))
+        ⟨mais regras podem ser adicionadas aqui⟩
+        (else
+         (error "unknown expression type:
+                      DERIV" exp))))</code></pre>
+
+        <p>
+          Podemos considerar esse programa como realizando um despacho no tipo
+          da expressão a ser diferenciada. Nessa situação, a "etiqueta de tipo"
+          do dado é o símbolo do operador algébrico (como <code>+</code>) e a
+          operação sendo realizada é <code>deriv</code>. Podemos transformar
+          esse programa em estilo orientado a dados reescrevendo o procedimento
+          básico de derivada como
+        </p>
+        <pre><code class="language-scheme">(define (deriv exp var)
+   (cond ((number? exp) 0)
+         ((variable? exp) 
+           (if (same-variable? exp var) 
+               1 
+               0))
+         (else
+          ((get 'deriv (operator exp)) 
+           (operands exp) 
+           var))))
+
+(define (operator exp) (car exp))
+(define (operands exp) (cdr exp))</code></pre>
+
+        <ol>
+          <li>
+            Explique o que foi feito acima. Por que não podemos assimilar os
+            predicados <code>number?</code> e <code>variable?</code> no despacho
+            orientado a dados?
+          </li>
+          <li>
+            Escreva os procedimentos para derivadas de somas e produtos, e o
+            código auxiliar necessário para instalá-los na tabela usada pelo
+            programa acima.
+          </li>
+          <li>
+            Escolha qualquer regra de diferenciação adicional que você goste,
+            como a de expoentes (<a href="2_002e3.xhtml#Exercise-2_002e56"
+              >Exercício 2.56</a
+            >), e instale-a nesse sistema orientado a dados.
+          </li>
+          <li>
+            Neste simples manipulador algébrico, o tipo de uma expressão é o
+            operador algébrico que a une. Suponha, no entanto, que indexássemos
+            os procedimentos de maneira oposta, de modo que a linha de despacho
+            em <code>deriv</code> parecesse
+            <pre><code class="language-scheme">((get (operator exp) 'deriv) 
+ (operands exp) var)</code></pre>
+            <p>
+              Quais mudanças correspondentes no sistema de derivadas são
+              necessárias?
+            </p>
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e74"></a>Exercício 2.74:</strong>
+          Insatiable Enterprises, Inc., é uma empresa altamente descentralizada,
+          consistindo em um grande número de divisões independentes localizadas
+          em todo o mundo. As instalações de computação da empresa acabaram de
+          ser interconectadas por meio de um esquema inteligente de interface de
+          rede que faz com que toda a rede pareça, para qualquer usuário, ser um
+          único computador. A presidente da Insatiable, em sua primeira
+          tentativa de explorar a capacidade da rede de extrair informações
+          administrativas dos arquivos das divisões, fica desapontada ao
+          descobrir que, embora todos os arquivos das divisões tenham sido
+          implementados como estruturas de dados em Scheme, a estrutura de dados
+          específica usada varia de divisão para divisão. Uma reunião dos
+          gerentes das divisões é convocada às pressas para buscar uma
+          estratégia para integrar os arquivos que atenda às necessidades da
+          sede, preservando a autonomia existente das divisões.
+        </p>
+        <p>
+          Mostre como tal estratégia pode ser implementada com programação
+          orientada a dados. Como exemplo, suponha que os registros de pessoal
+          de cada divisão consistam em um único arquivo, que contém um conjunto
+          de registros indexados pelos nomes dos funcionários. A estrutura do
+          conjunto varia de divisão para divisão. Além disso, o registro de cada
+          funcionário é, ele mesmo, um conjunto (estruturado de forma diferente
+          de divisão para divisão) que contém informações indexadas por
+          identificadores como <code>address</code> e <code>salary</code>. Em
+          particular:
+        </p>
+        <ol>
+          <li>
+            Implemente para a sede um procedimento <code>get-record</code> que
+            recupera o registro de um funcionário especificado de um arquivo de
+            pessoal especificado. O procedimento deve ser aplicável a qualquer
+            arquivo de divisão. Explique como os arquivos individuais das
+            divisões devem ser estruturados. Em particular, que informações de
+            tipo devem ser fornecidas?
+          </li>
+          <li>
+            Implemente para a sede um procedimento <code>get-salary</code> que
+            retorna as informações de salário de um determinado registro de
+            funcionário de qualquer arquivo de pessoal de divisão. Como o
+            registro deve ser estruturado para que essa operação funcione?
+          </li>
+          <li>
+            Implemente para a sede um procedimento
+            <code>find-employee-record</code>. Isso deve pesquisar todos os
+            arquivos das divisões pelo registro de um determinado funcionário e
+            retornar o registro. Suponha que esse procedimento receba como
+            argumentos o nome de um funcionário e uma lista de todos os arquivos
+            das divisões.
+          </li>
+          <li>
+            Quando a Insatiable assume uma nova empresa, quais mudanças devem
+            ser feitas para incorporar as novas informações de pessoal ao
+            sistema central?
+          </li>
+        </ol>
+      </blockquote>
+
+      <a id="Message-passing"></a>
+      <h5 class="subsubheading">Passagem de Mensagens</h5>
+
+      <p>
+        A ideia principal da programação orientada a dados é lidar com operações
+        genéricas em programas, lidando explicitamente com tabelas de operações
+        e tipos, como a tabela na <a href="#Figure-2_002e22">Figura 2.22</a>. O
+        estilo de programação que usamos em
+        <a href="#g_t2_002e4_002e2">2.4.2</a> organizou o despacho necessário
+        por tipo, fazendo com que cada operação cuidasse de seu próprio
+        despacho. Na prática, isso decompõe a tabela de operações e tipos em
+        linhas, com cada procedimento de operação genérica representando uma
+        linha da tabela.
+      </p>
+      <p>
+        Uma estratégia de implementação alternativa é decompor a tabela em
+        colunas e, em vez de usar "operações inteligentes" que despacham em
+        tipos de dados, trabalhar com "objetos de dados inteligentes" que
+        despacham em nomes de operações. Podemos fazer isso organizando as
+        coisas de forma que um objeto de dados, como um número retangular, seja
+        representado como um procedimento que recebe como entrada o nome da
+        operação necessária e realiza a operação indicada. Nessa disciplina,
+        <code>make-from-real-imag</code> poderia ser escrito como
+      </p>
+      <pre><code class="language-scheme">(define (make-from-real-imag x y)
+  (define (dispatch op)
+    (cond ((eq? op 'real-part) x)
+          ((eq? op 'imag-part) y)
+          ((eq? op 'magnitude)
+           (sqrt (+ (square x) (square y))))
+          ((eq? op 'angle) (atan y x))
+          (else
+           (error "Unknown op: 
+            MAKE-FROM-REAL-IMAG" op))))
+  dispatch)</code></pre>
+
+      <p>
+        O procedimento <code>apply-generic</code> correspondente, que aplica uma
+        operação genérica a um argumento, agora simplesmente alimenta o nome da
+        operação para o objeto de dados e deixa o objeto fazer o trabalho:<a
+          class="footnote_link"
+          id="DOCF114"
+          href="#FOOT114"
+          ><sup>114</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (apply-generic op arg) (arg op))</code></pre>
+
+      <p>
+        Observe que o valor retornado por <code>make-from-real-imag</code> é um
+        procedimento – o procedimento interno <code>dispatch</code>. Esse é o
+        procedimento que é invocado quando <code>apply-generic</code> solicita
+        que uma operação seja realizada.
+      </p>
+      <p>
+        Esse estilo de programação é chamado de
+        <a id="index-message-passing-1"></a> <em>passagem de mensagens</em>. O
+        nome vem da imagem de que um objeto de dados é uma entidade que recebe o
+        nome da operação solicitada como uma "mensagem". Já vimos um exemplo de
+        passagem de mensagens em
+        <a href="2_002e1.xhtml#g_t2_002e1_002e3">2.1.3</a>, onde vimos como
+        <code>cons</code>, <code>car</code> e <code>cdr</code> poderiam ser
+        definidos sem objetos de dados, mas apenas com procedimentos. Aqui vemos
+        que a passagem de mensagens não é um truque matemático, mas uma técnica
+        útil para organizar sistemas com operações genéricas. No restante deste
+        capítulo, continuaremos a usar programação orientada a dados, em vez de
+        passagem de mensagens, para discutir operações aritméticas genéricas. Em
+        <a href="Chapter-3.xhtml#Chapter-3">Capítulo 3</a>, retornaremos à
+        passagem de mensagens e veremos que ela pode ser uma ferramenta poderosa
+        para estruturar programas de simulação.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e75"></a>Exercício 2.75:</strong>
+          Implemente o construtor <code>make-from-mag-ang</code> no estilo de
+          passagem de mensagens. Esse procedimento deve ser análogo ao
+          procedimento <code>make-from-real-imag</code> dado acima.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e76"></a>Exercício 2.76:</strong> À
+          medida que um grande sistema com operações genéricas evolui, novos
+          tipos de objetos de dados ou novas operações podem ser necessários.
+          Para cada uma das três estratégias – operações genéricas com despacho
+          explícito, estilo orientado a dados e estilo de passagem de mensagens
+          – descreva as mudanças que devem ser feitas em um sistema para
+          adicionar novos tipos ou novas operações. Qual organização seria mais
+          apropriada para um sistema em que novos tipos devem ser frequentemente
+          adicionados? Qual seria mais apropriada para um sistema em que novas
+          operações devem ser frequentemente adicionadas?
+        </p>
+      </blockquote>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de Rodapé</h4>
+
+        <div id="FOOT109">
+          <p>
+            <a class="footnote_backlink" href="#DOCF109"><sup>109</sup></a> Em
+            sistemas computacionais reais, a forma retangular é preferível à
+            forma polar na maioria das vezes devido a erros de arredondamento na
+            conversão entre as formas retangular e polar. É por isso que o
+            exemplo de números complexos é irrealista. No entanto, ele fornece
+            uma ilustração clara do design de um sistema usando operações
+            genéricas e uma boa introdução aos sistemas mais substanciais a
+            serem desenvolvidos mais adiante neste capítulo.
+          </p>
+        </div>
+        <div id="FOOT110">
+          <p>
+            <a class="footnote_backlink" href="#DOCF110"><sup>110</sup></a> A
+            função arco-tangente referida aqui, calculada pelo procedimento
+            <code>atan</code> do Scheme, é definida para receber dois argumentos
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>y</mi>
+            </math>
+            e
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>x</mi>
+            </math>
+            e retornar o ângulo cuja tangente é
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>y</mi>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mo>/</mo>
+                </mrow>
+                <mi>x</mi>
+              </mrow> </math
+            >. Os sinais dos argumentos determinam o quadrante do ângulo.
+          </p>
+        </div>
+        <div id="FOOT111">
+          <p>
+            <a class="footnote_backlink" href="#DOCF111"><sup>111</sup></a>
+            Usamos a lista <code>(rectangular)</code> em vez do símbolo
+            <code>rectangular</code> para permitir a possibilidade de operações
+            com múltiplos argumentos, nem todos do mesmo tipo.
+          </p>
+        </div>
+        <div id="FOOT112">
+          <p>
+            <a class="footnote_backlink" href="#DOCF112"><sup>112</sup></a> O
+            tipo sob o qual os construtores são instalados não precisa ser uma
+            lista porque um construtor é sempre usado para fazer um objeto de um
+            tipo particular.
+          </p>
+        </div>
+        <div id="FOOT113">
+          <p>
+            <a class="footnote_backlink" href="#DOCF113"><sup>113</sup></a>
+            <code>Apply-generic</code> usa a notação de cauda pontilhada
+            descrita em
+            <a href="2_002e2.xhtml#Exercise-2_002e20">Exercício 2.20</a>, porque
+            diferentes operações genéricas podem receber diferentes números de
+            argumentos. Em <code>apply-generic</code>, <code>op</code> tem como
+            valor o primeiro argumento para <code>apply-generic</code> e
+            <code>args</code> tem como valor uma lista dos argumentos restantes.
+          </p>
+          <p>
+            <code>Apply-generic</code> também usa o procedimento primitivo
+            <code>apply</code>, que recebe dois argumentos, um procedimento e
+            uma lista. <code>Apply</code> aplica o procedimento, usando os
+            elementos da lista como argumentos. Por exemplo,
+          </p>
+          <pre><code class="language-scheme">(apply + (list 1 2 3 4))</code></pre>
+
+          <p>retorna 10.</p>
+        </div>
+        <div id="FOOT114">
+          <p>
+            <a class="footnote_backlink" href="#DOCF114"><sup>114</sup></a> Uma
+            limitação dessa organização é que ela permite apenas procedimentos
+            genéricos de um argumento.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="2_002e5.xhtml#g_t2_002e5" accesskey="n" rel="next">2.5</a>,
+          Anterior:
+          <a href="2_002e3.xhtml#g_t2_002e3" accesskey="p" rel="prev">2.3</a>,
+          Acima: <a href="#g_t2_002e4" accesskey="u" rel="prev">2.4</a> [<a
+            href="index.xhtml#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Ir para o final"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    >
+    <a id="pagebottom"></a>
+  </body>
+</html>
