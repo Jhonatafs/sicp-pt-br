@@ -1,0 +1,3915 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Jump to top"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      ><a id="pagetop"></a><a id="g_t2_002e2"></a>
+      <nav class="header">
+        <p>
+          Next:
+          <a href="2_002e3.xhtml#g_t2_002e3" accesskey="n" rel="next">2.3</a>,
+          Prev:
+          <a href="2_002e1.xhtml#g_t2_002e1" accesskey="p" rel="prev">2.1</a>,
+          Up:
+          <a href="Chapter-2.xhtml#Chapter-2" accesskey="u" rel="prev"
+            >Chapter 2</a
+          >
+          [<a
+            href="index.xhtml#SEC_Contents"
+            title="Table of contents"
+            accesskey="c"
+            rel="contents"
+            >Contents</a
+          >]
+        </p>
+      </nav>
+      <a id="Hierarchical-Data-and-the-Closure-Property"></a>
+      <h3 class="section">
+        <span class="secnum">2.2</span
+        ><span class="sectitle"
+          >Dados Hierárquicos e a Propriedade de Fechamento</span
+        >
+      </h3>
+
+      <p>
+        Como vimos, os pares fornecem uma "cola" primitiva que podemos usar para
+        construir objetos de dados compostos. A
+        <a href="#Figure-2_002e2">Figura 2.2</a> mostra uma maneira padrão de
+        visualizar um par — neste caso, o par formado por
+        <code>(cons 1 2)</code>. Nesta representação, que é chamada de
+        <a id="index-box_002dand_002dpointer-notation"></a>
+        <em>notação de caixa e ponteiro</em>, cada objeto é mostrado como um
+        <a id="index-pointer"></a> <em>ponteiro</em> para uma caixa. A caixa
+        para um objeto primitivo contém uma representação do objeto. Por
+        exemplo, a caixa para um número contém um numeral. A caixa para um par é
+        na verdade uma caixa dupla, a parte esquerda contendo (um ponteiro para)
+        o <code>car</code> do par e a parte direita contendo o <code>cdr</code>.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e2"></a>
+        <object
+          style="width: 21.76ex; height: 11.83ex"
+          data="fig/chap2/Fig2.2e.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.2:</strong> Representação de caixa e ponteiro de
+            <code>(cons 1 2)</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Já vimos que <code>cons</code> pode ser usado para combinar não apenas
+        números, mas também pares. (Você usou esse fato, ou deveria ter usado,
+        ao fazer os <a href="2_002e1.xhtml#Exercise-2_002e2">Exercício 2.2</a> e
+        <a href="2_002e1.xhtml#Exercise-2_002e3">Exercício 2.3</a>.) Como
+        consequência, os pares fornecem um bloco de construção universal a
+        partir do qual podemos construir todos os tipos de estruturas de dados.
+        A <a href="#Figure-2_002e3">Figura 2.3</a> mostra duas maneiras de usar
+        pares para combinar os números 1, 2, 3 e 4.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e3"></a>
+        <object
+          style="width: 55.6ex; height: 28.41ex"
+          data="fig/chap2/Fig2.3e.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.3:</strong> Duas maneiras de combinar 1, 2, 3 e 4
+            usando pares.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        A capacidade de criar pares cujos elementos são pares é a essência da
+        importância da estrutura de listas como uma ferramenta de representação.
+        Referimo-nos a essa capacidade como a
+        <a id="index-closure-property"></a>
+        <em>propriedade de fechamento</em> de <code>cons</code>. Em geral, uma
+        operação para combinar objetos de dados satisfaz a propriedade de
+        fechamento se os resultados de combinar coisas com essa operação podem
+        ser combinados usando a mesma operação.<a
+          class="footnote_link"
+          id="DOCF72"
+          href="#FOOT72"
+          ><sup>72</sup></a
+        >
+        O fechamento é a chave para o poder em qualquer meio de combinação
+        porque nos permite criar estruturas <a id="index-hierarchical"></a>
+        <em>hierárquicas</em> — estruturas feitas de partes, que por sua vez são
+        feitas de partes, e assim por diante.
+      </p>
+      <p>
+        Desde o início do <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>,
+        usamos essencialmente o fechamento ao lidar com procedimentos, porque
+        todos, exceto os programas mais simples, dependem do fato de que os
+        elementos de uma combinação podem ser combinações. Nesta seção,
+        abordamos as consequências do fechamento para dados compostos.
+        Descrevemos algumas técnicas convencionais para usar pares para
+        representar sequências e árvores, e exibimos uma linguagem gráfica que
+        ilustra o fechamento de uma maneira vívida.<a
+          class="footnote_link"
+          id="DOCF73"
+          href="#FOOT73"
+          ><sup>73</sup></a
+        >
+      </p>
+
+      <a id="g_t2_002e2_002e1"></a>
+      <a id="Representing-Sequences"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.2.1</span
+        ><span class="sectitle">Representando Sequências</span>
+      </h4>
+
+      <p>
+        Uma das estruturas úteis que podemos construir com pares é uma
+        <a id="index-sequence"></a> <em>sequência</em> — uma coleção ordenada de
+        objetos de dados. Existem, é claro, muitas maneiras de representar
+        sequências em termos de pares. Uma representação particularmente direta
+        é ilustrada na <a href="#Figure-2_002e4">Figura 2.4</a>, onde a
+        sequência 1, 2, 3, 4 é representada como uma cadeia de pares. O
+        <code>car</code> de cada par é o item correspondente na cadeia, e o
+        <code>cdr</code> do par é o próximo par na cadeia. O <code>cdr</code> do
+        par final sinaliza o fim da sequência apontando para um valor
+        distinguido que não é um par, representado em diagramas de caixa e
+        ponteiro como uma linha diagonal e em programas como o valor da variável
+        <code>nil</code>. A sequência inteira é construída por operações
+        <code>cons</code> aninhadas:
+      </p>
+      <pre><code class="language-scheme">(cons 1
+          (cons 2
+                (cons 3
+                      (cons 4 nil))))</code></pre>
+
+      <figure class="float">
+        <a id="Figure-2_002e4"></a>
+        <object
+          style="width: 48.95ex; height: 11.83ex"
+          data="fig/chap2/Fig2.4e.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.4:</strong> A sequência 1, 2, 3, 4 representada
+            como uma cadeia de pares.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Essa sequência de pares, formada por <code>cons</code> aninhados, é
+        chamada de <a id="index-list"></a> <em>lista</em>, e Scheme fornece uma
+        primitiva chamada <code>list</code> para ajudar na construção de
+        listas.<a class="footnote_link" id="DOCF74" href="#FOOT74"
+          ><sup>74</sup></a
+        >
+        A sequência acima poderia ser produzida por <code>(list 1 2 3 4)</code>.
+        Em geral,
+      </p>
+      <pre><code class="language-scheme">(list ⟨a₁⟩ ⟨a₂⟩ … ⟨aₙ⟩)</code></pre>
+
+      <p>é equivalente a</p>
+      <pre><code class="language-scheme">(cons ⟨a₁⟩
+          (cons ⟨a₂⟩
+                (cons …
+                      (cons ⟨aₙ⟩
+                            nil)…)))</code></pre>
+
+      <p>
+        Os sistemas Lisp convencionalmente imprimem listas imprimindo a
+        sequência de elementos, entre parênteses. Assim, o objeto de dados na
+        <a href="#Figure-2_002e4">Figura 2.4</a> é impresso como
+        <code>(1 2 3 4)</code>:
+      </p>
+      <pre><code class="language-scheme">(define one-through-four (list 1 2 3 4))
+    
+    one-through-four
+    <i>(1 2 3 4)</i></code></pre>
+
+      <p>
+        Cuidado para não confundir a expressão <code>(list 1 2 3 4)</code> com a
+        lista <code>(1 2 3 4)</code>, que é o resultado obtido quando a
+        expressão é avaliada. Tentar avaliar a expressão
+        <code>(1 2 3 4)</code> sinalizará um erro quando o interpretador tentar
+        aplicar o procedimento <code>1</code> aos argumentos <code>2</code>,
+        <code>3</code>, <code>4</code>.
+      </p>
+      <p>
+        Podemos pensar em <code>car</code> como selecionando o primeiro item da
+        lista, e em <code>cdr</code> como selecionando a sublista consistindo de
+        todos os itens, exceto o primeiro. Aplicações aninhadas de
+        <code>car</code> e <code>cdr</code> podem ser usadas para extrair o
+        segundo, terceiro e itens subsequentes na lista.<a
+          class="footnote_link"
+          id="DOCF75"
+          href="#FOOT75"
+          ><sup>75</sup></a
+        >
+        O construtor <code>cons</code> faz uma lista como a original, mas com um
+        item adicional no início.
+      </p>
+      <pre><code class="language-scheme">(car one-through-four)
+    <i>1</i>
+    
+    (cdr one-through-four)
+    <i>(2 3 4)</i>
+    
+    (car (cdr one-through-four))
+    <i>2</i>
+    
+    (cons 10 one-through-four)
+    <i>(10 1 2 3 4)</i>
+    
+    (cons 5 one-through-four)
+    <i>(5 1 2 3 4)</i></code></pre>
+
+      <p>
+        O valor de <code>nil</code>, usado para terminar a cadeia de pares, pode
+        ser pensado como uma sequência de nenhum elemento, a
+        <a id="index-empty-list"></a> <em>lista vazia</em>. A palavra
+        <a id="index-nil"></a> <em>nil</em> é uma contração da palavra latina
+        <em>nihil</em>, que significa "nada".<a
+          class="footnote_link"
+          id="DOCF76"
+          href="#FOOT76"
+          ><sup>76</sup></a
+        >
+      </p>
+      <a id="List-operations"></a>
+      <h5 class="subsubheading">Operações com Listas</h5>
+
+      <p>
+        O uso de pares para representar sequências de elementos como listas é
+        acompanhado por técnicas convencionais de programação para manipular
+        listas, "descendo" sucessivamente as listas com <code>cdr</code>. Por
+        exemplo, o procedimento <code>list-ref</code> toma como argumentos uma
+        lista e um número
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>n</mi>
+        </math>
+        e retorna o
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <msup>
+            <mi>n</mi>
+            <mrow class="MJX-TeXAtom-ORD">
+              <mtext>th</mtext>
+            </mrow>
+          </msup>
+        </math>
+        item da lista. É costume numerar os elementos da lista começando com 0.
+        O método para calcular <code>list-ref</code> é o seguinte:
+      </p>
+      <ul>
+        <li>
+          Para
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>n</mi>
+              <mo>=</mo>
+              <mn>0</mn>
+            </mrow> </math
+          >, <code>list-ref</code> deve retornar o <code>car</code> da lista.
+        </li>
+        <li>
+          Caso contrário, <code>list-ref</code> deve retornar o
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mo stretchy="false">(</mo>
+              <mi>n</mi>
+              <mo>−<!-- − --></mo>
+              <mn>1</mn>
+              <mo stretchy="false">)</mo>
+            </mrow> </math
+          >-ésimo item do <code>cdr</code> da lista.
+        </li>
+      </ul>
+
+      <pre><code class="language-scheme">(define (list-ref items n)
+      (if (= n 0)
+          (car items)
+          (list-ref (cdr items) 
+                    (- n 1))))
+    
+    (define squares 
+      (list 1 4 9 16 25))
+    
+    (list-ref squares 3)
+    <i>16</i></code></pre>
+
+      <p>
+        Muitas vezes "descemos" a lista inteira. Para ajudar nisso, Scheme
+        inclui um predicado primitivo <code>null?</code>, que testa se seu
+        argumento é a lista vazia. O procedimento <code>length</code>, que
+        retorna o número de itens em uma lista, ilustra esse padrão típico de
+        uso:
+      </p>
+      <pre><code class="language-scheme">(define (length items)
+      (if (null? items)
+          0
+          (+ 1 (length (cdr items)))))
+    
+    (define odds
+      (list 1 3 5 7))
+    
+    (length odds)
+    <i>4</i></code></pre>
+
+      <p>
+        O procedimento <code>length</code> implementa um plano recursivo
+        simples. O passo de redução é:
+      </p>
+      <ul>
+        <li>
+          O <code>length</code> de qualquer lista é 1 mais o
+          <code>length</code> do <code>cdr</code> da lista.
+        </li>
+      </ul>
+
+      <p>Isso é aplicado sucessivamente até chegarmos ao caso base:</p>
+      <ul>
+        <li>O <code>length</code> da lista vazia é 0.</li>
+      </ul>
+
+      <p>
+        Também poderíamos calcular <code>length</code> em um estilo iterativo:
+      </p>
+      <pre><code class="language-scheme">(define (length items)
+      (define (length-iter a count)
+        (if (null? a)
+            count
+            (length-iter (cdr a) 
+                         (+ 1 count))))
+      (length-iter items 0))</code></pre>
+
+      <p>
+        Outra técnica convencional de programação é "construir" uma lista de
+        respostas enquanto "descemos" uma lista, como no procedimento
+        <code>append</code>, que toma duas listas como argumentos e combina seus
+        elementos para fazer uma nova lista:
+      </p>
+      <pre><code class="language-scheme">(append squares odds)
+    <i>(1 4 9 16 25 1 3 5 7)</i>
+    
+    (append odds squares)
+    <i>(1 3 5 7 1 4 9 16 25)</i></code></pre>
+
+      <p>
+        <code>Append</code> também é implementado usando um plano recursivo.
+        Para <code>append</code> as listas <code>list1</code> e
+        <code>list2</code>, faça o seguinte:
+      </p>
+      <ul>
+        <li>
+          Se <code>list1</code> é a lista vazia, então o resultado é apenas
+          <code>list2</code>.
+        </li>
+        <li>
+          Caso contrário, <code>append</code> o <code>cdr</code> de
+          <code>list1</code> e <code>list2</code>, e <code>cons</code> o
+          <code>car</code> de <code>list1</code> no resultado:
+        </li>
+      </ul>
+
+      <pre><code class="language-scheme">(define (append list1 list2)
+      (if (null? list1)
+          list2
+          (cons (car list1) 
+                (append (cdr list1) 
+                        list2))))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e17"></a>Exercício 2.17:</strong> Defina
+          um procedimento <code>last-pair</code> que retorna a lista que contém
+          apenas o último elemento de uma lista dada (não vazia):
+        </p>
+        <pre><code class="language-scheme">(last-pair (list 23 72 149 34))
+    <i>(34)</i></code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e18"></a>Exercício 2.18:</strong> Defina
+          um procedimento <code>reverse</code> que toma uma lista como argumento
+          e retorna uma lista dos mesmos elementos em ordem inversa:
+        </p>
+        <pre><code class="language-scheme">(reverse (list 1 4 9 16 25))
+    <i>(25 16 9 4 1)</i></code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e19"></a>Exercício 2.19:</strong>
+          Considere o programa de contagem de moedas de
+          <a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>. Seria bom poder
+          facilmente mudar a moeda usada pelo programa, para que pudéssemos
+          calcular o número de maneiras de trocar uma libra britânica, por
+          exemplo. Como o programa está escrito, o conhecimento da moeda está
+          parcialmente no procedimento <code>first-denomination</code> e
+          parcialmente no procedimento <code>count-change</code> (que sabe que
+          há cinco tipos de moedas dos EUA). Seria melhor poder fornecer uma
+          lista de moedas a serem usadas para fazer a troca.
+        </p>
+        <p>
+          Queremos reescrever o procedimento <code>cc</code> para que seu
+          segundo argumento seja uma lista dos valores das moedas a serem
+          usadas, em vez de um inteiro especificando quais moedas usar.
+          Poderíamos então ter listas que definem cada tipo de moeda:
+        </p>
+        <pre><code class="language-scheme">(define us-coins 
+      (list 50 25 10 5 1))
+    
+    (define uk-coins 
+      (list 100 50 20 10 5 2 1 0.5))</code></pre>
+
+        <p>Poderíamos então chamar <code>cc</code> da seguinte forma:</p>
+        <pre><code class="language-scheme">(cc 100 us-coins)
+    <i>292</i></code></pre>
+
+        <p>
+          Para fazer isso, será necessário mudar o programa <code>cc</code> um
+          pouco. Ele ainda terá a mesma forma, mas acessará seu segundo
+          argumento de forma diferente, como segue:
+        </p>
+        <pre><code class="language-scheme">(define (cc amount coin-values)
+      (cond ((= amount 0) 
+             1)
+            ((or (< amount 0) 
+                 (no-more? coin-values)) 
+             0)
+            (else
+             (+ (cc 
+                 amount
+                 (except-first-denomination 
+                  coin-values))
+                (cc 
+                 (- amount
+                    (first-denomination 
+                     coin-values))
+                 coin-values)))))</code></pre>
+
+        <p>
+          Defina os procedimentos <code>first-denomination</code>,
+          <code>except-first-denomination</code> e <code>no-more?</code> em
+          termos de operações primitivas sobre estruturas de listas. A ordem da
+          lista <code>coin-values</code> afeta a resposta produzida por
+          <code>cc</code>? Por que ou por que não?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e20"></a>Exercício 2.20:</strong> Os
+          procedimentos <code>+</code>, <code>*</code> e <code>list</code> tomam
+          um número arbitrário de argumentos. Uma maneira de definir tais
+          procedimentos é usar <code>define</code> com
+          <a id="index-dotted_002dtail-notation"></a>
+          <em>notação de cauda pontilhada</em>. Em uma definição de
+          procedimento, uma lista de parâmetros que tem um ponto antes do último
+          nome do parâmetro indica que, quando o procedimento é chamado, os
+          parâmetros iniciais (se houver) terão como valores os argumentos
+          iniciais, como de costume, mas o valor do parâmetro final será uma
+          <a id="index-list-2"></a> <em>lista</em> de quaisquer argumentos
+          restantes. Por exemplo, dada a definição
+        </p>
+        <pre><code class="language-scheme">(define (f x y . z) ⟨body⟩)</code></pre>
+
+        <p>
+          o procedimento <code>f</code> pode ser chamado com dois ou mais
+          argumentos. Se avaliarmos
+        </p>
+        <pre><code class="language-scheme">(f 1 2 3 4 5 6)</code></pre>
+
+        <p>
+          então, no corpo de <code>f</code>, <code>x</code> será 1,
+          <code>y</code> será 2 e <code>z</code> será a lista
+          <code>(3 4 5 6)</code>. Dada a definição
+        </p>
+        <pre><code class="language-scheme">(define (g . w) ⟨body⟩)</code></pre>
+
+        <p>
+          o procedimento <code>g</code> pode ser chamado com zero ou mais
+          argumentos. Se avaliarmos
+        </p>
+        <pre><code class="language-scheme">(g 1 2 3 4 5 6)</code></pre>
+
+        <p>
+          então, no corpo de <code>g</code>, <code>w</code> será a lista
+          <code>(1 2 3 4 5 6)</code>.<a
+            class="footnote_link"
+            id="DOCF77"
+            href="#FOOT77"
+            ><sup>77</sup></a
+          >
+        </p>
+        <p>
+          Use essa notação para escrever um procedimento
+          <code>same-parity</code> que toma um ou mais inteiros e retorna uma
+          lista de todos os argumentos que têm a mesma paridade (par ou ímpar)
+          que o primeiro argumento. Por exemplo,
+        </p>
+        <pre><code class="language-scheme">(same-parity 1 2 3 4 5 6 7)
+    <i>(1 3 5 7)</i>
+    
+    (same-parity 2 3 4 5 6 7)
+    <i>(2 4 6)</i></code></pre>
+      </blockquote>
+
+      <a id="Mapping-over-lists"></a>
+      <h5 class="subsubheading">Mapeando sobre listas</h5>
+
+      <p>
+        Uma operação extremamente útil é aplicar alguma transformação a cada
+        elemento em uma lista e gerar a lista de resultados. Por exemplo, o
+        seguinte procedimento escala cada número em uma lista por um fator dado:
+      </p>
+      <pre><code class="language-scheme">(define (scale-list items factor)
+      (if (null? items)
+          nil
+          (cons (* (car items) factor)
+                (scale-list (cdr items) 
+                            factor))))
+    
+    (scale-list (list 1 2 3 4 5) 10)
+    <i>(10 20 30 40 50)</i></code></pre>
+
+      <p>
+        Podemos abstrair essa ideia geral e capturá-la como um padrão comum
+        expresso como um procedimento de ordem superior, assim como em
+        <a href="1_002e3.xhtml#g_t1_002e3">1.3</a>. O procedimento de ordem
+        superior aqui é chamado <code>map</code>. <code>Map</code> toma como
+        argumentos um procedimento de um argumento e uma lista, e retorna uma
+        lista dos resultados produzidos pela aplicação do procedimento a cada
+        elemento na lista:<a class="footnote_link" id="DOCF78" href="#FOOT78"
+          ><sup>78</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (map proc items)
+      (if (null? items)
+          nil
+          (cons (proc (car items))
+                (map proc (cdr items)))))
+    
+    (map abs (list -10 2.5 -11.6 17))
+    <i>(10 2.5 11.6 17)</i>
+    
+    (map (lambda (x) (* x x)) (list 1 2 3 4))
+    <i>(1 4 9 16)</i></code></pre>
+
+      <p>
+        Agora podemos dar uma nova definição de <code>scale-list</code> em
+        termos de <code>map</code>:
+      </p>
+      <pre><code class="language-scheme">(define (scale-list items factor)
+      (map (lambda (x) (* x factor))
+           items))</code></pre>
+
+      <p>
+        <code>Map</code> é uma construção importante, não apenas porque captura
+        um padrão comum, mas porque estabelece um nível mais alto de abstração
+        ao lidar com listas. Na definição original de <code>scale-list</code>, a
+        estrutura recursiva do programa chama a atenção para o processamento
+        elemento por elemento da lista. Definir <code>scale-list</code> em
+        termos de <code>map</code> suprime esse nível de detalhe e enfatiza que
+        a escala transforma uma lista de elementos em uma lista de resultados. A
+        diferença entre as duas definições não é que o computador está
+        realizando um processo diferente (não está), mas que pensamos sobre o
+        processo de maneira diferente. Efetivamente, <code>map</code> ajuda a
+        estabelecer uma barreira de abstração que isola a implementação de
+        procedimentos que transformam listas dos detalhes de como os elementos
+        da lista são extraídos e combinados. Como as barreiras mostradas na
+        <a href="2_002e1.xhtml#Figure-2_002e1">Figura 2.1</a>, essa abstração
+        nos dá a flexibilidade de mudar os detalhes de baixo nível de como as
+        sequências são implementadas, enquanto preserva o quadro conceitual de
+        operações que transformam sequências em sequências. A seção
+        <a href="#g_t2_002e2_002e3">2.2.3</a> expande esse uso de sequências
+        como um quadro para organizar programas.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e21"></a>Exercício 2.21:</strong> O
+          procedimento <code>square-list</code> toma uma lista de números como
+          argumento e retorna uma lista dos quadrados desses números.
+        </p>
+        <pre><code class="language-scheme">(square-list (list 1 2 3 4))
+    <i>(1 4 9 16)</i></code></pre>
+
+        <p>
+          Aqui estão duas definições diferentes de <code>square-list</code>.
+          Complete ambas preenchendo as expressões faltantes:
+        </p>
+        <pre><code class="language-scheme">(define (square-list items)
+      (if (null? items)
+          nil
+          (cons ⟨??⟩ ⟨??⟩)))
+    
+    (define (square-list items)
+      (map ⟨??⟩ ⟨??⟩))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e22"></a>Exercício 2.22:</strong> Louis
+          Reasoner tenta reescrever o primeiro procedimento
+          <code>square-list</code> do
+          <a href="#Exercise-2_002e21">Exercício 2.21</a> para que ele evolua um
+          processo iterativo:
+        </p>
+        <pre><code class="language-scheme">(define (square-list items)
+      (define (iter things answer)
+        (if (null? things)
+            answer
+            (iter (cdr things)
+                  (cons (square (car things))
+                        answer))))
+      (iter items nil))</code></pre>
+
+        <p>
+          Infelizmente, definir <code>square-list</code> dessa forma produz a
+          lista de respostas na ordem inversa da desejada. Por quê?
+        </p>
+        <p>
+          Louis então tenta corrigir seu bug trocando os argumentos para
+          <code>cons</code>:
+        </p>
+        <pre><code class="language-scheme">(define (square-list items)
+      (define (iter things answer)
+        (if (null? things)
+            answer
+            (iter (cdr things)
+                  (cons answer
+                        (square 
+                         (car things))))))
+      (iter items nil))</code></pre>
+
+        <p>Isso também não funciona. Explique.</p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e23"></a>Exercício 2.23:</strong> O
+          procedimento <code>for-each</code> é semelhante a <code>map</code>.
+          Ele toma como argumentos um procedimento e uma lista de elementos. No
+          entanto, em vez de formar uma lista dos resultados,
+          <code>for-each</code> apenas aplica o procedimento a cada um dos
+          elementos, da esquerda para a direita. Os valores retornados pela
+          aplicação do procedimento aos elementos não são usados —
+          <code>for-each</code> é usado com procedimentos que realizam uma ação,
+          como imprimir. Por exemplo,
+        </p>
+        <pre><code class="language-scheme">(for-each 
+     (lambda (x) (newline) (display x))
+     (list 57 321 88))
+    
+    <i>57</i>
+    <i>321</i>
+    <i>88</i></code></pre>
+
+        <p>
+          O valor retornado pela chamada a <code>for-each</code> (não ilustrado
+          acima) pode ser algo arbitrário, como verdadeiro. Dê uma implementação
+          de <code>for-each</code>.
+        </p>
+      </blockquote>
+
+      <a id="g_t2_002e2_002e2"></a>
+      <a id="Hierarchical-Structures"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.2.2</span
+        ><span class="sectitle">Estruturas Hierárquicas</span>
+      </h4>
+
+      <p>
+        A representação de sequências em termos de listas generaliza
+        naturalmente para representar sequências cujos elementos podem ser
+        sequências. Por exemplo, podemos considerar o objeto
+        <code>((1 2) 3 4)</code> construído por
+      </p>
+      <pre><code class="language-scheme">(cons (list 1 2) (list 3 4))</code></pre>
+
+      <p>
+        como uma lista de três itens, o primeiro dos quais é uma lista,
+        <code>(1 2)</code>. De fato, isso é sugerido pela forma na qual o
+        resultado é impresso pelo interpretador. A
+        <a href="#Figure-2_002e5">Figura 2.5</a> mostra a representação dessa
+        estrutura em termos de pares.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e5"></a>
+        <object
+          style="width: 51.89ex; height: 25.73ex"
+          data="fig/chap2/Fig2.5e.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.5:</strong> Estrutura formada por
+            <code>(cons (list 1 2) (list 3 4))</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Outra maneira de pensar em sequências cujos elementos são sequências é
+        como <a id="index-trees"></a> <em>árvores</em>. Os elementos da
+        sequência são os ramos da árvore, e os elementos que são eles mesmos
+        sequências são subárvores. A
+        <a href="#Figure-2_002e6">Figura 2.6</a> mostra a estrutura na
+        <a href="#Figure-2_002e5">Figura 2.5</a> vista como uma árvore.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e6"></a>
+        <object
+          style="width: 15.02ex; height: 17.01ex"
+          data="fig/chap2/Fig2.6b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.6:</strong> A estrutura de lista na
+            <a href="#Figure-2_002e5">Figura 2.5</a> vista como uma árvore.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        A recursão é uma ferramenta natural para lidar com estruturas de
+        árvores, já que muitas vezes podemos reduzir operações em árvores a
+        operações em seus ramos, que por sua vez se reduzem a operações nos
+        ramos dos ramos, e assim por diante, até chegarmos às folhas da árvore.
+        Como exemplo, compare o procedimento <code>length</code> de
+        <a href="#g_t2_002e2_002e1">2.2.1</a> com o procedimento
+        <code>count-leaves</code>, que retorna o número total de folhas de uma
+        árvore:
+      </p>
+      <pre><code class="language-scheme">(define x (cons (list 1 2) (list 3 4)))</code></pre>
+
+      <pre><code class="language-scheme">(length x)
+    <i>3</i></code></pre>
+
+      <pre><code class="language-scheme">(count-leaves x)
+    <i>4</i>
+    
+    (list x x)
+    <i>(((1 2) 3 4) ((1 2) 3 4))</i>
+    
+    (length (list x x))
+    <i>2</i>
+    
+    (count-leaves (list x x))
+    <i>8</i></code></pre>
+
+      <p>
+        Para implementar <code>count-leaves</code>, lembre-se do plano recursivo
+        para calcular <code>length</code>:
+      </p>
+      <ul>
+        <li>
+          O <code>length</code> de uma lista <code>x</code> é 1 mais o
+          <code>length</code> do <code>cdr</code> de <code>x</code>.
+        </li>
+        <li>O <code>length</code> da lista vazia é 0.</li>
+      </ul>
+
+      <p>
+        <code>Count-leaves</code> é semelhante. O valor para a lista vazia é o
+        mesmo:
+      </p>
+      <ul>
+        <li>O <code>count-leaves</code> da lista vazia é 0.</li>
+      </ul>
+
+      <p>
+        Mas no passo de redução, onde retiramos o <code>car</code> da lista,
+        devemos levar em conta que o <code>car</code> pode ser uma árvore cujas
+        folhas precisamos contar. Assim, o passo de redução apropriado é
+      </p>
+      <ul>
+        <li>
+          O <code>count-leaves</code> de uma árvore <code>x</code> é
+          <code>count-leaves</code> do <code>car</code> de <code>x</code> mais
+          <code>count-leaves</code> do <code>cdr</code> de <code>x</code>.
+        </li>
+      </ul>
+
+      <p>
+        Finalmente, ao tirar <code>car</code>s, chegamos a folhas reais, então
+        precisamos de outro caso base:
+      </p>
+      <ul>
+        <li>O <code>count-leaves</code> de uma folha é 1.</li>
+      </ul>
+
+      <p>
+        Para ajudar a escrever procedimentos recursivos em árvores, Scheme
+        fornece o predicado primitivo <code>pair?</code>, que testa se seu
+        argumento é um par. Aqui está o procedimento completo:<a
+          class="footnote_link"
+          id="DOCF79"
+          href="#FOOT79"
+          ><sup>79</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (count-leaves x)
+      (cond ((null? x) 0)
+            ((not (pair? x)) 1)
+            (else (+ (count-leaves (car x))
+                     (count-leaves (cdr x))))))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e24"></a>Exercício 2.24:</strong> Suponha
+          que avaliamos a expressão <code>(list 1 (list 2 (list 3 4)))</code>.
+          Dê o resultado impresso pelo interpretador, a estrutura correspondente
+          de caixa e ponteiro, e a interpretação disso como uma árvore (como na
+          <a href="#Figure-2_002e6">Figura 2.6</a>).
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e25"></a>Exercício 2.25:</strong> Dê
+          combinações de <code>car</code>s e <code>cdr</code>s que selecionarão
+          7 de cada uma das seguintes listas:
+        </p>
+        <pre><code class="language-scheme">(1 3 (5 7) 9)
+    ((7))
+    (1 (2 (3 (4 (5 (6 7))))))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e26"></a>Exercício 2.26:</strong> Suponha
+          que definimos <code>x</code> e <code>y</code> como duas listas:
+        </p>
+        <pre><code class="language-scheme">(define x (list 1 2 3))
+    (define y (list 4 5 6))</code></pre>
+
+        <p>
+          Qual resultado é impresso pelo interpretador em resposta à avaliação
+          de cada uma das seguintes expressões:
+        </p>
+        <pre><code class="language-scheme">(append x y)
+    (cons x y)
+    (list x y)</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e27"></a>Exercício 2.27:</strong>
+          Modifique seu procedimento <code>reverse</code> do
+          <a href="#Exercise-2_002e18">Exercício 2.18</a> para produzir um
+          procedimento <code>deep-reverse</code> que toma uma lista como
+          argumento e retorna como seu valor a lista com seus elementos
+          invertidos e com todas as sublistas invertidas também. Por exemplo,
+        </p>
+        <pre><code class="language-scheme">(define x 
+      (list (list 1 2) (list 3 4)))
+    
+    x
+    <i>((1 2) (3 4))</i>
+    
+    (reverse x)
+    <i>((3 4) (1 2))</i>
+    
+    (deep-reverse x)
+    <i>((4 3) (2 1))</i></code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e28"></a>Exercício 2.28:</strong> Escreva
+          um procedimento <code>fringe</code> que toma como argumento uma árvore
+          (representada como uma lista) e retorna uma lista cujos elementos são
+          todas as folhas da árvore arranjadas da esquerda para a direita. Por
+          exemplo,
+        </p>
+        <pre><code class="language-scheme">(define x 
+      (list (list 1 2) (list 3 4)))
+    
+    (fringe x)
+    <i>(1 2 3 4)</i>
+    
+    (fringe (list x x))
+    <i>(1 2 3 4 1 2 3 4)</i></code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e29"></a>Exercício 2.29:</strong> Um
+          móvel binário consiste em dois ramos, um ramo esquerdo e um ramo
+          direito. Cada ramo é uma haste de um certo comprimento, da qual pende
+          ou um peso ou outro móvel binário. Podemos representar um móvel
+          binário usando dados compostos, construindo-o a partir de dois ramos
+          (por exemplo, usando <code>list</code>):
+        </p>
+        <pre><code class="language-scheme">(define (make-mobile left right)
+      (list left right))</code></pre>
+
+        <p>
+          Um ramo é construído a partir de um <code>length</code> (que deve ser
+          um número) junto com uma <code>structure</code>, que pode ser um
+          número (representando um peso simples) ou outro móvel:
+        </p>
+        <pre><code class="language-scheme">(define (make-branch length structure)
+      (list length structure))</code></pre>
+
+        <ol>
+          <li>
+            Escreva os seletores correspondentes <code>left-branch</code> e
+            <code>right-branch</code>, que retornam os ramos de um móvel, e
+            <code>branch-length</code> e <code>branch-structure</code>, que
+            retornam os componentes de um ramo.
+          </li>
+          <li>
+            Usando seus seletores, defina um procedimento
+            <code>total-weight</code> que retorna o peso total de um móvel.
+          </li>
+          <li>
+            Um móvel é dito <a id="index-balanced"></a> <em>equilibrado</em> se
+            o torque aplicado por seu ramo superior esquerdo é igual ao torque
+            aplicado por seu ramo superior direito (ou seja, se o comprimento da
+            haste esquerda multiplicado pelo peso pendurado nessa haste é igual
+            ao produto correspondente para o lado direito) e se cada um dos
+            submóveis pendurados em seus ramos é equilibrado. Projete um
+            predicado que testa se um móvel binário é equilibrado.
+          </li>
+          <li>
+            Suponha que mudamos a representação de móveis para que os
+            construtores sejam
+
+            <pre><code class="language-scheme">(define (make-mobile left right)
+      (cons left right))
+    
+    (define (make-branch length structure)
+      (cons length structure))</code></pre>
+
+            <p>
+              Quanto você precisa mudar seus programas para se converter para a
+              nova representação?
+            </p>
+          </li>
+        </ol>
+      </blockquote>
+
+      <a id="Mapping-over-trees"></a>
+      <h5 class="subsubheading">Mapeando sobre árvores</h5>
+
+      <p>
+        Assim como <code>map</code> é uma abstração poderosa para lidar com
+        sequências, <code>map</code> junto com recursão é uma abstração poderosa
+        para lidar com árvores. Por exemplo, o procedimento
+        <code>scale-tree</code>, análogo ao <code>scale-list</code> de
+        <a href="#g_t2_002e2_002e1">2.2.1</a>, toma como argumentos um fator
+        numérico e uma árvore cujas folhas são números. Ele retorna uma árvore
+        da mesma forma, onde cada número é multiplicado pelo fator. O plano
+        recursivo para <code>scale-tree</code> é semelhante ao de
+        <code>count-leaves</code>:
+      </p>
+      <pre><code class="language-scheme">(define (scale-tree tree factor)
+      (cond ((null? tree) nil)
+            ((not (pair? tree)) 
+             (* tree factor))
+            (else
+             (cons (scale-tree (car tree) 
+                               factor)
+                   (scale-tree (cdr tree) 
+                               factor)))))
+    
+    (scale-tree (list 1 
+                      (list 2 (list 3 4) 5) 
+                      (list 6 7))
+                10)
+    <i>(10 (20 (30 40) 50) (60 70))</i></code></pre>
+
+      <p>
+        Outra maneira de implementar <code>scale-tree</code> é tratar a árvore
+        como uma sequência de subárvores e usar <code>map</code>. Mapeamos sobre
+        a sequência, escalando cada subárvore por sua vez, e retornamos a lista
+        de resultados. No caso base, onde a árvore é uma folha, simplesmente
+        multiplicamos pelo fator:
+      </p>
+      <pre><code class="language-scheme">(define (scale-tree tree factor)
+      (map (lambda (sub-tree)
+             (if (pair? sub-tree)
+                 (scale-tree sub-tree factor)
+                 (* sub-tree factor)))
+           tree))</code></pre>
+
+      <p>
+        Muitas operações em árvores podem ser implementadas por combinações
+        semelhantes de operações de sequência e recursão.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e30"></a>Exercício 2.30:</strong> Defina
+          um procedimento <code>square-tree</code> análogo ao procedimento
+          <code>square-list</code> do
+          <a href="#Exercise-2_002e21">Exercício 2.21</a>. Ou seja,
+          <code>square-tree</code> deve se comportar da seguinte forma:
+        </p>
+        <pre><code class="language-scheme">(square-tree
+     (list 1
+           (list 2 (list 3 4) 5)
+           (list 6 7)))
+    <i>(1 (4 (9 16) 25) (36 49))</i></code></pre>
+
+        <p>
+          Defina <code>square-tree</code> tanto diretamente (ou seja, sem usar
+          nenhum procedimento de ordem superior) quanto usando
+          <code>map</code> e recursão.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e31"></a>Exercício 2.31:</strong>
+          Abstraia sua resposta ao
+          <a href="#Exercise-2_002e30">Exercício 2.30</a> para produzir um
+          procedimento <code>tree-map</code> com a propriedade de que
+          <code>square-tree</code> poderia ser definido como
+        </p>
+        <pre><code class="language-scheme">(define (square-tree tree) 
+      (tree-map square tree))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e32"></a>Exercício 2.32:</strong> Podemos
+          representar um conjunto como uma lista de elementos distintos, e
+          podemos representar o conjunto de todos os subconjuntos do conjunto
+          como uma lista de listas. Por exemplo, se o conjunto é
+          <code>(1 2 3)</code>, então o conjunto de todos os subconjuntos é
+          <code>(() (3) (2) (2 3) (1) (1 3) (1 2) (1 2 3))</code>. Complete a
+          seguinte definição de um procedimento que gera o conjunto de
+          subconjuntos de um conjunto e dê uma explicação clara de por que ele
+          funciona:
+        </p>
+        <pre><code class="language-scheme">(define (subsets s)
+      (if (null? s)
+          (list nil)
+          (let ((rest (subsets (cdr s))))
+            (append rest (map ⟨??⟩ rest)))))</code></pre>
+      </blockquote>
+
+      <a id="g_t2_002e2_002e3"></a>
+      <a id="Sequences-as-Conventional-Interfaces"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.2.3</span
+        ><span class="sectitle">Sequências como Interfaces Convencionais</span>
+      </h4>
+
+      <p>
+        No trabalho com dados compostos, enfatizamos como a abstração de dados
+        nos permite projetar programas sem nos envolvermos nos detalhes das
+        representações de dados, e como a abstração preserva para nós a
+        flexibilidade de experimentar com representações alternativas. Nesta
+        seção, introduzimos outro princípio poderoso de design para trabalhar
+        com estruturas de dados — o uso de
+        <a id="index-conventional-interfaces-1"></a>
+        <em>interfaces convencionais</em>.
+      </p>
+      <p>
+        Em <a href="1_002e3.xhtml#g_t1_002e3">1.3</a>, vimos como abstrações de
+        programas, implementadas como procedimentos de ordem superior, podem
+        capturar padrões comuns em programas que lidam com dados numéricos.
+        Nossa capacidade de formular operações análogas para trabalhar com dados
+        compostos depende crucialmente do estilo em que manipulamos nossas
+        estruturas de dados. Considere, por exemplo, o seguinte procedimento,
+        análogo ao procedimento <code>count-leaves</code> de
+        <a href="#g_t2_002e2_002e2">2.2.2</a>, que toma uma árvore como
+        argumento e calcula a soma dos quadrados das folhas que são ímpares:
+      </p>
+      <pre><code class="language-scheme">(define (sum-odd-squares tree)
+      (cond ((null? tree) 0)
+            ((not (pair? tree))
+             (if (odd? tree) (square tree) 0))
+            (else (+ (sum-odd-squares 
+                      (car tree))
+                     (sum-odd-squares 
+                      (cdr tree))))))</code></pre>
+
+      <p>
+        Na superfície, este procedimento é muito diferente do seguinte, que
+        constrói uma lista de todos os números de Fibonacci
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mtext>Fib</mtext>
+            <mo stretchy="false">(</mo>
+            <mi>k</mi>
+            <mo stretchy="false">)</mo>
+          </mrow> </math
+        >, onde
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>k</mi>
+        </math>
+        é menor ou igual a um dado inteiro
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>n</mi> </math
+        >:
+      </p>
+      <pre><code class="language-scheme">(define (even-fibs n)
+      (define (next k)
+        (if (> k n)
+            nil
+            (let ((f (fib k)))
+              (if (even? f)
+                  (cons f (next (+ k 1)))
+                  (next (+ k 1))))))
+      (next 0))</code></pre>
+
+      <p>
+        Apesar do fato de que esses dois procedimentos são estruturalmente muito
+        diferentes, uma descrição mais abstrata das duas computações revela uma
+        grande semelhança. O primeiro programa
+      </p>
+      <ul>
+        <li>enumera as folhas de uma árvore;</li>
+        <li>filtra-as, selecionando as ímpares;</li>
+        <li>eleva ao quadrado cada uma das selecionadas; e</li>
+        <li>acumula os resultados usando <code>+</code>, começando com 0.</li>
+      </ul>
+
+      <p>O segundo programa</p>
+      <ul>
+        <li>
+          enumera os inteiros de 0 a
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>n</mi> </math
+          >;
+        </li>
+        <li>calcula o número de Fibonacci para cada inteiro;</li>
+        <li>filtra-os, selecionando os pares; e</li>
+        <li>
+          acumula os resultados usando <code>cons</code>, começando com a lista
+          vazia.
+        </li>
+      </ul>
+      <p>
+        Um engenheiro de processamento de sinais acharia natural conceituar
+        esses processos em termos de sinais fluindo através de uma cascata de
+        estágios, cada um dos quais implementa parte do plano do programa, como
+        mostrado na <a href="#Figure-2_002e7">Figura 2.7</a>. No
+        <code>sum-odd-squares</code>, começamos com um
+        <a id="index-enumerator"></a><em>enumerador</em>, que gera um "sinal"
+        consistindo nas folhas de uma árvore dada. Esse sinal é passado por um
+        <a id="index-filter-1"></a><em>filtro</em>, que elimina todos os
+        elementos exceto os ímpares. O sinal resultante é então passado por um
+        <a id="index-map"></a><em>map</em>, que é um "transdutor" que aplica o
+        procedimento <code>square</code> a cada elemento. A saída do map é então
+        alimentada para um <a id="index-accumulator"></a><em>acumulador</em>,
+        que combina os elementos usando <code>+</code>, começando de um 0
+        inicial. O plano para <code>even-fibs</code> é análogo.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-2_002e7"></a>
+        <object
+          style="width: 57.93ex; height: 16.23ex"
+          data="fig/chap2/Fig2.7e.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.7:</strong> Os planos de fluxo de sinal para os
+            procedimentos <code>sum-odd-squares</code> (topo) e
+            <code>even-fibs</code> (fundo) revelam a comunalidade entre os dois
+            programas.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Infelizmente, as duas definições de procedimentos acima não exibem essa
+        estrutura de fluxo de sinal. Por exemplo, se examinarmos o procedimento
+        <code>sum-odd-squares</code>, descobrimos que a enumeração é
+        implementada parcialmente pelos testes <code>null?</code> e
+        <code>pair?</code> e parcialmente pela estrutura recursiva da árvore do
+        procedimento. Da mesma forma, a acumulação é encontrada parcialmente nos
+        testes e parcialmente na adição usada na recursão. Em geral, não há
+        partes distintas de qualquer procedimento que correspondam aos elementos
+        na descrição do fluxo de sinal. Nossos dois procedimentos decompõem as
+        computações de uma maneira diferente, espalhando a enumeração pelo
+        programa e misturando-a com o map, o filtro e a acumulação. Se
+        pudéssemos organizar nossos programas para tornar a estrutura de fluxo
+        de sinal manifesta nos procedimentos que escrevemos, isso aumentaria a
+        clareza conceitual do código resultante.
+      </p>
+
+      <a id="Sequence-Operations"></a>
+      <h5 class="subsubheading">Operações de Sequência</h5>
+
+      <p>
+        A chave para organizar programas de forma a refletir mais claramente a
+        estrutura de fluxo de sinal é concentrar-se nos "sinais" que fluem de um
+        estágio no processo para o próximo. Se representarmos esses sinais como
+        listas, então podemos usar operações de lista para implementar o
+        processamento em cada um dos estágios. Por exemplo, podemos implementar
+        os estágios de mapeamento dos diagramas de fluxo de sinal usando o
+        procedimento <code>map</code> de <a href="#g_t2_002e2_002e1">2.2.1</a>:
+      </p>
+
+      <pre><code class="language-scheme">(map square (list 1 2 3 4 5))
+<i>(1 4 9 16 25)</i></code></pre>
+
+      <p>
+        Filtrar uma sequência para selecionar apenas os elementos que satisfazem
+        um predicado dado é realizado por:
+      </p>
+
+      <pre><code class="language-scheme">(define (filter predicate sequence)
+  (cond ((null? sequence) nil)
+        ((predicate (car sequence))
+         (cons (car sequence)
+               (filter predicate 
+                       (cdr sequence))))
+        (else  (filter predicate 
+                       (cdr sequence)))))</code></pre>
+
+      <p>Por exemplo,</p>
+
+      <pre><code class="language-scheme">(filter odd? (list 1 2 3 4 5))
+<i>(1 3 5)</i></code></pre>
+
+      <p>Acumulações podem ser implementadas por:</p>
+
+      <pre><code class="language-scheme">(define (accumulate op initial sequence)
+  (if (null? sequence)
+      initial
+      (op (car sequence)
+          (accumulate op 
+                      initial 
+                      (cdr sequence)))))
+
+(accumulate + 0 (list 1 2 3 4 5))
+<i>15</i>
+(accumulate * 1 (list 1 2 3 4 5))
+<i>120</i>
+(accumulate cons nil (list 1 2 3 4 5))
+<i>(1 2 3 4 5)</i></code></pre>
+
+      <p>
+        Tudo o que resta para implementar diagramas de fluxo de sinal é enumerar
+        a sequência de elementos a serem processados. Para
+        <code>even-fibs</code>, precisamos gerar a sequência de inteiros em um
+        determinado intervalo, o que podemos fazer da seguinte forma:
+      </p>
+
+      <pre><code class="language-scheme">(define (enumerate-interval low high)
+  (if (> low high)
+      nil
+      (cons low 
+            (enumerate-interval 
+             (+ low 1) 
+             high))))
+
+(enumerate-interval 2 7)
+<i>(2 3 4 5 6 7)</i></code></pre>
+
+      <p>
+        Para enumerar as folhas de uma árvore, podemos usar<a
+          class="footnote_link"
+          id="DOCF80"
+          href="#FOOT80"
+          ><sup>80</sup></a
+        >:
+      </p>
+
+      <pre><code class="language-scheme">(define (enumerate-tree tree)
+  (cond ((null? tree) nil)
+        ((not (pair? tree)) (list tree))
+        (else (append 
+               (enumerate-tree (car tree))
+               (enumerate-tree (cdr tree))))))
+
+(enumerate-tree (list 1 (list 2 (list 3 4)) 5))
+<i>(1 2 3 4 5)</i></code></pre>
+
+      <p>
+        Agora podemos reformular <code>sum-odd-squares</code> e
+        <code>even-fibs</code> como nos diagramas de fluxo de sinal. Para
+        <code>sum-odd-squares</code>, enumeramos a sequência de folhas da
+        árvore, filtramos para manter apenas os números ímpares na sequência,
+        elevamos ao quadrado cada elemento e somamos os resultados:
+      </p>
+
+      <pre><code class="language-scheme">(define (sum-odd-squares tree)
+  (accumulate 
+   +
+   0
+   (map square
+        (filter odd?
+                (enumerate-tree tree)))))</code></pre>
+
+      <p>
+        Para <code>even-fibs</code>, enumeramos os inteiros de 0 a
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+        >, geramos o número de Fibonacci para cada um desses inteiros, filtramos
+        a sequência resultante para manter apenas os elementos pares e
+        acumulamos os resultados em uma lista:
+      </p>
+
+      <pre><code class="language-scheme">(define (even-fibs n)
+  (accumulate 
+   cons
+   nil
+   (filter even?
+           (map fib
+                (enumerate-interval 0 n)))))</code></pre>
+
+      <p>
+        O valor de expressar programas como operações de sequência é que isso
+        nos ajuda a fazer designs de programas que são modulares, ou seja,
+        designs que são construídos combinando peças relativamente
+        independentes. Podemos incentivar o design modular fornecendo uma
+        biblioteca de componentes padrão junto com uma interface convencional
+        para conectar os componentes de maneiras flexíveis.
+      </p>
+
+      <p>
+        A construção modular é uma estratégia poderosa para controlar a
+        complexidade no design de engenharia. Em aplicações reais de
+        processamento de sinais, por exemplo, os designers regularmente
+        constroem sistemas por cascateamento de elementos selecionados de
+        famílias padronizadas de filtros e transdutores. Da mesma forma, as
+        operações de sequência fornecem uma biblioteca de elementos de programa
+        padrão que podemos misturar e combinar. Por exemplo, podemos reutilizar
+        peças dos procedimentos <code>sum-odd-squares</code> e
+        <code>even-fibs</code> em um programa que constrói uma lista dos
+        quadrados dos primeiros
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mi>n</mi><mo>+</mo><mn>1</mn></mrow
+          ></math
+        >
+        números de Fibonacci:
+      </p>
+
+      <pre><code class="language-scheme">(define (list-fib-squares n)
+  (accumulate 
+   cons
+   nil
+   (map square
+        (map fib
+             (enumerate-interval 0 n)))))
+
+(list-fib-squares 10)
+<i>(0 1 1 4 9 25 64 169 441 1156 3025)</i></code></pre>
+
+      <p>
+        Podemos rearranjar as peças e usá-las para calcular o produto dos
+        quadrados dos inteiros ímpares em uma sequência:
+      </p>
+
+      <pre><code class="language-scheme">(define 
+  (product-of-squares-of-odd-elements
+   sequence)
+  (accumulate 
+   *
+   1
+   (map square (filter odd? sequence))))
+
+(product-of-squares-of-odd-elements 
+ (list 1 2 3 4 5))
+<i>225</i></code></pre>
+
+      <p>
+        Também podemos formular aplicações convencionais de processamento de
+        dados em termos de operações de sequência. Suponha que temos uma
+        sequência de registros de pessoal e queremos encontrar o salário do
+        programador mais bem pago. Suponha que temos um seletor
+        <code>salary</code> que retorna o salário de um registro, e um predicado
+        <code>programmer?</code> que testa se um registro é para um programador.
+        Então podemos escrever:
+      </p>
+
+      <pre><code class="language-scheme">(define 
+  (salary-of-highest-paid-programmer
+   records)
+  (accumulate 
+   max
+   0
+   (map salary
+        (filter programmer? records))))</code></pre>
+
+      <p>
+        Esses exemplos dão apenas uma ideia da vasta gama de operações que podem
+        ser expressas como operações de sequência.<a
+          class="footnote_link"
+          id="DOCF81"
+          href="#FOOT81"
+          ><sup>81</sup></a
+        >
+      </p>
+
+      <p>
+        Sequências, implementadas aqui como listas, servem como uma interface
+        convencional que nos permite combinar módulos de processamento. Além
+        disso, quando representamos estruturas uniformemente como sequências,
+        temos localizado as dependências de estrutura de dados em nossos
+        programas para um pequeno número de operações de sequência. Ao mudar
+        essas, podemos experimentar com representações alternativas de
+        sequências, enquanto deixamos o design geral de nossos programas
+        intacto. Vamos explorar essa capacidade em
+        <a href="3_002e5.xhtml#g_t3_002e5">3.5</a>, quando generalizarmos o
+        paradigma de processamento de sequências para admitir sequências
+        infinitas.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e33"></a>Exercício 2.33:</strong>
+          Preencha as expressões faltantes para completar as seguintes
+          definições de algumas operações básicas de manipulação de listas como
+          acumulações:
+        </p>
+        <pre><code class="language-scheme">(define (map p sequence)
+  (accumulate (lambda (x y) ⟨??⟩) 
+              nil sequence))
+
+(define (append seq1 seq2)
+  (accumulate cons ⟨??⟩ ⟨??⟩))
+
+(define (length sequence)
+  (accumulate ⟨??⟩ 0 sequence))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e34"></a>Exercício 2.34:</strong> Avaliar
+          um polinômio em
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> em
+          um dado valor de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math>
+          pode ser formulado como uma acumulação. Avaliamos o polinômio
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><msub><mi>a</mi><mi>n</mi></msub
+              ><msup><mi>x</mi><mi>n</mi></msup></mrow
+            ><mo>+</mo
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><msub
+                ><mi>a</mi
+                ><mrow class="MJX-TeXAtom-ORD"
+                  ><mi>n</mi><mo>−</mo><mn>1</mn></mrow
+                ></msub
+              ><msup
+                ><mi>x</mi
+                ><mrow class="MJX-TeXAtom-ORD"
+                  ><mi>n</mi><mo>−</mo><mn>1</mn></mrow
+                ></msup
+              ></mrow
+            ><mo>+</mo><mo>⋯</mo><mo>+</mo
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><msub><mi>a</mi><mn>1</mn></msub
+              ><mi>x</mi></mrow
+            ><mo>+</mo><msub><mi>a</mi><mn>0</mn></msub></math
+          >
+          usando um algoritmo bem conhecido chamado
+          <a id="index-Horner_0027s-rule"></a><em>Regra de Horner</em>, que
+          estrutura a computação como
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mo stretchy="false">(</mo><mo>…</mo><mo stretchy="false">(</mo
+              ><msub><mi>a</mi><mi>n</mi></msub
+              ><mi>x</mi></mrow
+            ><mo>+</mo
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><msub
+                ><mi>a</mi
+                ><mrow class="MJX-TeXAtom-ORD"
+                  ><mi>n</mi><mo>−</mo><mn>1</mn></mrow
+                ></msub
+              ><mo stretchy="false">)</mo><mi>x</mi></mrow
+            ><mo>+</mo><mo>⋯</mo><mo>+</mo
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><msub><mi>a</mi><mn>1</mn></msub
+              ><mo stretchy="false">)</mo><mi>x</mi></mrow
+            ><mo>+</mo
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><msub><mi>a</mi><mn>0</mn></msub
+              ><mo>.</mo></mrow
+            ></math
+          >
+          Em outras palavras, começamos com
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>a</mi><mi>n</mi></msub></math
+          >, multiplicamos por
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math
+          >, adicionamos
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub
+              ><mi>a</mi
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>n</mi><mo>−</mo><mn>1</mn></mrow
+              ></msub
+            ></math
+          >, multiplicamos por
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math
+          >, e assim por diante, até chegarmos a
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>a</mi><mn>0</mn></msub></math
+          >.<a class="footnote_link" id="DOCF82" href="#FOOT82"
+            ><sup>82</sup></a
+          >
+        </p>
+        <p>
+          Preencha o seguinte modelo para produzir um procedimento que avalia um
+          polinômio usando a Regra de Horner. Suponha que os coeficientes do
+          polinômio estão arranjados em uma sequência, de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>a</mi><mn>0</mn></msub></math
+          >
+          até
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>a</mi><mi>n</mi></msub></math
+          >.
+        </p>
+        <pre><code class="language-scheme">(define 
+  (horner-eval x coefficient-sequence)
+  (accumulate 
+   (lambda (this-coeff higher-terms)
+     ⟨??⟩)
+   0
+   coefficient-sequence))</code></pre>
+
+        <p>
+          Por exemplo, para calcular
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mn>1</mn><mo>+</mo><mn>3</mn><mi>x</mi></mrow
+            ><mo>+</mo
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mn>5</mn><msup><mi>x</mi><mn>3</mn></msup
+              ><mo>+</mo><msup><mi>x</mi><mn>5</mn></msup></mrow
+            ></math
+          >
+          em
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>x</mi><mo>=</mo><mn>2</mn></mrow
+            ></math
+          >
+          você avaliaria:
+        </p>
+        <pre><code class="language-scheme">(horner-eval 2 (list 1 3 0 5 0 1))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e35"></a>Exercício 2.35:</strong>
+          Redefina <code>count-leaves</code> de
+          <a href="#g_t2_002e2_002e2">2.2.2</a> como uma acumulação:
+        </p>
+        <pre><code class="language-scheme">(define (count-leaves t)
+  (accumulate ⟨??⟩ ⟨??⟩ (map ⟨??⟩ ⟨??⟩)))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e36"></a>Exercício 2.36:</strong> O
+          procedimento <code>accumulate-n</code> é similar a
+          <code>accumulate</code>, exceto que ele toma como seu terceiro
+          argumento uma sequência de sequências, que são todas assumidas como
+          tendo o mesmo número de elementos. Ele aplica o procedimento de
+          acumulação designado para combinar todos os primeiros elementos das
+          sequências, todos os segundos elementos das sequências, e assim por
+          diante, e retorna uma sequência dos resultados. Por exemplo, se
+          <code>s</code> é uma sequência contendo quatro sequências,
+          <code>((1 2 3) (4 5 6) (7 8 9) (10 11 12))</code>, então o valor de
+          <code>(accumulate-n + 0 s)</code> deve ser a sequência
+          <code>(22 26 30)</code>. Preencha as expressões faltantes na seguinte
+          definição de <code>accumulate-n</code>:
+        </p>
+        <pre><code class="language-scheme">(define (accumulate-n op init seqs)
+  (if (null? (car seqs))
+      nil
+      (cons (accumulate op init ⟨??⟩)
+            (accumulate-n op init ⟨??⟩))))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e37"></a>Exercício 2.37:</strong> Suponha
+          que representamos vetores <b>v</b> =
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mo stretchy="false">(</mo><msub><mi>v</mi><mi>i</mi></msub
+              ><mo stretchy="false">)</mo></mrow
+            ></math
+          >
+          como sequências de números, e matrizes <b>m</b> =
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mo stretchy="false">(</mo
+              ><msub
+                ><mi>m</mi
+                ><mrow class="MJX-TeXAtom-ORD"><mi>i</mi><mi>j</mi></mrow></msub
+              ><mo stretchy="false">)</mo></mrow
+            ></math
+          >
+          como sequências de vetores (as linhas da matriz). Por exemplo, a
+          matriz
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"
+            ><mrow
+              ><mo>(</mo
+              ><mtable rowspacing="4pt" columnspacing="1em"
+                ><mtr
+                  ><mtd><mn>1</mn></mtd
+                  ><mtd><mn>2</mn></mtd
+                  ><mtd><mn>3</mn></mtd
+                  ><mtd><mn>4</mn></mtd></mtr
+                ><mtr
+                  ><mtd><mn>4</mn></mtd
+                  ><mtd><mn>5</mn></mtd
+                  ><mtd><mn>6</mn></mtd
+                  ><mtd><mn>6</mn></mtd></mtr
+                ><mtr
+                  ><mtd><mn>6</mn></mtd
+                  ><mtd><mn>7</mn></mtd
+                  ><mtd><mn>8</mn></mtd
+                  ><mtd><mn>9</mn></mtd></mtr
+                ></mtable
+              ><mo>)</mo></mrow
+            ></math
+          >
+          é representada como a sequência
+          <code>((1 2 3 4) (4 5 6 6) (6 7 8 9))</code>. Com essa representação,
+          podemos usar operações de sequência para expressar de forma concisa as
+          operações básicas de matriz e vetor. Essas operações (que são
+          descritas em qualquer livro de álgebra linear) são as seguintes:
+        </p>
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"
+          ><mtable
+            columnalign="right left"
+            rowspacing=".5em"
+            columnspacing="thickmathspace"
+            ><mtr
+              ><mtd><mtext>(dot-product v w)</mtext></mtd
+              ><mtd
+                ><mtext>retorna a soma</mtext
+                ><mspace width="thickmathspace" /><msub
+                  ><mi mathvariant="normal">Σ</mi><mi>i</mi></msub
+                ><msub><mi>v</mi><mi>i</mi></msub
+                ><msub><mi>w</mi><mi>i</mi></msub
+                ><mo>;</mo></mtd
+              ></mtr
+            ><mtr
+              ><mtd><mtext>(matrix-*-vector m v)</mtext></mtd
+              ><mtd
+                ><mtext>retorna o vetor</mtext
+                ><mspace width="thickmathspace" /><mrow class="MJX-TeXAtom-ORD"
+                  ><mi mathvariant="bold">t</mi></mrow
+                ><mo>,</mo></mtd
+              ></mtr
+            ><mtr
+              ><mtd /><mtd
+                ><mtext>onde</mtext><mspace width="thickmathspace" /><msub
+                  ><mi>t</mi><mi>i</mi></msub
+                ><mo>=</mo><msub><mi mathvariant="normal">Σ</mi><mi>j</mi></msub
+                ><msub
+                  ><mi>m</mi
+                  ><mrow class="MJX-TeXAtom-ORD"
+                    ><mi>i</mi><mi>j</mi></mrow
+                  ></msub
+                ><msub><mi>v</mi><mi>j</mi></msub
+                ><mo>;</mo></mtd
+              ></mtr
+            ><mtr
+              ><mtd><mtext>(matrix-*-matrix m n)</mtext></mtd
+              ><mtd
+                ><mtext>retorna a matriz</mtext
+                ><mspace width="thickmathspace" /><mrow class="MJX-TeXAtom-ORD"
+                  ><mi mathvariant="bold">p</mi></mrow
+                ><mo>,</mo></mtd
+              ></mtr
+            ><mtr
+              ><mtd /><mtd
+                ><mtext>onde</mtext><mspace width="thickmathspace" /><msub
+                  ><mi>p</mi
+                  ><mrow class="MJX-TeXAtom-ORD"
+                    ><mi>i</mi><mi>j</mi></mrow
+                  ></msub
+                ><mo>=</mo><msub><mi mathvariant="normal">Σ</mi><mi>k</mi></msub
+                ><msub
+                  ><mi>m</mi
+                  ><mrow class="MJX-TeXAtom-ORD"
+                    ><mi>i</mi><mi>k</mi></mrow
+                  ></msub
+                ><msub
+                  ><mi>n</mi
+                  ><mrow class="MJX-TeXAtom-ORD"
+                    ><mi>k</mi><mi>j</mi></mrow
+                  ></msub
+                ><mo>;</mo></mtd
+              ></mtr
+            ><mtr
+              ><mtd><mtext>(transpose m)</mtext></mtd
+              ><mtd
+                ><mtext>retorna a matriz</mtext
+                ><mspace width="thickmathspace" /><mrow class="MJX-TeXAtom-ORD"
+                  ><mi mathvariant="bold">n</mi></mrow
+                ><mo>,</mo></mtd
+              ></mtr
+            ><mtr
+              ><mtd /><mtd
+                ><mtext>onde</mtext><mspace width="thickmathspace" /><msub
+                  ><mi>n</mi
+                  ><mrow class="MJX-TeXAtom-ORD"
+                    ><mi>i</mi><mi>j</mi></mrow
+                  ></msub
+                ><mo>=</mo
+                ><msub
+                  ><mi>m</mi
+                  ><mrow class="MJX-TeXAtom-ORD"
+                    ><mi>j</mi><mi>i</mi></mrow
+                  ></msub
+                ><mo>.</mo></mtd
+              ></mtr
+            ></mtable
+          ></math
+        >
+        <p>
+          Podemos definir o produto escalar como<a
+            class="footnote_link"
+            id="DOCF83"
+            href="#FOOT83"
+            ><sup>83</sup></a
+          >:
+        </p>
+        <pre><code class="language-scheme">(define (dot-product v w)
+  (accumulate + 0 (map * v w)))</code></pre>
+
+        <p>
+          Preencha as expressões faltantes nos seguintes procedimentos para
+          computar as outras operações de matriz. (O procedimento
+          <code>accumulate-n</code> é definido em
+          <a href="#Exercise-2_002e36">Exercício 2.36</a>.)
+        </p>
+        <pre><code class="language-scheme">(define (matrix-*-vector m v)
+  (map ⟨??⟩ m))
+
+(define (transpose mat)
+  (accumulate-n ⟨??⟩ ⟨??⟩ mat))
+
+(define (matrix-*-matrix m n)
+  (let ((cols (transpose n)))
+    (map ⟨??⟩ m)))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e38"></a>Exercício 2.38:</strong> O
+          procedimento <code>accumulate</code> também é conhecido como
+          <code>fold-right</code>, porque combina o primeiro elemento da
+          sequência com o resultado de combinar todos os elementos à direita. Há
+          também um <code>fold-left</code>, que é similar ao
+          <code>fold-right</code>, exceto que ele combina elementos trabalhando
+          na direção oposta:
+        </p>
+        <pre><code class="language-scheme">(define (fold-left op initial sequence)
+  (define (iter result rest)
+    (if (null? rest)
+        result
+        (iter (op result (car rest))
+              (cdr rest))))
+  (iter initial sequence))</code></pre>
+
+        <p>Quais são os valores de:</p>
+        <pre><code class="language-scheme">(fold-right / 1 (list 1 2 3))
+(fold-left  / 1 (list 1 2 3))
+(fold-right list nil (list 1 2 3))
+(fold-left  list nil (list 1 2 3))</code></pre>
+
+        <p>
+          Dê uma propriedade que <code>op</code> deve satisfazer para garantir
+          que <code>fold-right</code> e <code>fold-left</code> produzirão os
+          mesmos valores para qualquer sequência.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e39"></a>Exercício 2.39:</strong>
+          Complete as seguintes definições de <code>reverse</code> (<a
+            href="#Exercise-2_002e18"
+            >Exercício 2.18</a
+          >) em termos de <code>fold-right</code> e <code>fold-left</code> de
+          <a href="#Exercise-2_002e38">Exercício 2.38</a>:
+        </p>
+        <pre><code class="language-scheme">(define (reverse sequence)
+  (fold-right 
+   (lambda (x y) ⟨??⟩) nil sequence))
+
+(define (reverse sequence)
+  (fold-left 
+   (lambda (x y) ⟨??⟩) nil sequence))</code></pre>
+      </blockquote>
+
+      <a id="Nested-Mappings"></a>
+      <h5 class="subsubheading">Mapeamentos Aninhados</h5>
+
+      <p>
+        Podemos estender o paradigma de sequência para incluir muitas
+        computações que são comumente expressas usando loops aninhados.<a
+          class="footnote_link"
+          id="DOCF84"
+          href="#FOOT84"
+          ><sup>84</sup></a
+        >
+        Considere este problema: Dado um inteiro positivo
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+        >, encontre todos os pares ordenados de inteiros positivos distintos
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>i</mi></math> e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>j</mi></math
+        >, onde
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mn>1</mn><mo>≤</mo><mi>j</mi></mrow
+          ><mo>&lt;</mo
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mi>i</mi><mo>≤</mo><mi>n</mi></mrow
+          ></math
+        >, tal que
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mi>i</mi><mo>+</mo><mi>j</mi></mrow
+          ></math
+        >
+        é primo. Por exemplo, se
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math> é 6,
+        então os pares são os seguintes:
+      </p>
+      <math xmlns="http://www.w3.org/1998/Math/MathML" display="block"
+        ><mtable
+          columnalign="center center center center center center center center"
+          rowspacing="4pt"
+          columnspacing="1em"
+          rowlines="none solid"
+          columnlines="solid none none none none none none"
+          ><mtr
+            ><mtd><mi>i</mi></mtd
+            ><mtd><mn>2</mn></mtd
+            ><mtd><mn>3</mn></mtd
+            ><mtd><mn>4</mn></mtd
+            ><mtd><mn>4</mn></mtd
+            ><mtd><mn>5</mn></mtd
+            ><mtd><mn>6</mn></mtd
+            ><mtd><mn>6</mn></mtd></mtr
+          ><mtr
+            ><mtd><mi>j</mi></mtd
+            ><mtd><mn>1</mn></mtd
+            ><mtd><mn>2</mn></mtd
+            ><mtd><mn>1</mn></mtd
+            ><mtd><mn>3</mn></mtd
+            ><mtd><mn>2</mn></mtd
+            ><mtd><mn>1</mn></mtd
+            ><mtd><mn>5</mn></mtd></mtr
+          ><mtr
+            ><mtd><mi>i</mi><mo>+</mo><mi>j</mi></mtd
+            ><mtd><mn>3</mn></mtd
+            ><mtd><mn>5</mn></mtd
+            ><mtd><mn>5</mn></mtd
+            ><mtd><mn>7</mn></mtd
+            ><mtd><mn>7</mn></mtd
+            ><mtd><mn>7</mn></mtd
+            ><mtd><mn>11</mn></mtd></mtr
+          ></mtable
+        ></math
+      >
+      <p>
+        Uma maneira natural de organizar essa computação é gerar a sequência de
+        todos os pares ordenados de inteiros positivos menores ou iguais a
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+        >, filtrar para selecionar aqueles pares cuja soma é prima, e então,
+        para cada par
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">(</mo><mi>i</mi><mo>,</mo><mi>j</mi
+            ><mo stretchy="false">)</mo></mrow
+          ></math
+        >
+        que passa pelo filtro, produzir o triplo
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">(</mo><mi>i</mi><mo>,</mo><mi>j</mi><mo>,</mo
+            ><mi>i</mi><mo>+</mo><mi>j</mi><mo stretchy="false">)</mo></mrow
+          ></math
+        >.
+      </p>
+      <p>
+        Aqui está uma maneira de gerar a sequência de pares: Para cada inteiro
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mi>i</mi><mo>≤</mo><mi>n</mi></mrow
+          ></math
+        >, enumeramos os inteiros
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mi>j</mi><mo>&lt;</mo><mi>i</mi></mrow
+          ></math
+        >, e para cada
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>i</mi></math> e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>j</mi></math>
+        geramos o par
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">(</mo><mi>i</mi><mo>,</mo><mi>j</mi
+            ><mo stretchy="false">)</mo></mrow
+          ></math
+        >. Em termos de operações de sequência, mapeamos ao longo da sequência
+        <code>(enumerate-interval 1 n)</code>. Para cada
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>i</mi></math> nessa
+        sequência, mapeamos ao longo da sequência
+        <code>(enumerate-interval 1 (- i 1))</code>. Para cada
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>j</mi></math> nessa
+        última sequência, geramos o par <code>(list i j)</code>. Isso nos dá uma
+        sequência de pares para cada
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>i</mi></math
+        >. Combinando todas as sequências para todos os
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>i</mi></math> (por
+        acumulação com <code>append</code>) produz a sequência necessária de
+        pares:<a class="footnote_link" id="DOCF85" href="#FOOT85"
+          ><sup>85</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(accumulate 
+ append
+ nil
+ (map (lambda (i)
+        (map (lambda (j) 
+               (list i j))
+             (enumerate-interval 
+              1 
+              (- i 1))))
+      (enumerate-interval 1 n)))</code></pre>
+
+      <p>
+        A combinação de mapeamento e acumulação com <code>append</code> é tão
+        comum nesse tipo de programa que vamos isolá-la como um procedimento
+        separado:
+      </p>
+      <pre><code class="language-scheme">(define (flatmap proc seq)
+  (accumulate append nil (map proc seq)))</code></pre>
+
+      <p>
+        Agora filtre essa sequência de pares para encontrar aqueles cuja soma é
+        prima. O predicado do filtro é chamado para cada elemento da sequência;
+        seu argumento é um par e ele deve extrair os inteiros do par. Assim, o
+        predicado para aplicar a cada elemento na sequência é:
+      </p>
+      <pre><code class="language-scheme">(define (prime-sum? pair)
+  (prime? (+ (car pair) (cadr pair))))</code></pre>
+
+      <p>
+        Finalmente, gere a sequência de resultados mapeando sobre os pares
+        filtrados usando o seguinte procedimento, que constrói um triplo
+        consistindo dos dois elementos do par junto com sua soma:
+      </p>
+      <pre><code class="language-scheme">(define (make-pair-sum pair)
+  (list (car pair) 
+        (cadr pair) 
+        (+ (car pair) (cadr pair))))</code></pre>
+
+      <p>Combinando todos esses passos, obtemos o procedimento completo:</p>
+      <pre><code class="language-scheme">(define (prime-sum-pairs n)
+  (map make-pair-sum
+       (filter 
+        prime-sum?
+        (flatmap
+         (lambda (i)
+           (map (lambda (j) 
+                  (list i j))
+                (enumerate-interval 
+                 1 
+                 (- i 1))))
+         (enumerate-interval 1 n)))))</code></pre>
+
+      <p>
+        Mapeamentos aninhados também são úteis para sequências que não enumeram
+        intervalos. Suponha que desejamos gerar todas as permutações de um
+        conjunto
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>S</mi><mo>;</mo></mrow></math
+        >
+        isto é, todas as maneiras de ordenar os itens no conjunto. Por exemplo,
+        as permutações de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo fence="false" stretchy="false">{</mo><mn>1</mn><mo>,</mo
+            ><mn>2</mn><mo>,</mo><mn>3</mn
+            ><mo fence="false" stretchy="false">}</mo></mrow
+          ></math
+        >
+        são
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo fence="false" stretchy="false">{</mo><mn>1</mn><mo>,</mo
+            ><mn>2</mn><mo>,</mo><mn>3</mn
+            ><mo fence="false" stretchy="false">}</mo></mrow
+          ></math
+        >,
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo fence="false" stretchy="false">{</mo><mn>1</mn><mo>,</mo
+            ><mn>3</mn><mo>,</mo><mn>2</mn
+            ><mo fence="false" stretchy="false">}</mo></mrow
+          ></math
+        >,
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo fence="false" stretchy="false">{</mo><mn>2</mn><mo>,</mo
+            ><mn>1</mn><mo>,</mo><mn>3</mn
+            ><mo fence="false" stretchy="false">}</mo></mrow
+          ></math
+        >,
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo fence="false" stretchy="false">{</mo><mn>2</mn><mo>,</mo
+            ><mn>3</mn><mo>,</mo><mn>1</mn
+            ><mo fence="false" stretchy="false">}</mo></mrow
+          ></math
+        >,
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo fence="false" stretchy="false">{</mo><mn>3</mn><mo>,</mo
+            ><mn>1</mn><mo>,</mo><mn>2</mn
+            ><mo fence="false" stretchy="false">}</mo></mrow
+          ></math
+        >, e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo fence="false" stretchy="false">{</mo><mn>3</mn><mo>,</mo
+            ><mn>2</mn><mo>,</mo><mn>1</mn
+            ><mo fence="false" stretchy="false">}</mo></mrow
+          ></math
+        >. Aqui está um plano para gerar as permutações de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math
+        >: Para cada item
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math
+        >, gere recursivamente a sequência de permutações de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mi>S</mi><mo>−</mo><mi>x</mi></mrow
+          ></math
+        >,<a class="footnote_link" id="DOCF86" href="#FOOT86"><sup>86</sup></a>
+        e adicione
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> à
+        frente de cada uma. Isso produz, para cada
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math
+        >, a sequência de permutações de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math> que
+        começam com
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math
+        >. Combinando essas sequências para todos os
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>x</mi></math> dá
+        todas as permutações de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math
+        >:<a class="footnote_link" id="DOCF87" href="#FOOT87"><sup>87</sup></a>
+      </p>
+      <pre><code class="language-scheme">(define (permutations s)
+  (if (null? s)   ; conjunto vazio?
+      (list nil)  ; sequência contendo o conjunto vazio
+      (flatmap (lambda (x)
+                 (map (lambda (p) 
+                        (cons x p))
+                      (permutations 
+                       (remove x s))))
+               s)))</code></pre>
+
+      <p>
+        Observe como essa estratégia reduz o problema de gerar permutações de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math> ao
+        problema de gerar as permutações de conjuntos com menos elementos que
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math
+        >. No caso terminal, trabalhamos até a lista vazia, que representa um
+        conjunto sem elementos. Para isso, geramos <code>(list nil)</code>, que
+        é uma sequência com um item, ou seja, o conjunto sem elementos. O
+        procedimento <code>remove</code> usado em
+        <code>permutations</code> retorna todos os itens em uma sequência dada,
+        exceto um item dado. Isso pode ser expresso como um simples filtro:
+      </p>
+      <pre><code class="language-scheme">(define (remove item sequence)
+  (filter (lambda (x) (not (= x item)))
+          sequence))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e40"></a>Exercício 2.40:</strong> Defina
+          um procedimento <code>unique-pairs</code> que, dado um inteiro
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+          >, gera a sequência de pares
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mo stretchy="false">(</mo><mi>i</mi><mo>,</mo><mi>j</mi
+              ><mo stretchy="false">)</mo></mrow
+            ></math
+          >
+          com
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"><mn>1</mn><mo>≤</mo><mi>j</mi></mrow
+            ><mo>&lt;</mo
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>i</mi><mo>≤</mo><mi>n</mi></mrow
+            ></math
+          >. Use <code>unique-pairs</code> para simplificar a definição de
+          <code>prime-sum-pairs</code> dada acima.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e41"></a>Exercício 2.41:</strong> Escreva
+          um procedimento para encontrar todos os triplos ordenados de inteiros
+          positivos distintos
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>i</mi></math
+          >, <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>j</mi></math
+          >, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math>
+          menores ou iguais a um dado inteiro
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math> que
+          somam a um dado inteiro
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>s</mi></math
+          >.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e42"></a>Exercício 2.42:</strong> O
+          "quebra-cabeça das oito rainhas" pergunta como colocar oito rainhas em
+          um tabuleiro de xadrez de forma que nenhuma rainha esteja em cheque de
+          qualquer outra (ou seja, nenhuma duas rainhas estão na mesma linha,
+          coluna ou diagonal). Uma solução possível é mostrada na
+          <a href="#Figure-2_002e8">Figura 2.8</a>. Uma maneira de resolver o
+          quebra-cabeça é trabalhar através do tabuleiro, colocando uma rainha
+          em cada coluna. Uma vez que colocamos
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>k</mi><mo>−</mo><mn>1</mn></mrow
+            ></math
+          >
+          rainhas, devemos colocar a
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msup
+              ><mi>k</mi
+              ><mrow class="MJX-TeXAtom-ORD"><mtext>th</mtext></mrow></msup
+            ></math
+          >
+          rainha em uma posição onde ela não esteja em cheque de nenhuma das
+          rainhas já no tabuleiro. Podemos formular essa abordagem
+          recursivamente: Assuma que já geramos a sequência de todas as maneiras
+          possíveis de colocar
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>k</mi><mo>−</mo><mn>1</mn></mrow
+            ></math
+          >
+          rainhas nas primeiras
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>k</mi><mo>−</mo><mn>1</mn></mrow
+            ></math
+          >
+          colunas do tabuleiro. Para cada uma dessas maneiras, gere um conjunto
+          estendido de posições colocando uma rainha em cada linha da
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msup
+              ><mi>k</mi
+              ><mrow class="MJX-TeXAtom-ORD"><mtext>th</mtext></mrow></msup
+            ></math
+          >
+          coluna. Agora filtre essas, mantendo apenas as posições para as quais
+          a rainha na
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msup
+              ><mi>k</mi
+              ><mrow class="MJX-TeXAtom-ORD"><mtext>th</mtext></mrow></msup
+            ></math
+          >
+          coluna está segura em relação às outras rainhas. Isso produz a
+          sequência de todas as maneiras de colocar
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math>
+          rainhas nas primeiras
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math>
+          colunas. Continuando esse processo, produziremos não apenas uma
+          solução, mas todas as soluções para o quebra-cabeça.
+        </p>
+        <figure class="float">
+          <a id="Figure-2_002e8"></a>
+          <object
+            style="width: 33.41ex; height: 33.41ex"
+            data="fig/chap2/Fig2.8c.std.svg"
+            type="image/svg+xml"
+          >
+            SVG
+          </object>
+          <figcaption class="float-caption">
+            <p>
+              <strong>Figura 2.8:</strong> Uma solução para o quebra-cabeça das
+              oito rainhas.
+            </p>
+          </figcaption>
+        </figure>
+
+        <p>
+          Implementamos essa solução como um procedimento <code>queens</code>,
+          que retorna uma sequência de todas as soluções para o problema de
+          colocar
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+          rainhas em um tabuleiro de xadrez
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>n</mi><mo>×</mo><mi>n</mi></mrow
+            ></math
+          >. <code>Queens</code> tem um procedimento interno
+          <code>queen-cols</code> que retorna a sequência de todas as maneiras
+          de colocar rainhas nas primeiras
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math>
+          colunas do tabuleiro.
+        </p>
+        <pre><code class="language-scheme">(define (queens board-size)
+  (define (queen-cols k)
+    (if (= k 0)
+        (list empty-board)
+        (filter
+         (lambda (positions) 
+           (safe? k positions))
+         (flatmap
+          (lambda (rest-of-queens)
+            (map (lambda (new-row)
+                   (adjoin-position 
+                    new-row 
+                    k 
+                    rest-of-queens))
+                 (enumerate-interval 
+                  1 
+                  board-size)))
+          (queen-cols (- k 1))))))
+  (queen-cols board-size))</code></pre>
+
+        <p>
+          Neste procedimento, <code>rest-of-queens</code> é uma maneira de
+          colocar
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>k</mi><mo>−</mo><mn>1</mn></mrow
+            ></math
+          >
+          rainhas nas primeiras
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>k</mi><mo>−</mo><mn>1</mn></mrow
+            ></math
+          >
+          colunas, e <code>new-row</code> é uma linha proposta na qual colocar a
+          rainha para a
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msup
+              ><mi>k</mi
+              ><mrow class="MJX-TeXAtom-ORD"><mtext>th</mtext></mrow></msup
+            ></math
+          >
+          coluna. Complete o programa implementando a representação para
+          conjuntos de posições do tabuleiro, incluindo o procedimento
+          <code>adjoin-position</code>, que adiciona uma nova posição de
+          linha-coluna a um conjunto de posições, e <code>empty-board</code>,
+          que representa um conjunto vazio de posições. Você também deve
+          escrever o procedimento <code>safe?</code>, que determina, para um
+          conjunto de posições, se a rainha na
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msup
+              ><mi>k</mi
+              ><mrow class="MJX-TeXAtom-ORD"><mtext>th</mtext></mrow></msup
+            ></math
+          >
+          coluna está segura em relação às outras. (Note que precisamos apenas
+          verificar se a nova rainha está segura—as outras rainhas já estão
+          garantidamente seguras em relação umas às outras.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e43"></a>Exercício 2.43:</strong> Louis
+          Reasoner está tendo um tempo terrível fazendo
+          <a href="#Exercise-2_002e42">Exercício 2.42</a>. Seu procedimento
+          <code>queens</code> parece funcionar, mas roda extremamente devagar.
+          (Louis nunca consegue esperar o suficiente para resolver até mesmo o
+          caso
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mn>6</mn><mo>×</mo><mn>6</mn></mrow
+            ></math
+          >.) Quando Louis pede ajuda a Eva Lu Ator, ela aponta que ele trocou a
+          ordem dos mapeamentos aninhados no <code>flatmap</code>, escrevendo-o
+          como:
+        </p>
+        <pre><code class="language-scheme">(flatmap
+ (lambda (new-row)
+   (map (lambda (rest-of-queens)
+          (adjoin-position 
+           new-row k rest-of-queens))
+        (queen-cols (- k 1))))
+ (enumerate-interval 1 board-size))</code></pre>
+
+        <p>
+          Explique por que essa troca faz o programa rodar devagar. Estime
+          quanto tempo o programa de Louis levará para resolver o quebra-cabeça
+          das oito rainhas, assumindo que o programa em
+          <a href="#Exercise-2_002e42">Exercício 2.42</a> resolve o
+          quebra-cabeça em tempo
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>T</mi></math
+          >.
+        </p>
+      </blockquote>
+
+      <a id="g_t2_002e2_002e4"></a>
+      <a id="Example_003a-A-Picture-Language"></a>
+      <h4 class="subsection">
+        <span class="secnum">2.2.4</span
+        ><span class="sectitle">Exemplo: Uma Linguagem de Imagens</span>
+      </h4>
+
+      <p>
+        Esta seção apresenta uma linguagem simples para desenhar imagens que
+        ilustra o poder da abstração de dados e do fechamento, e também explora
+        procedimentos de ordem superior de maneira essencial. A linguagem é
+        projetada para facilitar a experimentação com padrões como os da
+        <a href="#Figure-2_002e9">Figura 2.9</a>, que são compostos de elementos
+        repetidos que são deslocados e escalados.<a
+          class="footnote_link"
+          id="DOCF88"
+          href="#FOOT88"
+          ><sup>88</sup></a
+        >
+        Nessa linguagem, os objetos de dados sendo combinados são representados
+        como procedimentos em vez de estruturas de lista. Assim como
+        <code>cons</code>, que satisfaz a propriedade de fechamento, nos
+        permitiu construir facilmente estruturas de lista arbitrariamente
+        complicadas, as operações nessa linguagem, que também satisfazem a
+        propriedade de fechamento, nos permitem construir facilmente padrões
+        arbitrariamente complicados.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e9"></a>
+        <object
+          style="width: 55.86ex; height: 31.34ex"
+          data="fig/chap2/Fig2.9.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.9:</strong> Designs gerados com a linguagem de
+            imagens.
+          </p>
+        </figcaption>
+      </figure>
+
+      <a id="The-picture-language"></a>
+      <h5 class="subsubheading">A linguagem de imagens</h5>
+
+      <p>
+        Quando começamos nosso estudo de programação em
+        <a href="1_002e1.xhtml#g_t1_002e1">1.1</a>, enfatizamos a importância de
+        descrever uma linguagem focando nos primitivos da linguagem, seus meios
+        de combinação e seus meios de abstração. Vamos seguir esse framework
+        aqui.
+      </p>
+      <p>
+        Parte da elegância dessa linguagem de imagens é que há apenas um tipo de
+        elemento, chamado de <a id="index-painter"></a><em>pintor</em>. Um
+        pintor desenha uma imagem que é deslocada e escalada para caber dentro
+        de um quadro em forma de paralelogramo designado. Por exemplo, há um
+        pintor primitivo que chamaremos de <code>wave</code> que faz um desenho
+        rudimentar, como mostrado na <a href="#Figure-2_002e10">Figura 2.10</a>.
+        A forma real do desenho depende do quadro—todas as quatro imagens na
+        figura 2.10 são produzidas pelo mesmo pintor <code>wave</code>, mas com
+        respeito a quatro quadros diferentes. Pintores podem ser mais elaborados
+        que isso: O pintor primitivo chamado <code>rogers</code> pinta uma
+        imagem do fundador do <abbr>MIT</abbr>, William Barton Rogers, como
+        mostrado na <a href="#Figure-2_002e11">Figura 2.11</a>.<a
+          class="footnote_link"
+          id="DOCF89"
+          href="#FOOT89"
+          ><sup>89</sup></a
+        >
+        As quatro imagens na figura 2.11 são desenhadas com respeito aos mesmos
+        quatro quadros que as imagens <code>wave</code> na figura 2.10.
+      </p>
+      <figure class="float">
+        <a id="Figure-2_002e10"></a>
+        <object
+          style="width: 28.23ex; height: 30.22ex"
+          data="fig/chap2/Fig2.10.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.10:</strong> Imagens produzidas pelo pintor
+            <code>wave</code>, com respeito a quatro quadros diferentes. Os
+            quadros, mostrados com linhas pontilhadas, não fazem parte das
+            imagens.
+          </p>
+        </figcaption>
+      </figure>
+
+      <figure class="float">
+        <a id="Figure-2_002e11"></a>
+        <object
+          style="width: 28.23ex; height: 31.26ex"
+          data="fig/chap2/Fig2.11.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.11:</strong> Imagens de William Barton Rogers,
+            fundador e primeiro presidente do <abbr>MIT</abbr>, pintadas com
+            respeito aos mesmos quatro quadros da
+            <a href="#Figure-2_002e10">Figura 2.10</a> (imagem original do
+            Wikimedia Commons).
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Para combinar imagens, usamos várias operações que constroem novos
+        pintores a partir de pintores dados. Por exemplo, a operação
+        <code>beside</code> toma dois pintores e produz um novo pintor composto
+        que desenha a imagem do primeiro pintor na metade esquerda do quadro e a
+        imagem do segundo pintor na metade direita do quadro. Da mesma forma,
+        <code>below</code> toma dois pintores e produz um pintor composto que
+        desenha a imagem do primeiro pintor abaixo da imagem do segundo pintor.
+        Algumas operações transformam um único pintor para produzir um novo
+        pintor. Por exemplo, <code>flip-vert</code> toma um pintor e produz um
+        pintor que desenha sua imagem de cabeça para baixo, e
+        <code>flip-horiz</code> produz um pintor que desenha a imagem original
+        do pintor invertida da esquerda para a direita.
+      </p>
+      <p>
+        <a href="#Figure-2_002e12">Figura 2.12</a> mostra o desenho de um pintor
+        chamado <code>wave4</code> que é construído em dois estágios a partir de
+        <code>wave</code>:
+      </p>
+      <pre><code class="language-scheme">(define wave2 (beside wave (flip-vert wave)))
+(define wave4 (below wave2 wave2))</code></pre>
+
+      <figure class="float">
+        <a id="Figure-2_002e12"></a>
+        <object
+          style="width: 47.06ex; height: 26.07ex"
+          data="fig/chap2/Fig2.12.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.12:</strong> Criando uma figura complexa, começando
+            do pintor <code>wave</code> da
+            <a href="#Figure-2_002e10">Figura 2.10</a>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Ao construir uma imagem complexa dessa maneira, estamos explorando o
+        fato de que os pintores são fechados sob os meios de combinação da
+        linguagem. O <code>beside</code> ou <code>below</code> de dois pintores
+        é ele mesmo um pintor; portanto, podemos usá-lo como um elemento para
+        fazer pintores mais complexos. Assim como construir estruturas de lista
+        usando <code>cons</code>, o fechamento de nossos dados sob os meios de
+        combinação é crucial para a capacidade de criar estruturas complexas
+        enquanto usa apenas algumas operações.
+      </p>
+      <p>
+        Uma vez que podemos combinar pintores, gostaríamos de ser capazes de
+        abstrair padrões típicos de combinação de pintores. Vamos implementar as
+        operações de pintor como procedimentos Scheme. Isso significa que não
+        precisamos de um mecanismo especial de abstração na linguagem de
+        imagens: Como os meios de combinação são procedimentos Scheme comuns,
+        temos automaticamente a capacidade de fazer qualquer coisa com operações
+        de pintor que podemos fazer com procedimentos. Por exemplo, podemos
+        abstrair o padrão em <code>wave4</code> como:
+      </p>
+      <pre><code class="language-scheme">(define (flipped-pairs painter)
+  (let ((painter2 
+         (beside painter 
+                 (flip-vert painter))))
+    (below painter2 painter2)))</code></pre>
+
+      <p>e definir <code>wave4</code> como uma instância desse padrão:</p>
+      <pre><code class="language-scheme">(define wave4 (flipped-pairs wave))</code></pre>
+
+      <p>
+        Também podemos definir operações recursivas. Aqui está uma que faz
+        pintores se dividirem e ramificarem para a direita, como mostrado na
+        <a href="#Figure-2_002e13">Figura 2.13</a> e
+        <a href="#Figure-2_002e14">Figura 2.14</a>:
+      </p>
+      <pre><code class="language-scheme">(define (right-split painter n)
+  (if (= n 0)
+      painter
+      (let ((smaller (right-split painter 
+                                  (- n 1))))
+        (beside painter 
+                (below smaller smaller)))))</code></pre>
+
+      <figure class="float">
+        <a id="Figure-2_002e13"></a>
+        <object
+          style="width: 52.15ex; height: 68.9ex"
+          data="fig/chap2/Fig2.13a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.13:</strong> Planos recursivos para
+            <code>right-split</code> e <code>corner-split</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Podemos produzir padrões balanceados ramificando para cima, bem como
+        para a direita (veja <a href="#Exercise-2_002e44">Exercício 2.44</a>,
+        <a href="#Figure-2_002e13">Figura 2.13</a> e
+        <a href="#Figure-2_002e14">Figura 2.14</a>):
+      </p>
+      <pre><code class="language-scheme">(define (corner-split painter n)
+  (if (= n 0)
+      painter
+      (let ((up (up-split painter (- n 1)))
+            (right (right-split painter 
+                                (- n 1))))
+        (let ((top-left (beside up up))
+              (bottom-right (below right 
+                                   right))
+              (corner (corner-split painter 
+                                    (- n 1))))
+          (beside (below painter top-left)
+                  (below bottom-right 
+                         corner))))))</code></pre>
+
+      <figure class="float">
+        <a id="Figure-2_002e14"></a>
+        <object
+          style="width: 52.93ex; height: 62.25ex"
+          data="fig/chap2/Fig2.14b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.14:</strong> As operações recursivas
+            <code>right-split</code> e <code>corner-split</code> aplicadas aos
+            pintores <code>wave</code> e <code>rogers</code>. Combinando quatro
+            figuras <code>corner-split</code> produz designs simétricos
+            <code>square-limit</code> como mostrado na
+            <a href="#Figure-2_002e9">Figura 2.9</a>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Ao colocar quatro cópias de um
+        <code>corner-split</code> apropriadamente, obtemos um padrão chamado
+        <code>square-limit</code>, cuja aplicação a <code>wave</code> e
+        <code>rogers</code> é mostrada na
+        <a href="#Figure-2_002e9">Figura 2.9</a>:
+      </p>
+      <pre><code class="language-scheme">(define (square-limit painter n)
+  (let ((quarter (corner-split painter n)))
+    (let ((half (beside (flip-horiz quarter) 
+                        quarter)))
+      (below (flip-vert half) half))))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e44"></a>Exercício 2.44:</strong> Defina
+          o procedimento <code>up-split</code> usado por
+          <code>corner-split</code>. Ele é similar ao <code>right-split</code>,
+          exceto que ele troca os papéis de <code>below</code> e
+          <code>beside</code>.
+        </p>
+      </blockquote>
+
+      <a id="Higher_002dorder-operations"></a>
+      <h5 class="subsubheading">Operações de ordem superior</h5>
+
+      <p>
+        Além de abstrair padrões de combinação de pintores, podemos trabalhar em
+        um nível mais alto, abstraindo padrões de combinação de operações de
+        pintores. Ou seja, podemos ver as operações de pintores como elementos a
+        serem manipulados e podemos escrever meios de combinação para esses
+        elementos — procedimentos que recebem operações de pintores como
+        argumentos e criam novas operações de pintores.
+      </p>
+
+      <p>
+        Por exemplo, <code>flipped-pairs</code> e <code>square-limit</code> cada
+        um organiza quatro cópias da imagem de um pintor em um padrão quadrado;
+        eles diferem apenas na forma como orientam as cópias. Uma maneira de
+        abstrair esse padrão de combinação de pintores é com o seguinte
+        procedimento, que recebe quatro operações de pintores de um argumento e
+        produz uma operação de pintor que transforma um pintor dado com essas
+        quatro operações e organiza os resultados em um quadrado.
+        <code>Tl</code>, <code>tr</code>, <code>bl</code> e <code>br</code> são
+        as transformações a serem aplicadas à cópia superior esquerda, à cópia
+        superior direita, à cópia inferior esquerda e à cópia inferior direita,
+        respectivamente.
+      </p>
+
+      <pre><code class="language-scheme">(define (square-of-four tl tr bl br)
+  (lambda (painter)
+    (let ((top (beside (tl painter) 
+                       (tr painter)))
+          (bottom (beside (bl painter) 
+                          (br painter))))
+      (below bottom top))))</code></pre>
+
+      <p>
+        Então, <code>flipped-pairs</code> pode ser definido em termos de
+        <code>square-of-four</code> da seguinte forma:<a
+          class="footnote_link"
+          id="DOCF90"
+          href="#FOOT90"
+          ><sup>90</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (flipped-pairs painter)
+  (let ((combine4 
+         (square-of-four identity 
+                         flip-vert
+                         identity 
+                         flip-vert)))
+    (combine4 painter)))</code></pre>
+
+      <p>
+        e <code>square-limit</code> pode ser expresso como<a
+          class="footnote_link"
+          id="DOCF91"
+          href="#FOOT91"
+          ><sup>91</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (square-limit painter n)
+  (let ((combine4 
+         (square-of-four flip-horiz 
+                         identity
+                         rotate180 
+                         flip-vert)))
+    (combine4 (corner-split painter n))))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e45"></a>Exercício 2.45:</strong>
+          <code>Right-split</code> e <code>up-split</code> podem ser expressos
+          como instâncias de uma operação de divisão geral. Defina um
+          procedimento <code>split</code> com a propriedade de que avaliar
+        </p>
+
+        <pre><code class="language-scheme">(define right-split (split beside below))
+(define up-split (split below beside))</code></pre>
+
+        <p>
+          produz procedimentos <code>right-split</code> e
+          <code>up-split</code> com os mesmos comportamentos dos já definidos.
+        </p>
+      </blockquote>
+
+      <a id="Frames"></a>
+      <h5 class="subsubheading">Quadros</h5>
+
+      <p>
+        Antes de podermos mostrar como implementar pintores e seus meios de
+        combinação, devemos primeiro considerar quadros. Um quadro pode ser
+        descrito por três vetores — um vetor de origem e dois vetores de borda.
+        O vetor de origem especifica o deslocamento da origem do quadro em
+        relação a alguma origem absoluta no plano, e os vetores de borda
+        especificam os deslocamentos dos cantos do quadro em relação à sua
+        origem. Se as bordas forem perpendiculares, o quadro será retangular.
+        Caso contrário, o quadro será um paralelogramo mais geral.
+      </p>
+
+      <p>
+        <a href="#Figure-2_002e15">Figura 2.15</a> mostra um quadro e seus
+        vetores associados. De acordo com a abstração de dados, não precisamos
+        ser específicos ainda sobre como os quadros são representados, exceto
+        para dizer que há um construtor <code>make-frame</code>, que recebe três
+        vetores e produz um quadro, e três seletores correspondentes
+        <code>origin-frame</code>, <code>edge1-frame</code> e
+        <code>edge2-frame</code> (veja
+        <a href="#Exercise-2_002e47">Exercício 2.47</a>).
+      </p>
+
+      <figure class="float">
+        <a id="Figure-2_002e15"></a>
+        <object
+          style="width: 34.02ex; height: 32.03ex"
+          data="fig/chap2/Fig2.15a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 2.15:</strong> Um quadro é descrito por três vetores
+            — uma origem e duas bordas.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Usaremos coordenadas no quadrado unitário
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mn>0</mn>
+            <mo>≤<!-- ≤ --></mo>
+            <mi>x</mi>
+            <mo>,</mo>
+            <mi>y</mi>
+            <mo>≤<!-- ≤ --></mo>
+            <mn>1</mn>
+            <mo stretchy="false">)</mo>
+          </mrow>
+        </math>
+        para especificar imagens. Com cada quadro, associamos um
+        <a id="index-frame-coordinate-map"></a>
+        <em>mapa de coordenadas do quadro</em>, que será usado para deslocar e
+        escalar imagens para caber no quadro. O mapa transforma o quadrado
+        unitário no quadro mapeando o vetor
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi mathvariant="bold">v</mi>
+            </mrow>
+            <mo>=</mo>
+            <mo stretchy="false">(</mo>
+            <mi>x</mi>
+            <mo>,</mo>
+            <mi>y</mi>
+            <mo stretchy="false">)</mo>
+          </mrow>
+        </math>
+        para a soma vetorial
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mtext>Origin(Frame)</mtext>
+          </mrow>
+          <mo>+</mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>x</mi>
+            <mo>⋅<!-- ⋅ --></mo>
+            <msub>
+              <mtext>Edge</mtext>
+              <mn>1</mn>
+            </msub>
+            <mtext>(Frame)</mtext>
+          </mrow>
+          <mo>+</mo>
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>y</mi>
+            <mo>⋅<!-- ⋅ --></mo>
+            <msub>
+              <mtext>Edge</mtext>
+              <mn>2</mn>
+            </msub>
+            <mtext>(Frame)</mtext>
+            <mo>.</mo>
+          </mrow>
+        </math>
+        Por exemplo, (0, 0) é mapeado para a origem do quadro, (1, 1) para o
+        vértice diagonalmente oposto à origem, e (0.5, 0.5) para o centro do
+        quadro. Podemos criar o mapa de coordenadas de um quadro com o seguinte
+        procedimento:<a class="footnote_link" id="DOCF92" href="#FOOT92"
+          ><sup>92</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (frame-coord-map frame)
+  (lambda (v)
+    (add-vect
+     (origin-frame frame)
+     (add-vect 
+      (scale-vect (xcor-vect v)
+                  (edge1-frame frame))
+      (scale-vect (ycor-vect v)
+                  (edge2-frame frame))))))</code></pre>
+
+      <p>
+        Observe que aplicar <code>frame-coord-map</code> a um quadro retorna um
+        procedimento que, dado um vetor, retorna um vetor. Se o vetor de
+        argumento estiver no quadrado unitário, o vetor resultante estará no
+        quadro. Por exemplo,
+      </p>
+
+      <pre><code class="language-scheme">((frame-coord-map a-frame) (make-vect 0 0))</code></pre>
+
+      <p>retorna o mesmo vetor que</p>
+
+      <pre><code class="language-scheme">(origin-frame a-frame)</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e46"></a>Exercício 2.46:</strong> Um
+          vetor bidimensional
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi mathvariant="bold">v</mi>
+          </math>
+          que vai da origem a um ponto pode ser representado como um par
+          consistindo de uma coordenada
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>x</mi>
+          </math>
+          e uma coordenada
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>y</mi> </math
+          >. Implemente uma abstração de dados para vetores fornecendo um
+          construtor <code>make-vect</code> e seletores correspondentes
+          <code>xcor-vect</code> e <code>ycor-vect</code>. Em termos de seus
+          seletores e construtor, implemente procedimentos
+          <code>add-vect</code>, <code>sub-vect</code> e
+          <code>scale-vect</code> que realizam as operações de adição de
+          vetores, subtração de vetores e multiplicação de um vetor por um
+          escalar:
+          <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+            <mtable
+              columnalign="right center left"
+              rowspacing="3pt"
+              columnspacing="thickmathspace"
+            >
+              <mtr>
+                <mtd>
+                  <mo stretchy="false">(</mo>
+                  <msub>
+                    <mi>x</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo>,</mo>
+                  <msub>
+                    <mi>y</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo stretchy="false">)</mo>
+                  <mo>+</mo>
+                  <mo stretchy="false">(</mo>
+                  <msub>
+                    <mi>x</mi>
+                    <mn>2</mn>
+                  </msub>
+                  <mo>,</mo>
+                  <msub>
+                    <mi>y</mi>
+                    <mn>2</mn>
+                  </msub>
+                  <mo stretchy="false">)</mo>
+                </mtd>
+                <mtd>
+                  <mo>=</mo>
+                </mtd>
+                <mtd>
+                  <mo stretchy="false">(</mo>
+                  <msub>
+                    <mi>x</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo>+</mo>
+                  <msub>
+                    <mi>x</mi>
+                    <mn>2</mn>
+                  </msub>
+                  <mo>,</mo>
+                  <msub>
+                    <mi>y</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo>+</mo>
+                  <msub>
+                    <mi>y</mi>
+                    <mn>2</mn>
+                  </msub>
+                  <mo stretchy="false">)</mo>
+                  <mo>,</mo>
+                </mtd>
+              </mtr>
+              <mtr>
+                <mtd>
+                  <mo stretchy="false">(</mo>
+                  <msub>
+                    <mi>x</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo>,</mo>
+                  <msub>
+                    <mi>y</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo stretchy="false">)</mo>
+                  <mo>−<!-- − --></mo>
+                  <mo stretchy="false">(</mo>
+                  <msub>
+                    <mi>x</mi>
+                    <mn>2</mn>
+                  </msub>
+                  <mo>,</mo>
+                  <msub>
+                    <mi>y</mi>
+                    <mn>2</mn>
+                  </msub>
+                  <mo stretchy="false">)</mo>
+                </mtd>
+                <mtd>
+                  <mo>=</mo>
+                </mtd>
+                <mtd>
+                  <mo stretchy="false">(</mo>
+                  <msub>
+                    <mi>x</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo>−<!-- − --></mo>
+                  <msub>
+                    <mi>x</mi>
+                    <mn>2</mn>
+                  </msub>
+                  <mo>,</mo>
+                  <msub>
+                    <mi>y</mi>
+                    <mn>1</mn>
+                  </msub>
+                  <mo>−<!-- − --></mo>
+                  <msub>
+                    <mi>y</mi>
+                    <mn>2</mn>
+                  </msub>
+                  <mo stretchy="false">)</mo>
+                  <mo>,</mo>
+                </mtd>
+              </mtr>
+              <mtr>
+                <mtd>
+                  <mi>s</mi>
+                  <mo>⋅<!-- ⋅ --></mo>
+                  <mo stretchy="false">(</mo>
+                  <mi>x</mi>
+                  <mo>,</mo>
+                  <mi>y</mi>
+                  <mo stretchy="false">)</mo>
+                </mtd>
+                <mtd>
+                  <mo>=</mo>
+                </mtd>
+                <mtd>
+                  <mo stretchy="false">(</mo>
+                  <mi>s</mi>
+                  <mi>x</mi>
+                  <mo>,</mo>
+                  <mi>s</mi>
+                  <mi>y</mi>
+                  <mo stretchy="false">)</mo>
+                  <mo>.</mo>
+                </mtd>
+              </mtr>
+            </mtable>
+          </math>
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e47"></a>Exercício 2.47:</strong> Aqui
+          estão dois possíveis construtores para quadros:
+        </p>
+
+        <pre><code class="language-scheme">(define (make-frame origin edge1 edge2)
+  (list origin edge1 edge2))
+
+(define (make-frame origin edge1 edge2)
+  (cons origin (cons edge1 edge2)))</code></pre>
+
+        <p>
+          Para cada construtor, forneça os seletores apropriados para produzir
+          uma implementação para quadros.
+        </p>
+      </blockquote>
+
+      <a id="Painters"></a>
+      <h5 class="subsubheading">Pintores</h5>
+
+      <p>
+        Um pintor é representado como um procedimento que, dado um quadro como
+        argumento, desenha uma imagem específica deslocada e escalada para caber
+        no quadro. Ou seja, se <code>p</code> é um pintor e <code>f</code> é um
+        quadro, então produzimos a imagem de <code>p</code> em
+        <code>f</code> chamando <code>p</code> com <code>f</code> como
+        argumento.
+      </p>
+
+      <p>
+        Os detalhes de como os pintores primitivos são implementados dependem
+        das características particulares do sistema gráfico e do tipo de imagem
+        a ser desenhada. Por exemplo, suponha que temos um procedimento
+        <code>draw-line</code> que desenha uma linha na tela entre dois pontos
+        especificados. Então podemos criar pintores para desenhos de linhas,
+        como o pintor <code>wave</code> na
+        <a href="#Figure-2_002e10">Figura 2.10</a>, a partir de listas de
+        segmentos de linha da seguinte forma:<a
+          class="footnote_link"
+          id="DOCF93"
+          href="#FOOT93"
+          ><sup>93</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (segments-&gt;painter segment-list)
+  (lambda (frame)
+    (for-each
+     (lambda (segment)
+       (draw-line
+        ((frame-coord-map frame) 
+         (start-segment segment))
+        ((frame-coord-map frame) 
+         (end-segment segment))))
+     segment-list)))</code></pre>
+
+      <p>
+        Os segmentos são dados usando coordenadas com respeito ao quadrado
+        unitário. Para cada segmento na lista, o pintor transforma os pontos
+        finais do segmento com o mapa de coordenadas do quadro e desenha uma
+        linha entre os pontos transformados.
+      </p>
+
+      <p>
+        Representar pintores como procedimentos ergue uma poderosa barreira de
+        abstração na linguagem de imagens. Podemos criar e misturar todos os
+        tipos de pintores primitivos, baseados em uma variedade de capacidades
+        gráficas. Os detalhes de sua implementação não importam. Qualquer
+        procedimento pode servir como um pintor, desde que receba um quadro como
+        argumento e desenhe algo escalado para caber no quadro.<a
+          class="footnote_link"
+          id="DOCF94"
+          href="#FOOT94"
+          ><sup>94</sup></a
+        >
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e48"></a>Exercício 2.48:</strong> Um
+          segmento de linha direcionado no plano pode ser representado como um
+          par de vetores — o vetor que vai da origem ao ponto inicial do
+          segmento, e o vetor que vai da origem ao ponto final do segmento. Use
+          sua representação de vetor do
+          <a href="#Exercise-2_002e46">Exercício 2.46</a> para definir uma
+          representação para segmentos com um construtor
+          <code>make-segment</code> e seletores <code>start-segment</code> e
+          <code>end-segment</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e49"></a>Exercício 2.49:</strong> Use
+          <code>segments-&gt;painter</code> para definir os seguintes pintores
+          primitivos:
+        </p>
+        <ol>
+          <li>O pintor que desenha o contorno do quadro designado.</li>
+          <li>
+            O pintor que desenha um “X” conectando os cantos opostos do quadro.
+          </li>
+          <li>
+            O pintor que desenha uma forma de diamante conectando os pontos
+            médios dos lados do quadro.
+          </li>
+          <li>O pintor <code>wave</code>.</li>
+        </ol>
+      </blockquote>
+
+      <a id="Transforming-and-combining-painters"></a>
+      <h5 class="subsubheading">Transformando e combinando pintores</h5>
+
+      <p>
+        Uma operação em pintores (como <code>flip-vert</code> ou
+        <code>beside</code>) funciona criando um pintor que invoca os pintores
+        originais com respeito a quadros derivados do quadro de argumento.
+        Assim, por exemplo, <code>flip-vert</code> não precisa saber como um
+        pintor funciona para invertê-lo — ele só precisa saber como virar um
+        quadro de cabeça para baixo: O pintor invertido simplesmente usa o
+        pintor original, mas no quadro invertido.
+      </p>
+
+      <p>
+        As operações de pintores são baseadas no procedimento
+        <code>transform-painter</code>, que recebe como argumentos um pintor e
+        informações sobre como transformar um quadro e produz um novo pintor. O
+        pintor transformado, quando chamado em um quadro, transforma o quadro e
+        chama o pintor original no quadro transformado. Os argumentos para
+        <code>transform-painter</code> são pontos (representados como vetores)
+        que especificam os cantos do novo quadro: Quando mapeados no quadro, o
+        primeiro ponto especifica a origem do novo quadro e os outros dois
+        especificam as extremidades de seus vetores de borda. Assim, argumentos
+        dentro do quadrado unitário especificam um quadro contido dentro do
+        quadro original.
+      </p>
+
+      <pre><code class="language-scheme">(define (transform-painter 
+         painter origin corner1 corner2)
+  (lambda (frame)
+    (let ((m (frame-coord-map frame)))
+      (let ((new-origin (m origin)))
+        (painter (make-frame new-origin
+                  (sub-vect (m corner1) 
+                            new-origin)
+                  (sub-vect (m corner2)
+                            new-origin))))))</code></pre>
+
+      <p>Aqui está como inverter as imagens do pintor verticalmente:</p>
+
+      <pre><code class="language-scheme">(define (flip-vert painter)
+  (transform-painter 
+   painter
+   (make-vect 0.0 1.0)   ; nova origem
+   (make-vect 1.0 1.0)   ; novo fim de edge1
+   (make-vect 0.0 0.0))) ; novo fim de edge2</code></pre>
+
+      <p>
+        Usando <code>transform-painter</code>, podemos facilmente definir novas
+        transformações. Por exemplo, podemos definir um pintor que encolhe sua
+        imagem para o quarto superior direito do quadro que lhe é dado:
+      </p>
+
+      <pre><code class="language-scheme">(define (shrink-to-upper-right painter)
+  (transform-painter painter
+                     (make-vect 0.5 0.5)
+                     (make-vect 1.0 0.5)
+                     (make-vect 0.5 1.0)))</code></pre>
+
+      <p>
+        Outras transformações giram as imagens no sentido anti-horário em 90
+        graus<a class="footnote_link" id="DOCF95" href="#FOOT95"
+          ><sup>95</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (rotate90 painter)
+  (transform-painter painter
+                     (make-vect 1.0 0.0)
+                     (make-vect 1.0 1.0)
+                     (make-vect 0.0 0.0)))</code></pre>
+
+      <p>
+        ou esmagam as imagens em direção ao centro do quadro:<a
+          class="footnote_link"
+          id="DOCF96"
+          href="#FOOT96"
+          ><sup>96</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (squash-inwards painter)
+  (transform-painter painter
+                     (make-vect 0.0 0.0)
+                     (make-vect 0.65 0.35)
+                     (make-vect 0.35 0.65)))</code></pre>
+
+      <p>
+        A transformação de quadros também é a chave para definir meios de
+        combinar dois ou mais pintores. O procedimento <code>beside</code>, por
+        exemplo, recebe dois pintores, transforma-os para pintar nas metades
+        esquerda e direita de um quadro de argumento, respectivamente, e produz
+        um novo pintor composto. Quando o pintor composto recebe um quadro, ele
+        chama o primeiro pintor transformado para pintar na metade esquerda do
+        quadro e chama o segundo pintor transformado para pintar na metade
+        direita do quadro:
+      </p>
+
+      <pre><code class="language-scheme">(define (beside painter1 painter2)
+  (let ((split-point (make-vect 0.5 0.0)))
+    (let ((paint-left  (transform-painter 
+                        painter1
+                        (make-vect 0.0 0.0)
+                        split-point
+                        (make-vect 0.0 1.0)))
+          (paint-right (transform-painter
+                        painter2
+                        split-point
+                        (make-vect 1.0 0.0)
+                        (make-vect 0.5 1.0))))
+      (lambda (frame)
+        (paint-left frame)
+        (paint-right frame)))))</code></pre>
+
+      <p>
+        Observe como a abstração de dados do pintor, e em particular a
+        representação de pintores como procedimentos, torna
+        <code>beside</code> fácil de implementar. O procedimento
+        <code>beside</code> não precisa saber nada sobre os detalhes dos
+        pintores componentes, exceto que cada pintor desenhará algo em seu
+        quadro designado.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e50"></a>Exercício 2.50:</strong> Defina
+          a transformação <code>flip-horiz</code>, que inverte os pintores
+          horizontalmente, e transformações que giram os pintores no sentido
+          anti-horário em 180 graus e 270 graus.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e51"></a>Exercício 2.51:</strong> Defina
+          a operação <code>below</code> para pintores. <code>Below</code> recebe
+          dois pintores como argumentos. O pintor resultante, dado um quadro,
+          desenha com o primeiro pintor na parte inferior do quadro e com o
+          segundo pintor na parte superior. Defina <code>below</code> de duas
+          maneiras diferentes — primeiro escrevendo um procedimento que é
+          análogo ao procedimento <code>beside</code> dado acima, e novamente em
+          termos de <code>beside</code> e operações de rotação adequadas (do
+          <a href="#Exercise-2_002e50">Exercício 2.50</a>).
+        </p>
+      </blockquote>
+
+      <a id="Levels-of-language-for-robust-design"></a>
+      <h5 class="subsubheading">Níveis de linguagem para design robusto</h5>
+
+      <p>
+        A linguagem de imagens exercita algumas das ideias críticas que
+        introduzimos sobre abstração com procedimentos e dados. As abstrações de
+        dados fundamentais, pintores, são implementadas usando representações
+        procedurais, o que permite que a linguagem lide com diferentes
+        capacidades básicas de desenho de maneira uniforme. Os meios de
+        combinação satisfazem a propriedade de fechamento, o que nos permite
+        facilmente construir designs complexos. Finalmente, todas as ferramentas
+        para abstrair procedimentos estão disponíveis para nós para abstrair
+        meios de combinação para pintores.
+      </p>
+
+      <p>
+        Também obtivemos um vislumbre de outra ideia crucial sobre linguagens e
+        design de programas. Esta é a abordagem de
+        <a id="index-stratified-design"></a> <em>design estratificado</em>, a
+        noção de que um sistema complexo deve ser estruturado como uma sequência
+        de níveis que são descritos usando uma sequência de linguagens. Cada
+        nível é construído combinando partes que são consideradas primitivas
+        naquele nível, e as partes construídas em cada nível são usadas como
+        primitivas no próximo nível. A linguagem usada em cada nível de um
+        design estratificado tem primitivas, meios de combinação e meios de
+        abstração apropriados para aquele nível de detalhe.
+      </p>
+
+      <p>
+        O design estratificado permeia a engenharia de sistemas complexos. Por
+        exemplo, na engenharia de computadores, resistores e transistores são
+        combinados (e descritos usando uma linguagem de circuitos analógicos)
+        para produzir partes como portas AND e portas OR, que formam as
+        primitivas de uma linguagem para design de circuitos digitais.<a
+          class="footnote_link"
+          id="DOCF97"
+          href="#FOOT97"
+          ><sup>97</sup></a
+        >
+        Essas partes são combinadas para construir processadores, estruturas de
+        barramento e sistemas de memória, que por sua vez são combinados para
+        formar computadores, usando linguagens apropriadas para arquitetura de
+        computadores. Computadores são combinados para formar sistemas
+        distribuídos, usando linguagens apropriadas para descrever interconexões
+        de rede, e assim por diante.
+      </p>
+
+      <p>
+        Como um pequeno exemplo de estratificação, nossa linguagem de imagens
+        usa elementos primitivos (pintores primitivos) que são criados usando
+        uma linguagem que especifica pontos e linhas para fornecer as listas de
+        segmentos de linha para <code>segments-&gt;painter</code>, ou os
+        detalhes de sombreamento para um pintor como <code>rogers</code>. A
+        maior parte de nossa descrição da linguagem de imagens focou em combinar
+        esses primitivos, usando combinadores geométricos como
+        <code>beside</code> e <code>below</code>. Também trabalhamos em um nível
+        mais alto, considerando <code>beside</code> e <code>below</code> como
+        primitivos a serem manipulados em uma linguagem cujas operações, como
+        <code>square-of-four</code>, capturam padrões comuns de combinação de
+        combinadores geométricos.
+      </p>
+
+      <p>
+        O design estratificado ajuda a tornar os programas
+        <a id="index-robust"></a> <em>robustos</em>, ou seja, torna provável que
+        pequenas mudanças em uma especificação exijam mudanças
+        correspondentemente pequenas no programa. Por exemplo, suponha que
+        quiséssemos mudar a imagem baseada em <code>wave</code> mostrada na
+        <a href="#Figure-2_002e9">Figura 2.9</a>. Poderíamos trabalhar no nível
+        mais baixo para mudar a aparência detalhada do elemento
+        <code>wave</code>; poderíamos trabalhar no nível médio para mudar a
+        forma como <code>corner-split</code> replica o <code>wave</code>;
+        poderíamos trabalhar no nível mais alto para mudar como
+        <code>square-limit</code> organiza as quatro cópias do canto. Em geral,
+        cada nível de um design estratificado fornece um vocabulário diferente
+        para expressar as características do sistema, e um tipo diferente de
+        capacidade para mudá-lo.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-2_002e52"></a>Exercício 2.52:</strong> Faça
+          mudanças no limite quadrado de <code>wave</code> mostrado na
+          <a href="#Figure-2_002e9">Figura 2.9</a> trabalhando em cada um dos
+          níveis descritos acima. Em particular:
+        </p>
+        <ol>
+          <li>
+            Adicione alguns segmentos ao pintor primitivo <code>wave</code> do
+            <a href="#Exercise-2_002e49">Exercício 2.49</a> (para adicionar um
+            sorriso, por exemplo).
+          </li>
+          <li>
+            Mude o padrão construído por <code>corner-split</code> (por exemplo,
+            usando apenas uma cópia das imagens <code>up-split</code> e
+            <code>right-split</code> em vez de duas).
+          </li>
+          <li>
+            Modifique a versão de <code>square-limit</code> que usa
+            <code>square-of-four</code> para montar os cantos em um padrão
+            diferente. (Por exemplo, você pode fazer o grande Sr. Rogers olhar
+            para fora de cada canto do quadrado.)
+          </li>
+        </ol>
+      </blockquote>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+
+        <div id="FOOT72">
+          <p>
+            <a class="footnote_backlink" href="#DOCF72"><sup>72</sup></a> O uso
+            da palavra “fechamento” aqui vem da álgebra abstrata, onde um
+            conjunto de elementos é dito fechado sob uma operação se aplicar a
+            operação a elementos no conjunto produz um elemento que é novamente
+            um elemento do conjunto. A comunidade Lisp também (infelizmente) usa
+            a palavra “fechamento” para descrever um conceito totalmente não
+            relacionado: Um fechamento é uma técnica de implementação para
+            representar procedimentos com variáveis livres. Não usamos a palavra
+            “fechamento” neste segundo sentido neste livro.
+          </p>
+        </div>
+
+        <div id="FOOT73">
+          <p>
+            <a class="footnote_backlink" href="#DOCF73"><sup>73</sup></a> A
+            noção de que um meio de combinação deve satisfazer o fechamento é
+            uma ideia simples. Infelizmente, os combinadores de dados fornecidos
+            em muitas linguagens de programação populares não satisfazem o
+            fechamento, ou tornam o fechamento difícil de explorar. Em Fortran
+            ou Basic, normalmente se combinam elementos de dados montando-os em
+            arrays — mas não se pode formar arrays cujos elementos são eles
+            mesmos arrays. Pascal e C admitem estruturas cujos elementos são
+            estruturas. No entanto, isso exige que o programador manipule
+            ponteiros explicitamente e adira à restrição de que cada campo de
+            uma estrutura pode conter apenas elementos de uma forma
+            pré-especificada. Ao contrário do Lisp com seus pares, essas
+            linguagens não têm uma cola de propósito geral embutida que facilita
+            a manipulação de dados compostos de maneira uniforme. Essa limitação
+            está por trás do comentário de Alan Perlis em seu prefácio a este
+            livro: “Em Pascal, a proliferação de estruturas de dados declaráveis
+            induz uma especialização dentro de funções que inibe e penaliza a
+            cooperação casual. É melhor ter 100 funções operando em uma
+            estrutura de dados do que ter 10 funções operando em 10 estruturas
+            de dados.”
+          </p>
+        </div>
+
+        <div id="FOOT74">
+          <p>
+            <a class="footnote_backlink" href="#DOCF74"><sup>74</sup></a> Neste
+            livro, usamos <a id="index-list-1"></a> <em>lista</em> para
+            significar uma cadeia de pares terminada pelo marcador de fim de
+            lista. Em contraste, o termo <a id="index-list-structure"></a>
+            <em>estrutura de lista</em> refere-se a qualquer estrutura de dados
+            feita de pares, não apenas a listas.
+          </p>
+        </div>
+
+        <div id="FOOT75">
+          <p>
+            <a class="footnote_backlink" href="#DOCF75"><sup>75</sup></a> Como
+            aplicações aninhadas de <code>car</code> e <code>cdr</code> são
+            trabalhosas de escrever, dialetos de Lisp fornecem abreviações para
+            elas — por exemplo,
+          </p>
+
+          <pre><code class="language-scheme">(cadr ⟨arg⟩) = (car (cdr ⟨arg⟩))</code></pre>
+
+          <p>
+            Os nomes de todos esses procedimentos começam com <code>c</code> e
+            terminam com <code>r</code>. Cada <code>a</code> entre eles
+            representa uma operação <code>car</code> e cada
+            <code>d</code> representa uma operação <code>cdr</code>, a ser
+            aplicada na mesma ordem em que aparecem no nome. Os nomes
+            <code>car</code> e <code>cdr</code> persistem porque combinações
+            simples como <code>cadr</code> são pronunciáveis.
+          </p>
+        </div>
+
+        <div id="FOOT76">
+          <p>
+            <a class="footnote_backlink" href="#DOCF76"><sup>76</sup></a> É
+            notável quanta energia na padronização de dialetos de Lisp foi
+            dissipada em argumentos que são literalmente sobre nada:
+            <code>nil</code> deveria ser um nome comum? O valor de
+            <code>nil</code> deveria ser um símbolo? Deveria ser uma lista?
+            Deveria ser um par? Em Scheme, <code>nil</code> é um nome comum, que
+            usamos nesta seção como uma variável cujo valor é o marcador de fim
+            de lista (assim como <code>true</code> é uma variável comum que tem
+            um valor verdadeiro). Outros dialetos de Lisp, incluindo Common
+            Lisp, tratam <code>nil</code> como um símbolo especial. Os autores
+            deste livro, que suportaram muitas brigas de padronização de
+            linguagens, gostariam de evitar toda a questão. Uma vez que
+            introduzimos a citação em
+            <a href="2_002e3.xhtml#g_t2_002e3">2.3</a>, denotaremos a lista
+            vazia como <code>'()</code> e dispensaremos a variável
+            <code>nil</code> inteiramente.
+          </p>
+        </div>
+
+        <div id="FOOT77">
+          <p>
+            <a class="footnote_backlink" href="#DOCF77"><sup>77</sup></a> Para
+            definir <code>f</code> e <code>g</code> usando
+            <code>lambda</code> escreveríamos
+          </p>
+
+          <pre><code class="language-scheme">(define f (lambda (x y . z) ⟨body⟩))
+(define g (lambda w ⟨body⟩))</code></pre>
+        </div>
+
+        <div id="FOOT78">
+          <p>
+            <a class="footnote_backlink" href="#DOCF78"><sup>78</sup></a> Scheme
+            fornece um procedimento <code>map</code> mais geral do que o
+            descrito aqui. Este <code>map</code> mais geral recebe um
+            procedimento de
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>n</mi>
+            </math>
+            argumentos, junto com
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>n</mi>
+            </math>
+            listas, e aplica o procedimento a todos os primeiros elementos das
+            listas, todos os segundos elementos das listas, e assim por diante,
+            retornando uma lista dos resultados. Por exemplo:
+          </p>
+
+          <pre><code class="language-scheme">(map + 
+     (list 1 2 3) 
+     (list 40 50 60) 
+     (list 700 800 900))
+(741 852 963)
+
+(map (lambda (x y) (+ x (* 2 y)))
+     (list 1 2 3)
+     (list 4 5 6))
+(9 12 15)</code></pre>
+        </div>
+
+        <div id="FOOT79">
+          <p>
+            <a class="footnote_backlink" href="#DOCF79"><sup>79</sup></a> A
+            ordem das duas primeiras cláusulas no <code>cond</code> importa,
+            pois a lista vazia satisfaz <code>null?</code> e também não é um
+            par.
+          </p>
+        </div>
+
+        <div id="FOOT80">
+          <p>
+            <a class="footnote_backlink" href="#DOCF80"><sup>80</sup></a> Este
+            é, de fato, precisamente o procedimento <code>fringe</code> do
+            <a href="#Exercise-2_002e28">Exercício 2.28</a>. Aqui o renomeamos
+            para enfatizar que ele faz parte de uma família de procedimentos de
+            manipulação de sequências gerais.
+          </p>
+        </div>
+
+        <div id="FOOT81">
+          <p>
+            <a class="footnote_backlink" href="#DOCF81"><sup>81</sup></a>
+            Richard
+            <a href="References.xhtml#Waters-_00281979_0029">Waters (1979)</a>
+            desenvolveu um programa que analisa automaticamente programas
+            tradicionais em Fortran, vendo-os em termos de mapas, filtros e
+            acumulações. Ele descobriu que 90% do código no Fortran Scientific
+            Subroutine Package se encaixa perfeitamente nesse paradigma. Uma das
+            razões para o sucesso do Lisp como linguagem de programação é que as
+            listas fornecem um meio padrão para expressar coleções ordenadas
+            para que possam ser manipuladas usando operações de ordem superior.
+            A linguagem de programação APL deve muito de seu poder e apelo a uma
+            escolha semelhante. Em APL, todos os dados são representados como
+            arrays, e há um conjunto universal e conveniente de operadores
+            genéricos para todos os tipos de operações de arrays.
+          </p>
+        </div>
+
+        <div id="FOOT82">
+          <p>
+            <a class="footnote_backlink" href="#DOCF82"><sup>82</sup></a> De
+            acordo com <a href="References.xhtml#Knuth-1981">Knuth 1981</a>,
+            esta regra foi formulada por W. G. Horner no início do século XIX,
+            mas o método foi realmente usado por Newton mais de cem anos antes.
+            A regra de Horner avalia o polinômio usando menos adições e
+            multiplicações do que o método direto de primeiro calcular
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <msub>
+                  <mi>a</mi>
+                  <mi>n</mi>
+                </msub>
+                <msup>
+                  <mi>x</mi>
+                  <mi>n</mi>
+                </msup>
+              </mrow> </math
+            >, depois adicionar
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <msub>
+                  <mi>a</mi>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mi>n</mi>
+                    <mo>−<!-- − --></mo>
+                    <mn>1</mn>
+                  </mrow>
+                </msub>
+                <msup>
+                  <mi>x</mi>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mi>n</mi>
+                    <mo>−<!-- − --></mo>
+                    <mn>1</mn>
+                  </mrow>
+                </msup>
+              </mrow> </math
+            >, e assim por diante. Na verdade, é possível provar que qualquer
+            algoritmo para avaliar polinômios arbitrários deve usar pelo menos
+            tantas adições e multiplicações quanto a regra de Horner, e assim a
+            regra de Horner é um algoritmo ótimo para avaliação de polinômios.
+            Isso foi provado (para o número de adições) por A. M. Ostrowski em
+            um artigo de 1954 que essencialmente fundou o estudo moderno de
+            algoritmos ótimos. A afirmação análoga para multiplicações foi
+            provada por V. Y. Pan em 1966. O livro de
+            <a href="References.xhtml#Borodin-and-Munro-_00281975_0029"
+              >Borodin e Munro (1975)</a
+            >
+            fornece uma visão geral desses e outros resultados sobre algoritmos
+            ótimos.
+          </p>
+        </div>
+
+        <div id="FOOT83">
+          <p>
+            <a class="footnote_backlink" href="#DOCF83"><sup>83</sup></a> Esta
+            definição usa a versão estendida de <code>map</code> descrita na
+            <a href="#Footnote-78">Nota de rodapé 78</a>.
+          </p>
+        </div>
+
+        <div id="FOOT84">
+          <p>
+            <a class="footnote_backlink" href="#DOCF84"><sup>84</sup></a> Esta
+            abordagem para mapeamentos aninhados foi mostrada a nós por David
+            Turner, cujas linguagens KRC e Miranda fornecem formalismos
+            elegantes para lidar com esses constructos. Os exemplos nesta seção
+            (veja também <a href="#Exercise-2_002e42">Exercício 2.42</a>) são
+            adaptados de <a href="References.xhtml#Turner-1981">Turner 1981</a>.
+            Em <a href="3_002e5.xhtml#g_t3_002e5_002e3">3.5.3</a>, veremos como
+            esta abordagem se generaliza para sequências infinitas.
+          </p>
+        </div>
+
+        <div id="FOOT85">
+          <p>
+            <a class="footnote_backlink" href="#DOCF85"><sup>85</sup></a>
+            Estamos representando um par aqui como uma lista de dois elementos
+            em vez de como um par Lisp. Assim, o “par”
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo stretchy="false">(</mo>
+                <mi>i</mi>
+                <mo>,</mo>
+                <mi>j</mi>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+            é representado como <code>(list i j)</code>, não
+            <code>(cons i j)</code>.
+          </p>
+        </div>
+
+        <div id="FOOT86">
+          <p>
+            <a class="footnote_backlink" href="#DOCF86"><sup>86</sup></a> O
+            conjunto
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>S</mi>
+                <mo>−<!-- − --></mo>
+                <mi>x</mi>
+              </mrow>
+            </math>
+            é o conjunto de todos os elementos de
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>S</mi> </math
+            >, excluindo
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>x</mi> </math
+            >.
+          </p>
+        </div>
+
+        <div id="FOOT87">
+          <p>
+            <a class="footnote_backlink" href="#DOCF87"><sup>87</sup></a> Ponto
+            e vírgula em código Scheme são usados para introduzir
+            <a id="index-comments"></a> <em>comentários</em>. Tudo do ponto e
+            vírgula até o final da linha é ignorado pelo interpretador. Neste
+            livro não usamos muitos comentários; tentamos fazer nossos programas
+            auto-documentados usando nomes descritivos.
+          </p>
+        </div>
+
+        <div id="FOOT88">
+          <p>
+            <a class="footnote_backlink" href="#DOCF88"><sup>88</sup></a> A
+            linguagem de imagens é baseada na linguagem que Peter Henderson
+            criou para construir imagens como a xilogravura “Square Limit” de
+            M.C. Escher (veja
+            <a href="References.xhtml#Henderson-1982">Henderson 1982</a>). A
+            xilogravura incorpora um padrão escalado repetido, semelhante aos
+            arranjos desenhados usando o procedimento
+            <code>square-limit</code> nesta seção.
+          </p>
+        </div>
+
+        <div id="FOOT89">
+          <p>
+            <a class="footnote_backlink" href="#DOCF89"><sup>89</sup></a>
+            William Barton Rogers (1804-1882) foi o fundador e primeiro
+            presidente do <abbr>MIT</abbr>. Um geólogo e professor talentoso,
+            ele ensinou no William and Mary College e na Universidade da
+            Virgínia. Em 1859 ele se mudou para Boston, onde teve mais tempo
+            para pesquisa, trabalhou em um plano para estabelecer um “instituto
+            politécnico” e serviu como o primeiro Inspetor de Medidores de Gás
+            do Estado de Massachusetts.
+          </p>
+
+          <p>
+            Quando o <abbr>MIT</abbr> foi estabelecido em 1861, Rogers foi
+            eleito seu primeiro presidente. Rogers defendia um ideal de
+            “aprendizado útil” que era diferente da educação universitária da
+            época, com sua ênfase excessiva nos clássicos, que, como ele
+            escreveu, “ficam no caminho de uma instrução e disciplina mais
+            amplas, mais elevadas e mais práticas das ciências naturais e
+            sociais.” Essa educação também deveria ser diferente da educação
+            estreita de escolas técnicas. Nas palavras de Rogers:
+          </p>
+
+          <blockquote>
+            <p>
+              A distinção imposta pelo mundo entre o trabalhador prático e o
+              trabalhador científico é completamente fútil, e toda a experiência
+              dos tempos modernos demonstrou sua completa inutilidade.
+            </p>
+          </blockquote>
+
+          <p>
+            Rogers serviu como presidente do <abbr>MIT</abbr> até 1870, quando
+            renunciou devido a problemas de saúde. Em 1878, o segundo presidente
+            do <abbr>MIT</abbr>, John Runkle, renunciou sob a pressão de uma
+            crise financeira causada pelo Pânico de 1873 e a tensão de lutar
+            contra tentativas de Harvard de assumir o <abbr>MIT</abbr>. Rogers
+            retornou para ocupar o cargo de presidente até 1881.
+          </p>
+
+          <p>
+            Rogers desmaiou e morreu enquanto discursava para a turma de
+            formandos do <abbr>MIT</abbr> nas cerimônias de formatura de 1882.
+            Runkle citou as últimas palavras de Rogers em um discurso memorial
+            proferido no mesmo ano:
+          </p>
+
+          <blockquote>
+            <p>
+              “Enquanto estou aqui hoje e vejo o que o Instituto é, … lembro-me
+              dos primórdios da ciência. Lembro-me que há cento e cinquenta anos
+              Stephen Hales publicou um panfleto sobre o assunto do gás de
+              iluminação, no qual ele afirmou que suas pesquisas haviam
+              demonstrado que 128 grãos de carvão betuminoso – ” “Carvão
+              betuminoso”, estas foram suas últimas palavras na terra. Aqui ele
+              se inclinou para frente, como se consultasse algumas notas na mesa
+              diante dele, então lentamente retomando uma posição ereta,
+              levantou as mãos e foi transladado da cena de seus trabalhos e
+              triunfos terrenos para “o amanhã da morte”, onde os mistérios da
+              vida são resolvidos, e o espírito desencarnado encontra satisfação
+              infinita ao contemplar os novos e ainda insondáveis mistérios do
+              futuro infinito.
+            </p>
+          </blockquote>
+
+          <p>
+            Nas palavras de Francis A. Walker (terceiro presidente do
+            <abbr>MIT</abbr>):
+          </p>
+
+          <blockquote>
+            <p>
+              Toda a sua vida ele se conduziu de maneira mais fiel e heroica, e
+              ele morreu como um bom cavaleiro certamente desejaria, em
+              armadura, em seu posto, e na própria parte e ato do dever público.
+            </p>
+          </blockquote>
+        </div>
+
+        <div id="FOOT90">
+          <p>
+            <a class="footnote_backlink" href="#DOCF90"><sup>90</sup></a>
+            Equivalentemente, poderíamos escrever
+          </p>
+
+          <pre><code class="language-scheme">(define flipped-pairs
+  (square-of-four 
+   identity flip-vert identity flip-vert))</code></pre>
+        </div>
+
+        <div id="FOOT91">
+          <p>
+            <a class="footnote_backlink" href="#DOCF91"><sup>91</sup></a>
+            <code>Rotate180</code> gira um pintor em 180 graus (veja
+            <a href="#Exercise-2_002e50">Exercício 2.50</a>). Em vez de
+            <code>rotate180</code> poderíamos dizer
+            <code>(compose flip-vert flip-horiz)</code>, usando o procedimento
+            <code>compose</code> do
+            <a href="1_002e3.xhtml#Exercise-1_002e42">Exercício 1.42</a>.
+          </p>
+        </div>
+
+        <div id="FOOT92">
+          <p>
+            <a class="footnote_backlink" href="#DOCF92"><sup>92</sup></a>
+            <code>Frame-coord-map</code> usa as operações de vetor descritas no
+            <a href="#Exercise-2_002e46">Exercício 2.46</a> abaixo, que
+            assumimos terem sido implementadas usando alguma representação para
+            vetores. Devido à abstração de dados, não importa qual seja essa
+            representação de vetor, desde que as operações de vetor se comportem
+            corretamente.
+          </p>
+        </div>
+
+        <div id="FOOT93">
+          <p>
+            <a class="footnote_backlink" href="#DOCF93"><sup>93</sup></a>
+            <code>Segments-&gt;painter</code> usa a representação para segmentos
+            de linha descrita no
+            <a href="#Exercise-2_002e48">Exercício 2.48</a> abaixo. Ele também
+            usa o procedimento <code>for-each</code> descrito no
+            <a href="#Exercise-2_002e23">Exercício 2.23</a>.
+          </p>
+        </div>
+
+        <div id="FOOT94">
+          <p>
+            <a class="footnote_backlink" href="#DOCF94"><sup>94</sup></a> Por
+            exemplo, o pintor <code>rogers</code> da
+            <a href="#Figure-2_002e11">Figura 2.11</a> foi construído a partir
+            de uma imagem em tons de cinza. Para cada ponto em um quadro dado, o
+            pintor <code>rogers</code> determina o ponto na imagem que é mapeado
+            para ele sob o mapa de coordenadas do quadro e o sombreia de acordo.
+            Ao permitir diferentes tipos de pintores, estamos capitalizando a
+            ideia de dados abstratos discutida em
+            <a href="2_002e1.xhtml#g_t2_002e1_002e3">2.1.3</a>, onde
+            argumentamos que uma representação de número racional poderia ser
+            qualquer coisa que satisfaça uma condição apropriada. Aqui estamos
+            usando o fato de que um pintor pode ser implementado de qualquer
+            maneira, desde que desenhe algo no quadro designado.
+            <a href="2_002e1.xhtml#g_t2_002e1_002e3">2.1.3</a> também mostrou
+            como pares poderiam ser implementados como procedimentos. Pintores
+            são nosso segundo exemplo de uma representação procedural para
+            dados.
+          </p>
+        </div>
+
+        <div id="FOOT95">
+          <p>
+            <a class="footnote_backlink" href="#DOCF95"><sup>95</sup></a>
+            <code>Rotate90</code> é uma rotação pura apenas para quadros
+            quadrados, porque também estica e encolhe a imagem para caber no
+            quadro girado.
+          </p>
+        </div>
+
+        <div id="FOOT96">
+          <p>
+            <a class="footnote_backlink" href="#DOCF96"><sup>96</sup></a> As
+            imagens em forma de diamante na
+            <a href="#Figure-2_002e10">Figura 2.10</a> e
+            <a href="#Figure-2_002e11">Figura 2.11</a> foram criadas com
+            <code>squash-inwards</code> aplicado a <code>wave</code> e
+            <code>rogers</code>.
+          </p>
+        </div>
+
+        <div id="FOOT97">
+          <p>
+            <a class="footnote_backlink" href="#DOCF97"><sup>97</sup></a> A
+            seção <a href="3_002e3.xhtml#g_t3_002e3_002e4">3.3.4</a> descreve
+            uma dessas linguagens.
+          </p>
+        </div>
+      </div>
+
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="2_002e3.xhtml#g_t2_002e3" accesskey="n" rel="next">2.3</a>,
+          Anterior:
+          <a href="2_002e1.xhtml#g_t2_002e1" accesskey="p" rel="prev">2.1</a>,
+          Acima: <a href="#g_t2_002e2" accesskey="u" rel="prev">2.2</a> [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Ir para o final"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
+</html>

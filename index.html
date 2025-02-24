@@ -45,9 +45,13 @@
         align-items: center;
         justify-content: center;
         margin: 0 auto;
+        padding: 0;
         width: max-content;
-        border-radius: 15px;
+        height: calc(100dvh - 6rem);
+        border-radius: 0 0 15px 15px;
         box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.342);
+        position: fixed;
+        top: 0;
       }
 
       a {
@@ -57,32 +61,42 @@
       }
 
       img {
-        padding: 1.5rem 1rem;
-        max-width: calc(100% - 3rem);
+        padding: 0 1rem;
+        max-width: calc(100% - 2rem);
         margin: 0 auto;
         border-radius: 15px;
       }
 
       div {
+        position: fixed;
+        bottom: 2rem;
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
+        margin: 0;
+        padding: 0;
       }
 
-      div a {
+      div a,
+      div span {
         color: rgb(0, 0, 0);
         opacity: 0.7;
         font-family: "default";
         font-size: 150%;
         transition: all 0.3s ease-in-out;
-        padding: 1rem;
+        padding: 0;
+        margin: 0;
       }
 
       div a:hover {
         color: #a02c2cff;
         opacity: 1;
+      }
+
+      #cover {
+        display: block;
       }
 
       @media (max-width: 800px) {
@@ -107,6 +121,7 @@
       <a href="https://github.com/Jhonatafs" target="_blank" class="icon_github"
         >&nbsp;&nbsp;Jhonfs</a
       >
+      <span>&nbsp;|&nbsp;</span>
       <a
         href="https://github.com/sarabander/sicp"
         target="_blank"
