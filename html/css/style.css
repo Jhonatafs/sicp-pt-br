@@ -580,15 +580,18 @@ a#References ~ p {
   padding: 0.4ex 0ex;
 }
 
-@media screen and (max-width: 812px) {
-  figure {
-    max-width: 100%;
-    width: 100%;
-  }
+/*[ @Jhonfs ]*/
+figure {
+  max-width: 100% !important;
+  width: 100% !important;
+}
 
-  object {
-    max-width: 100%;
-    width: 100%;
-    object-fit: contain;
-  }
+object {
+  max-width: 100% !important;
+  width: 100% !important;
+  object-fit: contain !important;
+}
+
+figure svg {
+  max-width: 100% !important;
 }
