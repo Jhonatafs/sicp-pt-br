@@ -728,4 +728,374 @@
         <mo stretchy="false">)</mo>
       </mrow>
     </math> passos, porque realizamos uma varredura completa de <code>set2</code> para cada elemento de <code>set1</code>. Mas com a representação ordenada, podemos usar um método mais inteligente. Comece comparando os elementos iniciais, <code>x1</code> e <code>x2</code>, dos dois conjuntos. Se <code>x1</code> for igual a <code>x2</code>, isso dá um elemento da interseção, e o resto da interseção é a interseção dos <code>cdr</code>-s dos dois conjuntos. Suponha, no entanto, que <code>x1</code> seja menor que <code>x2</code>. Como <code>x2</code> é o menor elemento em <code>set2</code>, podemos concluir imediatamente que <code>x1</code> não pode aparecer em <code>set2</code> e, portanto, não está na interseção. Portanto, a interseção é igual à interseção de <code>set2</code> com o <code>cdr</code> de <code>set1</code>. Da mesma forma, se <code>x2</code> for menor que <code>x1</code>, a interseção é dada pela interseção de <code>set1</code> com o <code>cdr</code> de <code>set2</code>. Aqui está o procedimento:</p>
-    <pre><code class="language-scheme">(define (intersection
+    <pre><code class="language-scheme">(define (intersection-set set1 set2)
+  (if (or (null? set1) (null? set2))
+      '()
+      (let ((x1 (car set1)) (x2 (car set2)))
+        (cond ((= x1 x2)
+               (cons x1 (intersection-set 
+                         (cdr set1)
+                         (cdr set2))))
+              ((< x1 x2) (intersection-set 
+                          (cdr set1) 
+                          set2))
+              ((< x2 x1) (intersection-set 
+                          set1 
+                          (cdr set2)))))))</code></pre>
+
+    <p>Para estimar o número de passos necessários por esse processo, observe que a cada passo reduzimos o problema de interseção ao cálculo de interseções de conjuntos menores—removendo o primeiro elemento de <code>set1</code> ou <code>set2</code> ou ambos. Assim, o número de passos necessários é no máximo a soma dos tamanhos de <code>set1</code> e <code>set2</code>, em vez do produto dos tamanhos como na representação não ordenada. Isso é crescimento <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <mi>n</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math> em vez de <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <msup>
+          <mi>n</mi>
+          <mn>2</mn>
+        </msup>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math>—uma aceleração considerável, mesmo para conjuntos de tamanho moderado.</p>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e61"></a>Exercício 2.61:</strong> Dê uma implementação de <code>adjoin-set</code> usando a representação ordenada. Por analogia com <code>element-of-set?</code>, mostre como tirar vantagem da ordenação para produzir um procedimento que requer, em média, cerca de metade do número de passos em relação à representação não ordenada.</p>
+    </blockquote>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e62"></a>Exercício 2.62:</strong> Dê uma implementação <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi mathvariant="normal">Θ<!-- Θ --></mi>
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo stretchy="false">)</mo>
+          </mrow>
+        </math> de <code>union-set</code> para conjuntos representados como listas ordenadas.</p>
+    </blockquote>
+
+    <a id="Sets-as-binary-trees"></a>
+    <h5 class="subsubheading">Conjuntos como árvores binárias</h5>
+
+    <p>Podemos fazer melhor que a representação de lista ordenada, organizando os elementos do conjunto na forma de uma árvore. Cada nó da árvore contém um elemento do conjunto, chamado de "entrada" naquele nó, e um link para cada um de dois outros (possivelmente vazios) nós. O link "esquerdo" aponta para elementos menores que o do nó, e o link "direito" aponta para elementos maiores que o do nó. <a href="#Figure-2_002e16">Figura 2.16</a> mostra algumas árvores que representam o conjunto <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mo fence="false" stretchy="false">{</mo>
+        <mn>1</mn>
+        <mo>,</mo>
+        <mn>3</mn>
+        <mo>,</mo>
+        <mn>5</mn>
+        <mo>,</mo>
+        <mn>7</mn>
+        <mo>,</mo>
+        <mn>9</mn>
+        <mo>,</mo>
+        <mn>11</mn>
+        <mo fence="false" stretchy="false">}</mo>
+      </mrow>
+    </math>. O mesmo conjunto pode ser representado por uma árvore de várias maneiras diferentes. A única coisa que exigimos para uma representação válida é que todos os elementos na subárvore esquerda sejam menores que a entrada do nó e que todos os elementos na subárvore direita sejam maiores.</p>
+
+    <figure class="float">
+        <a id="Figure-2_002e16"></a>
+        <object style="width: 45.93ex; height: 21.50ex;" data="fig/chap2/Fig2.16c.std.svg" type="image/svg+xml">SVG</object>
+        <figcaption class="float-caption">
+            <p><strong>Figura 2.16:</strong> Várias árvores binárias que representam o conjunto <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo fence="false" stretchy="false">{</mo>
+                <mn>1</mn>
+                <mo>,</mo>
+                <mn>3</mn>
+                <mo>,</mo>
+                <mn>5</mn>
+                <mo>,</mo>
+                <mn>7</mn>
+                <mo>,</mo>
+                <mn>9</mn>
+                <mo>,</mo>
+                <mn>11</mn>
+                <mo fence="false" stretchy="false">}</mo>
+              </mrow>
+            </math>.</p>
+        </figcaption>
+    </figure>
+
+    <p>A vantagem da representação em árvore é a seguinte: Suponha que queremos verificar se um número <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>x</mi>
+    </math> está contido em um conjunto. Começamos comparando <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>x</mi>
+    </math> com a entrada no nó superior. Se <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>x</mi>
+    </math> for menor que isso, sabemos que precisamos apenas procurar na subárvore esquerda; se <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>x</mi>
+    </math> for maior, precisamos apenas procurar na subárvore direita. Agora, se a árvore estiver "balanceada", cada uma dessas subárvores terá cerca de metade do tamanho da árvore original. Assim, em um passo, reduzimos o problema de procurar em uma árvore de tamanho <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>n</mi>
+    </math> para procurar em uma árvore de tamanho <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi>n</mi>
+        <mrow class="MJX-TeXAtom-ORD">
+          <mo>/</mo>
+        </mrow>
+        <mn>2</mn>
+      </mrow>
+    </math>.
+    Como o tamanho da árvore é reduzido à metade a cada passo, devemos esperar que o número de passos necessários para procurar em uma árvore de tamanho <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>n</mi>
+    </math> cresça como <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <mi>log</mi>
+        <mo>⁡<!-- ⁡ --></mo>
+        <mi>n</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math>.<a class="footnote_link" id="DOCF104" href="#FOOT104"><sup>104</sup></a> Para grandes conjuntos, isso será uma aceleração significativa em relação às representações anteriores.</p>
+
+    <p>Podemos representar árvores usando listas. Cada nó será uma lista de três itens: a entrada no nó, a subárvore esquerda e a subárvore direita. Uma subárvore esquerda ou direita da lista vazia indicará que não há subárvore conectada lá. Podemos descrever essa representação pelos seguintes procedimentos:<a class="footnote_link" id="DOCF105" href="#FOOT105"><sup>105</sup></a></p>
+    <pre><code class="language-scheme">(define (entry tree) (car tree))
+(define (left-branch tree) (cadr tree))
+(define (right-branch tree) (caddr tree))
+(define (make-tree entry left right)
+  (list entry left right))</code></pre>
+
+    <p>Agora podemos escrever o procedimento <code>element-of-set?</code> usando a estratégia descrita acima:</p>
+    <pre><code class="language-scheme">(define (element-of-set? x set)
+  (cond ((null? set) false)
+        ((= x (entry set)) true)
+        ((< x (entry set))
+         (element-of-set? 
+          x 
+          (left-branch set)))
+        ((> x (entry set))
+         (element-of-set? 
+          x 
+          (right-branch set)))))</code></pre>
+
+    <p>Adicionar um item a um conjunto é implementado de forma semelhante e também requer <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <mi>log</mi>
+        <mo>⁡<!-- ⁡ --></mo>
+        <mi>n</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math> passos. Para adicionar um item <code>x</code>, comparamos <code>x</code> com a entrada do nó para determinar se <code>x</code> deve ser adicionado ao ramo direito ou ao ramo esquerdo, e tendo adicionado <code>x</code> ao ramo apropriado, juntamos esse ramo recém-construído com a entrada original e o outro ramo. Se <code>x</code> for igual à entrada, simplesmente retornamos o nó. Se nos pedirem para adicionar <code>x</code> a uma árvore vazia, geramos uma árvore que tem <code>x</code> como entrada e ramos esquerdo e direito vazios. Aqui está o procedimento:</p>
+    <pre><code class="language-scheme">(define (adjoin-set x set)
+  (cond ((null? set) (make-tree x '() '()))
+        ((= x (entry set)) set)
+        ((< x (entry set))
+         (make-tree 
+          (entry set)
+          (adjoin-set x (left-branch set))
+          (right-branch set)))
+        ((> x (entry set))
+         (make-tree
+          (entry set)
+          (left-branch set)
+          (adjoin-set x (right-branch set))))))</code></pre>
+
+    <p>A afirmação acima de que a procura na árvore pode ser realizada em um número logarítmico de passos depende da suposição de que a árvore está "balanceada", ou seja, que as subárvores esquerda e direita de cada árvore têm aproximadamente o mesmo número de elementos, de modo que cada subárvore contém cerca de metade dos elementos de seu pai. Mas como podemos ter certeza de que as árvores que construímos estarão balanceadas? Mesmo que comecemos com uma árvore balanceada, adicionar elementos com <code>adjoin-set</code> pode produzir um resultado desbalanceado. Como a posição de um elemento recém-adicionado depende de como o elemento se compara com os itens já no conjunto, podemos esperar que, se adicionarmos elementos "aleatoriamente", a árvore tenderá a ser balanceada em média. Mas isso não é uma garantia. Por exemplo, se começarmos com um conjunto vazio e adicionarmos os números de 1 a 7 em sequência, terminaremos com a árvore altamente desbalanceada mostrada em <a href="#Figure-2_002e17">Figura 2.17</a>. Nessa árvore, todas as subárvores esquerdas estão vazias, então ela não tem vantagem sobre uma simples lista ordenada. Uma maneira de resolver esse problema é definir uma operação que transforma uma árvore arbitrária em uma árvore balanceada com os mesmos elementos. Então, podemos realizar essa transformação após cada poucas operações <code>adjoin-set</code> para manter nosso conjunto em equilíbrio. Há também outras maneiras de resolver esse problema, a maioria das quais envolve projetar novas estruturas de dados para as quais a procura e a inserção podem ser feitas em <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <mi mathvariant="normal">Θ<!-- Θ --></mi>
+        <mo stretchy="false">(</mo>
+        <mi>log</mi>
+        <mo>⁡<!-- ⁡ --></mo>
+        <mi>n</mi>
+        <mo stretchy="false">)</mo>
+      </mrow>
+    </math> passos.<a class="footnote_link" id="DOCF106" href="#FOOT106"><sup>106</sup></a></p>
+
+    <figure class="float">
+        <a id="Figure-2_002e17"></a>
+        <object style="width: 26.68ex; height: 26.51ex;" data="fig/chap2/Fig2.17a.std.svg" type="image/svg+xml">SVG</object>
+        <figcaption class="float-caption">
+            <p><strong>Figura 2.17:</strong> Árvore desbalanceada produzida ao adicionar 1 a 7 em sequência.</p>
+        </figcaption>
+    </figure>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e63"></a>Exercício 2.63:</strong> Cada um dos dois procedimentos a seguir converte uma árvore binária em uma lista.</p>
+        <pre><code class="language-scheme">(define (tree->list-1 tree)
+  (if (null? tree)
+      '()
+      (append 
+       (tree->list-1 
+        (left-branch tree))
+       (cons (entry tree)
+             (tree->list-1 
+              (right-branch tree))))))
+
+(define (tree->list-2 tree)
+  (define (copy-to-list tree result-list)
+    (if (null? tree)
+        result-list
+        (copy-to-list 
+         (left-branch tree)
+         (cons (entry tree)
+               (copy-to-list 
+                (right-branch tree)
+                result-list)))))
+  (copy-to-list tree '()))</code></pre>
+
+        <ol>
+            <li> Os dois procedimentos produzem o mesmo resultado para toda árvore? Se não, como os resultados diferem? Que listas os dois procedimentos produzem para as árvores em <a href="#Figure-2_002e16">Figura 2.16</a>?</li>
+            <li> Os dois procedimentos têm a mesma ordem de crescimento no número de passos necessários para converter uma árvore balanceada com <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>n</mi>
+            </math> elementos em uma lista? Se não, qual cresce mais lentamente?</li>
+        </ol>
+    </blockquote>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e64"></a>Exercício 2.64:</strong> O seguinte procedimento <code>list->tree</code> converte uma lista ordenada em uma árvore binária balanceada. O procedimento auxiliar <code>partial-tree</code> recebe como argumentos um inteiro <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>n</mi>
+        </math> e uma lista de pelo menos <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>n</mi>
+        </math> elementos e constrói uma árvore balanceada contendo os primeiros <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>n</mi>
+        </math> elementos da lista. O resultado retornado por <code>partial-tree</code> é um par (formado com <code>cons</code>) cujo <code>car</code> é a árvore construída e cujo <code>cdr</code> é a lista de elementos não incluídos na árvore.</p>
+        <pre><code class="language-scheme">(define (list->tree elements)
+  (car (partial-tree 
+        elements (length elements))))
+
+(define (partial-tree elts n)
+  (if (= n 0)
+      (cons '() elts)
+      (let ((left-size 
+             (quotient (- n 1) 2)))
+        (let ((left-result 
+               (partial-tree 
+                elts left-size)))
+          (let ((left-tree 
+                 (car left-result))
+                (non-left-elts 
+                 (cdr left-result))
+                (right-size 
+                 (- n (+ left-size 1))))
+            (let ((this-entry 
+                   (car non-left-elts))
+                  (right-result 
+                   (partial-tree 
+                    (cdr non-left-elts)
+                    right-size)))
+              (let ((right-tree 
+                     (car right-result))
+                    (remaining-elts 
+                     (cdr right-result)))
+                (cons (make-tree this-entry 
+                                 left-tree 
+                                 right-tree)
+                      remaining-elts))))))))</code></pre>
+
+        <ol>
+            <li> Escreva um parágrafo curto explicando o mais claramente possível como <code>partial-tree</code> funciona. Desenhe a árvore produzida por <code>list->tree</code> para a lista <code>(1 3 5 7 9 11)</code>.</li>
+            <li> Qual é a ordem de crescimento no número de passos necessários para <code>list->tree</code> converter uma lista de <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>n</mi>
+            </math> elementos?</li>
+        </ol>
+    </blockquote>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e65"></a>Exercício 2.65:</strong> Use os resultados de <a href="#Exercise-2_002e63">Exercício 2.63</a> e <a href="#Exercise-2_002e64">Exercício 2.64</a> para dar implementações <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi mathvariant="normal">Θ<!-- Θ --></mi>
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo stretchy="false">)</mo>
+          </mrow>
+        </math> de <code>union-set</code> e <code>intersection-set</code> para conjuntos implementados como árvores binárias (balanceadas).<a class="footnote_link" id="DOCF107" href="#FOOT107"><sup>107</sup></a></p>
+    </blockquote>
+
+    <a id="Sets-and-information-retrieval"></a>
+    <h5 class="subsubheading">Conjuntos e recuperação de informação</h5>
+
+    <p>Examinamos opções para usar listas para representar conjuntos e vimos como a escolha da representação para um objeto de dados pode ter um grande impacto no desempenho dos programas que usam os dados. Outra razão para nos concentrarmos em conjuntos é que as técnicas discutidas aqui aparecem repetidamente em aplicações envolvendo recuperação de informação.</p>
+
+    <p>Considere um banco de dados contendo um grande número de registros individuais, como os arquivos de pessoal de uma empresa ou as transações em um sistema de contabilidade. Um sistema típico de gerenciamento de dados passa uma grande quantidade de tempo acessando ou modificando os dados nos registros e, portanto, requer um método eficiente para acessar os registros. Isso é feito identificando uma parte de cada registro para servir como uma <em>chave</em> identificadora. Uma chave pode ser qualquer coisa que identifique exclusivamente o registro. Para um arquivo de pessoal, pode ser o número de identificação de um funcionário. Para um sistema de contabilidade, pode ser um número de transação. Seja qual for a chave, quando definimos o registro como uma estrutura de dados, devemos incluir um procedimento seletor <code>key</code> que recupera a chave associada a um determinado registro.</p>
+
+    <p>Agora representamos o banco de dados como um conjunto de registros. Para localizar o registro com uma determinada chave, usamos um procedimento <code>lookup</code>, que recebe como argumentos uma chave e um banco de dados e retorna o registro que tem essa chave, ou falso se não houver tal registro. <code>Lookup</code> é implementado de forma muito semelhante a <code>element-of-set?</code>. Por exemplo, se o conjunto de registros for implementado como uma lista não ordenada, poderíamos usar:</p>
+    <pre><code class="language-scheme">(define (lookup given-key set-of-records)
+  (cond ((null? set-of-records) false)
+        ((equal? given-key 
+                 (key (car set-of-records)))
+         (car set-of-records))
+        (else 
+         (lookup given-key 
+                 (cdr set-of-records)))))</code></pre>
+
+    <p>Claro, há maneiras melhores de representar grandes conjuntos do que como listas não ordenadas. Sistemas de recuperação de informação em que os registros precisam ser "acessados aleatoriamente" são tipicamente implementados por um método baseado em árvores, como a representação de árvore binária discutida anteriormente. Ao projetar tal sistema, a metodologia de abstração de dados pode ser de grande ajuda. O projetista pode criar uma implementação inicial usando uma representação simples e direta, como listas não ordenadas. Isso será inadequado para o sistema eventual, mas pode ser útil para fornecer um banco de dados "rápido e sujo" com o qual testar o resto do sistema. Posteriormente, a representação de dados pode ser modificada para ser mais sofisticada. Se o banco de dados for acessado em termos de seletores e construtores abstratos, essa mudança de representação não exigirá nenhuma alteração no resto do sistema.</p>
+
+    <blockquote>
+        <p><strong><a id="Exercise-2_002e66"></a>Exercício 2.66:</strong> Implemente o procedimento <code>lookup</code> para o caso em que o conjunto de registros é estruturado como uma árvore binária, ordenada pelos valores numéricos das chaves.</p>
+    </blockquote>
+
+    <a id="g_t2_002e3_002e4"></a>
+    <a id="Example_003a-Huffman-Encoding-Trees"></a>
+    <h4 class="subsection"><span class="secnum">2.3.4</span><span class="sectitle">Exemplo: Árvores de Codificação de Huffman</span></h4>
+
+    <p>Esta seção fornece prática no uso de estrutura de lista e abstração de dados para manipular conjuntos e árvores. A aplicação é a métodos para representar dados como sequências de uns e zeros (bits). Por exemplo, o código padrão ASCII usado para representar texto em computadores codifica cada caractere como uma sequência de sete bits. Usar sete bits nos permite distinguir <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <msup>
+        <mn>2</mn>
+        <mn>7</mn>
+      </msup>
+    </math>, ou 128, caracteres diferentes possíveis. Em geral, se quisermos distinguir <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mi>n</mi>
+    </math> símbolos diferentes, precisaremos usar <math xmlns="http://www.w3.org/1998/Math/MathML">
+      <mrow class="MJX-TeXAtom-ORD">
+        <msub>
+          <mi>log</mi>
+          <mn>2</mn>
+        </msub>
+        <mo>⁡<!-- ⁡ --></mo>
+        <mi>n</mi>
+      </mrow>
+    </math> bits por símbolo. Se todas as nossas mensagens forem compostas pelos oito símbolos A, B, C, D, E, F, G e H, podemos escolher um código com três bits por caractere, por exemplo:</p>
+    <pre><code class="language-scheme">A 000  C 010  E 100  G 110
+B 001  D 011  F 101  H 111</code></pre>
+
+    <p>Com esse código, a mensagem</p>
+    <pre><code class="language-scheme">BACADAEAFABBAAAGAH</code></pre>
+
+    <p>é codificada como a string de 54 bits</p>
+    <pre><code class="language-scheme">001000010000011000100000101
+000001001000000000110000111</code></pre>
+
+    <p>Códigos como ASCII e o código de A a H acima são conhecidos como códigos de <em>comprimento fixo</em>, porque representam cada símbolo na mensagem com o mesmo número de bits. Às vezes, é vantajoso usar códigos de <em>comprimento variável</em>, nos quais diferentes símbolos podem ser representados por diferentes números de bits. Por exemplo, o código Morse não usa o mesmo número de pontos e traços para cada letra do alfabeto. Em particular, E, a letra mais frequente, é representada por um único ponto. Em geral, se nossas mensagens forem tais que alguns símbolos apareçam muito frequentemente e outros muito raramente, podemos codificar os dados de forma mais eficiente (ou seja, usando menos bits por mensagem) se atribuirmos códigos mais curtos aos símbolos frequentes. Considere o seguinte código alternativo para as letras de A a H:</p>
+    <pre><code class="language-scheme">A 0    C 1010  E 1100  G 1110
+B 100  D 1011  F 1101  H 1111</code></pre>
+
+    <p>Com esse código, a mesma mensagem acima é codificada como a string</p>
+    <pre><code class="language-scheme">100010100101101100011
+010100100000111001111</code></pre>
+
+    <p>Essa string contém 42 bits, então economiza mais de 20% em espaço em comparação com o código de comprimento fixo mostrado acima.</p>
+
+    <p>Uma das dificuldades de usar um código de comprimento variável é saber quando chegamos ao final de um símbolo ao ler uma sequência de zeros e uns. O código Morse resolve esse problema usando um código <em>separador</em> especial (neste caso, uma pausa) após a sequência de pontos e traços para cada letra. Outra solução é projetar o código de forma que nenhum código completo para qualquer símbolo seja o início (ou <em>prefixo</em>) do código para outro símbolo. Esse código é chamado de <em>código de prefixo</em>. No exemplo acima, A é codificado por 0 e B é codificado por 100, então nenhum outro símbolo pode ter um código que comece com 0 ou com 100.</p>
+
+    <p>Em geral, podemos obter economias significativas se usarmos códigos de prefixo de comprimento variável que levem em consideração as frequências relativas dos símbolos nas mensagens a serem codificadas. Um esquema particular para fazer isso é chamado de método de codificação de Huffman, em homenagem ao seu descobridor, David Huffman. Um código de Huffman pode ser representado como uma árvore binária cujas folhas são os símbolos que são codificados. Em cada nó não folha da árvore há um conjunto contendo todos os símbolos nas folhas que estão abaixo do nó. Além disso, cada símbolo em uma folha é atribuído a um peso (que é sua frequência relativa), e cada nó não folha contém um peso que é a soma de todos os pesos das folhas abaixo dele. Os pesos não são usados no processo de codificação ou decodificação. Veremos abaixo como eles são usados para ajudar a construir a árvore.</p>
+
+    <p><a href="#Figure-2_002e18">Figura 2.18</a> mostra a árvore de Huffman para o código de A a H dado acima. Os pesos nas folhas indicam que a árvore foi projetada para mensagens em que A aparece com frequência relativa 8, B com frequência relativa 3, e as outras letras cada uma com frequência relativa 1.</p>
+
+    <figure class="float">
+        <a id="Figure-2_002e18"></a>
+        <object style="width: 53.01ex; height: 35.23ex;" data="fig/chap2/Fig2.18a.std.svg" type="image/svg+xml">SVG</object>
+        <figcaption class="float-caption">
+            <p><strong>Figura 2.18:</strong> Uma árvore de codificação de Huffman.</p>
+        </figcaption>
+    </figure>
+
+    <p>Dada uma árvore de Huffman, podemos encontrar a codificação de qualquer símbolo começando na raiz e descendo até atingirmos a folha que contém o símbolo. Cada vez que descemos por um ramo esquerdo, adicionamos um 0 ao código, e cada vez que descemos por um ramo direito, adicionamos um 1. (Decidimos qual ramo seguir testando para ver qual ramo é o nó folha para o símbolo ou contém o símbolo em seu conjunto.) Por exemplo, começando na raiz da árvore em <a href="#Figure-2_002e18">Figura 2.18</a>, chegamos à folha para D seguindo um ramo direito, depois um ramo esquerdo, depois um ramo direito, depois um ramo direito; portanto, o código para D é 1011.</p>
+
+    <p>Para decodificar uma sequência de bits usando uma árvore de Huffman, começamos na raiz e usamos os zeros e uns sucessivos da sequência de bits para determinar se devemos descer pelo ramo esquerdo ou pelo ramo direito. Cada vez que chegamos a uma folha, geramos um novo símbolo na mensagem, momento em que começamos novamente na raiz da árvore para encontrar o próximo símbolo. Por exemplo, suponha que recebamos a árvore acima e a sequência 10001010. Começando na raiz, descemos pelo ramo direito (já que o primeiro bit da string é 1), depois pelo ramo esquerdo (já que o segundo bit é 0), depois pelo ramo esquerdo (já que o terceiro bit também é 0). Isso nos leva à folha para B, então o primeiro símbolo da mensagem decodificada é B. Agora começamos novamente na raiz, e fazemos um movimento para a esquerda porque o próximo bit na string é 0. Isso nos leva à folha para A. Então começamos novamente na raiz com o restante da string 1010, então movemos para a direita, esquerda, direita, esquerda e chegamos a C. Assim, a mensagem inteira é BAC.</p>
+
+    <a id="Generating-Huffman-trees"></a>
+    <h5 class="subsubheading">Gerando árvores de Huffman</h5>
+
+    <p>Dado um "alfabeto" de símbolos e suas frequências relativas, como construímos o "melhor" código? (Em outras palavras, qual árvore codificará mensagens com o menor número de bits?) Huffman deu um algoritmo para fazer isso e mostrou que o código resultante é de fato o melhor código de comprimento variável para mensagens onde a frequência relativa dos símbolos corresponde às frequências com as quais o código foi construído. Não provaremos essa otimalidade dos códigos de Huffman aqui, mas mostraremos como as árvores de Huffman são construídas.<a class="footnote_link" id="DOCF108" href="#FOOT108"><sup>108</sup></a></p>
+
+    <p>O algoritmo para gerar uma árvore de Huffman é muito simples. A ideia é organizar a árvore de forma que os símbolos com a menor frequência apareçam mais longe da raiz. Comece com o conjunto de nós folha, contendo símbolos e suas frequências, conforme determinado pelos dados iniciais a partir dos quais o código deve ser construído. Agora encontre duas folhas com os menores pesos e as mescle para produzir um nó que tenha esses dois nós como seus ramos esquerdo e direito. O peso do novo nó é a soma dos dois pesos. Remova as duas folhas do conjunto original e substitua-as por esse novo nó. Agora continue esse processo. A cada passo, mescle dois nós com os menores pesos, removendo-os do conjunto e substituindo-os por um nó que tenha esses dois como seus ramos esquerdo e direito. O processo para quando houver apenas um nó restante, que é a raiz de toda a árvore. Aqui está como a árvore de Huffman de <a href="#Figure-2_002e18">Figura 2.18</a> foi gerada:</p>
+    <pre><code class="language-scheme">Initial {(A 8) (B 3) (C 1) (D 1) 
+leaves   (E 1) (
