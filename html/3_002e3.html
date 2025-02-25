@@ -35,15 +35,15 @@
       <nav class="header">
         <p>
           Próximo:
-          <a href="3_002e4.xhtml#g_t3_002e4" accesskey="n" rel="next">3.4</a>,
+          <a href="3_002e4.html#g_t3_002e4" accesskey="n" rel="next">3.4</a>,
           Anterior:
-          <a href="3_002e2.xhtml#g_t3_002e2" accesskey="p" rel="prev">3.2</a>,
+          <a href="3_002e2.html#g_t3_002e2" accesskey="p" rel="prev">3.2</a>,
           Acima:
-          <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev"
+          <a href="Chapter-3.html#Chapter-3" accesskey="u" rel="prev"
             >Capítulo 3</a
           >
           [<a
-            href="index.xhtml#SEC_Contents"
+            href="index.html#SEC_Contents"
             title="Índice"
             accesskey="c"
             rel="contents"
@@ -58,7 +58,7 @@
       </h3>
 
       <p>
-        O <a href="Chapter-2.xhtml#Chapter-2">Capítulo 2</a> tratou de dados
+        O <a href="Chapter-2.html#Chapter-2">Capítulo 2</a> tratou de dados
         compostos como um meio para construir objetos computacionais que têm
         várias partes, a fim de modelar objetos do mundo real que têm vários
         aspectos. Naquele capítulo, introduzimos a disciplina de abstração de
@@ -93,7 +93,7 @@
         construção para objetos de dados mutáveis. Esses mutadores aumentam
         muito o poder de representação dos pares, permitindo-nos construir
         estruturas de dados além das sequências e árvores com as quais
-        trabalhamos em <a href="2_002e2.xhtml#g_t2_002e2">2.2</a>. Também
+        trabalhamos em <a href="2_002e2.html#g_t2_002e2">2.2</a>. Também
         apresentamos alguns exemplos de simulações em que sistemas complexos são
         modelados como coleções de objetos com estado local.
       </p>
@@ -269,7 +269,7 @@
         <p>
           <strong><a id="Exercise-3_002e12"></a>Exercício 3.12:</strong> O
           seguinte procedimento para anexar listas foi introduzido em
-          <a href="2_002e2.xhtml#g_t2_002e2_002e1">2.2.1</a>:
+          <a href="2_002e2.html#g_t2_002e2_002e1">2.2.1</a>:
         </p>
         <pre><code class="language-scheme">(define (append x y)
   (if (null? x)
@@ -378,7 +378,7 @@ w
       <h5 class="subsubheading">Compartilhamento e identidade</h5>
 
       <p>
-        Mencionamos em <a href="3_002e1.xhtml#g_t3_002e1_002e3">3.1.3</a> as
+        Mencionamos em <a href="3_002e1.html#g_t3_002e1_002e3">3.1.3</a> as
         questões teóricas de "igualdade" e "mudança" levantadas pela introdução
         da atribuição. Essas questões surgem na prática quando pares individuais
         são <a id="index-shared"></a><em>compartilhados</em> entre diferentes
@@ -489,7 +489,7 @@ z2
       <p>
         Uma maneira de detectar compartilhamento em estruturas de lista é usar o
         predicado <code>eq?</code>, que introduzimos em
-        <a href="2_002e3.xhtml#g_t2_002e3_002e1">2.3.1</a> como uma maneira de
+        <a href="2_002e3.html#g_t2_002e3_002e1">2.3.1</a> como uma maneira de
         testar se dois símbolos são iguais. Mais geralmente,
         <code>(eq? x y)</code> testa se <code>x</code> e <code>y</code> são o
         mesmo objeto (ou seja, se <code>x</code> e <code>y</code> são iguais
@@ -585,7 +585,7 @@ z2
 
       <p>
         Quando introduzimos dados compostos, observamos em
-        <a href="2_002e1.xhtml#g_t2_002e1_002e3">2.1.3</a> que pares podem ser
+        <a href="2_002e1.html#g_t2_002e1_002e3">2.1.3</a> que pares podem ser
         representados puramente em termos de procedimentos:
       </p>
       <pre><code class="language-scheme">(define (cons x y)
@@ -605,7 +605,7 @@ z2
         lidar com <code>set-car!</code> e <code>set-cdr!</code> de maneira
         análoga à forma como implementamos contas bancárias usando
         <code>make-account</code> em
-        <a href="3_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a>:
+        <a href="3_002e1.html#g_t3_002e1_002e1">3.1.1</a>:
       </p>
       <pre><code class="language-scheme">(define (cons x y)
   (define (set-x! v) (set! x v))
@@ -657,7 +657,7 @@ z2
 
         <p>
           usando a implementação procedural de pares dada acima. (Compare com o
-          <a href="3_002e2.xhtml#Exercise-3_002e11">Exercício 3.11</a>.)
+          <a href="3_002e2.html#Exercise-3_002e11">Exercício 3.11</a>.)
         </p>
       </blockquote>
 
@@ -1018,11 +1018,11 @@ z2
 
       <p>
         Quando estudamos várias maneiras de representar conjuntos no
-        <a href="Chapter-2.xhtml#Chapter-2">Capítulo 2</a>, mencionamos em
-        <a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a> a tarefa de manter
+        <a href="Chapter-2.html#Chapter-2">Capítulo 2</a>, mencionamos em
+        <a href="2_002e3.html#g_t2_002e3_002e3">2.3.3</a> a tarefa de manter
         uma tabela de registros indexados por chaves identificadoras. Na
         implementação de programação orientada a dados em
-        <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a>, usamos
+        <a href="2_002e4.html#g_t2_002e4_002e3">2.4.3</a>, usamos
         extensivamente tabelas bidimensionais, nas quais as informações são
         armazenadas e recuperadas usando duas chaves. Aqui vemos como construir
         tabelas como estruturas de listas mutáveis.
@@ -1253,7 +1253,7 @@ math:  +: 43    letters:  a: 97
       <p>
         Usando <code>make-table</code>, poderíamos implementar as operações
         <code>get</code> e <code>put</code> usadas em
-        <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a> para programação
+        <a href="2_002e4.html#g_t2_002e4_002e3">2.4.3</a> para programação
         orientada a dados, da seguinte forma:
       </p>
       <pre><code class="language-scheme">(define operation-table (make-table))
@@ -1301,14 +1301,14 @@ math:  +: 43    letters:  a: 97
           <strong><a id="Exercise-3_002e26"></a>Exercício 3.26:</strong> Para
           pesquisar uma tabela como implementada acima, é necessário percorrer a
           lista de registros. Isso é basicamente a representação de lista não
-          ordenada de <a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a>. Para
+          ordenada de <a href="2_002e3.html#g_t2_002e3_002e3">2.3.3</a>. Para
           tabelas grandes, pode ser mais eficiente estruturar a tabela de uma
           maneira diferente. Descreva uma implementação de tabela onde os
           registros (chave, valor) são organizados usando uma árvore binária,
           assumindo que as chaves podem ser ordenadas de alguma forma (por
           exemplo, numericamente ou alfabeticamente). (Compare com
-          <a href="2_002e3.xhtml#Exercise-2_002e66">Exercício 2.66</a> do
-          <a href="Chapter-2.xhtml#Chapter-2">Capítulo 2</a>.)
+          <a href="2_002e3.html#Exercise-2_002e66">Exercício 2.66</a> do
+          <a href="Chapter-2.html#Chapter-2">Capítulo 2</a>.)
         </p>
       </blockquote>
 
@@ -1328,7 +1328,7 @@ math:  +: 43    letters:  a: 97
           computa o novo valor da maneira usual e armazena isso na tabela. Como
           exemplo de memoização, lembre-se do processo exponencial para computar
           números de Fibonacci de
-          <a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>:
+          <a href="1_002e2.html#g_t1_002e2_002e2">1.2.2</a>:
         </p>
         <pre><code class="language-scheme">(define (fib n)
           (cond ((= n 0) 0)
@@ -1565,7 +1565,7 @@ math:  +: 43    letters:  a: 97
         Em essência, nosso simulador nos fornece as ferramentas para construir
         uma linguagem de circuitos. Se adotarmos a perspectiva geral sobre
         linguagens com a qual abordamos o estudo de Lisp em
-        <a href="1_002e1.xhtml#g_t1_002e1">1.1</a>, podemos dizer que as caixas
+        <a href="1_002e1.html#g_t1_002e1">1.1</a>, podemos dizer que as caixas
         de função primitivas formam os elementos primitivos da linguagem, que a
         conexão de caixas fornece um meio de combinação, e que a especificação
         de padrões de conexão como procedimentos serve como um meio de
@@ -1784,7 +1784,7 @@ math:  +: 43    letters:  a: 97
         estilo de passagem de mensagens, como uma coleção de procedimentos
         locais junto com um procedimento <code>dispatch</code> que seleciona a
         operação local apropriada, assim como fizemos com o objeto simples de
-        conta bancária em <a href="3_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a>:
+        conta bancária em <a href="3_002e1.html#g_t3_002e1_002e1">3.1.1</a>:
       </p>
       <pre><code class="language-scheme">(define (make-wire)
           (let ((signal-value 0) 
@@ -3058,7 +3058,7 @@ math:  +: 43    letters:  a: 97
             <a class="footnote_backlink" href="#DOCF145"><sup>145</sup></a>
             Vemos disso que operações de mutação em listas podem criar "lixo"
             que não faz parte de nenhuma estrutura acessível. Veremos em
-            <a href="5_002e3.xhtml#g_t5_002e3_002e2">5.3.2</a> que os sistemas
+            <a href="5_002e3.html#g_t5_002e3_002e2">5.3.2</a> que os sistemas
             de gerenciamento de memória do Lisp incluem um
             <a id="index-garbage-collector"></a><em>coletor de lixo</em>, que
             identifica e recicla o espaço de memória usado por pares
@@ -3071,7 +3071,7 @@ math:  +: 43    letters:  a: 97
             <code>Get-new-pair</code> é uma das operações que deve ser
             implementada como parte do gerenciamento de memória exigido por uma
             implementação do Lisp. Discutiremos isso em
-            <a href="5_002e3.xhtml#g_t5_002e3_002e1">5.3.1</a>.
+            <a href="5_002e3.html#g_t5_002e3_002e1">5.3.1</a>.
           </p>
         </div>
         <div id="FOOT147">
@@ -3093,7 +3093,7 @@ math:  +: 43    letters:  a: 97
             sutilezas de lidar com o compartilhamento de objetos de dados
             mutáveis refletem as questões subjacentes de "identidade" e
             "mudança" que foram levantadas em
-            <a href="3_002e1.xhtml#g_t3_002e1_002e3">3.1.3</a>. Mencionamos lá
+            <a href="3_002e1.html#g_t3_002e1_002e3">3.1.3</a>. Mencionamos lá
             que admitir mudanças em nossa linguagem requer que um objeto
             composto tenha uma "identidade" que seja algo diferente das peças
             das quais é composto. No Lisp, consideramos essa "identidade" como a
@@ -3237,20 +3237,20 @@ math:  +: 43    letters:  a: 97
             <a class="footnote_backlink" href="#DOCF159"><sup>159</sup></a> A
             propagação de restrições apareceu pela primeira vez no incrivelmente
             visionário sistema <abbr>SKETCHPAD</abbr> de Ivan
-            <a href="References.xhtml#Sutherland-_00281963_0029"
+            <a href="References.html#Sutherland-_00281963_0029"
               >Sutherland (1963)</a
             >. Um belo sistema de propagação de restrições baseado na linguagem
             Smalltalk foi desenvolvido por Alan
-            <a href="References.xhtml#Borning-_00281977_0029">Borning (1977)</a>
+            <a href="References.html#Borning-_00281977_0029">Borning (1977)</a>
             no Xerox Palo Alto Research Center. Sussman, Stallman e Steele
             aplicaram a propagação de restrições à análise de circuitos
-            elétricos (<a href="References.xhtml#Sussman-and-Stallman-1975"
+            elétricos (<a href="References.html#Sussman-and-Stallman-1975"
               >Sussman e Stallman 1975</a
             >;
-            <a href="References.xhtml#Sussman-and-Steele-1980"
+            <a href="References.html#Sussman-and-Steele-1980"
               >Sussman e Steele 1980</a
             >). TK!Solver (<a
-              href="References.xhtml#Konopasek-and-Jayaraman-1984"
+              href="References.html#Konopasek-and-Jayaraman-1984"
               >Konopasek e Jayaraman 1984</a
             >) é um ambiente de modelagem extensivo baseado em restrições.
           </p>
@@ -3327,11 +3327,11 @@ math:  +: 43    letters:  a: 97
       <nav class="header">
         <p>
           Próximo:
-          <a href="3_002e4.xhtml#g_t3_002e4" accesskey="n" rel="next">3.4</a>,
+          <a href="3_002e4.html#g_t3_002e4" accesskey="n" rel="next">3.4</a>,
           Anterior:
-          <a href="3_002e2.xhtml#g_t3_002e2" accesskey="p" rel="prev">3.2</a>,
+          <a href="3_002e2.html#g_t3_002e2" accesskey="p" rel="prev">3.2</a>,
           Acima: <a href="#g_t3_002e3" accesskey="u" rel="prev">3.3</a> [<a
-            href="index.xhtml#SEC_Contents"
+            href="index.html#SEC_Contents"
             title="Índice"
             accesskey="c"
             rel="contents"

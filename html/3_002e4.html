@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <a id="pagetop"></a>
+      <a id="g_t3_002e4"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e5.html#g_t3_002e5" accesskey="n" rel="next">3.5</a>,
+          Anterior:
+          <a href="3_002e3.html#g_t3_002e3" accesskey="p" rel="prev">3.3</a>,
+          Acima:
+          <a href="Chapter-3.html#Chapter-3" accesskey="u" rel="prev"
+            >Capítulo 3</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <a id="Concurrency_003a-Time-Is-of-the-Essence"></a>
+      <h3 class="section">
+        <span class="secnum">3.4</span
+        ><span class="sectitle">Concorrência: O Tempo é Essencial</span>
+      </h3>
+
+      <p>
+        Vimos o poder dos objetos computacionais com estado local como
+        ferramentas para modelagem. No entanto, como
+        <a href="3_002e1.html#g_t3_002e1_002e3">3.1.3</a> alertou, esse poder
+        tem um preço: a perda da transparência referencial, dando origem a uma
+        série de questões sobre identidade e mudança, e a necessidade de
+        abandonar o modelo de substituição de avaliação em favor do mais
+        intrincado modelo de ambiente.
+      </p>
+
+      <p>
+        A questão central por trás da complexidade do estado, identidade e
+        mudança é que, ao introduzir a atribuição, somos forçados a admitir
+        <a id="index-time"></a><em>tempo</em> em nossos modelos computacionais.
+        Antes de introduzirmos a atribuição, todos os nossos programas eram
+        atemporais, no sentido de que qualquer expressão que tinha um valor
+        sempre tinha o mesmo valor. Em contraste, lembre-se do exemplo de
+        modelagem de saques de uma conta bancária e retorno do saldo resultante,
+        introduzido no início de
+        <a href="3_002e1.html#g_t3_002e1_002e1">3.1.1</a>:
+      </p>
+
+      <pre><code class="language-scheme">(withdraw 25)
+75
+
+(withdraw 25)
+50</code></pre>
+
+      <p>
+        Aqui, avaliações sucessivas da mesma expressão produzem valores
+        diferentes. Esse comportamento surge do fato de que a execução de
+        declarações de atribuição (neste caso, atribuições à variável
+        <code>balance</code>) delineia <a id="index-moments-in-time"></a
+        ><em>momentos no tempo</em> em que os valores mudam. O resultado da
+        avaliação de uma expressão depende não apenas da expressão em si, mas
+        também de se a avaliação ocorre antes ou depois desses momentos.
+        Construir modelos em termos de objetos computacionais com estado local
+        nos força a confrontar o tempo como um conceito essencial na
+        programação.
+      </p>
+
+      <p>
+        Podemos ir além na estruturação de modelos computacionais para
+        corresponder à nossa percepção do mundo físico. Objetos no mundo não
+        mudam um de cada vez em sequência. Em vez disso, nós os percebemos como
+        agindo <a id="index-concurrently"></a><em>concorrentemente</em>—todos de
+        uma vez. Portanto, muitas vezes é natural modelar sistemas como coleções
+        de processos computacionais que executam concorrentemente. Assim como
+        podemos tornar nossos programas modulares organizando modelos em termos
+        de objetos com estado local separado, muitas vezes é apropriado dividir
+        modelos computacionais em partes que evoluem separadamente e
+        concorrentemente. Mesmo que os programas sejam executados em um
+        computador sequencial, a prática de escrever programas como se fossem
+        executados concorrentemente força o programador a evitar restrições de
+        tempo desnecessárias e, assim, torna os programas mais modulares.
+      </p>
+
+      <p>
+        Além de tornar os programas mais modulares, a computação concorrente
+        pode fornecer uma vantagem de velocidade sobre a computação sequencial.
+        Computadores sequenciais executam apenas uma operação por vez, então o
+        tempo necessário para realizar uma tarefa é proporcional ao número total
+        de operações realizadas.<a
+          class="footnote_link"
+          id="DOCF162"
+          href="#FOOT162"
+          ><sup>162</sup></a
+        >
+        No entanto, se for possível decompor um problema em partes relativamente
+        independentes e que precisam se comunicar apenas raramente, pode ser
+        possível alocar as partes para processadores de computação separados,
+        produzindo uma vantagem de velocidade proporcional ao número de
+        processadores disponíveis.
+      </p>
+
+      <p>
+        Infelizmente, as complexidades introduzidas pela atribuição tornam-se
+        ainda mais problemáticas na presença de concorrência. O fato da execução
+        concorrente, seja porque o mundo opera em paralelo ou porque nossos
+        computadores o fazem, implica em complexidade adicional em nossa
+        compreensão do tempo.
+      </p>
+
+      <a id="g_t3_002e4_002e1"></a>
+      <a id="The-Nature-of-Time-in-Concurrent-Systems"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.4.1</span
+        ><span class="sectitle"
+          >A Natureza do Tempo em Sistemas Concorrentes</span
+        >
+      </h4>
+
+      <p>
+        Na superfície, o tempo parece simples. É uma ordem imposta sobre
+        eventos.<a class="footnote_link" id="DOCF163" href="#FOOT163"
+          ><sup>163</sup></a
+        >
+        Para quaisquer eventos
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi></math> e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>B</mi></math
+        >, ou
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi></math>
+        ocorre antes de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>B</mi></math
+        >, <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi></math> e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>B</mi></math> são
+        simultâneos, ou
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>A</mi></math>
+        ocorre depois de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>B</mi></math
+        >. Por exemplo, voltando ao exemplo da conta bancária, suponha que Peter
+        retire $10 e Paul retire $25 de uma conta conjunta que inicialmente
+        contém $100, deixando $65 na conta. Dependendo da ordem dos dois saques,
+        a sequência de saldos na conta é $100
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mo stretchy="false">→</mo></math
+        >
+        $90
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mo stretchy="false">→</mo></math
+        >
+        $65 ou $100
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mo stretchy="false">→</mo></math
+        >
+        $75
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mo stretchy="false">→</mo></math
+        >
+        $65. Em uma implementação computacional do sistema bancário, essa
+        sequência de saldos poderia ser modelada por atribuições sucessivas a
+        uma variável <code>balance</code>.
+      </p>
+
+      <p>
+        Em situações complexas, no entanto, essa visão pode ser problemática.
+        Suponha que Peter e Paul, e outras pessoas além deles, estejam acessando
+        a mesma conta bancária através de uma rede de caixas eletrônicos
+        distribuídos por todo o mundo. A sequência real de saldos na conta
+        dependerá criticamente do tempo detalhado dos acessos e dos detalhes da
+        comunicação entre as máquinas.
+      </p>
+
+      <p>
+        Essa indeterminação na ordem dos eventos pode causar sérios problemas no
+        design de sistemas concorrentes. Por exemplo, suponha que os saques
+        feitos por Peter e Paul sejam implementados como dois processos
+        separados compartilhando uma variável comum <code>balance</code>, cada
+        processo especificado pelo procedimento dado em
+        <a href="3_002e1.html#g_t3_002e1_002e1">3.1.1</a>:
+      </p>
+
+      <pre><code class="language-scheme">(define (withdraw amount)
+  (if (>= balance amount)
+      (begin 
+        (set! balance 
+              (- balance amount))
+        balance)
+      "Insufficient funds"))</code></pre>
+
+      <p>
+        Se os dois processos operarem independentemente, então Peter pode testar
+        o saldo e tentar sacar uma quantia legítima. No entanto, Paul pode sacar
+        alguns fundos entre o momento em que Peter verifica o saldo e o momento
+        em que Peter completa o saque, invalidando assim o teste de Peter.
+      </p>
+
+      <p>As coisas podem ficar ainda piores. Considere a expressão</p>
+
+      <pre><code class="language-scheme">(set! balance (- balance amount))</code></pre>
+
+      <p>
+        executada como parte de cada processo de saque. Isso consiste em três
+        etapas: (1) acessar o valor da variável <code>balance</code>; (2)
+        calcular o novo saldo; (3) definir <code>balance</code> para esse novo
+        valor. Se os saques de Peter e Paul executarem essa declaração
+        concorrentemente, então os dois saques podem intercalar a ordem em que
+        acessam <code>balance</code> e o definem para o novo valor.
+      </p>
+
+      <p>
+        O diagrama de tempo em
+        <a href="#Figure-3_002e29">Figura 3.29</a> descreve uma ordem de eventos
+        em que <code>balance</code> começa em 100, Peter saca 10, Paul saca 25,
+        e ainda assim o valor final de <code>balance</code> é 75. Como mostrado
+        no diagrama, a razão para essa anomalia é que a atribuição de 75 a
+        <code>balance</code> por Paul é feita sob a suposição de que o valor de
+        <code>balance</code> a ser decrementado é 100. Essa suposição, no
+        entanto, tornou-se inválida quando Peter mudou <code>balance</code> para
+        90. Isso é uma falha catastrófica para o sistema bancário, porque a
+        quantidade total de dinheiro no sistema não é conservada. Antes das
+        transações, a quantidade total de dinheiro era $100. Depois, Peter tem
+        $10, Paul tem $25, e o banco tem $75.<a
+          class="footnote_link"
+          id="DOCF164"
+          href="#FOOT164"
+          ><sup>164</sup></a
+        >
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e29"></a>
+        <object
+          style="width: 60.18ex; height: 57.93ex"
+          data="fig/chap3/Fig3.29b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.29:</strong> Diagrama de tempo mostrando como a
+            intercalação da ordem de eventos em dois saques bancários pode levar
+            a um saldo final incorreto.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        O fenômeno geral ilustrado aqui é que vários processos podem
+        compartilhar uma variável de estado comum. O que torna isso complicado é
+        que mais de um processo pode estar tentando manipular o estado
+        compartilhado ao mesmo tempo. Para o exemplo da conta bancária, durante
+        cada transação, cada cliente deve ser capaz de agir como se os outros
+        clientes não existissem. Quando um cliente altera o saldo de uma forma
+        que depende do saldo, ele deve ser capaz de assumir que, logo antes do
+        momento da mudança, o saldo ainda é o que ele pensava que era.
+      </p>
+
+      <a id="Correct-behavior-of-concurrent-programs"></a>
+      <h5 class="subsubheading">
+        Comportamento correto de programas concorrentes
+      </h5>
+
+      <p>
+        O exemplo acima tipifica os bugs sutis que podem surgir em programas
+        concorrentes. A raiz dessa complexidade está nas atribuições a variáveis
+        que são compartilhadas entre os diferentes processos. Já sabemos que
+        devemos ter cuidado ao escrever programas que usam <code>set!</code>,
+        porque os resultados de uma computação dependem da ordem em que as
+        atribuições ocorrem.<a
+          class="footnote_link"
+          id="DOCF165"
+          href="#FOOT165"
+          ><sup>165</sup></a
+        >
+        Com processos concorrentes, devemos ser especialmente cuidadosos com as
+        atribuições, porque podemos não ser capazes de controlar a ordem das
+        atribuições feitas pelos diferentes processos. Se várias dessas mudanças
+        puderem ser feitas concorrentemente (como com dois depositantes
+        acessando uma conta conjunta), precisamos de alguma maneira de garantir
+        que nosso sistema se comporte corretamente. Por exemplo, no caso de
+        saques de uma conta bancária conjunta, devemos garantir que o dinheiro
+        seja conservado. Para fazer com que programas concorrentes se comportem
+        corretamente, podemos ter que impor algumas restrições à execução
+        concorrente.
+      </p>
+
+      <p>
+        Uma possível restrição à concorrência estipularia que nenhuma operação
+        que altere qualquer variável de estado compartilhado pode ocorrer ao
+        mesmo tempo. Esse é um requisito extremamente rigoroso. Para o banco
+        distribuído, exigiria que o designer do sistema garantisse que apenas
+        uma transação pudesse prosseguir por vez. Isso seria ineficiente e
+        excessivamente conservador.
+        <a href="#Figure-3_002e30">Figura 3.30</a> mostra Peter e Paul
+        compartilhando uma conta bancária, onde Paul também tem uma conta
+        privada. O diagrama ilustra dois saques da conta compartilhada (um por
+        Peter e outro por Paul) e um depósito na conta privada de Paul.<a
+          class="footnote_link"
+          id="DOCF166"
+          href="#FOOT166"
+          ><sup>166</sup></a
+        >
+        Os dois saques da conta compartilhada não devem ser concorrentes (já que
+        ambos acessam e atualizam a mesma conta), e o depósito e o saque de Paul
+        não devem ser concorrentes (já que ambos acessam e atualizam a quantia
+        na carteira de Paul). Mas não deve haver problema em permitir que o
+        depósito de Paul em sua conta privada prossiga concorrentemente com o
+        saque de Peter da conta compartilhada.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e30"></a>
+        <object
+          style="width: 67.52ex; height: 52.84ex"
+          data="fig/chap3/Fig3.30c.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.30:</strong> Depósitos e saques concorrentes de uma
+            conta conjunta no Banco1 e uma conta privada no Banco2.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Uma restrição menos rigorosa à concorrência garantiria que um sistema
+        concorrente produza o mesmo resultado como se os processos tivessem sido
+        executados sequencialmente em alguma ordem. Há dois aspectos importantes
+        nesse requisito. Primeiro, ele não exige que os processos realmente
+        sejam executados sequencialmente, mas apenas que produzam resultados que
+        sejam os mesmos <em>como se</em> tivessem sido executados
+        sequencialmente. Para o exemplo em
+        <a href="#Figure-3_002e30">Figura 3.30</a>, o designer do sistema de
+        conta bancária pode permitir com segurança que o depósito de Paul e o
+        saque de Peter aconteçam concorrentemente, porque o resultado líquido
+        será o mesmo como se as duas operações tivessem acontecido
+        sequencialmente. Segundo, pode haver mais de um resultado "correto"
+        produzido por um programa concorrente, porque exigimos apenas que o
+        resultado seja o mesmo como para <em>alguma</em> ordem sequencial. Por
+        exemplo, suponha que a conta conjunta de Peter e Paul comece com $100, e
+        Peter deposite $40 enquanto Paul concorrentemente saca metade do
+        dinheiro na conta. Então, a execução sequencial poderia resultar no
+        saldo da conta sendo $70 ou $90 (veja
+        <a href="#Exercise-3_002e38">Exercício 3.38</a>).<a
+          class="footnote_link"
+          id="DOCF167"
+          href="#FOOT167"
+          ><sup>167</sup></a
+        >
+      </p>
+
+      <p>
+        Ainda há requisitos mais fracos para a execução correta de programas
+        concorrentes. Um programa para simular difusão (digamos, o fluxo de
+        calor em um objeto) pode consistir em um grande número de processos,
+        cada um representando um pequeno volume de espaço, que atualizam seus
+        valores concorrentemente. Cada processo repetidamente muda seu valor
+        para a média de seu próprio valor e os valores de seus vizinhos. Esse
+        algoritmo converge para a resposta correta independentemente da ordem em
+        que as operações são feitas; não há necessidade de restrições sobre o
+        uso concorrente dos valores compartilhados.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e38"></a>Exercício 3.38:</strong> Suponha
+          que Peter, Paul e Mary compartilhem uma conta bancária conjunta que
+          inicialmente contém $100. Concorrentemente, Peter deposita $10, Paul
+          saca $20, e Mary saca metade do dinheiro na conta, executando os
+          seguintes comandos:
+        </p>
+        <pre><code class="language-scheme">Peter: (set! balance (+ balance 10))
+Paul:  (set! balance (- balance 20))
+Mary:  (set! balance (- balance 
+                        (/ balance 2)))</code></pre>
+
+        <ol>
+          <li>
+            Liste todos os diferentes valores possíveis para
+            <code>balance</code> após essas três transações terem sido
+            concluídas, assumindo que o sistema bancário força os três processos
+            a serem executados sequencialmente em alguma ordem.
+          </li>
+          <li>
+            Quais são alguns outros valores que poderiam ser produzidos se o
+            sistema permitir que os processos sejam intercalados? Desenhe
+            diagramas de tempo como o da
+            <a href="#Figure-3_002e29">Figura 3.29</a> para explicar como esses
+            valores podem ocorrer.
+          </li>
+        </ol>
+      </blockquote>
+
+      <a id="g_t3_002e4_002e2"></a>
+      <a id="Mechanisms-for-Controlling-Concurrency"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.4.2</span
+        ><span class="sectitle">Mecanismos para Controlar Concorrência</span>
+      </h4>
+
+      <p>
+        Vimos que a dificuldade em lidar com processos concorrentes está
+        enraizada na necessidade de considerar a intercalação da ordem de
+        eventos nos diferentes processos. Por exemplo, suponha que tenhamos dois
+        processos, um com três eventos ordenados
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo>,</mo
+            ><mi>c</mi><mo stretchy="false">)</mo></mrow
+          ></math
+        >
+        e outro com três eventos ordenados
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">(</mo><mi>x</mi><mo>,</mo><mi>y</mi><mo>,</mo
+            ><mi>z</mi><mo stretchy="false">)</mo></mrow
+          ></math
+        >. Se os dois processos forem executados concorrentemente, sem
+        restrições sobre como sua execução é intercalada, então há 20 ordens
+        diferentes possíveis para os eventos que são consistentes com as ordens
+        individuais dos dois processos:
+      </p>
+
+      <pre><code class="language-scheme">(a,b,c,x,y,z)  (a,x,b,y,c,z)  (x,a,b,c,y,z)  
+(x,a,y,z,b,c)  (a,b,x,c,y,z)  (a,x,b,y,z,c)  
+(x,a,b,y,c,z)  (x,y,a,b,c,z)  (a,b,x,y,c,z)  
+(a,x,y,b,c,z)  (x,a,b,y,z,c)  (x,y,a,b,z,c)
+(a,b,x,y,z,c)  (a,x,y,b,z,c)  (x,a,y,b,c,z)  
+(x,y,a,z,b,c)  (a,x,b,c,y,z)  (a,x,y,z,b,c)  
+(x,a,y,b,z,c)  (x,y,z,a,b,c)</code></pre>
+
+      <p>
+        Como programadores projetando esse sistema, teríamos que considerar os
+        efeitos de cada uma dessas 20 ordens e verificar se cada comportamento é
+        aceitável. Essa abordagem rapidamente se torna inviável à medida que o
+        número de processos e eventos aumenta.
+      </p>
+
+      <p>
+        Uma abordagem mais prática para o design de sistemas concorrentes é
+        criar mecanismos gerais que nos permitam restringir a intercalação de
+        processos concorrentes para que possamos ter certeza de que o
+        comportamento do programa está correto. Muitos mecanismos foram
+        desenvolvidos para esse propósito. Nesta seção, descreveremos um deles,
+        o <a id="index-serializer"></a><em>serializador</em>.
+      </p>
+
+      <a id="Serializing-access-to-shared-state"></a>
+      <h5 class="subsubheading">
+        Serializando o acesso ao estado compartilhado
+      </h5>
+
+      <p>
+        A serialização implementa a seguinte ideia: Os processos serão
+        executados concorrentemente, mas haverá certas coleções de procedimentos
+        que não podem ser executados concorrentemente. Mais precisamente, a
+        serialização cria conjuntos distintos de procedimentos de forma que
+        apenas uma execução de um procedimento em cada conjunto serializado é
+        permitida por vez. Se algum procedimento no conjunto estiver sendo
+        executado, então um processo que tenta executar qualquer procedimento no
+        conjunto será forçado a esperar até que a primeira execução termine.
+      </p>
+
+      <p>
+        Podemos usar a serialização para controlar o acesso a variáveis
+        compartilhadas. Por exemplo, se quisermos atualizar uma variável
+        compartilhada com base no valor anterior dessa variável, colocamos o
+        acesso ao valor anterior da variável e a atribuição do novo valor à
+        variável no mesmo procedimento. Em seguida, garantimos que nenhum outro
+        procedimento que atribua à variável possa ser executado concorrentemente
+        com esse procedimento, serializando todos esses procedimentos com o
+        mesmo serializador. Isso garante que o valor da variável não possa ser
+        alterado entre um acesso e a atribuição correspondente.
+      </p>
+
+      <a id="Serializers-in-Scheme"></a>
+      <h5 class="subsubheading">Serializadores em Scheme</h5>
+
+      <p>
+        Para tornar o mecanismo acima mais concreto, suponha que estendemos
+        Scheme para incluir um procedimento chamado
+        <code>parallel-execute</code>:
+      </p>
+
+      <pre><code class="language-scheme">(parallel-execute ⟨p₁⟩ 
+                  ⟨p₂⟩ 
+                  … 
+                  ⟨pₖ⟩)</code></pre>
+
+      <p>
+        Cada <code>⟨</code><var>p</var><code>⟩</code> deve ser um procedimento
+        sem argumentos. <code>Parallel-execute</code> cria um processo separado
+        para cada <code>⟨</code><var>p</var><code>⟩</code>, que aplica
+        <code>⟨</code><var>p</var><code>⟩</code> (sem argumentos). Esses
+        processos são executados concorrentemente.<a
+          class="footnote_link"
+          id="DOCF168"
+          href="#FOOT168"
+          ><sup>168</sup></a
+        >
+      </p>
+
+      <p>Como exemplo de como isso é usado, considere</p>
+
+      <pre><code class="language-scheme">(define x 10)
+(parallel-execute (lambda () (set! x (* x x)))
+                  (lambda () (set! x (+ x 1))))</code></pre>
+
+      <p>
+        Isso cria dois processos concorrentes—<math
+          xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>P</mi><mn>1</mn></msub></math
+        >, que define <code>x</code> como <code>x</code> vezes <code>x</code>, e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>P</mi><mn>2</mn></msub></math
+        >, que incrementa <code>x</code>. Após a execução, <code>x</code> terá
+        um dos cinco valores possíveis, dependendo da intercalação dos eventos
+        de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>P</mi><mn>1</mn></msub></math
+        >
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>P</mi><mn>2</mn></msub></math
+        >:
+      </p>
+
+      <pre><code class="language-scheme">101: <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>1</mn></msub></math> define <code>x</code> como 100 e então <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>2</mn></msub></math> incrementa <code>x</code> para 101.
+121: <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>2</mn></msub></math> incrementa <code>x</code> para 11 e então <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>1</mn></msub></math> define <code>x</code> como <code>x</code> vezes <code>x</code>.
+110: <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>2</mn></msub></math> muda <code>x</code> de 10 para 11 entre as duas vezes que <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>1</mn></msub></math> acessa o valor de <code>x</code> durante a avaliação de <code>(* x x)</code>.
+11: <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>2</mn></msub></math> acessa <code>x</code>, então <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>1</mn></msub></math> define <code>x</code> como 100, então <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>2</mn></msub></math> define <code>x</code>.
+100: <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>1</mn></msub></math> acessa <code>x</code> (duas vezes), então <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>2</mn></msub></math> define <code>x</code> como 11, então <math xmlns="http://www.w3.org/1998/Math/MathML"><msub><mi>P</mi><mn>1</mn></msub></math> define <code>x</code>.</code></pre>
+
+      <p>
+        Podemos restringir a concorrência usando procedimentos serializados, que
+        são criados por <a id="index-serializers"></a><em>serializadores</em>.
+        Serializadores são construídos por <code>make-serializer</code>, cuja
+        implementação é dada abaixo. Um serializador recebe um procedimento como
+        argumento e retorna um procedimento serializado que se comporta como o
+        procedimento original. Todas as chamadas para um determinado
+        serializador retornam procedimentos serializados no mesmo conjunto.
+      </p>
+
+      <p>Assim, em contraste com o exemplo acima, executando</p>
+
+      <pre><code class="language-scheme">(define x 10)
+(define s (make-serializer))
+(parallel-execute 
+ (s (lambda () (set! x (* x x))))
+ (s (lambda () (set! x (+ x 1)))))</code></pre>
+
+      <p>
+        pode produzir apenas dois valores possíveis para <code>x</code>, 101 ou
+        121. As outras possibilidades são eliminadas, porque a execução de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>P</mi><mn>1</mn></msub></math
+        >
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><msub><mi>P</mi><mn>2</mn></msub></math
+        >
+        não pode ser intercalada.
+      </p>
+
+      <p>
+        Aqui está uma versão do procedimento <code>make-account</code> de
+        <a href="3_002e1.html#g_t3_002e1_002e1">3.1.1</a>, onde os depósitos e
+        saques foram serializados:
+      </p>
+
+      <pre><code class="language-scheme">(define (make-account balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin 
+          (set! balance 
+                (- balance amount))
+          balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((protected (make-serializer)))
+    (define (dispatch m)
+      (cond ((eq? m 'withdraw) 
+             (protected withdraw))
+            ((eq? m 'deposit) 
+             (protected deposit))
+            ((eq? m 'balance) 
+             balance)
+            (else 
+             (error 
+              "Unknown request: 
+               MAKE-ACCOUNT"
+              m))))
+    dispatch))</code></pre>
+
+      <p>
+        Com essa implementação, dois processos não podem sacar ou depositar em
+        uma única conta concorrentemente. Isso elimina a fonte do erro ilustrado
+        em <a href="#Figure-3_002e29">Figura 3.29</a>, onde Peter muda o saldo
+        da conta entre os momentos em que Paul acessa o saldo para calcular o
+        novo valor e quando Paul realmente realiza a atribuição. Por outro lado,
+        cada conta tem seu próprio serializador, de modo que depósitos e saques
+        para diferentes contas podem prosseguir concorrentemente.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e39"></a>Exercício 3.39:</strong> Quais
+          das cinco possibilidades na execução paralela mostrada acima
+          permanecem se, em vez disso, serializarmos a execução da seguinte
+          forma:
+        </p>
+        <pre><code class="language-scheme">(define x 10)
+(define s (make-serializer))
+(parallel-execute 
+  (lambda () 
+    (set! x ((s (lambda () (* x x))))))
+  (s (lambda () (set! x (+ x 1)))))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e40"></a>Exercício 3.40:</strong> Dê
+          todos os valores possíveis de <code>x</code> que podem resultar da
+          execução de
+        </p>
+        <pre><code class="language-scheme">(define x 10)
+(parallel-execute 
+ (lambda () (set! x (* x x)))
+ (lambda () (set! x (* x x x))))</code></pre>
+
+        <p>
+          Quais dessas possibilidades permanecem se, em vez disso, usarmos
+          procedimentos serializados:
+        </p>
+        <pre><code class="language-scheme">(define x 10)
+(define s (make-serializer))
+(parallel-execute 
+ (s (lambda () (set! x (* x x))))
+ (s (lambda () (set! x (* x x x)))))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e41"></a>Exercício 3.41:</strong> Ben
+          Bitdiddle se preocupa que seria melhor implementar a conta bancária da
+          seguinte forma (onde a linha comentada foi alterada):
+        </p>
+        <pre><code class="language-scheme">(define (make-account balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin 
+          (set! balance 
+                (- balance amount))
+          balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((protected (make-serializer)))
+    (define (dispatch m)
+      (cond ((eq? m 'withdraw) 
+             (protected withdraw))
+            ((eq? m 'deposit) 
+             (protected deposit))
+            ((eq? m 'balance) 
+             ((protected 
+                (lambda () 
+                  balance)))) ; serialized
+            (else 
+             (error 
+              "Unknown request: 
+               MAKE-ACCOUNT"
+              m))))
+    dispatch))</code></pre>
+
+        <p>
+          porque permitir acesso não serializado ao saldo da conta pode resultar
+          em comportamento anômalo. Você concorda? Há algum cenário que
+          demonstre a preocupação de Ben?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e42"></a>Exercício 3.42:</strong> Ben
+          Bitdiddle sugere que é um desperdício de tempo criar um novo
+          procedimento serializado em resposta a cada mensagem de
+          <code>withdraw</code> e <code>deposit</code>. Ele diz que
+          <code>make-account</code> poderia ser alterado para que as chamadas a
+          <code>protected</code> sejam feitas fora do procedimento
+          <code>dispatch</code>. Ou seja, uma conta retornaria o mesmo
+          procedimento serializado (que foi criado ao mesmo tempo que a conta)
+          cada vez que for solicitado um procedimento de saque.
+        </p>
+        <pre><code class="language-scheme">(define (make-account balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin 
+          (set! balance 
+                (- balance amount))
+          balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((protected (make-serializer)))
+    (let ((protected-withdraw 
+           (protected withdraw))
+          (protected-deposit 
+           (protected deposit)))
+      (define (dispatch m)
+        (cond ((eq? m 'withdraw) 
+               protected-withdraw))
+              ((eq? m 'deposit) 
+               protected-deposit))
+              ((eq? m 'balance) 
+               balance)
+              (else 
+               (error 
+                "Unknown request: 
+                 MAKE-ACCOUNT"
+                m))))
+      dispatch)))</code></pre>
+
+        <p>
+          Essa é uma mudança segura? Em particular, há alguma diferença no que a
+          concorrência é permitida por essas duas versões de
+          <code>make-account</code>?
+        </p>
+      </blockquote>
+
+      <a id="Complexity-of-using-multiple-shared-resources"></a>
+      <h5 class="subsubheading">
+        Complexidade de usar múltiplos recursos compartilhados
+      </h5>
+
+      <p>
+        Os serializadores fornecem uma abstração poderosa que ajuda a isolar as
+        complexidades dos programas concorrentes para que possam ser tratadas
+        com cuidado e (esperançosamente) corretamente. No entanto, embora o uso
+        de serializadores seja relativamente simples quando há apenas um recurso
+        compartilhado (como uma única conta bancária), a programação concorrente
+        pode ser traiçoeiramente difícil quando há múltiplos recursos
+        compartilhados.
+      </p>
+
+      <p>
+        Para ilustrar uma das dificuldades que podem surgir, suponha que
+        desejamos trocar os saldos em duas contas bancárias. Acessamos cada
+        conta para encontrar o saldo, calculamos a diferença entre os saldos,
+        sacamos essa diferença de uma conta e a depositamos na outra conta.
+        Poderíamos implementar isso da seguinte forma:<a
+          class="footnote_link"
+          id="DOCF169"
+          href="#FOOT169"
+          ><sup>169</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (exchange account1 account2)
+  (let ((difference (- (account1 'balance)
+                       (account2 'balance))))
+    ((account1 'withdraw) difference))
+    ((account2 'deposit) difference)))</code></pre>
+
+      <p>
+        Esse procedimento funciona bem quando apenas um único processo está
+        tentando fazer a troca. Suponha, no entanto, que Peter e Paul tenham
+        acesso às contas
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >,
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>2</mn></mrow></math
+        >
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>3</mn></mrow></math
+        >, e que Peter troque
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>2</mn></mrow></math
+        >
+        enquanto Paul concorrentemente troca
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>3</mn></mrow></math
+        >. Mesmo com depósitos e saques serializados para contas individuais
+        (como no procedimento <code>make-account</code> mostrado acima nesta
+        seção), <code>exchange</code> ainda pode produzir resultados incorretos.
+        Por exemplo, Peter pode calcular a diferença nos saldos para
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>2</mn></mrow></math
+        >, mas então Paul pode mudar o saldo em
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >
+        antes que Peter possa completar a troca.<a
+          class="footnote_link"
+          id="DOCF170"
+          href="#FOOT170"
+          ><sup>170</sup></a
+        >
+        Para um comportamento correto, devemos garantir que o procedimento
+        <code>exchange</code> bloqueie qualquer outro acesso concorrente às
+        contas durante todo o tempo da troca.
+      </p>
+
+      <p>
+        Uma maneira de conseguir isso é usar os serializadores de ambas as
+        contas para serializar todo o procedimento <code>exchange</code>. Para
+        fazer isso, vamos organizar o acesso ao serializador de uma conta.
+        Observe que estamos deliberadamente quebrando a modularidade do objeto
+        conta bancária ao expor o serializador. A seguinte versão de
+        <code>make-account</code> é idêntica à versão original dada em
+        <a href="3_002e1.html#g_t3_002e1_002e1">3.1.1</a>, exceto que um
+        serializador é fornecido para proteger a variável de saldo, e o
+        serializador é exportado via passagem de mensagens:
+      </p>
+
+      <pre><code class="language-scheme">(define (make-account-and-serializer balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin 
+          (set! balance (- balance amount))
+          balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((balance-serializer 
+         (make-serializer)))
+    (define (dispatch m)
+      (cond ((eq? m 'withdraw) 
+             withdraw))
+            ((eq? m 'deposit) 
+             deposit))
+            ((eq? m 'balance) 
+             balance)
+            ((eq? m 'serializer) 
+             balance-serializer))
+            (else 
+             (error 
+              "Unknown request: 
+               MAKE-ACCOUNT"
+              m))))
+    dispatch))</code></pre>
+
+      <p>
+        Podemos usar isso para fazer depósitos e saques serializados. No
+        entanto, ao contrário de nossa conta serializada anterior, agora é
+        responsabilidade de cada usuário de objetos conta bancária gerenciar
+        explicitamente a serialização, por exemplo da seguinte forma:<a
+          class="footnote_link"
+          id="DOCF171"
+          href="#FOOT171"
+          ><sup>171</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (deposit account amount)
+  (let ((s (account 'serializer))
+        (d (account 'deposit)))
+    ((s d) amount)))</code></pre>
+
+      <p>
+        Exportar o serializador dessa forma nos dá flexibilidade suficiente para
+        implementar um programa de troca serializado. Simplesmente serializamos
+        o procedimento <code>exchange</code> original com os serializadores de
+        ambas as contas:
+      </p>
+
+      <pre><code class="language-scheme">(define (serialized-exchange account1 account2)
+  (let ((serializer1 (account1 'serializer))
+        (serializer2 (account2 'serializer)))
+    ((serializer1 (serializer2 exchange))
+     account1
+     account2)))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e43"></a>Exercício 3.43:</strong> Suponha
+          que os saldos em três contas comecem com $10, $20 e $30, e que
+          múltiplos processos sejam executados, trocando os saldos nas contas.
+          Argumente que, se os processos forem executados sequencialmente, após
+          qualquer número de trocas concorrentes, os saldos das contas devem ser
+          $10, $20 e $30 em alguma ordem. Desenhe um diagrama de tempo como o da
+          <a href="#Figure-3_002e29">Figura 3.29</a> para mostrar como essa
+          condição pode ser violada se as trocas forem implementadas usando a
+          primeira versão do programa de troca de contas nesta seção. Por outro
+          lado, argumente que, mesmo com esse programa <code>exchange</code>, a
+          soma dos saldos nas contas será preservada. Desenhe um diagrama de
+          tempo para mostrar como até essa condição seria violada se não
+          serializássemos as transações em contas individuais.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e44"></a>Exercício 3.44:</strong>
+          Considere o problema de transferir uma quantia de uma conta para
+          outra. Ben Bitdiddle afirma que isso pode ser realizado com o seguinte
+          procedimento, mesmo que haja várias pessoas transferindo dinheiro
+          concorrentemente entre várias contas, usando qualquer mecanismo de
+          conta que serialize transações de depósito e saque, por exemplo, a
+          versão de <code>make-account</code> no texto acima.
+        </p>
+        <pre><code class="language-scheme">(define 
+  (transfer from-account to-account amount)
+  ((from-account 'withdraw) amount))
+  ((to-account 'deposit) amount))</code></pre>
+
+        <p>
+          Louis Reasoner afirma que há um problema aqui e que precisamos usar um
+          método mais sofisticado, como o necessário para lidar com o problema
+          de troca. Louis está certo? Se não, qual é a diferença essencial entre
+          o problema de transferência e o problema de troca? (Você deve assumir
+          que o saldo em <code>from-account</code> é pelo menos
+          <code>amount</code>.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e45"></a>Exercício 3.45:</strong> Louis
+          Reasoner acha que nosso sistema de conta bancária é desnecessariamente
+          complexo e propenso a erros agora que depósitos e saques não são
+          automaticamente serializados. Ele sugere que
+          <code>make-account-and-serializer</code> deveria ter exportado o
+          serializador (para uso por procedimentos como
+          <code>serialized-exchange</code>) além de (em vez de) usá-lo para
+          serializar contas e depósitos como <code>make-account</code> fez. Ele
+          propõe redefinir contas da seguinte forma:
+        </p>
+        <pre><code class="language-scheme">(define 
+  (make-account-and-serializer balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin 
+          (set! balance 
+                (- balance amount))
+          balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (let ((balance-serializer 
+         (make-serializer)))
+    (define (dispatch m)
+      (cond ((eq? m 'withdraw) 
+             (balance-serializer withdraw))
+            ((eq? m 'deposit) 
+             (balance-serializer deposit))
+            ((eq? m 'balance) 
+             balance)
+            ((eq? m 'serializer) 
+             balance-serializer))
+            (else 
+             (error 
+              "Unknown request: 
+               MAKE-ACCOUNT"
+              m))))
+    dispatch))</code></pre>
+
+        <p>
+          Então, os depósitos são tratados como na versão original de
+          <code>make-account</code>:
+        </p>
+        <pre><code class="language-scheme">(define (deposit account amount)
+  ((account 'deposit) amount))</code></pre>
+
+        <p>
+          Explique o que está errado com o raciocínio de Louis. Em particular,
+          considere o que acontece quando <code>serialized-exchange</code> é
+          chamado.
+        </p>
+      </blockquote>
+
+      <a id="Implementing-serializers"></a>
+      <h5 class="subsubheading">Implementando serializadores</h5>
+
+      <p>
+        Implementamos serializadores em termos de um mecanismo de sincronização
+        mais primitivo chamado <a id="index-mutex"></a><em>mutex</em>. Um mutex
+        é um objeto que suporta duas operações—o mutex pode ser
+        <a id="index-acquired"></a><em>adquirido</em>, e o mutex pode ser
+        <a id="index-released"></a><em>liberado</em>. Uma vez que um mutex foi
+        adquirido, nenhuma outra operação de aquisição nesse mutex pode
+        prosseguir até que o mutex seja liberado.<a
+          class="footnote_link"
+          id="DOCF172"
+          href="#FOOT172"
+          ><sup>172</sup></a
+        >
+        Em nossa implementação, cada serializador tem um mutex associado. Dado
+        um procedimento <code>p</code>, o serializador retorna um procedimento
+        que adquire o mutex, executa <code>p</code> e, em seguida, libera o
+        mutex. Isso garante que apenas um dos procedimentos produzidos pelo
+        serializador pode estar em execução por vez, o que é exatamente a
+        propriedade de serialização que precisamos garantir.
+      </p>
+
+      <pre><code class="language-scheme">(define (make-serializer)
+  (let ((mutex (make-mutex)))
+    (lambda (p)
+      (define (serialized-p . args)
+        (mutex 'acquire))
+        (let ((val (apply p args)))
+          (mutex 'release))
+          val))
+      serialized-p)))</code></pre>
+
+      <p>
+        O mutex é um objeto mutável (aqui usaremos uma lista de um elemento, que
+        chamaremos de <a id="index-cell"></a><em>célula</em>) que pode conter o
+        valor verdadeiro ou falso. Quando o valor é falso, o mutex está
+        disponível para ser adquirido. Quando o valor é verdadeiro, o mutex está
+        indisponível, e qualquer processo que tente adquirir o mutex deve
+        esperar.
+      </p>
+
+      <p>
+        Nosso construtor de mutex <code>make-mutex</code> começa inicializando o
+        conteúdo da célula como falso. Para adquirir o mutex, testamos a célula.
+        Se o mutex estiver disponível, definimos o conteúdo da célula como
+        verdadeiro e prosseguimos. Caso contrário, esperamos em um loop,
+        tentando adquirir repetidamente até encontrarmos o mutex disponível.<a
+          class="footnote_link"
+          id="DOCF173"
+          href="#FOOT173"
+          ><sup>173</sup></a
+        >
+        Para liberar o mutex, definimos o conteúdo da célula como falso.
+      </p>
+
+      <pre><code class="language-scheme">(define (make-mutex)
+  (let ((cell (list false)))
+    (define (the-mutex m)
+      (cond ((eq? m 'acquire))
+             (if (test-and-set! cell)
+                 (the-mutex 'acquire)))) ; retry
+            ((eq? m 'release)) (clear! cell))))
+    the-mutex))
+(define (clear! cell) (set-car! cell false))</code></pre>
+
+      <p>
+        <code>Test-and-set!</code> testa a célula e retorna o resultado do
+        teste. Além disso, se o teste for falso,
+        <code>test-and-set!</code> define o conteúdo da célula como verdadeiro
+        antes de retornar falso. Podemos expressar esse comportamento como o
+        seguinte procedimento:
+      </p>
+
+      <pre><code class="language-scheme">(define (test-and-set! cell)
+  (if (car cell)
+      true
+      (begin (set-car! cell true)
+             false)))</code></pre>
+
+      <p>
+        No entanto, essa implementação de <code>test-and-set!</code> não é
+        suficiente como está. Há uma sutileza crucial aqui, que é o lugar
+        essencial onde o controle de concorrência entra no sistema: A operação
+        <code>test-and-set!</code> deve ser realizada
+        <a id="index-atomically"></a><em>atomicamente</em>. Ou seja, devemos
+        garantir que, uma vez que um processo tenha testado a célula e
+        encontrado o valor falso, o conteúdo da célula será realmente definido
+        como verdadeiro antes que qualquer outro processo possa testar a célula.
+        Se não fizermos essa garantia, o mutex pode falhar de maneira semelhante
+        à falha da conta bancária na <a href="#Figure-3_002e29">Figura 3.29</a>.
+        (Veja <a href="#Exercise-3_002e46">Exercício 3.46</a>.)
+      </p>
+
+      <p>
+        A implementação real de <code>test-and-set!</code> depende dos detalhes
+        de como nosso sistema executa processos concorrentes. Por exemplo,
+        podemos estar executando processos concorrentes em um processador
+        sequencial usando um mecanismo de divisão de tempo que alterna entre os
+        processos, permitindo que cada processo execute por um curto período
+        antes de interrompê-lo e passar para o próximo processo. Nesse caso,
+        <code>test-and-set!</code> pode funcionar desabilitando a divisão de
+        tempo durante o teste e a definição.<a
+          class="footnote_link"
+          id="DOCF174"
+          href="#FOOT174"
+          ><sup>174</sup></a
+        >
+        Alternativamente, computadores multiprocessados fornecem instruções que
+        suportam operações atômicas diretamente no hardware.<a
+          class="footnote_link"
+          id="DOCF175"
+          href="#FOOT175"
+          ><sup>175</sup></a
+        >
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e46"></a>Exercício 3.46:</strong> Suponha
+          que implementemos <code>test-and-set!</code> usando um procedimento
+          comum, como mostrado no texto, sem tentar tornar a operação atômica.
+          Desenhe um diagrama de tempo como o da
+          <a href="#Figure-3_002e29">Figura 3.29</a> para demonstrar como a
+          implementação do mutex pode falhar, permitindo que dois processos
+          adquiram o mutex ao mesmo tempo.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e47"></a>Exercício 3.47:</strong> Um
+          semáforo (de tamanho
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+          >) é uma generalização de um mutex. Como um mutex, um semáforo suporta
+          operações de aquisição e liberação, mas é mais geral, pois até
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+          processos podem adquiri-lo concorrentemente. Processos adicionais que
+          tentam adquirir o semáforo devem esperar por operações de liberação.
+          Dê implementações de semáforos
+        </p>
+        <ol>
+          <li>em termos de mutexes</li>
+          <li>em termos de operações atômicas <code>test-and-set!</code>.</li>
+        </ol>
+      </blockquote>
+
+      <a id="Deadlock"></a>
+      <h5 class="subsubheading">Deadlock</h5>
+
+      <p>
+        Agora que vimos como implementar serializadores, podemos ver que a troca
+        de contas ainda tem um problema, mesmo com o procedimento
+        <code>serialized-exchange</code> acima. Imagine que Peter tente trocar
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >
+        com
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>2</mn></mrow></math
+        >
+        enquanto Paul concorrentemente tenta trocar
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>2</mn></mrow></math
+        >
+        com
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >. Suponha que o processo de Peter chegue ao ponto em que ele entrou em
+        um procedimento serializado protegendo
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >
+        e, logo após isso, o processo de Paul entre em um procedimento
+        serializado protegendo
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>2</mn></mrow></math
+        >. Agora Peter não pode prosseguir (para entrar em um procedimento
+        serializado protegendo
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>2</mn></mrow></math
+        >) até que Paul saia do procedimento serializado protegendo
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>2</mn></mrow></math
+        >. Da mesma forma, Paul não pode prosseguir até que Peter saia do
+        procedimento serializado protegendo
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"><mi>a</mi><mn>1</mn></mrow></math
+        >. Cada processo está parado para sempre, esperando pelo outro. Essa
+        situação é chamada de <a id="index-deadlock"></a><em>deadlock</em>.
+        Deadlock é sempre um perigo em sistemas que fornecem acesso concorrente
+        a múltiplos recursos compartilhados.
+      </p>
+
+      <p>
+        Uma maneira de evitar o deadlock nessa situação é dar a cada conta um
+        número de identificação único e reescrever
+        <code>serialized-exchange</code> para que um processo sempre tente
+        entrar em um procedimento protegendo a conta de número mais baixo
+        primeiro. Embora esse método funcione bem para o problema de troca, há
+        outras situações que exigem técnicas mais sofisticadas de evitar
+        deadlock, ou onde o deadlock não pode ser evitado. (Veja
+        <a href="#Exercise-3_002e48">Exercício 3.48</a> e
+        <a href="#Exercise-3_002e49">Exercício 3.49</a>.)<a
+          class="footnote_link"
+          id="DOCF176"
+          href="#FOOT176"
+          ><sup>176</sup></a
+        >
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e48"></a>Exercício 3.48:</strong>
+          Explique em detalhes por que o método de evitar deadlock descrito
+          acima (ou seja, as contas são numeradas, e cada processo tenta
+          adquirir a conta de número menor primeiro) evita deadlock no problema
+          de troca. Reescreva <code>serialized-exchange</code> para incorporar
+          essa ideia. (Você também precisará modificar
+          <code>make-account</code> para que cada conta seja criada com um
+          número, que pode ser acessado enviando uma mensagem apropriada.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e49"></a>Exercício 3.49:</strong> Dê um
+          cenário onde o mecanismo de evitar deadlock descrito acima não
+          funciona. (Dica: No problema de troca, cada processo sabe de antemão
+          quais contas precisará acessar. Considere uma situação onde um
+          processo deve acessar alguns recursos compartilhados antes de saber
+          quais recursos compartilhados adicionais precisará.)
+        </p>
+      </blockquote>
+
+      <a id="Concurrency_002c-time_002c-and-communication"></a>
+      <h5 class="subsubheading">Concorrência, tempo e comunicação</h5>
+
+      <p>
+        Vimos como programar sistemas concorrentes exige controlar a ordem dos
+        eventos quando diferentes processos acessam o estado compartilhado, e
+        vimos como alcançar esse controle através do uso criterioso de
+        serializadores. Mas os problemas da concorrência vão mais fundo do que
+        isso, porque, de um ponto de vista fundamental, nem sempre está claro o
+        que se entende por "estado compartilhado".
+      </p>
+
+      <p>
+        Mecanismos como <code>test-and-set!</code> exigem que os processos
+        examinem uma flag global compartilhada em momentos arbitrários. Isso é
+        problemático e ineficiente de implementar em processadores modernos de
+        alta velocidade, onde, devido a técnicas de otimização como pipelining e
+        memória cache, o conteúdo da memória pode não estar em um estado
+        consistente a cada instante. Em sistemas multiprocessados
+        contemporâneos, portanto, o paradigma de serialização está sendo
+        substituído por novas abordagens para controle de concorrência.<a
+          class="footnote_link"
+          id="DOCF177"
+          href="#FOOT177"
+          ><sup>177</sup></a
+        >
+      </p>
+
+      <p>
+        Os aspectos problemáticos do estado compartilhado também surgem em
+        grandes sistemas distribuídos. Por exemplo, imagine um sistema bancário
+        distribuído onde bancos individuais mantêm valores locais para saldos
+        bancários e periodicamente comparam esses valores com os valores
+        mantidos por outros bancos. Em tal sistema, o valor de "o saldo da
+        conta" seria indeterminado, exceto logo após a sincronização. Se Peter
+        depositar dinheiro em uma conta que ele mantém em conjunto com Paul,
+        quando devemos dizer que o saldo da conta mudou—quando o saldo no banco
+        local muda, ou não até depois da sincronização? E se Paul acessar a
+        conta de um banco diferente, quais são as restrições razoáveis a serem
+        impostas ao sistema bancário para que o comportamento seja "correto"? A
+        única coisa que pode importar para a correção é o comportamento
+        observado por Peter e Paul individualmente e o "estado" da conta
+        imediatamente após a sincronização. Questões sobre o "verdadeiro" saldo
+        da conta ou a ordem dos eventos entre sincronizações podem ser
+        irrelevantes ou sem sentido.<a
+          class="footnote_link"
+          id="DOCF178"
+          href="#FOOT178"
+          ><sup>178</sup></a
+        >
+      </p>
+
+      <p>
+        O fenômeno básico aqui é que sincronizar diferentes processos,
+        estabelecer estado compartilhado ou impor uma ordem sobre eventos exige
+        comunicação entre os processos. Em essência, qualquer noção de tempo no
+        controle de concorrência deve estar intimamente ligada à comunicação.<a
+          class="footnote_link"
+          id="DOCF179"
+          href="#FOOT179"
+          ><sup>179</sup></a
+        >
+        É intrigante que uma conexão semelhante entre tempo e comunicação também
+        surja na Teoria da Relatividade, onde a velocidade da luz (o sinal mais
+        rápido que pode ser usado para sincronizar eventos) é uma constante
+        fundamental relacionando tempo e espaço. As complexidades que
+        encontramos ao lidar com tempo e estado em nossos modelos computacionais
+        podem, de fato, espelhar uma complexidade fundamental do universo
+        físico.
+      </p>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+
+        <div id="FOOT162">
+          <p>
+            <a class="footnote_backlink" href="#DOCF162"><sup>162</sup></a> A
+            maioria dos processadores reais executa algumas operações por vez,
+            seguindo uma estratégia chamada <a id="index-pipelining"></a
+            ><em>pipelining</em>. Embora essa técnica melhore muito a utilização
+            efetiva do hardware, ela é usada apenas para acelerar a execução de
+            um fluxo sequencial de instruções, mantendo o comportamento do
+            programa sequencial.
+          </p>
+        </div>
+        <div id="FOOT163">
+          <p>
+            <a class="footnote_backlink" href="#DOCF163"><sup>163</sup></a> Para
+            citar um grafite visto em uma parede de um prédio em Cambridge: “O
+            tempo é um dispositivo inventado para evitar que tudo aconteça de
+            uma vez.”
+          </p>
+        </div>
+        <div id="FOOT164">
+          <p>
+            <a class="footnote_backlink" href="#DOCF164"><sup>164</sup></a> Uma
+            falha ainda pior para esse sistema poderia ocorrer se as duas
+            operações <code>set!</code> tentassem mudar o saldo simultaneamente,
+            caso em que os dados reais aparecendo na memória poderiam acabar
+            sendo uma combinação aleatória das informações sendo escritas pelos
+            dois processos. A maioria dos computadores tem travas nas operações
+            primitivas de escrita na memória, que protegem contra tal acesso
+            simultâneo. No entanto, mesmo esse tipo aparentemente simples de
+            proteção levanta desafios de implementação no design de computadores
+            multiprocessados, onde protocolos elaborados de
+            <a id="index-cache_002dcoherence"></a
+            ><em>coerência de cache</em> são necessários para garantir que os
+            vários processadores mantenham uma visão consistente do conteúdo da
+            memória, apesar do fato de que os dados podem ser replicados
+            ("cacheados") entre os diferentes processadores para aumentar a
+            velocidade de acesso à memória.
+          </p>
+        </div>
+        <div id="FOOT165">
+          <p>
+            <a class="footnote_backlink" href="#DOCF165"><sup>165</sup></a> O
+            programa de fatorial em
+            <a href="3_002e1.html#g_t3_002e1_002e3">3.1.3</a> ilustra isso para
+            um único processo sequencial.
+          </p>
+        </div>
+        <div id="FOOT166">
+          <p>
+            <a class="footnote_backlink" href="#DOCF166"><sup>166</sup></a> As
+            colunas mostram o conteúdo da carteira de Peter, a conta conjunta
+            (no Banco1), a carteira de Paul e a conta privada de Paul (no
+            Banco2), antes e depois de cada saque (W) e depósito (D). Peter saca
+            $10 do Banco1; Paul deposita $5 no Banco2, então saca $25 do Banco1.
+          </p>
+        </div>
+        <div id="FOOT167">
+          <p>
+            <a class="footnote_backlink" href="#DOCF167"><sup>167</sup></a> Uma
+            maneira mais formal de expressar essa ideia é dizer que programas
+            concorrentes são inerentemente <a id="index-nondeterministic"></a
+            ><em>não determinísticos</em>. Ou seja, eles são descritos não por
+            funções de valor único, mas por funções cujos resultados são
+            conjuntos de valores possíveis. Em
+            <a href="4_002e3.html#g_t4_002e3">4.3</a> estudaremos uma linguagem
+            para expressar computações não determinísticas.
+          </p>
+        </div>
+        <div id="FOOT168">
+          <p>
+            <a class="footnote_backlink" href="#DOCF168"><sup>168</sup></a>
+            <code>Parallel-execute</code> não faz parte do Scheme padrão, mas
+            pode ser implementado no <abbr>MIT</abbr> Scheme. Em nossa
+            implementação, os novos processos concorrentes também são executados
+            concorrentemente com o processo Scheme original. Além disso, em
+            nossa implementação, o valor retornado por
+            <code>parallel-execute</code> é um objeto de controle especial que
+            pode ser usado para parar os processos recém-criados.
+          </p>
+        </div>
+        <div id="FOOT169">
+          <p>
+            <a class="footnote_backlink" href="#DOCF169"><sup>169</sup></a>
+            Simplificamos <code>exchange</code> explorando o fato de que nossa
+            mensagem de <code>deposit</code> aceita quantias negativas. (Isso é
+            um bug sério em nosso sistema bancário!)
+          </p>
+        </div>
+        <div id="FOOT170">
+          <p>
+            <a class="footnote_backlink" href="#DOCF170"><sup>170</sup></a> Se
+            os saldos das contas começarem com $10, $20 e $30, então após
+            qualquer número de trocas concorrentes, os saldos ainda devem ser
+            $10, $20 e $30 em alguma ordem. Serializar os depósitos em contas
+            individuais não é suficiente para garantir isso. Veja
+            <a href="#Exercise-3_002e43">Exercício 3.43</a>.
+          </p>
+        </div>
+        <div id="FOOT171">
+          <p>
+            <a class="footnote_backlink" href="#DOCF171"><sup>171</sup></a>
+            <a href="#Exercise-3_002e45">Exercício 3.45</a> investiga por que
+            depósitos e saques não são mais automaticamente serializados pela
+            conta.
+          </p>
+        </div>
+        <div id="FOOT172">
+          <p>
+            <a class="footnote_backlink" href="#DOCF172"><sup>172</sup></a> O
+            termo "mutex" é uma abreviação para
+            <a id="index-mutual-exclusion"></a><em>exclusão mútua</em>. O
+            problema geral de organizar um mecanismo que permita que processos
+            concorrentes compartilhem recursos com segurança é chamado de
+            problema de exclusão mútua. Nosso mutex é uma variante simples do
+            mecanismo de <a id="index-semaphore"></a><em>semáforo</em> (veja
+            <a href="#Exercise-3_002e47">Exercício 3.47</a>), que foi
+            introduzido no sistema de multiprogramação "THE" desenvolvido na
+            Universidade Tecnológica de Eindhoven e nomeado pelas iniciais da
+            universidade em holandês (<a href="References.html#Dijkstra-1968a"
+              >Dijkstra 1968a</a
+            >). As operações de aquisição e liberação foram originalmente
+            chamadas de P e V, das palavras holandesas
+            <em>passeren</em> (passar) e <em>vrijgeven</em> (liberar), em
+            referência aos semáforos usados em sistemas ferroviários. A
+            exposição clássica de Dijkstra (<a href="References.html#g_t1968b"
+              >1968b</a
+            >) foi uma das primeiras a apresentar claramente as questões de
+            controle de concorrência e mostrou como usar semáforos para lidar
+            com uma variedade de problemas de concorrência.
+          </p>
+        </div>
+        <div id="FOOT173">
+          <p>
+            <a class="footnote_backlink" href="#DOCF173"><sup>173</sup></a> Na
+            maioria dos sistemas operacionais de tempo compartilhado, processos
+            que são bloqueados por um mutex não desperdiçam tempo "esperando
+            ocupado" como acima. Em vez disso, o sistema agenda outro processo
+            para executar enquanto o primeiro está esperando, e o processo
+            bloqueado é acordado quando o mutex se torna disponível.
+          </p>
+        </div>
+        <div id="FOOT174">
+          <p>
+            <a class="footnote_backlink" href="#DOCF174"><sup>174</sup></a> No
+            <abbr>MIT</abbr> Scheme para um único processador, que usa um modelo
+            de divisão de tempo, <code>test-and-set!</code> pode ser
+            implementado da seguinte forma:
+          </p>
+          <pre><code class="language-scheme">(define (test-and-set! cell)
+  (without-interrupts
+   (lambda ()
+     (if (car cell)
+         true
+         (begin (set-car! cell true)
+                false))))</code></pre>
+
+          <p>
+            <code>Without-interrupts</code> desabilita interrupções de divisão
+            de tempo enquanto seu argumento de procedimento está sendo
+            executado.
+          </p>
+        </div>
+        <div id="FOOT175">
+          <p>
+            <a class="footnote_backlink" href="#DOCF175"><sup>175</sup></a> Há
+            muitas variantes de tais instruções—incluindo test-and-set,
+            test-and-clear, swap, compare-and-exchange, load-reserve e
+            store-conditional—cujo design deve ser cuidadosamente correspondido
+            à interface processador-memória da máquina. Uma questão que surge
+            aqui é determinar o que acontece se dois processos tentarem adquirir
+            o mesmo recurso exatamente ao mesmo tempo usando tal instrução. Isso
+            requer algum mecanismo para tomar uma decisão sobre qual processo
+            obtém controle. Tal mecanismo é chamado de <a id="index-arbiter"></a
+            ><em>árbitro</em>. Árbitros geralmente se resumem a algum tipo de
+            dispositivo de hardware. Infelizmente, é possível provar que não se
+            pode construir fisicamente um árbitro justo que funcione 100% do
+            tempo, a menos que se permita ao árbitro um tempo arbitrariamente
+            longo para tomar sua decisão. O fenômeno fundamental aqui foi
+            originalmente observado pelo filósofo francês do século XIV Jean
+            Buridan em seu comentário sobre o <i>De caelo</i> de Aristóteles.
+            Buridan argumentou que um cachorro perfeitamente racional colocado
+            entre duas fontes igualmente atraentes de comida morreria de fome,
+            porque é incapaz de decidir para qual ir primeiro.
+          </p>
+        </div>
+        <div id="FOOT176">
+          <p>
+            <a class="footnote_backlink" href="#DOCF176"><sup>176</sup></a> A
+            técnica geral para evitar deadlock numerando os recursos
+            compartilhados e adquirindo-os em ordem é devida a
+            <a href="References.html#Havender-_00281968_0029"
+              >Havender (1968)</a
+            >. Situações onde o deadlock não pode ser evitado exigem métodos de
+            <a id="index-deadlock_002drecovery"></a
+            ><em>recuperação de deadlock</em>, que envolvem fazer com que os
+            processos "recuem" do estado de deadlock e tentem novamente.
+            Mecanismos de recuperação de deadlock são amplamente usados em
+            sistemas de gerenciamento de banco de dados, um tópico que é tratado
+            em detalhes em
+            <a href="References.html#Gray-and-Reuter-1993"
+              >Gray e Reuter 1993</a
+            >.
+          </p>
+        </div>
+        <div id="FOOT177">
+          <p>
+            <a class="footnote_backlink" href="#DOCF177"><sup>177</sup></a> Uma
+            dessas alternativas à serialização é chamada de
+            <a id="index-barrier-synchronization"></a
+            ><em>sincronização de barreira</em>. O programador permite que
+            processos concorrentes sejam executados como quiserem, mas
+            estabelece certos pontos de sincronização ("barreiras") através dos
+            quais nenhum processo pode prosseguir até que todos os processos
+            tenham alcançado a barreira. Processadores modernos fornecem
+            instruções de máquina que permitem aos programadores estabelecer
+            pontos de sincronização em lugares onde a consistência é necessária.
+            O <abbr>PowerPC</abbr>, por exemplo, inclui para esse propósito duas
+            instruções chamadas <abbr>SYNC</abbr> e <abbr>EIEIO</abbr> (Execução
+            Forçada em Ordem de Entrada/Saída).
+          </p>
+        </div>
+        <div id="FOOT178">
+          <p>
+            <a class="footnote_backlink" href="#DOCF178"><sup>178</sup></a> Isso
+            pode parecer um ponto de vista estranho, mas há sistemas que
+            funcionam dessa forma. Cobranças internacionais em contas de cartão
+            de crédito, por exemplo, são normalmente liberadas por país, e as
+            cobranças feitas em diferentes países são periodicamente
+            reconciliadas. Assim, o saldo da conta pode ser diferente em
+            diferentes países.
+          </p>
+        </div>
+        <div id="FOOT179">
+          <p>
+            <a class="footnote_backlink" href="#DOCF179"><sup>179</sup></a> Para
+            sistemas distribuídos, essa perspectiva foi perseguida por
+            <a href="References.html#Lamport-_00281978_0029">Lamport (1978)</a
+            >, que mostrou como usar a comunicação para estabelecer "relógios
+            globais" que podem ser usados para estabelecer ordens sobre eventos
+            em sistemas distribuídos.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e5.html#g_t3_002e5" accesskey="n" rel="next">3.5</a>,
+          Anterior:
+          <a href="3_002e3.html#g_t3_002e3" accesskey="p" rel="prev">3.3</a>,
+          Acima: <a href="#g_t3_002e4" accesskey="u" rel="prev">3.4</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Ir para o final"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    >
+    <a id="pagebottom"></a>
+  </body>
+</html>
