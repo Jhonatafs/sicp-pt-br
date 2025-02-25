@@ -1,98 +1,221 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <title>Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.1</title>
-</head>
-<body>
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.1
+    </title>
+  </head>
+  <body>
     <section>
-        <span class="top jump" title="Ir para o topo"><a href="#pagetop" accesskey="t">⇡</a></span>
-        <a id="pagetop"></a>
-        <a id="g_t4_002e1"></a>
-        <nav class="header">
-            <p>
-                Próximo: <a href="4_002e2.xhtml#g_t4_002e2" accesskey="n" rel="next">4.2</a>, Anterior: <a href="Chapter-4.xhtml#Chapter-4" accesskey="p" rel="prev">Capítulo 4</a>, Acima: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Capítulo 4</a>   [<a href="index.xhtml#SEC_Contents" title="Índice" accesskey="c" rel="contents">Conteúdo</a>]
-            </p>
-        </nav>
-        <a id="The-Metacircular-Evaluator"></a>
-        <h3 class="section"><span class="secnum">4.1</span><span class="sectitle">O Avaliador Metacircular</span></h3>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t4_002e1"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="4_002e2.xhtml#g_t4_002e2" accesskey="n" rel="next">4.2</a>,
+          Anterior:
+          <a href="Chapter-4.xhtml#Chapter-4" accesskey="p" rel="prev"
+            >Capítulo 4</a
+          >, Acima:
+          <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev"
+            >Capítulo 4</a
+          >
+          [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <a id="The-Metacircular-Evaluator"></a>
+      <h3 class="section">
+        <span class="secnum">4.1</span
+        ><span class="sectitle">O Avaliador Metacircular</span>
+      </h3>
 
-        <p>Nosso avaliador para Lisp será implementado como um programa Lisp. Pode parecer circular pensar em avaliar programas Lisp usando um avaliador que é ele mesmo implementado em Lisp. No entanto, a avaliação é um processo, então é apropriado descrever o processo de avaliação usando Lisp, que, afinal, é nossa ferramenta para descrever processos.<a class="footnote_link" id="DOCF207" href="#FOOT207"><sup>207</sup></a>
-        Um avaliador que é escrito na mesma linguagem que ele avalia é chamado de <a id="index-metacircular"></a>
-        <em>metacircular</em>.
-        </p>
-        <p>O avaliador metacircular é essencialmente uma formulação em Scheme do modelo de avaliação de ambiente descrito em <a href="3_002e2.xhtml#g_t3_002e2">3.2</a>. Lembre-se de que o modelo tem duas partes básicas:
-        </p>
-        <ol>
-            <li> Para avaliar uma combinação (uma expressão composta que não seja uma forma especial), avalie as subexpressões e então aplique o valor da subexpressão do operador aos valores das subexpressões dos operandos.
-            </li>
-            <li> Para aplicar um procedimento composto a um conjunto de argumentos, avalie o corpo do procedimento em um novo ambiente. Para construir esse ambiente, estenda a parte do ambiente do objeto de procedimento por um quadro no qual os parâmetros formais do procedimento são vinculados aos argumentos aos quais o procedimento é aplicado.
-            </li>
-        </ol>
+      <p>
+        Nosso avaliador para Lisp será implementado como um programa Lisp. Pode
+        parecer circular pensar em avaliar programas Lisp usando um avaliador
+        que é ele mesmo implementado em Lisp. No entanto, a avaliação é um
+        processo, então é apropriado descrever o processo de avaliação usando
+        Lisp, que, afinal, é nossa ferramenta para descrever processos.<a
+          class="footnote_link"
+          id="DOCF207"
+          href="#FOOT207"
+          ><sup>207</sup></a
+        >
+        Um avaliador que é escrito na mesma linguagem que ele avalia é chamado
+        de <a id="index-metacircular"></a> <em>metacircular</em>.
+      </p>
+      <p>
+        O avaliador metacircular é essencialmente uma formulação em Scheme do
+        modelo de avaliação de ambiente descrito em
+        <a href="3_002e2.xhtml#g_t3_002e2">3.2</a>. Lembre-se de que o modelo
+        tem duas partes básicas:
+      </p>
+      <ol>
+        <li>
+          Para avaliar uma combinação (uma expressão composta que não seja uma
+          forma especial), avalie as subexpressões e então aplique o valor da
+          subexpressão do operador aos valores das subexpressões dos operandos.
+        </li>
+        <li>
+          Para aplicar um procedimento composto a um conjunto de argumentos,
+          avalie o corpo do procedimento em um novo ambiente. Para construir
+          esse ambiente, estenda a parte do ambiente do objeto de procedimento
+          por um quadro no qual os parâmetros formais do procedimento são
+          vinculados aos argumentos aos quais o procedimento é aplicado.
+        </li>
+      </ol>
 
-        <p>Essas duas regras descrevem a essência do processo de avaliação, um ciclo básico no qual expressões a serem avaliadas em ambientes são reduzidas a procedimentos a serem aplicados a argumentos, que por sua vez são reduzidos a novas expressões a serem avaliadas em novos ambientes, e assim por diante, até chegarmos a símbolos, cujos valores são procurados no ambiente, e a procedimentos primitivos, que são aplicados diretamente (veja <a href="#Figure-4_002e1">Figura 4.1</a>).<a class="footnote_link" id="DOCF208" href="#FOOT208"><sup>208</sup></a> 
-        Este ciclo de avaliação será incorporado pela interação entre os dois procedimentos críticos no avaliador, <code>eval</code> e <code>apply</code>, que são descritos em <a href="#g_t4_002e1_002e1">4.1.1</a> (veja <a href="#Figure-4_002e1">Figura 4.1</a>).
-        </p>
-        <figure class="float">
-            <a id="Figure-4_002e1"></a>
-            <object style="width: 60.35ex; height: 24.52ex;" data="fig/chap4/Fig4.1a.std.svg" type="image/svg+xml">SVG</object>
-            <figcaption class="float-caption">
-                <p><strong>Figura 4.1:</strong> O ciclo <code>eval</code>-<code>apply</code> expõe a essência de uma linguagem de computador.</p>
-            </figcaption>
-        </figure>
+      <p>
+        Essas duas regras descrevem a essência do processo de avaliação, um
+        ciclo básico no qual expressões a serem avaliadas em ambientes são
+        reduzidas a procedimentos a serem aplicados a argumentos, que por sua
+        vez são reduzidos a novas expressões a serem avaliadas em novos
+        ambientes, e assim por diante, até chegarmos a símbolos, cujos valores
+        são procurados no ambiente, e a procedimentos primitivos, que são
+        aplicados diretamente (veja <a href="#Figure-4_002e1">Figura 4.1</a>).<a
+          class="footnote_link"
+          id="DOCF208"
+          href="#FOOT208"
+          ><sup>208</sup></a
+        >
+        Este ciclo de avaliação será incorporado pela interação entre os dois
+        procedimentos críticos no avaliador, <code>eval</code> e
+        <code>apply</code>, que são descritos em
+        <a href="#g_t4_002e1_002e1">4.1.1</a> (veja
+        <a href="#Figure-4_002e1">Figura 4.1</a>).
+      </p>
+      <figure class="float">
+        <a id="Figure-4_002e1"></a>
+        <object
+          style="width: 60.35ex; height: 24.52ex"
+          data="fig/chap4/Fig4.1a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 4.1:</strong> O ciclo <code>eval</code>-<code
+              >apply</code
+            >
+            expõe a essência de uma linguagem de computador.
+          </p>
+        </figcaption>
+      </figure>
 
-        <p>A implementação do avaliador dependerá de procedimentos que definem a <a id="index-syntax"></a>
-        <em>sintaxe</em> das expressões a serem avaliadas. Usaremos abstração de dados para tornar o avaliador independente da representação da linguagem. Por exemplo, em vez de nos comprometermos com a escolha de que uma atribuição seja representada por uma lista começando com o símbolo <code>set!</code>, usamos um predicado abstrato <code>assignment?</code> para testar uma atribuição, e usamos seletores abstratos <code>assignment-variable</code> e <code>assignment-value</code> para acessar as partes de uma atribuição. A implementação de expressões será descrita em detalhes em <a href="#g_t4_002e1_002e2">4.1.2</a>. Há também operações, descritas em <a href="#g_t4_002e1_002e3">4.1.3</a>, que especificam a representação de procedimentos e ambientes. Por exemplo, <code>make-procedure</code> constrói procedimentos compostos, <code>lookup-variable-value</code> acessa os valores das variáveis, e <code>apply-primitive-procedure</code> aplica um procedimento primitivo a uma dada lista de argumentos.
-        </p>
+      <p>
+        A implementação do avaliador dependerá de procedimentos que definem a
+        <a id="index-syntax"></a> <em>sintaxe</em> das expressões a serem
+        avaliadas. Usaremos abstração de dados para tornar o avaliador
+        independente da representação da linguagem. Por exemplo, em vez de nos
+        comprometermos com a escolha de que uma atribuição seja representada por
+        uma lista começando com o símbolo <code>set!</code>, usamos um predicado
+        abstrato <code>assignment?</code> para testar uma atribuição, e usamos
+        seletores abstratos <code>assignment-variable</code> e
+        <code>assignment-value</code> para acessar as partes de uma atribuição.
+        A implementação de expressões será descrita em detalhes em
+        <a href="#g_t4_002e1_002e2">4.1.2</a>. Há também operações, descritas em
+        <a href="#g_t4_002e1_002e3">4.1.3</a>, que especificam a representação
+        de procedimentos e ambientes. Por exemplo,
+        <code>make-procedure</code> constrói procedimentos compostos,
+        <code>lookup-variable-value</code> acessa os valores das variáveis, e
+        <code>apply-primitive-procedure</code> aplica um procedimento primitivo
+        a uma dada lista de argumentos.
+      </p>
 
-        <a id="g_t4_002e1_002e1"></a>
-        <a id="The-Core-of-the-Evaluator"></a>
-        <h4 class="subsection"><span class="secnum">4.1.1</span><span class="sectitle">O Núcleo do Avaliador</span></h4>
+      <a id="g_t4_002e1_002e1"></a>
+      <a id="The-Core-of-the-Evaluator"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.1.1</span
+        ><span class="sectitle">O Núcleo do Avaliador</span>
+      </h4>
 
-        <p>O processo de avaliação pode ser descrito como a interação entre dois procedimentos: <code>eval</code> e <code>apply</code>.
-        </p>
-        <a id="Eval"></a>
-        <h5 class="subsubheading">Eval</h5>
+      <p>
+        O processo de avaliação pode ser descrito como a interação entre dois
+        procedimentos: <code>eval</code> e <code>apply</code>.
+      </p>
+      <a id="Eval"></a>
+      <h5 class="subsubheading">Eval</h5>
 
-        <p><code>Eval</code> recebe como argumentos uma expressão e um ambiente. Ele classifica a expressão e direciona sua avaliação. <code>Eval</code> é estruturado como uma análise de caso do tipo sintático da expressão a ser avaliada. Para manter o procedimento geral, expressamos a determinação do tipo de uma expressão de forma abstrata, sem nos comprometermos com nenhuma representação particular para os vários tipos de expressões. Cada tipo de expressão tem um predicado que testa por ele e um meio abstrato para selecionar suas partes. Esta <a id="index-abstract-syntax"></a>
-        <em>sintaxe abstrata</em> facilita ver como podemos mudar a sintaxe da linguagem usando o mesmo avaliador, mas com uma coleção diferente de procedimentos de sintaxe.
-        </p>
-        <p><b>Expressões primitivas</b>
-        </p>
-        <ul>
-            <li> Para expressões autoavaliáveis, como números, <code>eval</code> retorna a própria expressão.
-            </li>
-            <li> <code>Eval</code> deve procurar variáveis no ambiente para encontrar seus valores.
-            </li>
-        </ul>
+      <p>
+        <code>Eval</code> recebe como argumentos uma expressão e um ambiente.
+        Ele classifica a expressão e direciona sua avaliação.
+        <code>Eval</code> é estruturado como uma análise de caso do tipo
+        sintático da expressão a ser avaliada. Para manter o procedimento geral,
+        expressamos a determinação do tipo de uma expressão de forma abstrata,
+        sem nos comprometermos com nenhuma representação particular para os
+        vários tipos de expressões. Cada tipo de expressão tem um predicado que
+        testa por ele e um meio abstrato para selecionar suas partes. Esta
+        <a id="index-abstract-syntax"></a> <em>sintaxe abstrata</em> facilita
+        ver como podemos mudar a sintaxe da linguagem usando o mesmo avaliador,
+        mas com uma coleção diferente de procedimentos de sintaxe.
+      </p>
+      <p><b>Expressões primitivas</b></p>
+      <ul>
+        <li>
+          Para expressões autoavaliáveis, como números,
+          <code>eval</code> retorna a própria expressão.
+        </li>
+        <li>
+          <code>Eval</code> deve procurar variáveis no ambiente para encontrar
+          seus valores.
+        </li>
+      </ul>
 
-        <p><b>Formas especiais</b>
-        </p>
-        <ul>
-            <li> Para expressões citadas, <code>eval</code> retorna a expressão que foi citada.
-            </li>
-            <li> Uma atribuição a (ou uma definição de) uma variável deve chamar recursivamente <code>eval</code> para calcular o novo valor a ser associado à variável. O ambiente deve ser modificado para alterar (ou criar) a vinculação da variável.
-            </li>
-            <li> Uma expressão <code>if</code> requer processamento especial de suas partes, de modo a avaliar o consequente se o predicado for verdadeiro, e caso contrário, avaliar a alternativa.
-            </li>
-            <li> Uma expressão <code>lambda</code> deve ser transformada em um procedimento aplicável, empacotando os parâmetros e o corpo especificados pela expressão <code>lambda</code> com o ambiente da avaliação.
-            </li>
-            <li> Uma expressão <code>begin</code> requer a avaliação de sua sequência de expressões na ordem em que aparecem.
-            </li>
-            <li> Uma análise de caso (<code>cond</code>) é transformada em um ninho de expressões <code>if</code> e então avaliada.
-            </li>
-        </ul>
+      <p><b>Formas especiais</b></p>
+      <ul>
+        <li>
+          Para expressões citadas, <code>eval</code> retorna a expressão que foi
+          citada.
+        </li>
+        <li>
+          Uma atribuição a (ou uma definição de) uma variável deve chamar
+          recursivamente <code>eval</code> para calcular o novo valor a ser
+          associado à variável. O ambiente deve ser modificado para alterar (ou
+          criar) a vinculação da variável.
+        </li>
+        <li>
+          Uma expressão <code>if</code> requer processamento especial de suas
+          partes, de modo a avaliar o consequente se o predicado for verdadeiro,
+          e caso contrário, avaliar a alternativa.
+        </li>
+        <li>
+          Uma expressão <code>lambda</code> deve ser transformada em um
+          procedimento aplicável, empacotando os parâmetros e o corpo
+          especificados pela expressão <code>lambda</code> com o ambiente da
+          avaliação.
+        </li>
+        <li>
+          Uma expressão <code>begin</code> requer a avaliação de sua sequência
+          de expressões na ordem em que aparecem.
+        </li>
+        <li>
+          Uma análise de caso (<code>cond</code>) é transformada em um ninho de
+          expressões <code>if</code> e então avaliada.
+        </li>
+      </ul>
 
-        <p><b>Combinações</b>
-        </p>
-        <ul>
-            <li> Para uma aplicação de procedimento, <code>eval</code> deve avaliar recursivamente a parte do operador e os operandos da combinação. O procedimento resultante e os argumentos são passados para <code>apply</code>, que lida com a aplicação real do procedimento.
-            </li>
-        </ul>
+      <p><b>Combinações</b></p>
+      <ul>
+        <li>
+          Para uma aplicação de procedimento, <code>eval</code> deve avaliar
+          recursivamente a parte do operador e os operandos da combinação. O
+          procedimento resultante e os argumentos são passados para
+          <code>apply</code>, que lida com a aplicação real do procedimento.
+        </li>
+      </ul>
 
-        <p>Aqui está a definição de <code>eval</code>:
-        </p>
-        <pre><code class="language-scheme">(define (eval exp env)
+      <p>Aqui está a definição de <code>eval</code>:</p>
+      <pre><code class="language-scheme">(define (eval exp env)
   (cond ((self-evaluating? exp) 
          exp)
         ((variable? exp) 
@@ -125,14 +248,34 @@
          (error "Unknown expression 
                  type: EVAL" exp))))</code></pre>
 
-        <p>Para clareza, <code>eval</code> foi implementado como uma análise de caso usando <code>cond</code>. A desvantagem disso é que nosso procedimento lida apenas com alguns tipos distinguíveis de expressões, e nenhum novo pode ser definido sem editar a definição de <code>eval</code>. Na maioria das implementações de Lisp, a despacho sobre o tipo de uma expressão é feito de forma dirigida por dados. Isso permite que um usuário adicione novos tipos de expressões que <code>eval</code> pode distinguir, sem modificar a definição de <code>eval</code> em si. (Veja <a href="#Exercise-4_002e3">Exercício 4.3</a>.)
-        </p>
-        <a id="Apply"></a>
-        <h5 class="subsubheading">Apply</h5>
+      <p>
+        Para clareza, <code>eval</code> foi implementado como uma análise de
+        caso usando <code>cond</code>. A desvantagem disso é que nosso
+        procedimento lida apenas com alguns tipos distinguíveis de expressões, e
+        nenhum novo pode ser definido sem editar a definição de
+        <code>eval</code>. Na maioria das implementações de Lisp, a despacho
+        sobre o tipo de uma expressão é feito de forma dirigida por dados. Isso
+        permite que um usuário adicione novos tipos de expressões que
+        <code>eval</code> pode distinguir, sem modificar a definição de
+        <code>eval</code> em si. (Veja
+        <a href="#Exercise-4_002e3">Exercício 4.3</a>.)
+      </p>
+      <a id="Apply"></a>
+      <h5 class="subsubheading">Apply</h5>
 
-        <p><code>Apply</code> recebe dois argumentos, um procedimento e uma lista de argumentos aos quais o procedimento deve ser aplicado. <code>Apply</code> classifica procedimentos em dois tipos: Ele chama <code>apply-primitive-procedure</code> para aplicar primitivas; ele aplica procedimentos compostos avaliando sequencialmente as expressões que compõem o corpo do procedimento. O ambiente para a avaliação do corpo de um procedimento composto é construído estendendo o ambiente base carregado pelo procedimento para incluir um quadro que vincula os parâmetros do procedimento aos argumentos aos quais o procedimento é aplicado. Aqui está a definição de <code>apply</code>:
-        </p>
-        <pre><code class="language-scheme">(define (apply procedure arguments)
+      <p>
+        <code>Apply</code> recebe dois argumentos, um procedimento e uma lista
+        de argumentos aos quais o procedimento deve ser aplicado.
+        <code>Apply</code> classifica procedimentos em dois tipos: Ele chama
+        <code>apply-primitive-procedure</code> para aplicar primitivas; ele
+        aplica procedimentos compostos avaliando sequencialmente as expressões
+        que compõem o corpo do procedimento. O ambiente para a avaliação do
+        corpo de um procedimento composto é construído estendendo o ambiente
+        base carregado pelo procedimento para incluir um quadro que vincula os
+        parâmetros do procedimento aos argumentos aos quais o procedimento é
+        aplicado. Aqui está a definição de <code>apply</code>:
+      </p>
+      <pre><code class="language-scheme">(define (apply procedure arguments)
   (cond ((primitive-procedure? procedure)
          (apply-primitive-procedure 
           procedure 
@@ -151,12 +294,20 @@
                  type: APPLY" 
                 procedure))))</code></pre>
 
-        <a id="Procedure-arguments"></a>
-        <h5 class="subsubheading">Argumentos de procedimento</h5>
+      <a id="Procedure-arguments"></a>
+      <h5 class="subsubheading">Argumentos de procedimento</h5>
 
-        <p>Quando <code>eval</code> processa uma aplicação de procedimento, ele usa <code>list-of-values</code> para produzir a lista de argumentos aos quais o procedimento deve ser aplicado. <code>List-of-values</code> recebe como argumento os operandos da combinação. Ele avalia cada operando e retorna uma lista dos valores correspondentes:<a class="footnote_link" id="DOCF209" href="#FOOT209"><sup>209</sup></a>
-        </p>
-        <pre><code class="language-scheme">(define (list-of-values exps env)
+      <p>
+        Quando <code>eval</code> processa uma aplicação de procedimento, ele usa
+        <code>list-of-values</code> para produzir a lista de argumentos aos
+        quais o procedimento deve ser aplicado.
+        <code>List-of-values</code> recebe como argumento os operandos da
+        combinação. Ele avalia cada operando e retorna uma lista dos valores
+        correspondentes:<a class="footnote_link" id="DOCF209" href="#FOOT209"
+          ><sup>209</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (list-of-values exps env)
   (if (no-operands? exps)
       '()
       (cons (eval (first-operand exps) env)
@@ -164,24 +315,44 @@
              (rest-operands exps) 
              env))))</code></pre>
 
-        <a id="Conditionals"></a>
-        <h5 class="subsubheading">Condicionais</h5>
+      <a id="Conditionals"></a>
+      <h5 class="subsubheading">Condicionais</h5>
 
-        <p><code>Eval-if</code> avalia a parte do predicado de uma expressão <code>if</code> no ambiente dado. Se o resultado for verdadeiro, <code>eval-if</code> avalia o consequente, caso contrário, avalia a alternativa:
-        </p>
-        <pre><code class="language-scheme">(define (eval-if exp env)
+      <p>
+        <code>Eval-if</code> avalia a parte do predicado de uma expressão
+        <code>if</code> no ambiente dado. Se o resultado for verdadeiro,
+        <code>eval-if</code> avalia o consequente, caso contrário, avalia a
+        alternativa:
+      </p>
+      <pre><code class="language-scheme">(define (eval-if exp env)
   (if (true? (eval (if-predicate exp) env))
       (eval (if-consequent exp) env)
       (eval (if-alternative exp) env)))</code></pre>
 
-        <p>O uso de <code>true?</code> em <code>eval-if</code> destaca a questão da conexão entre uma linguagem implementada e uma linguagem de implementação. O <code>if-predicate</code> é avaliado na linguagem sendo implementada e, portanto, produz um valor nessa linguagem. O predicado do interpretador <code>true?</code> traduz esse valor em um valor que pode ser testado pelo <code>if</code> na linguagem de implementação: A representação metacircular da verdade pode não ser a mesma que a do Scheme subjacente.<a class="footnote_link" id="DOCF210" href="#FOOT210"><sup>210</sup></a>
-        </p>
-        <a id="Sequences"></a>
-        <h5 class="subsubheading">Sequências</h5>
+      <p>
+        O uso de <code>true?</code> em <code>eval-if</code> destaca a questão da
+        conexão entre uma linguagem implementada e uma linguagem de
+        implementação. O <code>if-predicate</code> é avaliado na linguagem sendo
+        implementada e, portanto, produz um valor nessa linguagem. O predicado
+        do interpretador <code>true?</code> traduz esse valor em um valor que
+        pode ser testado pelo <code>if</code> na linguagem de implementação: A
+        representação metacircular da verdade pode não ser a mesma que a do
+        Scheme subjacente.<a class="footnote_link" id="DOCF210" href="#FOOT210"
+          ><sup>210</sup></a
+        >
+      </p>
+      <a id="Sequences"></a>
+      <h5 class="subsubheading">Sequências</h5>
 
-        <p><code>Eval-sequence</code> é usado por <code>apply</code> para avaliar a sequência de expressões no corpo de um procedimento e por <code>eval</code> para avaliar a sequência de expressões em uma expressão <code>begin</code>. Ele recebe como argumentos uma sequência de expressões e um ambiente, e avalia as expressões na ordem em que ocorrem. O valor retornado é o valor da expressão final.
-        </p>
-        <pre><code class="language-scheme">(define (eval-sequence exps env)
+      <p>
+        <code>Eval-sequence</code> é usado por <code>apply</code> para avaliar a
+        sequência de expressões no corpo de um procedimento e por
+        <code>eval</code> para avaliar a sequência de expressões em uma
+        expressão <code>begin</code>. Ele recebe como argumentos uma sequência
+        de expressões e um ambiente, e avalia as expressões na ordem em que
+        ocorrem. O valor retornado é o valor da expressão final.
+      </p>
+      <pre><code class="language-scheme">(define (eval-sequence exps env)
   (cond ((last-exp? exps) 
          (eval (first-exp exps) env))
         (else 
@@ -189,103 +360,162 @@
          (eval-sequence (rest-exps exps) 
                         env))))</code></pre>
 
-        <a id="Assignments-and-definitions"></a>
-        <h5 class="subsubheading">Atribuições e definições</h5>
+      <a id="Assignments-and-definitions"></a>
+      <h5 class="subsubheading">Atribuições e definições</h5>
 
-        <p>O seguinte procedimento lida com atribuições a variáveis. Ele chama <code>eval</code> para encontrar o valor a ser atribuído e transmite a variável e o valor resultante para <code>set-variable-value!</code> para ser instalado no ambiente designado.
-        </p>
-        <pre><code class="language-scheme">(define (eval-assignment exp env)
+      <p>
+        O seguinte procedimento lida com atribuições a variáveis. Ele chama
+        <code>eval</code> para encontrar o valor a ser atribuído e transmite a
+        variável e o valor resultante para <code>set-variable-value!</code> para
+        ser instalado no ambiente designado.
+      </p>
+      <pre><code class="language-scheme">(define (eval-assignment exp env)
   (set-variable-value! 
    (assignment-variable exp)
    (eval (assignment-value exp) env)
    env)
   'ok)</code></pre>
 
-        <p>As definições de variáveis são tratadas de maneira semelhante.<a class="footnote_link" id="DOCF211" href="#FOOT211"><sup>211</sup></a>
-        </p>
-        <pre><code class="language-scheme">(define (eval-definition exp env)
+      <p>
+        As definições de variáveis são tratadas de maneira semelhante.<a
+          class="footnote_link"
+          id="DOCF211"
+          href="#FOOT211"
+          ><sup>211</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (eval-definition exp env)
   (define-variable! 
     (definition-variable exp)
     (eval (definition-value exp) env)
     env)
   'ok)</code></pre>
 
-        <p>Escolhemos aqui retornar o símbolo <code>ok</code> como o valor de uma atribuição ou uma definição.<a class="footnote_link" id="DOCF212" href="#FOOT212"><sup>212</sup></a>
+      <p>
+        Escolhemos aqui retornar o símbolo <code>ok</code> como o valor de uma
+        atribuição ou uma definição.<a
+          class="footnote_link"
+          id="DOCF212"
+          href="#FOOT212"
+          ><sup>212</sup></a
+        >
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e1"></a>Exercício 4.1:</strong> Observe
+          que não podemos dizer se o avaliador metacircular avalia operandos da
+          esquerda para a direita ou da direita para a esquerda. Sua ordem de
+          avaliação é herdada do Lisp subjacente: Se os argumentos para
+          <code>cons</code> em <code>list-of-values</code> são avaliados da
+          esquerda para a direita, então <code>list-of-values</code> avaliará
+          operandos da esquerda para a direita; e se os argumentos para
+          <code>cons</code> são avaliados da direita para a esquerda, então
+          <code>list-of-values</code> avaliará operandos da direita para a
+          esquerda.
         </p>
-        <blockquote>
-            <p><strong><a id="Exercise-4_002e1"></a>Exercício 4.1:</strong> Observe que não podemos dizer se o avaliador metacircular avalia operandos da esquerda para a direita ou da direita para a esquerda. Sua ordem de avaliação é herdada do Lisp subjacente: Se os argumentos para <code>cons</code> em <code>list-of-values</code> são avaliados da esquerda para a direita, então <code>list-of-values</code> avaliará operandos da esquerda para a direita; e se os argumentos para <code>cons</code> são avaliados da direita para a esquerda, então <code>list-of-values</code> avaliará operandos da direita para a esquerda.
-            </p>
-            <p>Escreva uma versão de <code>list-of-values</code> que avalia operandos da esquerda para a direita, independentemente da ordem de avaliação no Lisp subjacente. Também escreva uma versão de <code>list-of-values</code> que avalia operandos da direita para a esquerda.
-            </p>
-        </blockquote>
-
-        <a id="g_t4_002e1_002e2"></a>
-        <a id="Representing-Expressions"></a>
-        <h4 class="subsection"><span class="secnum">4.1.2</span><span class="sectitle">Representando Expressões</span></h4>
-
-        <p>O avaliador é reminiscente do programa de diferenciação simbólica discutido em <a href="2_002e3.xhtml#g_t2_002e3_002e2">2.3.2</a>. Ambos os programas operam em expressões simbólicas. Em ambos os programas, o resultado de operar em uma expressão composta é determinado operando recursivamente nas partes da expressão e combinando os resultados de uma forma que depende do tipo da expressão. Em ambos os programas, usamos abstração de dados para desacoplar as regras gerais de operação dos detalhes de como as expressões são representadas. No programa de diferenciação, isso significava que o mesmo procedimento de diferenciação poderia lidar com expressões algébricas em forma de prefixo, em forma de infixo ou em alguma outra forma. Para o avaliador, isso significa que a sintaxe da linguagem sendo avaliada é determinada unicamente pelos procedimentos que classificam e extraem partes das expressões.
+        <p>
+          Escreva uma versão de <code>list-of-values</code> que avalia operandos
+          da esquerda para a direita, independentemente da ordem de avaliação no
+          Lisp subjacente. Também escreva uma versão de
+          <code>list-of-values</code> que avalia operandos da direita para a
+          esquerda.
         </p>
-        <p>Aqui está a especificação da sintaxe da nossa linguagem:
-        </p>
-        <ul>
-            <li> Os únicos itens autoavaliáveis são números e strings:
+      </blockquote>
 
-                <pre><code class="language-scheme">(define (self-evaluating? exp)
+      <a id="g_t4_002e1_002e2"></a>
+      <a id="Representing-Expressions"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.1.2</span
+        ><span class="sectitle">Representando Expressões</span>
+      </h4>
+
+      <p>
+        O avaliador é reminiscente do programa de diferenciação simbólica
+        discutido em <a href="2_002e3.xhtml#g_t2_002e3_002e2">2.3.2</a>. Ambos
+        os programas operam em expressões simbólicas. Em ambos os programas, o
+        resultado de operar em uma expressão composta é determinado operando
+        recursivamente nas partes da expressão e combinando os resultados de uma
+        forma que depende do tipo da expressão. Em ambos os programas, usamos
+        abstração de dados para desacoplar as regras gerais de operação dos
+        detalhes de como as expressões são representadas. No programa de
+        diferenciação, isso significava que o mesmo procedimento de
+        diferenciação poderia lidar com expressões algébricas em forma de
+        prefixo, em forma de infixo ou em alguma outra forma. Para o avaliador,
+        isso significa que a sintaxe da linguagem sendo avaliada é determinada
+        unicamente pelos procedimentos que classificam e extraem partes das
+        expressões.
+      </p>
+      <p>Aqui está a especificação da sintaxe da nossa linguagem:</p>
+      <ul>
+        <li>
+          Os únicos itens autoavaliáveis são números e strings:
+
+          <pre><code class="language-scheme">(define (self-evaluating? exp)
   (cond ((number? exp) true)
         ((string? exp) true)
         (else false)))</code></pre>
+        </li>
+        <li>
+          Variáveis são representadas por símbolos:
 
-            </li>
-            <li> Variáveis são representadas por símbolos:
+          <pre><code class="language-scheme">(define (variable? exp) (symbol? exp))</code></pre>
+        </li>
+        <li>
+          Citações têm a forma
+          <code>(quote ⟨<var>text-of-quotation</var>⟩)</code>:<a
+            class="footnote_link"
+            id="DOCF213"
+            href="#FOOT213"
+            ><sup>213</sup></a
+          >
 
-                <pre><code class="language-scheme">(define (variable? exp) (symbol? exp))</code></pre>
-
-            </li>
-            <li> Citações têm a forma <code>(quote ⟨<var>text-of-quotation</var>⟩)</code>:<a class="footnote_link" id="DOCF213" href="#FOOT213"><sup>213</sup></a>
-
-                <pre><code class="language-scheme">(define (quoted? exp)
+          <pre><code class="language-scheme">(define (quoted? exp)
   (tagged-list? exp 'quote))
 
 (define (text-of-quotation exp)
   (cadr exp))</code></pre>
 
-                <p><code>Quoted?</code> é definido em termos do procedimento <code>tagged-list?</code>, que identifica listas começando com um símbolo designado:
-                </p>
-                <pre><code class="language-scheme">(define (tagged-list? exp tag)
+          <p>
+            <code>Quoted?</code> é definido em termos do procedimento
+            <code>tagged-list?</code>, que identifica listas começando com um
+            símbolo designado:
+          </p>
+          <pre><code class="language-scheme">(define (tagged-list? exp tag)
   (if (pair? exp)
       (eq? (car exp) tag)
       false))</code></pre>
+        </li>
+        <li>
+          Atribuições têm a forma
+          <code>(set! ⟨<var>var</var>⟩ ⟨<var>value</var>⟩)</code>:
 
-            </li>
-            <li> Atribuições têm a forma <code>(set! ⟨<var>var</var>⟩ ⟨<var>value</var>⟩)</code>:
-
-                <pre><code class="language-scheme">(define (assignment? exp)
+          <pre><code class="language-scheme">(define (assignment? exp)
   (tagged-list? exp 'set!))
 
 (define (assignment-variable exp) 
   (cadr exp))
 
 (define (assignment-value exp) (caddr exp))</code></pre>
+        </li>
+        <li>
+          Definições têm a forma
 
-            </li>
-            <li> Definições têm a forma
+          <pre><code class="language-scheme">(define ⟨<var>var</var>⟩ ⟨<var>value</var>⟩)</code></pre>
 
-                <pre><code class="language-scheme">(define ⟨<var>var</var>⟩ ⟨<var>value</var>⟩)</code></pre>
-
-                <p>ou a forma
-                </p>
-                <pre><code class="language-scheme">(define (⟨<var>var</var>⟩ ⟨<var>param</var>₁⟩ … ⟨<var>param</var>ₙ⟩)
+          <p>ou a forma</p>
+          <pre><code class="language-scheme">(define (⟨<var>var</var>⟩ ⟨<var>param</var>₁⟩ … ⟨<var>param</var>ₙ⟩)
   ⟨<var>body</var>⟩)</code></pre>
 
-                <p>A última forma (definição padrão de procedimento) é açúcar sintático para
-                </p>
-                <pre><code class="language-scheme">(define ⟨<var>var</var>⟩
+          <p>
+            A última forma (definição padrão de procedimento) é açúcar sintático
+            para
+          </p>
+          <pre><code class="language-scheme">(define ⟨<var>var</var>⟩
   (lambda (⟨<var>param</var>₁⟩ … ⟨<var>param</var>ₙ⟩)
     ⟨<var>body</var>⟩))</code></pre>
 
-                <p>Os procedimentos de sintaxe correspondentes são os seguintes:
-                </p>
-                <pre><code class="language-scheme">(define (definition? exp)
+          <p>Os procedimentos de sintaxe correspondentes são os seguintes:</p>
+          <pre><code class="language-scheme">(define (definition? exp)
   (tagged-list? exp 'define))
 
 (define (definition-variable exp)
@@ -299,24 +529,34 @@
       (make-lambda 
        (cdadr exp)   ; parâmetros formais
        (cddr exp)))) ; corpo</code></pre>
+        </li>
+        <li>
+          Expressões <code>lambda</code> são listas que começam com o símbolo
+          <code>lambda</code>:
 
-            </li>
-            <li> Expressões <code>lambda</code> são listas que começam com o símbolo <code>lambda</code>:
-
-                <pre><code class="language-scheme">(define (lambda? exp) 
+          <pre><code class="language-scheme">(define (lambda? exp) 
   (tagged-list? exp 'lambda))
 (define (lambda-parameters exp) (cadr exp))
 (define (lambda-body exp) (cddr exp))</code></pre>
 
-                <p>Também fornecemos um construtor para expressões <code>lambda</code>, que é usado por <code>definition-value</code>, acima:
-                </p>
-                <pre><code class="language-scheme">(define (make-lambda parameters body)
+          <p>
+            Também fornecemos um construtor para expressões <code>lambda</code>,
+            que é usado por <code>definition-value</code>, acima:
+          </p>
+          <pre><code class="language-scheme">(define (make-lambda parameters body)
   (cons 'lambda (cons parameters body)))</code></pre>
+        </li>
+        <li>
+          Condicionais começam com <code>if</code> e têm um predicado, um
+          consequente e uma alternativa (opcional). Se a expressão não tiver
+          parte alternativa, fornecemos <code>false</code> como alternativa.<a
+            class="footnote_link"
+            id="DOCF214"
+            href="#FOOT214"
+            ><sup>214</sup></a
+          >
 
-            </li>
-            <li> Condicionais começam com <code>if</code> e têm um predicado, um consequente e uma alternativa (opcional). Se a expressão não tiver parte alternativa, fornecemos <code>false</code> como alternativa.<a class="footnote_link" id="DOCF214" href="#FOOT214"><sup>214</sup></a>
-
-                <pre><code class="language-scheme">(define (if? exp) (tagged-list? exp 'if))
+          <pre><code class="language-scheme">(define (if? exp) (tagged-list? exp 'if))
 (define (if-predicate exp) (cadr exp))
 (define (if-consequent exp) (caddr exp))
 (define (if-alternative exp)
@@ -324,70 +564,107 @@
       (cadddr exp)
       'false))</code></pre>
 
-                <p>Também fornecemos um construtor para expressões <code>if</code>, a ser usado por <code>cond->if</code> para transformar expressões <code>cond</code> em expressões <code>if</code>:
-                </p>
-                <pre><code class="language-scheme">(define (make-if predicate 
+          <p>
+            Também fornecemos um construtor para expressões <code>if</code>, a
+            ser usado por <code>cond->if</code> para transformar expressões
+            <code>cond</code> em expressões <code>if</code>:
+          </p>
+          <pre><code class="language-scheme">(define (make-if predicate 
                  consequent 
                  alternative)
   (list 'if 
         predicate 
         consequent 
         alternative))</code></pre>
+        </li>
+        <li>
+          <code>Begin</code> empacota uma sequência de expressões em uma única
+          expressão. Incluímos operações de sintaxe em expressões
+          <code>begin</code> para extrair a sequência real da expressão
+          <code>begin</code>, bem como seletores que retornam a primeira
+          expressão e o restante das expressões na sequência.<a
+            class="footnote_link"
+            id="DOCF215"
+            href="#FOOT215"
+            ><sup>215</sup></a
+          >
 
-            </li>
-            <li> <code>Begin</code> empacota uma sequência de expressões em uma única expressão. Incluímos operações de sintaxe em expressões <code>begin</code> para extrair a sequência real da expressão <code>begin</code>, bem como seletores que retornam a primeira expressão e o restante das expressões na sequência.<a class="footnote_link" id="DOCF215" href="#FOOT215"><sup>215</sup></a>
-
-                <pre><code class="language-scheme">(define (begin? exp) 
+          <pre><code class="language-scheme">(define (begin? exp) 
   (tagged-list? exp 'begin))
 (define (begin-actions exp) (cdr exp))
 (define (last-exp? seq) (null? (cdr seq)))
 (define (first-exp seq) (car seq))
 (define (rest-exps seq) (cdr seq))</code></pre>
 
-                <p>Também incluímos um construtor <code>sequence->exp</code> (para uso por <code>cond->if</code>) que transforma uma sequência em uma única expressão, usando <code>begin</code> se necessário:
-                </p>
-                <pre><code class="language-scheme">(define (sequence->exp seq)
+          <p>
+            Também incluímos um construtor <code>sequence->exp</code> (para uso
+            por <code>cond->if</code>) que transforma uma sequência em uma única
+            expressão, usando <code>begin</code> se necessário:
+          </p>
+          <pre><code class="language-scheme">(define (sequence->exp seq)
   (cond ((null? seq) seq)
         ((last-exp? seq) (first-exp seq))
         (else (make-begin seq))))
 
 (define (make-begin seq) (cons 'begin seq))</code></pre>
+        </li>
+        <li>
+          Uma aplicação de procedimento é qualquer expressão composta que não
+          seja um dos tipos de expressão acima. O <code>car</code> da expressão
+          é o operador, e o <code>cdr</code> é a lista de operandos:
 
-            </li>
-            <li> Uma aplicação de procedimento é qualquer expressão composta que não seja um dos tipos de expressão acima. O <code>car</code> da expressão é o operador, e o <code>cdr</code> é a lista de operandos:
-
-                <pre><code class="language-scheme">(define (application? exp) (pair? exp))
+          <pre><code class="language-scheme">(define (application? exp) (pair? exp))
 (define (operator exp) (car exp))
 (define (operands exp) (cdr exp))
 (define (no-operands? ops) (null? ops))
 (define (first-operand ops) (car ops))
 (define (rest-operands ops) (cdr ops))</code></pre>
+        </li>
+      </ul>
 
-            </li>
-        </ul>
+      <a id="Derived-expressions"></a>
+      <h5 class="subsubheading">Expressões derivadas</h5>
 
-        <a id="Derived-expressions"></a>
-        <h5 class="subsubheading">Expressões derivadas</h5>
-
-        <p>Algumas formas especiais em nossa linguagem podem ser definidas em termos de expressões envolvendo outras formas especiais, em vez de serem implementadas diretamente. Um exemplo é <code>cond</code>, que pode ser implementado como um ninho de expressões <code>if</code>. Por exemplo, podemos reduzir o problema de avaliar a expressão
-        </p>
-        <pre><code class="language-scheme">(cond ((> x 0) x)
+      <p>
+        Algumas formas especiais em nossa linguagem podem ser definidas em
+        termos de expressões envolvendo outras formas especiais, em vez de serem
+        implementadas diretamente. Um exemplo é <code>cond</code>, que pode ser
+        implementado como um ninho de expressões <code>if</code>. Por exemplo,
+        podemos reduzir o problema de avaliar a expressão
+      </p>
+      <pre><code class="language-scheme">(cond ((> x 0) x)
       ((= x 0) (display 'zero) 0)
       (else (- x)))</code></pre>
 
-        <p>ao problema de avaliar a seguinte expressão envolvendo <code>if</code> e <code>begin</code>:
-        </p>
-        <pre><code class="language-scheme">(if (> x 0)
+      <p>
+        ao problema de avaliar a seguinte expressão envolvendo <code>if</code> e
+        <code>begin</code>:
+      </p>
+      <pre><code class="language-scheme">(if (> x 0)
     x
     (if (= x 0)
         (begin (display 'zero) 0)
         (- x)))</code></pre>
 
-        <p>Implementar a avaliação de <code>cond</code> dessa forma simplifica o avaliador porque reduz o número de formas especiais para as quais o processo de avaliação deve ser explicitamente especificado.
-        </p>
-        <p>Incluímos procedimentos de sintaxe que extraem as partes de uma expressão <code>cond</code>, e um procedimento <code>cond->if</code> que transforma expressões <code>cond</code> em expressões <code>if</code>. Uma análise de caso começa com <code>cond</code> e tem uma lista de cláusulas predicado-ação. Uma cláusula é uma cláusula <code>else</code> se seu predicado for o símbolo <code>else</code>.<a class="footnote_link" id="DOCF216" href="#FOOT216"><sup>216</sup></a>
-        </p>
-        <pre><code class="language-scheme">(define (cond? exp) 
+      <p>
+        Implementar a avaliação de <code>cond</code> dessa forma simplifica o
+        avaliador porque reduz o número de formas especiais para as quais o
+        processo de avaliação deve ser explicitamente especificado.
+      </p>
+      <p>
+        Incluímos procedimentos de sintaxe que extraem as partes de uma
+        expressão <code>cond</code>, e um procedimento <code>cond->if</code> que
+        transforma expressões <code>cond</code> em expressões <code>if</code>.
+        Uma análise de caso começa com <code>cond</code> e tem uma lista de
+        cláusulas predicado-ação. Uma cláusula é uma cláusula
+        <code>else</code> se seu predicado for o símbolo <code>else</code>.<a
+          class="footnote_link"
+          id="DOCF216"
+          href="#FOOT216"
+          ><sup>216</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (cond? exp) 
   (tagged-list? exp 'cond))
 (define (cond-clauses exp) (cdr exp))
 (define (cond-else-clause? clause)
@@ -416,87 +693,191 @@
                      (expand-clauses 
                       rest))))))</code></pre>
 
-        <p>Expressões (como <code>cond</code>) que escolhemos implementar como transformações sintáticas são chamadas de <a id="index-derived-expressions"></a>
-        <em>expressões derivadas</em>. Expressões <code>let</code> também são expressões derivadas (veja <a href="#Exercise-4_002e6">Exercício 4.6</a>).<a class="footnote_link" id="DOCF217" href="#FOOT217"><sup>217</sup></a>
+      <p>
+        Expressões (como <code>cond</code>) que escolhemos implementar como
+        transformações sintáticas são chamadas de
+        <a id="index-derived-expressions"></a> <em>expressões derivadas</em>.
+        Expressões <code>let</code> também são expressões derivadas (veja
+        <a href="#Exercise-4_002e6">Exercício 4.6</a>).<a
+          class="footnote_link"
+          id="DOCF217"
+          href="#FOOT217"
+          ><sup>217</sup></a
+        >
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e2"></a>Exercício 4.2:</strong> Louis
+          Reasoner planeja reordenar as cláusulas <code>cond</code> em
+          <code>eval</code> para que a cláusula para aplicações de procedimento
+          apareça antes da cláusula para atribuições. Ele argumenta que isso
+          tornará o interpretador mais eficiente: Como os programas geralmente
+          contêm mais aplicações do que atribuições, definições e assim por
+          diante, seu <code>eval</code> modificado geralmente verificará menos
+          cláusulas do que o <code>eval</code> original antes de identificar o
+          tipo de uma expressão.
         </p>
-        <blockquote>
-            <p><strong><a id="Exercise-4_002e2"></a>Exercício 4.2:</strong> Louis Reasoner planeja reordenar as cláusulas <code>cond</code> em <code>eval</code> para que a cláusula para aplicações de procedimento apareça antes da cláusula para atribuições. Ele argumenta que isso tornará o interpretador mais eficiente: Como os programas geralmente contêm mais aplicações do que atribuições, definições e assim por diante, seu <code>eval</code> modificado geralmente verificará menos cláusulas do que o <code>eval</code> original antes de identificar o tipo de uma expressão.
-            </p>
-            <ol>
-                <li> O que há de errado com o plano de Louis? (Dica: O que o avaliador de Louis fará com a expressão <code>(define x 3)</code>?)
-                </li>
-                <li> Louis está chateado que seu plano não funcionou. Ele está disposto a fazer qualquer coisa para fazer seu avaliador reconhecer aplicações de procedimento antes de verificar a maioria dos outros tipos de expressões. Ajude-o mudando a sintaxe da linguagem avaliada para que as aplicações de procedimento comecem com <code>call</code>. Por exemplo, em vez de <code>(factorial 3)</code> agora teremos que escrever <code>(call factorial 3)</code> e em vez de <code>(+ 1 2)</code> teremos que escrever <code>(call + 1 2)</code>.
-                </li>
-            </ol>
-        </blockquote>
+        <ol>
+          <li>
+            O que há de errado com o plano de Louis? (Dica: O que o avaliador de
+            Louis fará com a expressão <code>(define x 3)</code>?)
+          </li>
+          <li>
+            Louis está chateado que seu plano não funcionou. Ele está disposto a
+            fazer qualquer coisa para fazer seu avaliador reconhecer aplicações
+            de procedimento antes de verificar a maioria dos outros tipos de
+            expressões. Ajude-o mudando a sintaxe da linguagem avaliada para que
+            as aplicações de procedimento comecem com <code>call</code>. Por
+            exemplo, em vez de <code>(factorial 3)</code> agora teremos que
+            escrever <code>(call factorial 3)</code> e em vez de
+            <code>(+ 1 2)</code> teremos que escrever <code>(call + 1 2)</code>.
+          </li>
+        </ol>
+      </blockquote>
 
-        <blockquote>
-            <p><strong><a id="Exercise-4_002e3"></a>Exercício 4.3:</strong> Reescreva <code>eval</code> para que o despacho seja feito de forma dirigida por dados. Compare isso com o procedimento de diferenciação dirigido por dados de <a href="2_002e4.xhtml#Exercise-2_002e73">Exercício 2.73</a>. (Você pode usar o <code>car</code> de uma expressão composta como o tipo da expressão, como é apropriado para a sintaxe implementada nesta seção.)
-            </p>
-        </blockquote>
-        <!--Aqui-->
-        <blockquote>
-<p><strong><a id="Exercise-4_002e4"></a>Exercício 4.4:</strong> Lembre-se das definições das formas especiais <code>and</code> e <code>or</code> do <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>:
-</p>
-<ul>
-<li> <code>and</code>: As expressões são avaliadas da esquerda para a direita. Se qualquer expressão avaliar para falso, falso é retornado; quaisquer expressões restantes não são avaliadas. Se todas as expressões avaliarem para valores verdadeiros, o valor da última expressão é retornado. Se não houver expressões, então verdadeiro é retornado.
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e3"></a>Exercício 4.3:</strong> Reescreva
+          <code>eval</code> para que o despacho seja feito de forma dirigida por
+          dados. Compare isso com o procedimento de diferenciação dirigido por
+          dados de <a href="2_002e4.xhtml#Exercise-2_002e73">Exercício 2.73</a>.
+          (Você pode usar o <code>car</code> de uma expressão composta como o
+          tipo da expressão, como é apropriado para a sintaxe implementada nesta
+          seção.)
+        </p>
+      </blockquote>
+      <!--Aqui-->
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e4"></a>Exercício 4.4:</strong> Lembre-se
+          das definições das formas especiais <code>and</code> e
+          <code>or</code> do <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>:
+        </p>
+        <ul>
+          <li>
+            <code>and</code>: As expressões são avaliadas da esquerda para a
+            direita. Se qualquer expressão avaliar para falso, falso é
+            retornado; quaisquer expressões restantes não são avaliadas. Se
+            todas as expressões avaliarem para valores verdadeiros, o valor da
+            última expressão é retornado. Se não houver expressões, então
+            verdadeiro é retornado.
+          </li>
+          <li>
+            <code>or</code>: As expressões são avaliadas da esquerda para a
+            direita. Se qualquer expressão avaliar para um valor verdadeiro,
+            esse valor é retornado; quaisquer expressões restantes não são
+            avaliadas. Se todas as expressões avaliarem para falso, ou se não
+            houver expressões, então falso é retornado.
+          </li>
+        </ul>
 
-</li><li> <code>or</code>: As expressões são avaliadas da esquerda para a direita. Se qualquer expressão avaliar para um valor verdadeiro, esse valor é retornado; quaisquer expressões restantes não são avaliadas. Se todas as expressões avaliarem para falso, ou se não houver expressões, então falso é retornado.
+        <p>
+          Instale <code>and</code> e <code>or</code> como novas formas especiais
+          para o avaliador, definindo procedimentos de sintaxe apropriados e
+          procedimentos de avaliação <code>eval-and</code> e
+          <code>eval-or</code>. Alternativamente, mostre como implementar
+          <code>and</code> e <code>or</code> como expressões derivadas.
+        </p>
+      </blockquote>
 
-</li></ul>
-
-<p>Instale <code>and</code> e <code>or</code> como novas formas especiais para o avaliador, definindo procedimentos de sintaxe apropriados e procedimentos de avaliação <code>eval-and</code> e <code>eval-or</code>. Alternativamente, mostre como implementar <code>and</code> e <code>or</code> como expressões derivadas.
-</p></blockquote>
-
-<blockquote>
-<p><strong><a id="Exercise-4_002e5"></a>Exercício 4.5:</strong> Scheme permite uma sintaxe adicional para cláusulas <code>cond</code>, <code>(⟨<var>test</var>⟩ =&gt; ⟨<var>recipient</var>⟩)</code>. Se <code>⟨</code><var>test</var><code>⟩</code> avaliar para um valor verdadeiro, então <code>⟨</code><var>recipient</var><code>⟩</code> é avaliado. Seu valor deve ser um procedimento de um argumento; este procedimento é então invocado com o valor de <code>⟨</code><var>test</var><code>⟩</code>, e o resultado é retornado como o valor da expressão <code>cond</code>. Por exemplo
-</p>
-<pre><code class="language-scheme">(cond ((assoc 'b '((a 1) (b 2))) => cadr)
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e5"></a>Exercício 4.5:</strong> Scheme
+          permite uma sintaxe adicional para cláusulas <code>cond</code>,
+          <code>(⟨<var>test</var>⟩ =&gt; ⟨<var>recipient</var>⟩)</code>. Se
+          <code>⟨</code><var>test</var><code>⟩</code> avaliar para um valor
+          verdadeiro, então <code>⟨</code><var>recipient</var><code>⟩</code> é
+          avaliado. Seu valor deve ser um procedimento de um argumento; este
+          procedimento é então invocado com o valor de <code>⟨</code
+          ><var>test</var><code>⟩</code>, e o resultado é retornado como o valor
+          da expressão <code>cond</code>. Por exemplo
+        </p>
+        <pre><code class="language-scheme">(cond ((assoc 'b '((a 1) (b 2))) => cadr)
       (else false))</code></pre>
 
-<p>retorna 2. Modifique o tratamento de <code>cond</code> para que ele suporte essa sintaxe estendida.
-</p></blockquote>
+        <p>
+          retorna 2. Modifique o tratamento de <code>cond</code> para que ele
+          suporte essa sintaxe estendida.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e6"></a>Exercício 4.6:</strong> Expressões <code>let</code> são expressões derivadas, porque
-</p>
-<pre><code class="language-scheme">(let ((⟨var₁⟩ ⟨exp₁⟩) … (⟨varₙ⟩ ⟨expₙ⟩))
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e6"></a>Exercício 4.6:</strong>
+          Expressões <code>let</code> são expressões derivadas, porque
+        </p>
+        <pre><code class="language-scheme">(let ((⟨var₁⟩ ⟨exp₁⟩) … (⟨varₙ⟩ ⟨expₙ⟩))
   ⟨body⟩)</code></pre>
 
-<p>é equivalente a
-</p>
-<pre><code class="language-scheme">((lambda (⟨var₁⟩ … ⟨varₙ⟩)
+        <p>é equivalente a</p>
+        <pre><code class="language-scheme">((lambda (⟨var₁⟩ … ⟨varₙ⟩)
    ⟨body⟩)
  ⟨exp₁⟩
  …
  ⟨expₙ⟩)</code></pre>
 
-<p>Implemente uma transformação sintática <code>let-&gt;combination</code> que reduza a avaliação de expressões <code>let</code> à avaliação de combinações do tipo mostrado acima, e adicione a cláusula apropriada a <code>eval</code> para lidar com expressões <code>let</code>.
-</p></blockquote>
+        <p>
+          Implemente uma transformação sintática
+          <code>let-&gt;combination</code> que reduza a avaliação de expressões
+          <code>let</code> à avaliação de combinações do tipo mostrado acima, e
+          adicione a cláusula apropriada a <code>eval</code> para lidar com
+          expressões <code>let</code>.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e7"></a>Exercício 4.7:</strong> <code>Let*</code> é semelhante a <code>let</code>, exceto que as ligações das variáveis do <code>let*</code> são realizadas sequencialmente da esquerda para a direita, e cada ligação é feita em um ambiente no qual todas as ligações anteriores são visíveis. Por exemplo
-</p>
-<pre><code class="language-scheme">(let* ((x 3)
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e7"></a>Exercício 4.7:</strong>
+          <code>Let*</code> é semelhante a <code>let</code>, exceto que as
+          ligações das variáveis do <code>let*</code> são realizadas
+          sequencialmente da esquerda para a direita, e cada ligação é feita em
+          um ambiente no qual todas as ligações anteriores são visíveis. Por
+          exemplo
+        </p>
+        <pre><code class="language-scheme">(let* ((x 3)
        (y (+ x 2))
        (z (+ x y 5)))
   (* x z))</code></pre>
 
-<p>retorna 39. Explique como uma expressão <code>let*</code> pode ser reescrita como um conjunto de expressões <code>let</code> aninhadas, e escreva um procedimento <code>let*-&gt;nested-lets</code> que realize essa transformação. Se já implementamos <code>let</code> (<a href="#Exercise-4_002e6">Exercício 4.6</a>) e queremos estender o avaliador para lidar com <code>let*</code>, é suficiente adicionar uma cláusula a <code>eval</code> cuja ação é
-</p>
-<pre><code class="language-scheme">(eval (let*-&gt;nested-lets exp) env)</code></pre>
+        <p>
+          retorna 39. Explique como uma expressão <code>let*</code> pode ser
+          reescrita como um conjunto de expressões <code>let</code> aninhadas, e
+          escreva um procedimento <code>let*-&gt;nested-lets</code> que realize
+          essa transformação. Se já implementamos <code>let</code> (<a
+            href="#Exercise-4_002e6"
+            >Exercício 4.6</a
+          >) e queremos estender o avaliador para lidar com <code>let*</code>, é
+          suficiente adicionar uma cláusula a <code>eval</code> cuja ação é
+        </p>
+        <pre><code class="language-scheme">(eval (let*-&gt;nested-lets exp) env)</code></pre>
 
-<p>ou devemos expandir explicitamente <code>let*</code> em termos de expressões não derivadas?
-</p></blockquote>
+        <p>
+          ou devemos expandir explicitamente <code>let*</code> em termos de
+          expressões não derivadas?
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e8"></a>Exercício 4.8:</strong> “Named <code>let</code>” é uma variante de <code>let</code> que tem a forma 
-</p>
-<pre><code class="language-scheme">(let ⟨var⟩ ⟨bindings⟩ ⟨body⟩)</code></pre>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e8"></a>Exercício 4.8:</strong> “Named
+          <code>let</code>” é uma variante de <code>let</code> que tem a forma
+        </p>
+        <pre><code class="language-scheme">(let ⟨var⟩ ⟨bindings⟩ ⟨body⟩)</code></pre>
 
-<p>As <code>⟨</code><var>bindings</var><code>⟩</code> e <code>⟨</code><var>body</var><code>⟩</code> são como no <code>let</code> comum, exceto que <code>⟨</code><var>var</var><code>⟩</code> é ligado dentro de <code>⟨</code><var>body</var><code>⟩</code> a um procedimento cujo corpo é <code>⟨</code><var>body</var><code>⟩</code> e cujos parâmetros são as variáveis nas <code>⟨</code><var>bindings</var><code>⟩</code>. Assim, pode-se executar repetidamente o <code>⟨</code><var>body</var><code>⟩</code> invocando o procedimento nomeado <code>⟨</code><var>var</var><code>⟩</code>. Por exemplo, o procedimento iterativo de Fibonacci (<a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>) pode ser reescrito usando named <code>let</code> da seguinte forma:
-</p>
-<pre><code class="language-scheme">(define (fib n)
+        <p>
+          As <code>⟨</code><var>bindings</var><code>⟩</code> e <code>⟨</code
+          ><var>body</var><code>⟩</code> são como no <code>let</code> comum,
+          exceto que <code>⟨</code><var>var</var><code>⟩</code> é ligado dentro
+          de <code>⟨</code><var>body</var><code>⟩</code> a um procedimento cujo
+          corpo é <code>⟨</code><var>body</var><code>⟩</code> e cujos parâmetros
+          são as variáveis nas <code>⟨</code><var>bindings</var><code>⟩</code>.
+          Assim, pode-se executar repetidamente o <code>⟨</code><var>body</var
+          ><code>⟩</code> invocando o procedimento nomeado <code>⟨</code
+          ><var>var</var><code>⟩</code>. Por exemplo, o procedimento iterativo
+          de Fibonacci (<a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>) pode
+          ser reescrito usando named <code>let</code> da seguinte forma:
+        </p>
+        <pre><code class="language-scheme">(define (fib n)
   (let fib-iter ((a 1) (b 0) (count n))
     (if (= count 0)
         b
@@ -504,55 +885,106 @@
                   a 
                   (- count 1)))))</code></pre>
 
-<p>Modifique <code>let-&gt;combination</code> do <a href="#Exercise-4_002e6">Exercício 4.6</a> para também suportar named <code>let</code>.
-</p></blockquote>
+        <p>
+          Modifique <code>let-&gt;combination</code> do
+          <a href="#Exercise-4_002e6">Exercício 4.6</a> para também suportar
+          named <code>let</code>.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e9"></a>Exercício 4.9:</strong> Muitas linguagens suportam uma variedade de construções de iteração, como <code>do</code>, <code>for</code>, <code>while</code> e <code>until</code>. Em Scheme, processos iterativos podem ser expressos em termos de chamadas de procedimentos comuns, então construções de iteração especiais não fornecem ganho essencial em poder computacional. Por outro lado, tais construções são frequentemente convenientes. Projete algumas construções de iteração, dê exemplos de seu uso e mostre como implementá-las como expressões derivadas.
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e9"></a>Exercício 4.9:</strong> Muitas
+          linguagens suportam uma variedade de construções de iteração, como
+          <code>do</code>, <code>for</code>, <code>while</code> e
+          <code>until</code>. Em Scheme, processos iterativos podem ser
+          expressos em termos de chamadas de procedimentos comuns, então
+          construções de iteração especiais não fornecem ganho essencial em
+          poder computacional. Por outro lado, tais construções são
+          frequentemente convenientes. Projete algumas construções de iteração,
+          dê exemplos de seu uso e mostre como implementá-las como expressões
+          derivadas.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e10"></a>Exercício 4.10:</strong> Ao usar abstração de dados, pudemos escrever um procedimento <code>eval</code> que é independente da sintaxe específica da linguagem a ser avaliada. Para ilustrar isso, projete e implemente uma nova sintaxe para Scheme modificando os procedimentos nesta seção, sem alterar <code>eval</code> ou <code>apply</code>.
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e10"></a>Exercício 4.10:</strong> Ao usar
+          abstração de dados, pudemos escrever um procedimento
+          <code>eval</code> que é independente da sintaxe específica da
+          linguagem a ser avaliada. Para ilustrar isso, projete e implemente uma
+          nova sintaxe para Scheme modificando os procedimentos nesta seção, sem
+          alterar <code>eval</code> ou <code>apply</code>.
+        </p>
+      </blockquote>
 
-<a id="g_t4_002e1_002e3"></a>
-<a id="Evaluator-Data-Structures"></a>
-<h4 class="subsection"><span class="secnum">4.1.3</span><span class="sectitle">Estruturas de Dados do Avaliador</span></h4>
+      <a id="g_t4_002e1_002e3"></a>
+      <a id="Evaluator-Data-Structures"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.1.3</span
+        ><span class="sectitle">Estruturas de Dados do Avaliador</span>
+      </h4>
 
-<p>Além de definir a sintaxe externa das expressões, a implementação do avaliador também deve definir as estruturas de dados que o avaliador manipula internamente, como parte da execução de um programa, como a representação de procedimentos e ambientes e a representação de verdadeiro e falso.
-</p>
-<a id="Testing-of-predicates"></a>
-<h5 class="subsubheading">Teste de predicados</h5>
+      <p>
+        Além de definir a sintaxe externa das expressões, a implementação do
+        avaliador também deve definir as estruturas de dados que o avaliador
+        manipula internamente, como parte da execução de um programa, como a
+        representação de procedimentos e ambientes e a representação de
+        verdadeiro e falso.
+      </p>
+      <a id="Testing-of-predicates"></a>
+      <h5 class="subsubheading">Teste de predicados</h5>
 
-<p>Para condicionais, aceitamos como verdadeiro qualquer coisa que não seja o objeto explícito <code>false</code>.
-</p>
-<pre><code class="language-scheme">(define (true? x)
+      <p>
+        Para condicionais, aceitamos como verdadeiro qualquer coisa que não seja
+        o objeto explícito <code>false</code>.
+      </p>
+      <pre><code class="language-scheme">(define (true? x)
   (not (eq? x false)))
 
 (define (false? x)
   (eq? x false))</code></pre>
 
-<a id="Representing-procedures"></a>
-<h5 class="subsubheading">Representação de procedimentos</h5>
+      <a id="Representing-procedures"></a>
+      <h5 class="subsubheading">Representação de procedimentos</h5>
 
-<p>Para lidar com primitivas, assumimos que temos disponíveis os seguintes procedimentos:
-</p>
-<ul>
-<li> <code>(apply-primitive-procedure ⟨<var>proc</var>⟩ ⟨<var>args</var>⟩)</code>
+      <p>
+        Para lidar com primitivas, assumimos que temos disponíveis os seguintes
+        procedimentos:
+      </p>
+      <ul>
+        <li>
+          <code
+            >(apply-primitive-procedure ⟨<var>proc</var>⟩
+            ⟨<var>args</var>⟩)</code
+          >
 
-<p>aplica a primitiva dada aos valores dos argumentos na lista <code>⟨</code><var>args</var><code>⟩</code> e retorna o resultado da aplicação.
-</p>
-</li><li> <code>(primitive-procedure? ⟨<var>proc</var>⟩)</code>
+          <p>
+            aplica a primitiva dada aos valores dos argumentos na lista
+            <code>⟨</code><var>args</var><code>⟩</code> e retorna o resultado da
+            aplicação.
+          </p>
+        </li>
+        <li>
+          <code>(primitive-procedure? ⟨<var>proc</var>⟩)</code>
 
-<p>testa se <code>⟨</code><var>proc</var><code>⟩</code> é uma primitiva.
-</p>
-</li></ul>
+          <p>
+            testa se <code>⟨</code><var>proc</var><code>⟩</code> é uma
+            primitiva.
+          </p>
+        </li>
+      </ul>
 
-<p>Esses mecanismos para lidar com primitivas são descritos mais detalhadamente em <a href="#g_t4_002e1_002e4">4.1.4</a>.
-</p>
-<p>Procedimentos compostos são construídos a partir de parâmetros, corpos de procedimentos e ambientes usando o construtor <code>make-procedure</code>:
-</p>
-<pre><code class="language-scheme">(define (make-procedure parameters body env)
+      <p>
+        Esses mecanismos para lidar com primitivas são descritos mais
+        detalhadamente em <a href="#g_t4_002e1_002e4">4.1.4</a>.
+      </p>
+      <p>
+        Procedimentos compostos são construídos a partir de parâmetros, corpos
+        de procedimentos e ambientes usando o construtor
+        <code>make-procedure</code>:
+      </p>
+      <pre><code class="language-scheme">(define (make-procedure parameters body env)
   (list 'procedure parameters body env))
 (define (compound-procedure? p)
   (tagged-list? p 'procedure))
@@ -560,39 +992,89 @@
 (define (procedure-body p) (caddr p))
 (define (procedure-environment p) (cadddr p))</code></pre>
 
-<a id="Operations-on-Environments"></a>
-<h5 class="subsubheading">Operações sobre Ambientes</h5>
+      <a id="Operations-on-Environments"></a>
+      <h5 class="subsubheading">Operações sobre Ambientes</h5>
 
-<p>O avaliador precisa de operações para manipular ambientes. Como explicado em <a href="3_002e2.xhtml#g_t3_002e2">3.2</a>, um ambiente é uma sequência de quadros, onde cada quadro é uma tabela de ligações que associam variáveis a seus valores correspondentes. Usamos as seguintes operações para manipular ambientes:
-</p>
-<ul>
-<li> <code>(lookup-variable-value ⟨<var>var</var>⟩ ⟨<var>env</var>⟩)</code>
+      <p>
+        O avaliador precisa de operações para manipular ambientes. Como
+        explicado em <a href="3_002e2.xhtml#g_t3_002e2">3.2</a>, um ambiente é
+        uma sequência de quadros, onde cada quadro é uma tabela de ligações que
+        associam variáveis a seus valores correspondentes. Usamos as seguintes
+        operações para manipular ambientes:
+      </p>
+      <ul>
+        <li>
+          <code>(lookup-variable-value ⟨<var>var</var>⟩ ⟨<var>env</var>⟩)</code>
 
-<p>retorna o valor que está ligado ao símbolo <code>⟨</code><var>var</var><code>⟩</code> no ambiente <code>⟨</code><var>env</var><code>⟩</code>, ou sinaliza um erro se a variável não estiver ligada.
-</p>
-</li><li> <code>(extend-environment ⟨<var>variables</var>⟩ ⟨<var>values</var>⟩ ⟨<var>base-env</var>⟩)</code>
+          <p>
+            retorna o valor que está ligado ao símbolo <code>⟨</code
+            ><var>var</var><code>⟩</code> no ambiente <code>⟨</code
+            ><var>env</var><code>⟩</code>, ou sinaliza um erro se a variável não
+            estiver ligada.
+          </p>
+        </li>
+        <li>
+          <code
+            >(extend-environment ⟨<var>variables</var>⟩ ⟨<var>values</var>⟩
+            ⟨<var>base-env</var>⟩)</code
+          >
 
-<p>retorna um novo ambiente, consistindo de um novo quadro no qual os símbolos na lista <code>⟨</code><var>variables</var><code>⟩</code> são ligados aos elementos correspondentes na lista <code>⟨</code><var>values</var><code>⟩</code>, onde o ambiente envolvente é o ambiente <code>⟨</code><var>base-env</var><code>⟩</code>.
-</p>
-</li><li> <code>(define-variable! ⟨<var>var</var>⟩ ⟨<var>value</var>⟩ ⟨<var>env</var>⟩)</code>
+          <p>
+            retorna um novo ambiente, consistindo de um novo quadro no qual os
+            símbolos na lista <code>⟨</code><var>variables</var
+            ><code>⟩</code> são ligados aos elementos correspondentes na lista
+            <code>⟨</code><var>values</var><code>⟩</code>, onde o ambiente
+            envolvente é o ambiente <code>⟨</code><var>base-env</var
+            ><code>⟩</code>.
+          </p>
+        </li>
+        <li>
+          <code
+            >(define-variable! ⟨<var>var</var>⟩ ⟨<var>value</var>⟩
+            ⟨<var>env</var>⟩)</code
+          >
 
-<p>adiciona ao primeiro quadro no ambiente <code>⟨</code><var>env</var><code>⟩</code> uma nova ligação que associa a variável <code>⟨</code><var>var</var><code>⟩</code> ao valor <code>⟨</code><var>value</var><code>⟩</code>.
-</p>
-</li><li> <code>(set-variable-value! ⟨<var>var</var>⟩ ⟨<var>value</var>⟩ ⟨<var>env</var>⟩)</code>
+          <p>
+            adiciona ao primeiro quadro no ambiente <code>⟨</code><var>env</var
+            ><code>⟩</code> uma nova ligação que associa a variável
+            <code>⟨</code><var>var</var><code>⟩</code> ao valor <code>⟨</code
+            ><var>value</var><code>⟩</code>.
+          </p>
+        </li>
+        <li>
+          <code
+            >(set-variable-value! ⟨<var>var</var>⟩ ⟨<var>value</var>⟩
+            ⟨<var>env</var>⟩)</code
+          >
 
-<p>altera a ligação da variável <code>⟨</code><var>var</var><code>⟩</code> no ambiente <code>⟨</code><var>env</var><code>⟩</code> para que a variável agora esteja ligada ao valor <code>⟨</code><var>value</var><code>⟩</code>, ou sinaliza um erro se a variável não estiver ligada.
-</p>
-</li></ul>
+          <p>
+            altera a ligação da variável <code>⟨</code><var>var</var
+            ><code>⟩</code> no ambiente <code>⟨</code><var>env</var
+            ><code>⟩</code> para que a variável agora esteja ligada ao valor
+            <code>⟨</code><var>value</var><code>⟩</code>, ou sinaliza um erro se
+            a variável não estiver ligada.
+          </p>
+        </li>
+      </ul>
 
-<p>Para implementar essas operações, representamos um ambiente como uma lista de quadros. O ambiente envolvente de um ambiente é o <code>cdr</code> da lista. O ambiente vazio é simplesmente a lista vazia.
-</p>
-<pre><code class="language-scheme">(define (enclosing-environment env) (cdr env))
+      <p>
+        Para implementar essas operações, representamos um ambiente como uma
+        lista de quadros. O ambiente envolvente de um ambiente é o
+        <code>cdr</code> da lista. O ambiente vazio é simplesmente a lista
+        vazia.
+      </p>
+      <pre><code class="language-scheme">(define (enclosing-environment env) (cdr env))
 (define (first-frame env) (car env))
 (define the-empty-environment '())</code></pre>
 
-<p>Cada quadro de um ambiente é representado como um par de listas: uma lista das variáveis ligadas naquele quadro e uma lista dos valores associados.<a class="footnote_link" id="DOCF218" href="#FOOT218"><sup>218</sup></a>
-</p>
-<pre><code class="language-scheme">(define (make-frame variables values)
+      <p>
+        Cada quadro de um ambiente é representado como um par de listas: uma
+        lista das variáveis ligadas naquele quadro e uma lista dos valores
+        associados.<a class="footnote_link" id="DOCF218" href="#FOOT218"
+          ><sup>218</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (make-frame variables values)
   (cons variables values))
 (define (frame-variables frame) (car frame))
 (define (frame-values frame) (cdr frame))
@@ -600,9 +1082,13 @@
   (set-car! frame (cons var (car frame)))
   (set-cdr! frame (cons val (cdr frame))))</code></pre>
 
-<p>Para estender um ambiente por um novo quadro que associa variáveis a valores, fazemos um quadro consistindo da lista de variáveis e da lista de valores, e o adicionamos ao ambiente. Sinalizamos um erro se o número de variáveis não corresponder ao número de valores.
-</p>
-<pre><code class="language-scheme">(define (extend-environment vars vals base-env)
+      <p>
+        Para estender um ambiente por um novo quadro que associa variáveis a
+        valores, fazemos um quadro consistindo da lista de variáveis e da lista
+        de valores, e o adicionamos ao ambiente. Sinalizamos um erro se o número
+        de variáveis não corresponder ao número de valores.
+      </p>
+      <pre><code class="language-scheme">(define (extend-environment vars vals base-env)
   (if (= (length vars) (length vals))
       (cons (make-frame vars vals) base-env)
       (if (< (length vars) (length vals))
@@ -613,9 +1099,15 @@
                  vars 
                  vals))))</code></pre>
 
-<p>Para procurar uma variável em um ambiente, escaneamos a lista de variáveis no primeiro quadro. Se encontrarmos a variável desejada, retornamos o elemento correspondente na lista de valores. Se não encontrarmos a variável no quadro atual, procuramos no ambiente envolvente, e assim por diante. Se alcançarmos o ambiente vazio, sinalizamos um erro de “variável não ligada”.
-</p>
-<pre><code class="language-scheme">(define (lookup-variable-value var env)
+      <p>
+        Para procurar uma variável em um ambiente, escaneamos a lista de
+        variáveis no primeiro quadro. Se encontrarmos a variável desejada,
+        retornamos o elemento correspondente na lista de valores. Se não
+        encontrarmos a variável no quadro atual, procuramos no ambiente
+        envolvente, e assim por diante. Se alcançarmos o ambiente vazio,
+        sinalizamos um erro de “variável não ligada”.
+      </p>
+      <pre><code class="language-scheme">(define (lookup-variable-value var env)
   (define (env-loop env)
     (define (scan vars vals)
       (cond ((null? vars)
@@ -632,9 +1124,13 @@
                 (frame-values frame)))))
   (env-loop env))</code></pre>
 
-<p>Para definir uma variável para um novo valor em um ambiente especificado, procuramos pela variável, assim como em <code>lookup-variable-value</code>, e alteramos o valor correspondente quando a encontramos.
-</p>
-<pre><code class="language-scheme">(define (set-variable-value! var val env)
+      <p>
+        Para definir uma variável para um novo valor em um ambiente
+        especificado, procuramos pela variável, assim como em
+        <code>lookup-variable-value</code>, e alteramos o valor correspondente
+        quando a encontramos.
+      </p>
+      <pre><code class="language-scheme">(define (set-variable-value! var val env)
   (define (env-loop env)
     (define (scan vars vals)
       (cond ((null? vars)
@@ -651,9 +1147,13 @@
                 (frame-values frame)))))
   (env-loop env))</code></pre>
 
-<p>Para definir uma variável, procuramos no primeiro quadro por uma ligação para a variável e alteramos a ligação se ela existir (assim como em <code>set-variable-value!</code>). Se tal ligação não existir, adicionamos uma ao primeiro quadro.
-</p>
-<pre><code class="language-scheme">(define (define-variable! var val env)
+      <p>
+        Para definir uma variável, procuramos no primeiro quadro por uma ligação
+        para a variável e alteramos a ligação se ela existir (assim como em
+        <code>set-variable-value!</code>). Se tal ligação não existir,
+        adicionamos uma ao primeiro quadro.
+      </p>
+      <pre><code class="language-scheme">(define (define-variable! var val env)
   (let ((frame (first-frame env)))
     (define (scan vars vals)
       (cond ((null? vars)
@@ -666,31 +1166,93 @@
     (scan (frame-variables frame)
           (frame-values frame))))</code></pre>
 
-<p>O método descrito aqui é apenas uma das muitas maneiras plausíveis de representar ambientes. Como usamos abstração de dados para isolar o restante do avaliador da escolha detalhada de representação, poderíamos mudar a representação do ambiente se quiséssemos. (Veja <a href="#Exercise-4_002e11">Exercício 4.11</a>.) Em um sistema Lisp de qualidade de produção, a velocidade das operações de ambiente do avaliador—especialmente a de busca de variáveis—tem um grande impacto no desempenho do sistema. A representação descrita aqui, embora conceitualmente simples, não é eficiente e não seria normalmente usada em um sistema de produção.<a class="footnote_link" id="DOCF219" href="#FOOT219"><sup>219</sup></a>
-</p>
-<blockquote>
-<p><strong><a id="Exercise-4_002e11"></a>Exercício 4.11:</strong> Em vez de representar um quadro como um par de listas, podemos representar um quadro como uma lista de ligações, onde cada ligação é um par nome-valor. Reescreva as operações de ambiente para usar essa representação alternativa.
-</p></blockquote>
+      <p>
+        O método descrito aqui é apenas uma das muitas maneiras plausíveis de
+        representar ambientes. Como usamos abstração de dados para isolar o
+        restante do avaliador da escolha detalhada de representação, poderíamos
+        mudar a representação do ambiente se quiséssemos. (Veja
+        <a href="#Exercise-4_002e11">Exercício 4.11</a>.) Em um sistema Lisp de
+        qualidade de produção, a velocidade das operações de ambiente do
+        avaliador—especialmente a de busca de variáveis—tem um grande impacto no
+        desempenho do sistema. A representação descrita aqui, embora
+        conceitualmente simples, não é eficiente e não seria normalmente usada
+        em um sistema de produção.<a
+          class="footnote_link"
+          id="DOCF219"
+          href="#FOOT219"
+          ><sup>219</sup></a
+        >
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e11"></a>Exercício 4.11:</strong> Em vez
+          de representar um quadro como um par de listas, podemos representar um
+          quadro como uma lista de ligações, onde cada ligação é um par
+          nome-valor. Reescreva as operações de ambiente para usar essa
+          representação alternativa.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e12"></a>Exercício 4.12:</strong> Os procedimentos <code>define-variable!</code>, <code>set-variable-value!</code> e <code>lookup-variable-value</code> podem ser expressos em termos de procedimentos mais abstratos para percorrer a estrutura do ambiente. Defina abstrações que capturem os padrões comuns e redefina os três procedimentos em termos dessas abstrações.
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e12"></a>Exercício 4.12:</strong> Os
+          procedimentos <code>define-variable!</code>,
+          <code>set-variable-value!</code> e
+          <code>lookup-variable-value</code> podem ser expressos em termos de
+          procedimentos mais abstratos para percorrer a estrutura do ambiente.
+          Defina abstrações que capturem os padrões comuns e redefina os três
+          procedimentos em termos dessas abstrações.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e13"></a>Exercício 4.13:</strong> Scheme nos permite criar novas ligações para variáveis por meio de <code>define</code>, mas não fornece uma maneira de se livrar das ligações. Implemente para o avaliador uma forma especial <code>make-unbound!</code> que remove a ligação de um determinado símbolo do ambiente no qual a expressão <code>make-unbound!</code> é avaliada. Este problema não está completamente especificado. Por exemplo, devemos remover apenas a ligação no primeiro quadro do ambiente? Complete a especificação e justifique quaisquer escolhas que fizer.
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e13"></a>Exercício 4.13:</strong> Scheme
+          nos permite criar novas ligações para variáveis por meio de
+          <code>define</code>, mas não fornece uma maneira de se livrar das
+          ligações. Implemente para o avaliador uma forma especial
+          <code>make-unbound!</code> que remove a ligação de um determinado
+          símbolo do ambiente no qual a expressão <code>make-unbound!</code> é
+          avaliada. Este problema não está completamente especificado. Por
+          exemplo, devemos remover apenas a ligação no primeiro quadro do
+          ambiente? Complete a especificação e justifique quaisquer escolhas que
+          fizer.
+        </p>
+      </blockquote>
 
-<a id="g_t4_002e1_002e4"></a>
-<a id="Running-the-Evaluator-as-a-Program"></a>
-<h4 class="subsection"><span class="secnum">4.1.4</span><span class="sectitle">Executando o Avaliador como um Programa</span></h4>
+      <a id="g_t4_002e1_002e4"></a>
+      <a id="Running-the-Evaluator-as-a-Program"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.1.4</span
+        ><span class="sectitle">Executando o Avaliador como um Programa</span>
+      </h4>
 
-<p>Dado o avaliador, temos em mãos uma descrição (expressa em Lisp) do processo pelo qual as expressões Lisp são avaliadas. Uma vantagem de expressar o avaliador como um programa é que podemos executar o programa. Isso nos dá, rodando dentro do Lisp, um modelo funcional de como o próprio Lisp avalia expressões. Isso pode servir como uma estrutura para experimentar com regras de avaliação, como faremos mais adiante neste capítulo.
-</p>
-<p>Nosso programa avaliador reduz expressões, em última análise, à aplicação de procedimentos primitivos. Portanto, tudo o que precisamos para executar o avaliador é criar um mecanismo que chame o sistema Lisp subjacente para modelar a aplicação de procedimentos primitivos.
-</p>
-<p>Deve haver uma ligação para cada nome de procedimento primitivo, de modo que quando <code>eval</code> avalia o operador de uma aplicação de uma primitiva, ele encontrará um objeto para passar para <code>apply</code>. Assim, configuramos um ambiente global que associa objetos únicos aos nomes dos procedimentos primitivos que podem aparecer nas expressões que serão avaliadas. O ambiente global também inclui ligações para os símbolos <code>true</code> e <code>false</code>, para que possam ser usados como variáveis em expressões a serem avaliadas.
-</p>
-<pre><code class="language-scheme">(define (setup-environment)
+      <p>
+        Dado o avaliador, temos em mãos uma descrição (expressa em Lisp) do
+        processo pelo qual as expressões Lisp são avaliadas. Uma vantagem de
+        expressar o avaliador como um programa é que podemos executar o
+        programa. Isso nos dá, rodando dentro do Lisp, um modelo funcional de
+        como o próprio Lisp avalia expressões. Isso pode servir como uma
+        estrutura para experimentar com regras de avaliação, como faremos mais
+        adiante neste capítulo.
+      </p>
+      <p>
+        Nosso programa avaliador reduz expressões, em última análise, à
+        aplicação de procedimentos primitivos. Portanto, tudo o que precisamos
+        para executar o avaliador é criar um mecanismo que chame o sistema Lisp
+        subjacente para modelar a aplicação de procedimentos primitivos.
+      </p>
+      <p>
+        Deve haver uma ligação para cada nome de procedimento primitivo, de modo
+        que quando <code>eval</code> avalia o operador de uma aplicação de uma
+        primitiva, ele encontrará um objeto para passar para <code>apply</code>.
+        Assim, configuramos um ambiente global que associa objetos únicos aos
+        nomes dos procedimentos primitivos que podem aparecer nas expressões que
+        serão avaliadas. O ambiente global também inclui ligações para os
+        símbolos <code>true</code> e <code>false</code>, para que possam ser
+        usados como variáveis em expressões a serem avaliadas.
+      </p>
+      <pre><code class="language-scheme">(define (setup-environment)
   (let ((initial-env
          (extend-environment 
           (primitive-procedure-names)
@@ -703,17 +1265,31 @@
 (define the-global-environment 
   (setup-environment))</code></pre>
 
-<p>Não importa como representamos os objetos de procedimento primitivo, desde que <code>apply</code> possa identificá-los e aplicá-los usando os procedimentos <code>primitive-procedure?</code> e <code>apply-primitive-procedure</code>. Escolhemos representar um procedimento primitivo como uma lista começando com o símbolo <code>primitive</code> e contendo um procedimento no Lisp subjacente que implementa essa primitiva.
-</p>
-<pre><code class="language-scheme">(define (primitive-procedure? proc)
+      <p>
+        Não importa como representamos os objetos de procedimento primitivo,
+        desde que <code>apply</code> possa identificá-los e aplicá-los usando os
+        procedimentos <code>primitive-procedure?</code> e
+        <code>apply-primitive-procedure</code>. Escolhemos representar um
+        procedimento primitivo como uma lista começando com o símbolo
+        <code>primitive</code> e contendo um procedimento no Lisp subjacente que
+        implementa essa primitiva.
+      </p>
+      <pre><code class="language-scheme">(define (primitive-procedure? proc)
   (tagged-list? proc 'primitive))
 
 (define (primitive-implementation proc) 
   (cadr proc))</code></pre>
 
-<p><code>Setup-environment</code> obterá os nomes e procedimentos de implementação das primitivas de uma lista:<a class="footnote_link" id="DOCF220" href="#FOOT220"><sup>220</sup></a>
-</p>
-<pre><code class="language-scheme">(define primitive-procedures
+      <p>
+        <code>Setup-environment</code> obterá os nomes e procedimentos de
+        implementação das primitivas de uma lista:<a
+          class="footnote_link"
+          id="DOCF220"
+          href="#FOOT220"
+          ><sup>220</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define primitive-procedures
   (list (list 'car car)
         (list 'cdr cdr)
         (list 'cons cons)
@@ -728,18 +1304,31 @@
          (list 'primitive (cadr proc)))
        primitive-procedures))</code></pre>
 
-<p>Para aplicar um procedimento primitivo, simplesmente aplicamos o procedimento de implementação aos argumentos, usando o sistema Lisp subjacente:<a class="footnote_link" id="DOCF221" href="#FOOT221"><sup>221</sup></a>
-</p>
-<pre><code class="language-scheme">(define (apply-primitive-procedure proc args)
+      <p>
+        Para aplicar um procedimento primitivo, simplesmente aplicamos o
+        procedimento de implementação aos argumentos, usando o sistema Lisp
+        subjacente:<a class="footnote_link" id="DOCF221" href="#FOOT221"
+          ><sup>221</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (apply-primitive-procedure proc args)
   (apply-in-underlying-scheme
    (primitive-implementation proc) args))</code></pre>
 
-<p>Para conveniência em executar o avaliador metacircular, fornecemos um <a id="index-driver-loop"></a>
-<em>loop de driver</em> que modela o loop de leitura-avaliação-impressão do sistema Lisp subjacente. Ele imprime um <a id="index-prompt"></a>
-<em>prompt</em>, lê uma expressão de entrada, avalia essa expressão no ambiente global e imprime o resultado. Precedemos cada resultado impresso por um <a id="index-output-prompt"></a>
-<em>prompt de saída</em> para distinguir o valor da expressão de outras saídas que podem ser impressas.<a class="footnote_link" id="DOCF222" href="#FOOT222"><sup>222</sup></a>
-</p>
-<pre><code class="language-scheme">(define input-prompt  ";;; M-Eval input:")
+      <p>
+        Para conveniência em executar o avaliador metacircular, fornecemos um
+        <a id="index-driver-loop"></a> <em>loop de driver</em> que modela o loop
+        de leitura-avaliação-impressão do sistema Lisp subjacente. Ele imprime
+        um <a id="index-prompt"></a> <em>prompt</em>, lê uma expressão de
+        entrada, avalia essa expressão no ambiente global e imprime o resultado.
+        Precedemos cada resultado impresso por um
+        <a id="index-output-prompt"></a> <em>prompt de saída</em> para
+        distinguir o valor da expressão de outras saídas que podem ser
+        impressas.<a class="footnote_link" id="DOCF222" href="#FOOT222"
+          ><sup>222</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define input-prompt  ";;; M-Eval input:")
 (define output-prompt ";;; M-Eval value:")
 
 (define (driver-loop)
@@ -759,9 +1348,12 @@
 (define (announce-output string)
   (newline) (display string) (newline))</code></pre>
 
-<p>Usamos um procedimento de impressão especial, <code>user-print</code>, para evitar imprimir a parte do ambiente de um procedimento composto, que pode ser uma lista muito longa (ou pode até conter ciclos).
-</p>
-<pre><code class="language-scheme">(define (user-print object)
+      <p>
+        Usamos um procedimento de impressão especial, <code>user-print</code>,
+        para evitar imprimir a parte do ambiente de um procedimento composto,
+        que pode ser uma lista muito longa (ou pode até conter ciclos).
+      </p>
+      <pre><code class="language-scheme">(define (user-print object)
   (if (compound-procedure? object)
       (display 
        (list 'compound-procedure
@@ -770,9 +1362,12 @@
              '&lt;procedure-env&gt;))
       (display object)))</code></pre>
 
-<p>Agora, tudo o que precisamos fazer para executar o avaliador é inicializar o ambiente global e iniciar o loop de driver. Aqui está uma interação de exemplo:
-</p>
-<pre><code class="language-scheme">(define the-global-environment 
+      <p>
+        Agora, tudo o que precisamos fazer para executar o avaliador é
+        inicializar o ambiente global e iniciar o loop de driver. Aqui está uma
+        interação de exemplo:
+      </p>
+      <pre><code class="language-scheme">(define the-global-environment 
   (setup-environment))
 
 (driver-loop)
@@ -793,173 +1388,573 @@ ok
 (a b c d e f)
 </code></pre>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e14"></a>Exercício 4.14:</strong> Eva Lu Ator e Louis Reasoner estão cada um experimentando com o avaliador metacircular. Eva digita a definição de <code>map</code> e executa alguns programas de teste que a usam. Eles funcionam bem. Louis, por outro lado, instalou a versão do sistema de <code>map</code> como uma primitiva para o avaliador metacircular. Quando ele tenta, as coisas dão terrivelmente errado. Explique por que o <code>map</code> de Louis falha, embora o de Eva funcione.
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e14"></a>Exercício 4.14:</strong> Eva Lu
+          Ator e Louis Reasoner estão cada um experimentando com o avaliador
+          metacircular. Eva digita a definição de <code>map</code> e executa
+          alguns programas de teste que a usam. Eles funcionam bem. Louis, por
+          outro lado, instalou a versão do sistema de <code>map</code> como uma
+          primitiva para o avaliador metacircular. Quando ele tenta, as coisas
+          dão terrivelmente errado. Explique por que o <code>map</code> de Louis
+          falha, embora o de Eva funcione.
+        </p>
+      </blockquote>
 
-<a id="g_t4_002e1_002e5"></a>
-<a id="Data-as-Programs"></a>
-<h4 class="subsection"><span class="secnum">4.1.5</span><span class="sectitle">Dados como Programas</span></h4>
+      <a id="g_t4_002e1_002e5"></a>
+      <a id="Data-as-Programs"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.1.5</span
+        ><span class="sectitle">Dados como Programas</span>
+      </h4>
 
-<p>Ao pensar em um programa Lisp que avalia expressões Lisp, uma analogia pode ser útil. Uma visão operacional do significado de um programa é que um programa é uma descrição de uma máquina abstrata (talvez infinitamente grande). Por exemplo, considere o programa familiar para calcular fatoriais:
-</p>
-<pre><code class="language-scheme">(define (factorial n)
+      <p>
+        Ao pensar em um programa Lisp que avalia expressões Lisp, uma analogia
+        pode ser útil. Uma visão operacional do significado de um programa é que
+        um programa é uma descrição de uma máquina abstrata (talvez
+        infinitamente grande). Por exemplo, considere o programa familiar para
+        calcular fatoriais:
+      </p>
+      <pre><code class="language-scheme">(define (factorial n)
   (if (= n 1)
       1
       (* (factorial (- n 1)) n)))</code></pre>
 
-<p>Podemos considerar este programa como a descrição de uma máquina contendo partes que decrementam, multiplicam e testam igualdade, junto com um interruptor de duas posições e outra máquina fatorial. (A máquina fatorial é infinita porque contém outra máquina fatorial dentro dela.) <a href="#Figure-4_002e2">Figura 4.2</a> é um diagrama de fluxo para a máquina fatorial, mostrando como as partes são conectadas.
-</p>
-<figure class="float">
-<a id="Figure-4_002e2"></a>
-<object style="width: 54.83ex; height: 29.36ex;" data="fig/chap4/Fig4.2a.std.svg" type="image/svg+xml">SVG</object>
+      <p>
+        Podemos considerar este programa como a descrição de uma máquina
+        contendo partes que decrementam, multiplicam e testam igualdade, junto
+        com um interruptor de duas posições e outra máquina fatorial. (A máquina
+        fatorial é infinita porque contém outra máquina fatorial dentro dela.)
+        <a href="#Figure-4_002e2">Figura 4.2</a> é um diagrama de fluxo para a
+        máquina fatorial, mostrando como as partes são conectadas.
+      </p>
+      <figure class="float">
+        <a id="Figure-4_002e2"></a>
+        <object
+          style="width: 54.83ex; height: 29.36ex"
+          data="fig/chap4/Fig4.2a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
 
-<figcaption class="float-caption">
-<p><strong>Figura 4.2:</strong> O programa fatorial, visto como uma máquina abstrata.</p>
-</figcaption>
-</figure>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 4.2:</strong> O programa fatorial, visto como uma
+            máquina abstrata.
+          </p>
+        </figcaption>
+      </figure>
 
-<p>De maneira semelhante, podemos considerar o avaliador como uma máquina muito especial que recebe como entrada uma descrição de uma máquina. Dada essa entrada, o avaliador se configura para emular a máquina descrita. Por exemplo, se alimentarmos nosso avaliador com a definição de <code>factorial</code>, como mostrado em <a href="#Figure-4_002e3">Figura 4.3</a>, o avaliador será capaz de calcular fatoriais.
-</p>
-<figure class="float">
-<a id="Figure-4_002e3"></a>
-<object style="width: 44.98ex; height: 28.32ex;" data="fig/chap4/Fig4.3.std.svg" type="image/svg+xml">SVG</object>
+      <p>
+        De maneira semelhante, podemos considerar o avaliador como uma máquina
+        muito especial que recebe como entrada uma descrição de uma máquina.
+        Dada essa entrada, o avaliador se configura para emular a máquina
+        descrita. Por exemplo, se alimentarmos nosso avaliador com a definição
+        de <code>factorial</code>, como mostrado em
+        <a href="#Figure-4_002e3">Figura 4.3</a>, o avaliador será capaz de
+        calcular fatoriais.
+      </p>
+      <figure class="float">
+        <a id="Figure-4_002e3"></a>
+        <object
+          style="width: 44.98ex; height: 28.32ex"
+          data="fig/chap4/Fig4.3.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
 
-<figcaption class="float-caption">
-<p><strong>Figura 4.3:</strong> O avaliador emulando uma máquina fatorial.</p>
-</figcaption>
-</figure>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 4.3:</strong> O avaliador emulando uma máquina
+            fatorial.
+          </p>
+        </figcaption>
+      </figure>
 
-<p>Dessa perspectiva, nosso avaliador é visto como uma <a id="index-universal-machine"></a>
-<em>máquina universal</em>. Ele imita outras máquinas quando estas são descritas como programas Lisp.<a class="footnote_link" id="DOCF223" href="#FOOT223"><sup>223</sup></a> Isso é impressionante. Tente imaginar um avaliador análogo para circuitos elétricos. Isso seria um circuito que recebe como entrada um sinal codificando os planos para algum outro circuito, como um filtro. Dada essa entrada, o avaliador de circuitos se comportaria como um filtro com a mesma descrição. Tal circuito elétrico universal é quase inimaginavelmente complexo. É notável que o programa avaliador seja um programa bastante simples.<a class="footnote_link" id="DOCF224" href="#FOOT224"><sup>224</sup></a>
-</p>
-<p>Outro aspecto impressionante do avaliador é que ele age como uma ponte entre os objetos de dados que são manipulados por nossa linguagem de programação e a própria linguagem de programação. Imagine que o programa avaliador (implementado em Lisp) está rodando, e que um usuário está digitando expressões para o avaliador e observando os resultados. Da perspectiva do usuário, uma expressão de entrada como <code>(* x x)</code> é uma expressão na linguagem de programação, que o avaliador deve executar. Da perspectiva do avaliador, no entanto, a expressão é simplesmente uma lista (neste caso, uma lista de três símbolos: <code>*</code>, <code>x</code> e <code>x</code>) que deve ser manipulada de acordo com um conjunto bem definido de regras.
-</p>
-<p>Que os programas do usuário sejam os dados do avaliador não precisa ser uma fonte de confusão. Na verdade, às vezes é conveniente ignorar essa distinção e dar ao usuário a capacidade de avaliar explicitamente um objeto de dados como uma expressão Lisp, disponibilizando <code>eval</code> para uso em programas. Muitos dialetos Lisp fornecem um procedimento primitivo <code>eval</code> que recebe como argumentos uma expressão e um ambiente e avalia a expressão em relação ao ambiente.<a class="footnote_link" id="DOCF225" href="#FOOT225"><sup>225</sup></a> Assim,
-</p>
-<pre><code class="language-scheme">(eval '(* 5 5) user-initial-environment)</code></pre>
+      <p>
+        Dessa perspectiva, nosso avaliador é visto como uma
+        <a id="index-universal-machine"></a> <em>máquina universal</em>. Ele
+        imita outras máquinas quando estas são descritas como programas Lisp.<a
+          class="footnote_link"
+          id="DOCF223"
+          href="#FOOT223"
+          ><sup>223</sup></a
+        >
+        Isso é impressionante. Tente imaginar um avaliador análogo para
+        circuitos elétricos. Isso seria um circuito que recebe como entrada um
+        sinal codificando os planos para algum outro circuito, como um filtro.
+        Dada essa entrada, o avaliador de circuitos se comportaria como um
+        filtro com a mesma descrição. Tal circuito elétrico universal é quase
+        inimaginavelmente complexo. É notável que o programa avaliador seja um
+        programa bastante simples.<a
+          class="footnote_link"
+          id="DOCF224"
+          href="#FOOT224"
+          ><sup>224</sup></a
+        >
+      </p>
+      <p>
+        Outro aspecto impressionante do avaliador é que ele age como uma ponte
+        entre os objetos de dados que são manipulados por nossa linguagem de
+        programação e a própria linguagem de programação. Imagine que o programa
+        avaliador (implementado em Lisp) está rodando, e que um usuário está
+        digitando expressões para o avaliador e observando os resultados. Da
+        perspectiva do usuário, uma expressão de entrada como
+        <code>(* x x)</code> é uma expressão na linguagem de programação, que o
+        avaliador deve executar. Da perspectiva do avaliador, no entanto, a
+        expressão é simplesmente uma lista (neste caso, uma lista de três
+        símbolos: <code>*</code>, <code>x</code> e <code>x</code>) que deve ser
+        manipulada de acordo com um conjunto bem definido de regras.
+      </p>
+      <p>
+        Que os programas do usuário sejam os dados do avaliador não precisa ser
+        uma fonte de confusão. Na verdade, às vezes é conveniente ignorar essa
+        distinção e dar ao usuário a capacidade de avaliar explicitamente um
+        objeto de dados como uma expressão Lisp, disponibilizando
+        <code>eval</code> para uso em programas. Muitos dialetos Lisp fornecem
+        um procedimento primitivo <code>eval</code> que recebe como argumentos
+        uma expressão e um ambiente e avalia a expressão em relação ao
+        ambiente.<a class="footnote_link" id="DOCF225" href="#FOOT225"
+          ><sup>225</sup></a
+        >
+        Assim,
+      </p>
+      <pre><code class="language-scheme">(eval '(* 5 5) user-initial-environment)</code></pre>
 
-<p>e
-</p>
-<pre><code class="language-scheme">(eval (cons '* (list 5 5)) 
+      <p>e</p>
+      <pre><code class="language-scheme">(eval (cons '* (list 5 5)) 
       user-initial-environment)</code></pre>
 
-<p>ambos retornarão 25.<a class="footnote_link" id="DOCF226" href="#FOOT226"><sup>226</sup></a>
-</p>
-<!--Aqui 2-->
-<div id="FOOT208"><p><a class="footnote_backlink" href="#DOCF208"><sup>208</sup></a>
-Se nos concedermos a capacidade de aplicar primitivas, o que resta para nós implementarmos no avaliador? O trabalho do avaliador não é especificar as primitivas da linguagem, mas sim fornecer o tecido conectivo — os meios de combinação e os meios de abstração — que une uma coleção de primitivas para formar uma linguagem. Especificamente:
-</p>
-<ul>
-<li> O avaliador nos permite lidar com expressões aninhadas. Por exemplo, embora simplesmente aplicar primitivas seja suficiente para avaliar a expressão <code>(+ 1 6)</code>, isso não é adequado para lidar com <code>(+ 1 (* 2 3))</code>. No que diz respeito ao procedimento primitivo <code>+</code>, seus argumentos devem ser números, e ele falharia se passássemos a expressão <code>(* 2 3)</code> como argumento. Um papel importante do avaliador é orquestrar a composição de procedimentos para que <code>(* 2 3)</code> seja reduzido a 6 antes de ser passado como argumento para <code>+</code>.
-</li><li> O avaliador nos permite usar variáveis. Por exemplo, o procedimento primitivo para adição não tem como lidar com expressões como <code>(+ x 1)</code>. Precisamos de um avaliador para rastrear variáveis e obter seus valores antes de invocar os procedimentos primitivos.
-</li><li> O avaliador nos permite definir procedimentos compostos. Isso envolve rastrear definições de procedimentos, saber como usar essas definições na avaliação de expressões e fornecer um mecanismo que permita que os procedimentos aceitem argumentos.
-</li><li> O avaliador fornece as formas especiais, que devem ser avaliadas de maneira diferente das chamadas de procedimento.
-</li></ul>
-</div>
-<div id="FOOT209"><p><a class="footnote_backlink" href="#DOCF209"><sup>209</sup></a>
-Poderíamos ter simplificado a cláusula <code>application?</code> em <code>eval</code> usando <code>map</code> (e estipulando que <code>operands</code> retorna uma lista) em vez de escrever um procedimento explícito <code>list-of-values</code>. Escolhemos não usar <code>map</code> aqui para enfatizar o fato de que o avaliador pode ser implementado sem o uso de procedimentos de ordem superior (e, portanto, poderia ser escrito em uma linguagem que não tem procedimentos de ordem superior), mesmo que a linguagem que ele suporta inclua procedimentos de ordem superior.</p>
-</div>
-<div id="FOOT210"><p><a class="footnote_backlink" href="#DOCF210"><sup>210</sup></a>
-Neste caso, a linguagem que está sendo implementada e a linguagem de implementação são a mesma. A contemplação do significado de <code>true?</code> aqui resulta em uma expansão da consciência sem o abuso de substância.</p>
-</div>
-<div id="FOOT211"><p><a class="footnote_backlink" href="#DOCF211"><sup>211</sup></a>
-Esta implementação de <code>define</code> ignora uma questão sutil no tratamento de definições internas, embora funcione corretamente na maioria dos casos. Veremos qual é o problema e como resolvê-lo em <a href="#g_t4_002e1_002e6">4.1.6</a>.</p>
-</div>
-<div id="FOOT212"><p><a class="footnote_backlink" href="#DOCF212"><sup>212</sup></a>
-Como dissemos quando introduzimos <code>define</code> e <code>set!</code>, esses valores são dependentes da implementação em Scheme — ou seja, o implementador pode escolher qual valor retornar.</p>
-</div>
-<div id="FOOT213"><p><a class="footnote_backlink" href="#DOCF213"><sup>213</sup></a>
-Como mencionado em <a href="2_002e3.xhtml#g_t2_002e3_002e1">2.3.1</a>, o avaliador vê uma expressão entre aspas como uma lista começando com <code>quote</code>, mesmo que a expressão seja digitada com a marca de aspas. Por exemplo, a expressão <code>'a</code> seria vista pelo avaliador como <code>(quote a)</code>. Veja <a href="2_002e3.xhtml#Exercise-2_002e55">Exercício 2.55</a>.</p>
-</div>
-<div id="FOOT214"><p><a class="footnote_backlink" href="#DOCF214"><sup>214</sup></a>
-O valor de uma expressão <code>if</code> quando o predicado é falso e não há alternativa é não especificado em Scheme; escolhemos aqui torná-lo falso. Vamos suportar o uso das variáveis <code>true</code> e <code>false</code> em expressões a serem avaliadas, vinculando-as no ambiente global. Veja <a href="#g_t4_002e1_002e4">4.1.4</a>.</p>
-</div>
-<div id="FOOT215"><p><a class="footnote_backlink" href="#DOCF215"><sup>215</sup></a>
-Esses seletores para uma lista de expressões — e os correspondentes para uma lista de operandos — não são destinados a uma abstração de dados. Eles são introduzidos como nomes mnemônicos para as operações básicas de lista, a fim de facilitar a compreensão do avaliador de controle explícito em <a href="5_002e4.xhtml#g_t5_002e4">5.4</a>.</p>
-</div>
-<div id="FOOT216"><p><a class="footnote_backlink" href="#DOCF216"><sup>216</sup></a>
-O valor de uma expressão <code>cond</code> quando todos os predicados são falsos e não há cláusula <code>else</code> é não especificado em Scheme; escolhemos aqui torná-lo falso.</p>
-</div>
-<div id="FOOT217"><p><a class="footnote_backlink" href="#DOCF217"><sup>217</sup></a>
-Sistemas práticos de Lisp fornecem um mecanismo que permite ao usuário adicionar novas expressões derivadas e especificar sua implementação como transformações sintáticas sem modificar o avaliador. Tal transformação definida pelo usuário é chamada de <a id="index-macro"></a>
-<em>macro</em>. Embora seja fácil adicionar um mecanismo elementar para definir macros, a linguagem resultante tem problemas sutis de conflito de nomes. Houve muita pesquisa sobre mecanismos para definição de macros que não causam essas dificuldades. Veja, por exemplo, <a href="References.xhtml#Kohlbecker-1986">Kohlbecker 1986</a>, 
-<a href="References.xhtml#Clinger-and-Rees-1991">Clinger e Rees 1991</a>, e <a href="References.xhtml#Hanson-1991">Hanson 1991</a>.</p>
-</div>
-<div id="FOOT218"><p><a class="footnote_backlink" href="#DOCF218"><sup>218</sup></a>
-Quadros não são realmente uma abstração de dados no seguinte código: <code>Set-variable-value!</code> e <code>define-variable!</code> usam <code>set-car!</code> para modificar diretamente os valores em um quadro. O propósito dos procedimentos de quadro é tornar os procedimentos de manipulação de ambiente fáceis de ler.</p>
-</div>
-<div id="FOOT219"><p><a class="footnote_backlink" href="#DOCF219"><sup>219</sup></a>
-A desvantagem desta representação (bem como da variante em <a href="#Exercise-4_002e11">Exercício 4.11</a>) é que o avaliador pode ter que pesquisar muitos quadros para encontrar a vinculação de uma determinada variável. (Essa abordagem é chamada de <a id="index-deep-binding"></a>
-<em>deep binding</em>.) Uma maneira de evitar essa ineficiência é usar uma estratégia chamada <a id="index-lexical-addressing"></a>
-<em>lexical addressing</em>, que será discutida em <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a>.</p>
-</div>
-<div id="FOOT220"><p><a class="footnote_backlink" href="#DOCF220"><sup>220</sup></a>
-Qualquer procedimento definido no Lisp subjacente pode ser usado como uma primitiva para o avaliador metacircular. O nome de uma primitiva instalada no avaliador não precisa ser o mesmo que o nome de sua implementação no Lisp subjacente; os nomes são os mesmos aqui porque o avaliador metacircular implementa o próprio Scheme. Assim, por exemplo, poderíamos colocar <code>(list 'first car)</code> ou <code>(list 'square (lambda (x) (* x x)))</code> na lista de <code>primitive-procedures</code>.</p>
-</div>
-<div id="FOOT221"><p><a class="footnote_backlink" href="#DOCF221"><sup>221</sup></a>
-<code>Apply-in-underlying-scheme</code> é o procedimento <code>apply</code> que usamos nos capítulos anteriores. O procedimento <code>apply</code> do avaliador metacircular (<a href="#g_t4_002e1_002e1">4.1.1</a>) modela o funcionamento dessa primitiva. Ter duas coisas diferentes chamadas <code>apply</code> leva a um problema técnico na execução do avaliador metacircular, porque definir o <code>apply</code> do avaliador metacircular mascara a definição da primitiva. Uma maneira de contornar isso é renomear o <code>apply</code> metacircular para evitar conflito com o nome do procedimento primitivo. Assumimos, em vez disso, que salvamos uma referência ao <code>apply</code> subjacente fazendo
-</p>
-<pre><code class="language-scheme">(define apply-in-underlying-scheme apply)
+      <p>
+        ambos retornarão 25.<a
+          class="footnote_link"
+          id="DOCF226"
+          href="#FOOT226"
+          ><sup>226</sup></a
+        >
+      </p>
+      <!--Aqui 2-->
+      <div id="FOOT208">
+        <p>
+          <a class="footnote_backlink" href="#DOCF208"><sup>208</sup></a>
+          Se nos concedermos a capacidade de aplicar primitivas, o que resta
+          para nós implementarmos no avaliador? O trabalho do avaliador não é
+          especificar as primitivas da linguagem, mas sim fornecer o tecido
+          conectivo — os meios de combinação e os meios de abstração — que une
+          uma coleção de primitivas para formar uma linguagem. Especificamente:
+        </p>
+        <ul>
+          <li>
+            O avaliador nos permite lidar com expressões aninhadas. Por exemplo,
+            embora simplesmente aplicar primitivas seja suficiente para avaliar
+            a expressão <code>(+ 1 6)</code>, isso não é adequado para lidar com
+            <code>(+ 1 (* 2 3))</code>. No que diz respeito ao procedimento
+            primitivo <code>+</code>, seus argumentos devem ser números, e ele
+            falharia se passássemos a expressão <code>(* 2 3)</code> como
+            argumento. Um papel importante do avaliador é orquestrar a
+            composição de procedimentos para que <code>(* 2 3)</code> seja
+            reduzido a 6 antes de ser passado como argumento para
+            <code>+</code>.
+          </li>
+          <li>
+            O avaliador nos permite usar variáveis. Por exemplo, o procedimento
+            primitivo para adição não tem como lidar com expressões como
+            <code>(+ x 1)</code>. Precisamos de um avaliador para rastrear
+            variáveis e obter seus valores antes de invocar os procedimentos
+            primitivos.
+          </li>
+          <li>
+            O avaliador nos permite definir procedimentos compostos. Isso
+            envolve rastrear definições de procedimentos, saber como usar essas
+            definições na avaliação de expressões e fornecer um mecanismo que
+            permita que os procedimentos aceitem argumentos.
+          </li>
+          <li>
+            O avaliador fornece as formas especiais, que devem ser avaliadas de
+            maneira diferente das chamadas de procedimento.
+          </li>
+        </ul>
+      </div>
+      <div id="FOOT209">
+        <p>
+          <a class="footnote_backlink" href="#DOCF209"><sup>209</sup></a>
+          Poderíamos ter simplificado a cláusula <code>application?</code> em
+          <code>eval</code> usando <code>map</code> (e estipulando que
+          <code>operands</code> retorna uma lista) em vez de escrever um
+          procedimento explícito <code>list-of-values</code>. Escolhemos não
+          usar <code>map</code> aqui para enfatizar o fato de que o avaliador
+          pode ser implementado sem o uso de procedimentos de ordem superior (e,
+          portanto, poderia ser escrito em uma linguagem que não tem
+          procedimentos de ordem superior), mesmo que a linguagem que ele
+          suporta inclua procedimentos de ordem superior.
+        </p>
+      </div>
+      <div id="FOOT210">
+        <p>
+          <a class="footnote_backlink" href="#DOCF210"><sup>210</sup></a> Neste
+          caso, a linguagem que está sendo implementada e a linguagem de
+          implementação são a mesma. A contemplação do significado de
+          <code>true?</code> aqui resulta em uma expansão da consciência sem o
+          abuso de substância.
+        </p>
+      </div>
+      <div id="FOOT211">
+        <p>
+          <a class="footnote_backlink" href="#DOCF211"><sup>211</sup></a> Esta
+          implementação de <code>define</code> ignora uma questão sutil no
+          tratamento de definições internas, embora funcione corretamente na
+          maioria dos casos. Veremos qual é o problema e como resolvê-lo em
+          <a href="#g_t4_002e1_002e6">4.1.6</a>.
+        </p>
+      </div>
+      <div id="FOOT212">
+        <p>
+          <a class="footnote_backlink" href="#DOCF212"><sup>212</sup></a> Como
+          dissemos quando introduzimos <code>define</code> e <code>set!</code>,
+          esses valores são dependentes da implementação em Scheme — ou seja, o
+          implementador pode escolher qual valor retornar.
+        </p>
+      </div>
+      <div id="FOOT213">
+        <p>
+          <a class="footnote_backlink" href="#DOCF213"><sup>213</sup></a> Como
+          mencionado em <a href="2_002e3.xhtml#g_t2_002e3_002e1">2.3.1</a>, o
+          avaliador vê uma expressão entre aspas como uma lista começando com
+          <code>quote</code>, mesmo que a expressão seja digitada com a marca de
+          aspas. Por exemplo, a expressão <code>'a</code> seria vista pelo
+          avaliador como <code>(quote a)</code>. Veja
+          <a href="2_002e3.xhtml#Exercise-2_002e55">Exercício 2.55</a>.
+        </p>
+      </div>
+      <div id="FOOT214">
+        <p>
+          <a class="footnote_backlink" href="#DOCF214"><sup>214</sup></a> O
+          valor de uma expressão <code>if</code> quando o predicado é falso e
+          não há alternativa é não especificado em Scheme; escolhemos aqui
+          torná-lo falso. Vamos suportar o uso das variáveis <code>true</code> e
+          <code>false</code> em expressões a serem avaliadas, vinculando-as no
+          ambiente global. Veja <a href="#g_t4_002e1_002e4">4.1.4</a>.
+        </p>
+      </div>
+      <div id="FOOT215">
+        <p>
+          <a class="footnote_backlink" href="#DOCF215"><sup>215</sup></a> Esses
+          seletores para uma lista de expressões — e os correspondentes para uma
+          lista de operandos — não são destinados a uma abstração de dados. Eles
+          são introduzidos como nomes mnemônicos para as operações básicas de
+          lista, a fim de facilitar a compreensão do avaliador de controle
+          explícito em <a href="5_002e4.xhtml#g_t5_002e4">5.4</a>.
+        </p>
+      </div>
+      <div id="FOOT216">
+        <p>
+          <a class="footnote_backlink" href="#DOCF216"><sup>216</sup></a> O
+          valor de uma expressão <code>cond</code> quando todos os predicados
+          são falsos e não há cláusula <code>else</code> é não especificado em
+          Scheme; escolhemos aqui torná-lo falso.
+        </p>
+      </div>
+      <div id="FOOT217">
+        <p>
+          <a class="footnote_backlink" href="#DOCF217"><sup>217</sup></a>
+          Sistemas práticos de Lisp fornecem um mecanismo que permite ao usuário
+          adicionar novas expressões derivadas e especificar sua implementação
+          como transformações sintáticas sem modificar o avaliador. Tal
+          transformação definida pelo usuário é chamada de
+          <a id="index-macro"></a> <em>macro</em>. Embora seja fácil adicionar
+          um mecanismo elementar para definir macros, a linguagem resultante tem
+          problemas sutis de conflito de nomes. Houve muita pesquisa sobre
+          mecanismos para definição de macros que não causam essas dificuldades.
+          Veja, por exemplo,
+          <a href="References.xhtml#Kohlbecker-1986">Kohlbecker 1986</a>,
+          <a href="References.xhtml#Clinger-and-Rees-1991"
+            >Clinger e Rees 1991</a
+          >, e <a href="References.xhtml#Hanson-1991">Hanson 1991</a>.
+        </p>
+      </div>
+      <div id="FOOT218">
+        <p>
+          <a class="footnote_backlink" href="#DOCF218"><sup>218</sup></a>
+          Quadros não são realmente uma abstração de dados no seguinte código:
+          <code>Set-variable-value!</code> e <code>define-variable!</code> usam
+          <code>set-car!</code> para modificar diretamente os valores em um
+          quadro. O propósito dos procedimentos de quadro é tornar os
+          procedimentos de manipulação de ambiente fáceis de ler.
+        </p>
+      </div>
+      <div id="FOOT219">
+        <p>
+          <a class="footnote_backlink" href="#DOCF219"><sup>219</sup></a> A
+          desvantagem desta representação (bem como da variante em
+          <a href="#Exercise-4_002e11">Exercício 4.11</a>) é que o avaliador
+          pode ter que pesquisar muitos quadros para encontrar a vinculação de
+          uma determinada variável. (Essa abordagem é chamada de
+          <a id="index-deep-binding"></a> <em>deep binding</em>.) Uma maneira de
+          evitar essa ineficiência é usar uma estratégia chamada
+          <a id="index-lexical-addressing"></a> <em>lexical addressing</em>, que
+          será discutida em <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a>.
+        </p>
+      </div>
+      <div id="FOOT220">
+        <p>
+          <a class="footnote_backlink" href="#DOCF220"><sup>220</sup></a>
+          Qualquer procedimento definido no Lisp subjacente pode ser usado como
+          uma primitiva para o avaliador metacircular. O nome de uma primitiva
+          instalada no avaliador não precisa ser o mesmo que o nome de sua
+          implementação no Lisp subjacente; os nomes são os mesmos aqui porque o
+          avaliador metacircular implementa o próprio Scheme. Assim, por
+          exemplo, poderíamos colocar <code>(list 'first car)</code> ou
+          <code>(list 'square (lambda (x) (* x x)))</code> na lista de
+          <code>primitive-procedures</code>.
+        </p>
+      </div>
+      <div id="FOOT221">
+        <p>
+          <a class="footnote_backlink" href="#DOCF221"><sup>221</sup></a>
+          <code>Apply-in-underlying-scheme</code> é o procedimento
+          <code>apply</code> que usamos nos capítulos anteriores. O procedimento
+          <code>apply</code> do avaliador metacircular (<a
+            href="#g_t4_002e1_002e1"
+            >4.1.1</a
+          >) modela o funcionamento dessa primitiva. Ter duas coisas diferentes
+          chamadas <code>apply</code> leva a um problema técnico na execução do
+          avaliador metacircular, porque definir o <code>apply</code> do
+          avaliador metacircular mascara a definição da primitiva. Uma maneira
+          de contornar isso é renomear o <code>apply</code> metacircular para
+          evitar conflito com o nome do procedimento primitivo. Assumimos, em
+          vez disso, que salvamos uma referência ao
+          <code>apply</code> subjacente fazendo
+        </p>
+        <pre><code class="language-scheme">(define apply-in-underlying-scheme apply)
 </code></pre>
 
-<p>antes de definir o <code>apply</code> metacircular. Isso nos permite acessar a versão original de <code>apply</code> sob um nome diferente.</p>
-</div>
-<div id="FOOT222"><p><a class="footnote_backlink" href="#DOCF222"><sup>222</sup></a>
-O procedimento primitivo <code>read</code> espera a entrada do usuário e retorna a próxima expressão completa que é digitada. Por exemplo, se o usuário digitar <code>(+ 23 x)</code>, <code>read</code> retorna uma lista de três elementos contendo o símbolo <code>+</code>, o número 23 e o símbolo <code>x</code>. Se o usuário digitar <code>'x</code>, <code>read</code> retorna uma lista de dois elementos contendo o símbolo <code>quote</code> e o símbolo <code>x</code>.</p>
-</div>
-<div id="FOOT223"><p><a class="footnote_backlink" href="#DOCF223"><sup>223</sup></a>
-O fato de as máquinas serem descritas em Lisp é irrelevante. Se dermos ao nosso avaliador um programa Lisp que se comporta como um avaliador para outra linguagem, digamos C, o avaliador Lisp emulará o avaliador C, que por sua vez pode emular qualquer máquina descrita como um programa C. Da mesma forma, escrever um avaliador Lisp em C produz um programa C que pode executar qualquer programa Lisp. A ideia profunda aqui é que qualquer avaliador pode emular qualquer outro. Assim, a noção de “o que pode, em princípio, ser computado” (ignorando as praticidades de tempo e memória necessários) é independente da linguagem ou do computador, e em vez disso reflete uma noção subjacente de <a id="index-computabilidade"></a>
-<em>computabilidade</em>. Isso foi demonstrado de forma clara pela primeira vez por Alan M. Turing (1912-1954), cujo artigo de 1936 estabeleceu as bases para a ciência da computação teórica. No artigo, Turing apresentou um modelo computacional simples — agora conhecido como <a id="index-Turing-machine"></a>
-<em>máquina de Turing</em> — e argumentou que qualquer “processo efetivo” pode ser formulado como um programa para tal máquina. (Esse argumento é conhecido como <a id="index-Church_002dTuring-thesis"></a>
-<em>teses de Church-Turing</em>.) Turing então implementou uma máquina universal, ou seja, uma máquina de Turing que se comporta como um avaliador para programas de máquina de Turing. Ele usou esse framework para demonstrar que existem problemas bem colocados que não podem ser computados por máquinas de Turing (veja <a href="#Exercise-4_002e15">Exercício 4.15</a>), e, portanto, por implicação, não podem ser formulados como “processos efetivos.” Turing também fez contribuições fundamentais para a ciência da computação prática. Por exemplo, ele inventou a ideia de estruturar programas usando sub-rotinas de propósito geral. Veja <a href="References.xhtml#Hodges-1983">Hodges 1983</a> para uma biografia de Turing.</p>
-</div>
-<div id="FOOT224"><p><a class="footnote_backlink" href="#DOCF224"><sup>224</sup></a>
-Algumas pessoas acham contra-intuitivo que um avaliador, que é implementado por um procedimento relativamente simples, possa emular programas que são mais complexos que o próprio avaliador. A existência de uma máquina avaliadora universal é uma propriedade profunda e maravilhosa da computação. <a id="index-Recursion-theory"></a>
-<em>Teoria da recursão</em>, um ramo da lógica matemática, está preocupado com os limites lógicos da computação. O belo livro de Douglas Hofstadter, <cite>Gödel, Escher, Bach</cite>, explora algumas dessas ideias (<a href="References.xhtml#Hofstadter-1979">Hofstadter 1979</a>).</p>
-</div>
-<div id="FOOT225"><p><a class="footnote_backlink" href="#DOCF225"><sup>225</sup></a>
-Aviso: Esta primitiva <code>eval</code> não é idêntica ao procedimento <code>eval</code> que implementamos em <a href="#g_t4_002e1_002e1">4.1.1</a>, porque ela usa ambientes <em>reais</em> de Scheme em vez das estruturas de ambiente de amostra que construímos em <a href="#g_t4_002e1_002e3">4.1.3</a>. Esses ambientes reais não podem ser manipulados pelo usuário como listas comuns; eles devem ser acessados via <code>eval</code> ou outras operações especiais. Da mesma forma, a primitiva <code>apply</code> que vimos anteriormente não é idêntica ao <code>apply</code> metacircular, porque ela usa procedimentos reais de Scheme em vez dos objetos de procedimento que construímos em <a href="#g_t4_002e1_002e3">4.1.3</a> e <a href="#g_t4_002e1_002e4">4.1.4</a>.</p>
-</div>
-<div id="FOOT226"><p><a class="footnote_backlink" href="#DOCF226"><sup>226</sup></a>
-A implementação do <abbr>MIT</abbr> do Scheme inclui <code>eval</code>, bem como um símbolo <code>user-initial-environment</code> que está vinculado ao ambiente inicial no qual as expressões de entrada do usuário são avaliadas.</p>
-</div>
-<div id="FOOT227"><p><a class="footnote_backlink" href="#DOCF227"><sup>227</sup></a>
-Embora tenhamos estipulado que <code>halts?</code> recebe um objeto de procedimento, observe que esse raciocínio ainda se aplica mesmo se <code>halts?</code> puder acessar o texto do procedimento e seu ambiente. Este é o celebrado <a id="index-Halting-Theorem"></a>
-<em>Teorema da Parada</em> de Turing, que deu o primeiro exemplo claro de um <a id="index-non_002dcomputable"></a>
-<em>problema não computável</em>, ou seja, uma tarefa bem colocada que não pode ser realizada como um procedimento computacional.</p>
-</div>
-<div id="FOOT228"><p><a class="footnote_backlink" href="#DOCF228"><sup>228</sup></a>
-O desejo de que os programas não dependam desse mecanismo de avaliação é a razão para a observação “a administração não é responsável” em <a href="1_002e1.xhtml#Footnote-28">Nota de rodapé 28</a> de <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>. Ao insistir que as definições internas venham primeiro e não se usem mutuamente enquanto as definições estão sendo avaliadas, o padrão <abbr>IEEE</abbr> para Scheme deixa aos implementadores alguma escolha no mecanismo usado para avaliar essas definições. A escolha de uma regra de avaliação em vez de outra aqui pode parecer uma questão pequena, afetando apenas a interpretação de programas “mal formados”. No entanto, veremos em <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a> que mudar para um modelo de escopo simultâneo para definições internas evita algumas dificuldades desagradáveis que surgiriam de outra forma na implementação de um compilador.</p>
-</div>
-<div id="FOOT229"><p><a class="footnote_backlink" href="#DOCF229"><sup>229</sup></a>
-O padrão <abbr>IEEE</abbr> para Scheme permite diferentes estratégias de implementação, especificando que cabe ao programador obedecer a essa restrição, e não à implementação para impô-la. Algumas implementações de Scheme, incluindo o <abbr>MIT</abbr> Scheme, usam a transformação mostrada acima. Assim, alguns programas que não obedecem a essa restrição de fato rodarão nessas implementações.</p>
-</div>
-<div id="FOOT230"><p><a class="footnote_backlink" href="#DOCF230"><sup>230</sup></a>
-Os implementadores do <abbr>MIT</abbr> do Scheme apoiam Alyssa nos seguintes termos: Eva está, em princípio, correta — as definições devem ser consideradas simultâneas. Mas parece difícil implementar um mecanismo geral e eficiente que faça o que Eva exige. Na ausência de tal mecanismo, é melhor gerar um erro nos casos difíceis de definições simultâneas (a noção de Alyssa) do que produzir uma resposta incorreta (como Ben teria).</p>
-</div>
-<div id="FOOT231"><p><a class="footnote_backlink" href="#DOCF231"><sup>231</sup></a>
-Este exemplo ilustra um truque de programação para formular procedimentos recursivos sem usar <code>define</code>. O truque mais geral desse tipo é o <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>Y</mi>
-</math> <a id="index-operator-1"></a>
-<em>operador</em>, que pode ser usado para dar uma implementação de recursão “pura λ-cálculo”. (Veja <a href="References.xhtml#Stoy-1977">Stoy 1977</a> para detalhes sobre o λ-cálculo, e <a href="References.xhtml#Gabriel-1988">Gabriel 1988</a> para uma exposição do operador <math xmlns="http://www.w3.org/1998/Math/MathML">
-  <mi>Y</mi>
-</math> em Scheme.)</p>
-</div>
-<div id="FOOT232"><p><a class="footnote_backlink" href="#DOCF232"><sup>232</sup></a>
-Esta técnica é uma parte integral do processo de compilação, que discutiremos em <a href="Chapter-5.xhtml#Chapter-5">Capítulo 5</a>. Jonathan Rees escreveu um interpretador Scheme assim por volta de 1982 para o projeto T (<a href="References.xhtml#Rees-and-Adams-1982">Rees e Adams 1982</a>). Marc <a href="References.xhtml#Feeley-_00281986_0029">Feeley (1986)</a> (veja também <a href="References.xhtml#Feeley-and-Lapalme-1987">Feeley e Lapalme 1987</a>) inventou independentemente essa técnica em sua tese de mestrado.</p>
-</div>
-<div id="FOOT233"><p><a class="footnote_backlink" href="#DOCF233"><sup>233</sup></a>
-Há, no entanto, uma parte importante da busca de variáveis que <em>pode</em> ser feita como parte da análise sintática. Como mostraremos em <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a>, pode-se determinar a posição na estrutura do ambiente onde o valor da variável será encontrado, eliminando a necessidade de escanear o ambiente para a entrada que corresponde à variável.</p>
-</div>
-<div id="FOOT234"><p><a class="footnote_backlink" href="#DOCF234"><sup>234</sup></a>
-Veja <a href="#Exercise-4_002e23">Exercício 4.23</a> para algumas percepções sobre o processamento de sequências.</p>
-</div>
-</div>
-<nav class="header">
-<p>
-Próximo: <a href="4_002e2.xhtml#g_t4_002e2" accesskey="n" rel="next">4.2</a>, Anterior: <a href="Chapter-4.xhtml#Chapter-4" accesskey="p" rel="prev">Capítulo 4</a>, Acima: <a href="#g_t4_002e1" accesskey="u" rel="prev">4.1</a>   [<a href="index.xhtml#SEC_Contents" title="Índice" accesskey="c" rel="contents">Conteúdo</a>]</p>
-</nav>
-</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
-</body>
+        <p>
+          antes de definir o <code>apply</code> metacircular. Isso nos permite
+          acessar a versão original de <code>apply</code> sob um nome diferente.
+        </p>
+      </div>
+      <div id="FOOT222">
+        <p>
+          <a class="footnote_backlink" href="#DOCF222"><sup>222</sup></a> O
+          procedimento primitivo <code>read</code> espera a entrada do usuário e
+          retorna a próxima expressão completa que é digitada. Por exemplo, se o
+          usuário digitar <code>(+ 23 x)</code>, <code>read</code> retorna uma
+          lista de três elementos contendo o símbolo <code>+</code>, o número 23
+          e o símbolo <code>x</code>. Se o usuário digitar <code>'x</code>,
+          <code>read</code> retorna uma lista de dois elementos contendo o
+          símbolo <code>quote</code> e o símbolo <code>x</code>.
+        </p>
+      </div>
+      <div id="FOOT223">
+        <p>
+          <a class="footnote_backlink" href="#DOCF223"><sup>223</sup></a> O fato
+          de as máquinas serem descritas em Lisp é irrelevante. Se dermos ao
+          nosso avaliador um programa Lisp que se comporta como um avaliador
+          para outra linguagem, digamos C, o avaliador Lisp emulará o avaliador
+          C, que por sua vez pode emular qualquer máquina descrita como um
+          programa C. Da mesma forma, escrever um avaliador Lisp em C produz um
+          programa C que pode executar qualquer programa Lisp. A ideia profunda
+          aqui é que qualquer avaliador pode emular qualquer outro. Assim, a
+          noção de “o que pode, em princípio, ser computado” (ignorando as
+          praticidades de tempo e memória necessários) é independente da
+          linguagem ou do computador, e em vez disso reflete uma noção
+          subjacente de <a id="index-computabilidade"></a>
+          <em>computabilidade</em>. Isso foi demonstrado de forma clara pela
+          primeira vez por Alan M. Turing (1912-1954), cujo artigo de 1936
+          estabeleceu as bases para a ciência da computação teórica. No artigo,
+          Turing apresentou um modelo computacional simples — agora conhecido
+          como <a id="index-Turing-machine"></a> <em>máquina de Turing</em> — e
+          argumentou que qualquer “processo efetivo” pode ser formulado como um
+          programa para tal máquina. (Esse argumento é conhecido como
+          <a id="index-Church_002dTuring-thesis"></a>
+          <em>teses de Church-Turing</em>.) Turing então implementou uma máquina
+          universal, ou seja, uma máquina de Turing que se comporta como um
+          avaliador para programas de máquina de Turing. Ele usou esse framework
+          para demonstrar que existem problemas bem colocados que não podem ser
+          computados por máquinas de Turing (veja
+          <a href="#Exercise-4_002e15">Exercício 4.15</a>), e, portanto, por
+          implicação, não podem ser formulados como “processos efetivos.” Turing
+          também fez contribuições fundamentais para a ciência da computação
+          prática. Por exemplo, ele inventou a ideia de estruturar programas
+          usando sub-rotinas de propósito geral. Veja
+          <a href="References.xhtml#Hodges-1983">Hodges 1983</a> para uma
+          biografia de Turing.
+        </p>
+      </div>
+      <div id="FOOT224">
+        <p>
+          <a class="footnote_backlink" href="#DOCF224"><sup>224</sup></a>
+          Algumas pessoas acham contra-intuitivo que um avaliador, que é
+          implementado por um procedimento relativamente simples, possa emular
+          programas que são mais complexos que o próprio avaliador. A existência
+          de uma máquina avaliadora universal é uma propriedade profunda e
+          maravilhosa da computação. <a id="index-Recursion-theory"></a>
+          <em>Teoria da recursão</em>, um ramo da lógica matemática, está
+          preocupado com os limites lógicos da computação. O belo livro de
+          Douglas Hofstadter, <cite>Gödel, Escher, Bach</cite>, explora algumas
+          dessas ideias (<a href="References.xhtml#Hofstadter-1979"
+            >Hofstadter 1979</a
+          >).
+        </p>
+      </div>
+      <div id="FOOT225">
+        <p>
+          <a class="footnote_backlink" href="#DOCF225"><sup>225</sup></a> Aviso:
+          Esta primitiva <code>eval</code> não é idêntica ao procedimento
+          <code>eval</code> que implementamos em
+          <a href="#g_t4_002e1_002e1">4.1.1</a>, porque ela usa ambientes
+          <em>reais</em> de Scheme em vez das estruturas de ambiente de amostra
+          que construímos em <a href="#g_t4_002e1_002e3">4.1.3</a>. Esses
+          ambientes reais não podem ser manipulados pelo usuário como listas
+          comuns; eles devem ser acessados via <code>eval</code> ou outras
+          operações especiais. Da mesma forma, a primitiva
+          <code>apply</code> que vimos anteriormente não é idêntica ao
+          <code>apply</code> metacircular, porque ela usa procedimentos reais de
+          Scheme em vez dos objetos de procedimento que construímos em
+          <a href="#g_t4_002e1_002e3">4.1.3</a> e
+          <a href="#g_t4_002e1_002e4">4.1.4</a>.
+        </p>
+      </div>
+      <div id="FOOT226">
+        <p>
+          <a class="footnote_backlink" href="#DOCF226"><sup>226</sup></a> A
+          implementação do <abbr>MIT</abbr> do Scheme inclui <code>eval</code>,
+          bem como um símbolo <code>user-initial-environment</code> que está
+          vinculado ao ambiente inicial no qual as expressões de entrada do
+          usuário são avaliadas.
+        </p>
+      </div>
+      <div id="FOOT227">
+        <p>
+          <a class="footnote_backlink" href="#DOCF227"><sup>227</sup></a> Embora
+          tenhamos estipulado que <code>halts?</code> recebe um objeto de
+          procedimento, observe que esse raciocínio ainda se aplica mesmo se
+          <code>halts?</code> puder acessar o texto do procedimento e seu
+          ambiente. Este é o celebrado <a id="index-Halting-Theorem"></a>
+          <em>Teorema da Parada</em> de Turing, que deu o primeiro exemplo claro
+          de um <a id="index-non_002dcomputable"></a>
+          <em>problema não computável</em>, ou seja, uma tarefa bem colocada que
+          não pode ser realizada como um procedimento computacional.
+        </p>
+      </div>
+      <div id="FOOT228">
+        <p>
+          <a class="footnote_backlink" href="#DOCF228"><sup>228</sup></a> O
+          desejo de que os programas não dependam desse mecanismo de avaliação é
+          a razão para a observação “a administração não é responsável” em
+          <a href="1_002e1.xhtml#Footnote-28">Nota de rodapé 28</a> de
+          <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>. Ao insistir que as
+          definições internas venham primeiro e não se usem mutuamente enquanto
+          as definições estão sendo avaliadas, o padrão <abbr>IEEE</abbr> para
+          Scheme deixa aos implementadores alguma escolha no mecanismo usado
+          para avaliar essas definições. A escolha de uma regra de avaliação em
+          vez de outra aqui pode parecer uma questão pequena, afetando apenas a
+          interpretação de programas “mal formados”. No entanto, veremos em
+          <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a> que mudar para um
+          modelo de escopo simultâneo para definições internas evita algumas
+          dificuldades desagradáveis que surgiriam de outra forma na
+          implementação de um compilador.
+        </p>
+      </div>
+      <div id="FOOT229">
+        <p>
+          <a class="footnote_backlink" href="#DOCF229"><sup>229</sup></a> O
+          padrão <abbr>IEEE</abbr> para Scheme permite diferentes estratégias de
+          implementação, especificando que cabe ao programador obedecer a essa
+          restrição, e não à implementação para impô-la. Algumas implementações
+          de Scheme, incluindo o <abbr>MIT</abbr> Scheme, usam a transformação
+          mostrada acima. Assim, alguns programas que não obedecem a essa
+          restrição de fato rodarão nessas implementações.
+        </p>
+      </div>
+      <div id="FOOT230">
+        <p>
+          <a class="footnote_backlink" href="#DOCF230"><sup>230</sup></a> Os
+          implementadores do <abbr>MIT</abbr> do Scheme apoiam Alyssa nos
+          seguintes termos: Eva está, em princípio, correta — as definições
+          devem ser consideradas simultâneas. Mas parece difícil implementar um
+          mecanismo geral e eficiente que faça o que Eva exige. Na ausência de
+          tal mecanismo, é melhor gerar um erro nos casos difíceis de definições
+          simultâneas (a noção de Alyssa) do que produzir uma resposta incorreta
+          (como Ben teria).
+        </p>
+      </div>
+      <div id="FOOT231">
+        <p>
+          <a class="footnote_backlink" href="#DOCF231"><sup>231</sup></a> Este
+          exemplo ilustra um truque de programação para formular procedimentos
+          recursivos sem usar <code>define</code>. O truque mais geral desse
+          tipo é o
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>Y</mi>
+          </math>
+          <a id="index-operator-1"></a> <em>operador</em>, que pode ser usado
+          para dar uma implementação de recursão “pura λ-cálculo”. (Veja
+          <a href="References.xhtml#Stoy-1977">Stoy 1977</a> para detalhes sobre
+          o λ-cálculo, e
+          <a href="References.xhtml#Gabriel-1988">Gabriel 1988</a> para uma
+          exposição do operador
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>Y</mi>
+          </math>
+          em Scheme.)
+        </p>
+      </div>
+      <div id="FOOT232">
+        <p>
+          <a class="footnote_backlink" href="#DOCF232"><sup>232</sup></a> Esta
+          técnica é uma parte integral do processo de compilação, que
+          discutiremos em <a href="Chapter-5.xhtml#Chapter-5">Capítulo 5</a>.
+          Jonathan Rees escreveu um interpretador Scheme assim por volta de 1982
+          para o projeto T (<a href="References.xhtml#Rees-and-Adams-1982"
+            >Rees e Adams 1982</a
+          >). Marc
+          <a href="References.xhtml#Feeley-_00281986_0029">Feeley (1986)</a>
+          (veja também
+          <a href="References.xhtml#Feeley-and-Lapalme-1987"
+            >Feeley e Lapalme 1987</a
+          >) inventou independentemente essa técnica em sua tese de mestrado.
+        </p>
+      </div>
+      <div id="FOOT233">
+        <p>
+          <a class="footnote_backlink" href="#DOCF233"><sup>233</sup></a> Há, no
+          entanto, uma parte importante da busca de variáveis que
+          <em>pode</em> ser feita como parte da análise sintática. Como
+          mostraremos em <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a>,
+          pode-se determinar a posição na estrutura do ambiente onde o valor da
+          variável será encontrado, eliminando a necessidade de escanear o
+          ambiente para a entrada que corresponde à variável.
+        </p>
+      </div>
+      <div id="FOOT234">
+        <p>
+          <a class="footnote_backlink" href="#DOCF234"><sup>234</sup></a> Veja
+          <a href="#Exercise-4_002e23">Exercício 4.23</a> para algumas
+          percepções sobre o processamento de sequências.
+        </p>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="4_002e2.xhtml#g_t4_002e2" accesskey="n" rel="next">4.2</a>,
+          Anterior:
+          <a href="Chapter-4.xhtml#Chapter-4" accesskey="p" rel="prev"
+            >Capítulo 4</a
+          >, Acima: <a href="#g_t4_002e1" accesskey="u" rel="prev">4.1</a> [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Jump to bottom"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
 </html>
