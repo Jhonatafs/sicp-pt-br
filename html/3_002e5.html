@@ -5,17 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 3.5"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
     />
     <meta
       name="keywords"
-      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 3.5"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
     />
     <title>
-      Estrutura e Interpretação de Programas de Computador, 2ª edição: 3.5
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2
     </title>
     <link rel="stylesheet" href="css/style.css" />
-    <link rel="stylesheet" href="css/prettify.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
     <script src="js/jquery.min.js"></script>
     <script src="js/footnotes.js"></script>
     <script src="js/browsertest.js"></script>
@@ -104,9 +109,9 @@
         <a id="index-streams-2"></a> <em>fluxos</em>. De um ponto de vista
         abstrato, um fluxo é simplesmente uma sequência. No entanto,
         descobriremos que a implementação direta de fluxos como listas (como em
-        <a href="2_002e2.html#g_t2_002e2_002e1">2.2.1</a>) não revela
-        totalmente o poder do processamento de fluxos. Como alternativa,
-        introduzimos a técnica de <a id="index-delayed-evaluation-1"></a>
+        <a href="2_002e2.html#g_t2_002e2_002e1">2.2.1</a>) não revela totalmente
+        o poder do processamento de fluxos. Como alternativa, introduzimos a
+        técnica de <a id="index-delayed-evaluation-1"></a>
         <em>avaliação atrasada</em>, que nos permite representar sequências
         muito grandes (mesmo infinitas) como fluxos.
       </p>
@@ -548,12 +553,12 @@
         simplesmente retornarão o valor armazenado sem repetir a computação. Em
         outras palavras, implementamos <code>delay</code> como um procedimento
         memoizado especializado, semelhante ao descrito em
-        <a href="3_002e3.html#Exercise-3_002e27">Exercício 3.27</a>. Uma
-        maneira de realizar isso é usar o seguinte procedimento, que toma como
-        argumento um procedimento (sem argumentos) e retorna uma versão
-        memoizada do procedimento. A primeira vez que o procedimento memoizado é
-        executado, ele salva o resultado calculado. Em avaliações subsequentes,
-        ele simplesmente retorna o resultado.
+        <a href="3_002e3.html#Exercise-3_002e27">Exercício 3.27</a>. Uma maneira
+        de realizar isso é usar o seguinte procedimento, que toma como argumento
+        um procedimento (sem argumentos) e retorna uma versão memoizada do
+        procedimento. A primeira vez que o procedimento memoizado é executado,
+        ele salva o resultado calculado. Em avaliações subsequentes, ele
+        simplesmente retorna o resultado.
       </p>
 
       <pre><code class="language-scheme">(define (memo-proc proc)
@@ -1770,9 +1775,8 @@
             </msub>
           </math>
           vezes
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>X</mi> </math
-          >. Use essa ideia para escrever um procedimento
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>X</mi> </math>.
+          Use essa ideia para escrever um procedimento
           <code>invert-unit-series</code> que calcula
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mrow class="MJX-TeXAtom-ORD">
@@ -1836,14 +1840,14 @@
       </h5>
 
       <p>
-        Na seção <a href="1_002e2.html#g_t1_002e2_002e1">1.2.1</a>,
-        introduzimos processos iterativos, que prosseguem atualizando variáveis
-        de estado. Sabemos agora que podemos representar o estado como um fluxo
-        "atemporal" de valores, em vez de como um conjunto de variáveis a serem
-        atualizadas. Vamos adotar essa perspectiva ao revisitar o procedimento
-        de raiz quadrada de <a href="1_002e1.html#g_t1_002e1_002e7">1.1.7</a>.
-        Lembre-se de que a ideia é gerar uma sequência de melhores e melhores
-        palpites para a raiz quadrada de
+        Na seção <a href="1_002e2.html#g_t1_002e2_002e1">1.2.1</a>, introduzimos
+        processos iterativos, que prosseguem atualizando variáveis de estado.
+        Sabemos agora que podemos representar o estado como um fluxo "atemporal"
+        de valores, em vez de como um conjunto de variáveis a serem atualizadas.
+        Vamos adotar essa perspectiva ao revisitar o procedimento de raiz
+        quadrada de <a href="1_002e1.html#g_t1_002e1_002e7">1.1.7</a>. Lembre-se
+        de que a ideia é gerar uma sequência de melhores e melhores palpites
+        para a raiz quadrada de
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <mi>x</mi>
         </math>
@@ -3059,15 +3063,11 @@
         <p>
           <strong><a id="Exercise-3_002e69"></a>Exercício 3.69:</strong> Escreva
           um procedimento <code>triples</code> que recebe três fluxos infinitos,
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>S</mi> </math
-          >,
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>T</mi> </math
-          >, e
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>U</mi> </math
-          >, e produz o fluxo de triplas
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>S</mi> </math>,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>T</mi> </math>,
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>U</mi> </math>,
+          e produz o fluxo de triplas
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mrow class="MJX-TeXAtom-ORD">
               <mo stretchy="false">(</mo>
@@ -3392,9 +3392,8 @@
             <mo stretchy="false">)</mo>
           </mrow> </math
         >, um valor inicial
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <mi>C</mi> </math
-        >, e um pequeno incremento
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>C</mi> </math>, e
+        um pequeno incremento
         <math xmlns="http://www.w3.org/1998/Math/MathML">
           <mrow class="MJX-TeXAtom-ORD">
             <mi>d</mi>
@@ -3537,12 +3536,9 @@
         <p>
           Escreva um procedimento <code>RC</code> que modela esse circuito.
           <code>RC</code> deve receber como entradas os valores de
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>R</mi> </math
-          >,
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>C</mi> </math
-          >, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>R</mi> </math>,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>C</mi> </math>,
+          e
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mrow class="MJX-TeXAtom-ORD">
               <mi>d</mi>
@@ -3562,10 +3558,9 @@
             </msub>
           </math>
           e produz como saída o fluxo de tensões
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>v</mi> </math
-          >. Por exemplo, você deve ser capaz de usar <code>RC</code> para
-          modelar um circuito RC com
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>v</mi> </math>.
+          Por exemplo, você deve ser capaz de usar <code>RC</code> para modelar
+          um circuito RC com
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mi>R</mi>
           </math>
@@ -3623,12 +3618,9 @@
           um procedimento <code>sign-change-detector</code> que recebe dois
           valores como argumentos e compara os sinais dos valores para produzir
           um
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mn>0</mn> </math
-          >,
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mn>1</mn> </math
-          >, ou
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mn>0</mn> </math>,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mn>1</mn> </math>,
+          ou
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mrow class="MJX-TeXAtom-ORD">
               <mo>−<!-- − --></mo>
@@ -3830,9 +3822,8 @@
           </msub>
         </math>
         para
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <mi>y</mi> </math
-        >, poderíamos tentar modelar este sistema usando o procedimento
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>y</mi> </math>,
+        poderíamos tentar modelar este sistema usando o procedimento
       </p>
       <pre><code class="language-scheme">(define (solve f y0 dt)
                 (define y (integral dy y0 dt))
@@ -4021,10 +4012,9 @@
             </mrow>
           </math>
           O fluxo de saída, modelando
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>y</mi> </math
-          >, é gerado por uma rede que contém um loop. Isso ocorre porque o
-          valor de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>y</mi> </math>,
+          é gerado por uma rede que contém um loop. Isso ocorre porque o valor
+          de
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mrow class="MJX-TeXAtom-ORD">
               <msup>
@@ -4078,12 +4068,9 @@
           >. O diagrama que gostaríamos de codificar é mostrado em
           <a href="#Figure-3_002e35">Figura 3.35</a>. Escreva um procedimento
           <code>solve-2nd</code> que recebe como argumentos as constantes
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>a</mi> </math
-          >,
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>b</mi> </math
-          >, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>a</mi> </math>,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>b</mi> </math>,
+          e
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mrow class="MJX-TeXAtom-ORD">
               <mi>d</mi>
@@ -4124,9 +4111,7 @@
             </mrow>
           </math>
           e gera o fluxo de valores sucessivos de
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>y</mi> </math
-          >.
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>y</mi> </math>.
         </p>
       </blockquote>
 
@@ -4211,12 +4196,9 @@
           <em>circuito RLC em série</em>
           consiste em um resistor, um capacitor e um indutor conectados em
           série, como mostrado em <a href="#Figure-3_002e36">Figura 3.36</a>. Se
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>R</mi> </math
-          >,
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>L</mi> </math
-          >, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>R</mi> </math>,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>L</mi> </math>,
+          e
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mi>C</mi>
           </math>
@@ -4516,12 +4498,9 @@
         <p>
           Escreva um procedimento <code>RLC</code> que recebe como argumentos os
           parâmetros
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>R</mi> </math
-          >,
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>L</mi> </math
-          >, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>R</mi> </math>,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>L</mi> </math>,
+          e
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mi>C</mi>
           </math>
@@ -4864,8 +4843,8 @@
         <code>make-simplified-withdraw</code>. No entanto, com a versão de
         fluxo, não há atribuição, nenhuma variável de estado local e,
         consequentemente, nenhuma das dificuldades teóricas que encontramos em
-        <a href="3_002e1.html#g_t3_002e1_002e3">3.1.3</a>. No entanto, o
-        sistema tem estado!
+        <a href="3_002e1.html#g_t3_002e1_002e3">3.1.3</a>. No entanto, o sistema
+        tem estado!
       </p>
       <p>
         Isso é realmente notável. Mesmo que
@@ -5222,8 +5201,7 @@
               </msub>
             </math>
             para todo
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <mi>n</mi> </math
+            <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>n</mi> </math
             >. Este resultado, originalmente conjecturado em 1845, é conhecido
             como <a id="index-Bertrand_0027s-hypothesis"></a>
             <em>Hipótese de Bertrand</em>. Uma prova pode ser encontrada na
@@ -5238,11 +5216,11 @@
             <a class="footnote_backlink" href="#DOCF192"><sup>192</sup></a> Este
             exercício mostra como a avaliação por necessidade está intimamente
             relacionada à memoização comum, conforme descrito em
-            <a href="3_002e3.html#Exercise-3_002e27">Exercício 3.27</a>.
-            Naquele exercício, usamos atribuição para construir explicitamente
-            uma tabela local. Nossa otimização de fluxo por necessidade
-            efetivamente constrói tal tabela automaticamente, armazenando
-            valores nas partes previamente forçadas do fluxo.
+            <a href="3_002e3.html#Exercise-3_002e27">Exercício 3.27</a>. Naquele
+            exercício, usamos atribuição para construir explicitamente uma
+            tabela local. Nossa otimização de fluxo por necessidade efetivamente
+            constrói tal tabela automaticamente, armazenando valores nas partes
+            previamente forçadas do fluxo.
           </p>
         </div>
         <div id="FOOT193">
@@ -5404,9 +5382,8 @@
               >Nota de rodapé 167</a
             >) que o não determinismo é essencial ao lidar com concorrência. A
             relação de merge ilustra o mesmo não determinismo essencial, da
-            perspectiva funcional. Em
-            <a href="4_002e3.html#g_t4_002e3">4.3</a>, veremos o não
-            determinismo de mais um ponto de vista.
+            perspectiva funcional. Em <a href="4_002e3.html#g_t4_002e3">4.3</a>,
+            veremos o não determinismo de mais um ponto de vista.
           </p>
         </div>
         <div id="FOOT204">
