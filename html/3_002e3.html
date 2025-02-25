@@ -1,0 +1,3347 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Pular para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t3_002e3"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e4.xhtml#g_t3_002e4" accesskey="n" rel="next">3.4</a>,
+          Anterior:
+          <a href="3_002e2.xhtml#g_t3_002e2" accesskey="p" rel="prev">3.2</a>,
+          Acima:
+          <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev"
+            >Capítulo 3</a
+          >
+          [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <a id="Modeling-with-Mutable-Data"></a>
+      <h3 class="section">
+        <span class="secnum">3.3</span
+        ><span class="sectitle">Modelagem com Dados Mutáveis</span>
+      </h3>
+
+      <p>
+        O <a href="Chapter-2.xhtml#Chapter-2">Capítulo 2</a> tratou de dados
+        compostos como um meio para construir objetos computacionais que têm
+        várias partes, a fim de modelar objetos do mundo real que têm vários
+        aspectos. Naquele capítulo, introduzimos a disciplina de abstração de
+        dados, segundo a qual as estruturas de dados são especificadas em termos
+        de construtores, que criam objetos de dados, e seletores, que acessam as
+        partes de objetos de dados compostos. Mas agora sabemos que há outro
+        aspecto dos dados que o capítulo 2 não abordou. O desejo de modelar
+        sistemas compostos de objetos que têm estado mutável nos leva à
+        necessidade de modificar objetos de dados compostos, além de
+        construí-los e selecionar partes deles. Para modelar objetos compostos
+        com estado mutável, projetaremos abstrações de dados para incluir, além
+        de seletores e construtores, operações chamadas
+        <a id="index-mutators"></a><em>mutadores</em>, que modificam objetos de
+        dados. Por exemplo, modelar um sistema bancário exige que alteremos os
+        saldos das contas. Assim, uma estrutura de dados para representar contas
+        bancárias pode admitir uma operação
+      </p>
+
+      <pre><code class="language-scheme">(set-balance! ⟨conta⟩ ⟨novo-valor⟩)</code></pre>
+
+      <p>
+        que altera o saldo da conta designada para o novo valor designado.
+        Objetos de dados para os quais mutadores são definidos são conhecidos
+        como <a id="index-mutable-data-objects"></a
+        ><em>objetos de dados mutáveis</em>.
+      </p>
+
+      <p>
+        O Capítulo 2 introduziu pares como uma "cola" de propósito geral para
+        sintetizar dados compostos. Começamos esta seção definindo mutadores
+        básicos para pares, para que os pares possam servir como blocos de
+        construção para objetos de dados mutáveis. Esses mutadores aumentam
+        muito o poder de representação dos pares, permitindo-nos construir
+        estruturas de dados além das sequências e árvores com as quais
+        trabalhamos em <a href="2_002e2.xhtml#g_t2_002e2">2.2</a>. Também
+        apresentamos alguns exemplos de simulações em que sistemas complexos são
+        modelados como coleções de objetos com estado local.
+      </p>
+
+      <a id="g_t3_002e3_002e1"></a>
+      <a id="Mutable-List-Structure"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.3.1</span
+        ><span class="sectitle">Estrutura de Lista Mutável</span>
+      </h4>
+
+      <p>
+        As operações básicas em pares—<code>cons</code>, <code>car</code> e
+        <code>cdr</code>—podem ser usadas para construir estruturas de lista e
+        selecionar partes de estruturas de lista, mas são incapazes de modificar
+        estruturas de lista. O mesmo vale para as operações de lista que usamos
+        até agora, como <code>append</code> e <code>list</code>, já que estas
+        podem ser definidas em termos de <code>cons</code>, <code>car</code> e
+        <code>cdr</code>. Para modificar estruturas de lista, precisamos de
+        novas operações.
+      </p>
+
+      <p>
+        Os mutadores primitivos para pares são <code>set-car!</code> e
+        <code>set-cdr!</code>. <code>Set-car!</code> recebe dois argumentos, o
+        primeiro dos quais deve ser um par. Ele modifica este par, substituindo
+        o ponteiro <code>car</code> por um ponteiro para o segundo argumento de
+        <code>set-car!</code>.<a
+          class="footnote_link"
+          id="DOCF144"
+          href="#FOOT144"
+          ><sup>144</sup></a
+        >
+      </p>
+
+      <p>
+        Como exemplo, suponha que <code>x</code> esteja vinculado à lista
+        <code>((a b) c d)</code> e <code>y</code> à lista <code>(e f)</code>,
+        como ilustrado na <a href="#Figure-3_002e12">Figura 3.12</a>. Avaliar a
+        expressão <code>(set-car! x y)</code> modifica o par ao qual
+        <code>x</code> está vinculado, substituindo seu <code>car</code> pelo
+        valor de <code>y</code>. O resultado da operação é mostrado na
+        <a href="#Figure-3_002e13">Figura 3.13</a>. A estrutura
+        <code>x</code> foi modificada e agora seria impressa como
+        <code>((e f) c d)</code>. Os pares que representam a lista
+        <code>(a b)</code>, identificados pelo ponteiro que foi substituído,
+        agora estão destacados da estrutura original.<a
+          class="footnote_link"
+          id="DOCF145"
+          href="#FOOT145"
+          ><sup>145</sup></a
+        >
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e12"></a>
+        <object
+          style="width: 48.18ex; height: 37.82ex"
+          data="fig/chap3/Fig3.12b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.12:</strong> Listas <code>x</code>:
+            <code>((a b) c d)</code> e <code>y</code>: <code>(e f)</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <figure class="float">
+        <a id="Figure-3_002e13"></a>
+        <object
+          style="width: 48.18ex; height: 37.82ex"
+          data="fig/chap3/Fig3.13b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.13:</strong> Efeito de
+            <code>(set-car! x y)</code> nas listas da
+            <a href="#Figure-3_002e12">Figura 3.12</a>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Compare a <a href="#Figure-3_002e13">Figura 3.13</a> com a
+        <a href="#Figure-3_002e14">Figura 3.14</a>, que ilustra o resultado da
+        execução de <code>(define z (cons y (cdr x)))</code> com
+        <code>x</code> e <code>y</code> vinculados às listas originais da
+        <a href="#Figure-3_002e12">Figura 3.12</a>. A variável
+        <code>z</code> agora está vinculada a um novo par criado pela operação
+        <code>cons</code>; a lista à qual <code>x</code> está vinculada não foi
+        alterada.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e14"></a>
+        <object
+          style="width: 48.18ex; height: 38.68ex"
+          data="fig/chap3/Fig3.14b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.14:</strong> Efeito de
+            <code>(define z (cons y (cdr x)))</code> nas listas da
+            <a href="#Figure-3_002e12">Figura 3.12</a>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        A operação <code>set-cdr!</code> é semelhante a <code>set-car!</code>. A
+        única diferença é que o ponteiro <code>cdr</code> do par, em vez do
+        ponteiro <code>car</code>, é substituído. O efeito de executar
+        <code>(set-cdr! x y)</code> nas listas da
+        <a href="#Figure-3_002e12">Figura 3.12</a> é mostrado na
+        <a href="#Figure-3_002e15">Figura 3.15</a>. Aqui, o ponteiro
+        <code>cdr</code> de <code>x</code> foi substituído pelo ponteiro para
+        <code>(e f)</code>. Além disso, a lista <code>(c d)</code>, que
+        costumava ser o <code>cdr</code> de <code>x</code>, agora está destacada
+        da estrutura.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e15"></a>
+        <object
+          style="width: 48.18ex; height: 37.82ex"
+          data="fig/chap3/Fig3.15b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.15:</strong> Efeito de
+            <code>(set-cdr! x y)</code> nas listas da
+            <a href="#Figure-3_002e12">Figura 3.12</a>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        <code>Cons</code> constrói novas estruturas de lista criando novos
+        pares, enquanto <code>set-car!</code> e <code>set-cdr!</code> modificam
+        pares existentes. De fato, poderíamos implementar <code>cons</code> em
+        termos dos dois mutadores, junto com um procedimento
+        <code>get-new-pair</code>, que retorna um novo par que não faz parte de
+        nenhuma estrutura de lista existente. Obtemos o novo par, definimos seus
+        ponteiros <code>car</code> e <code>cdr</code> para os objetos designados
+        e retornamos o novo par como o resultado do <code>cons</code>.<a
+          class="footnote_link"
+          id="DOCF146"
+          href="#FOOT146"
+          ><sup>146</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (cons x y)
+  (let ((new (get-new-pair)))
+    (set-car! new x)
+    (set-cdr! new y)
+    new))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e12"></a>Exercício 3.12:</strong> O
+          seguinte procedimento para anexar listas foi introduzido em
+          <a href="2_002e2.xhtml#g_t2_002e2_002e1">2.2.1</a>:
+        </p>
+        <pre><code class="language-scheme">(define (append x y)
+  (if (null? x)
+      y
+      (cons (car x) (append (cdr x) y))))</code></pre>
+
+        <p>
+          <code>Append</code> forma uma nova lista sucessivamente
+          <code>cons</code>ando os elementos de <code>x</code> em
+          <code>y</code>. O procedimento <code>append!</code> é semelhante a
+          <code>append</code>, mas é um mutador em vez de um construtor. Ele
+          anexa as listas juntando-as, modificando o último par de
+          <code>x</code> para que seu <code>cdr</code> seja agora
+          <code>y</code>. (É um erro chamar <code>append!</code> com um
+          <code>x</code> vazio.)
+        </p>
+        <pre><code class="language-scheme">(define (append! x y)
+  (set-cdr! (last-pair x) y)
+  x)</code></pre>
+
+        <p>
+          Aqui, <code>last-pair</code> é um procedimento que retorna o último
+          par em seu argumento:
+        </p>
+        <pre><code class="language-scheme">(define (last-pair x)
+  (if (null? (cdr x))
+      x
+      (last-pair (cdr x))))</code></pre>
+
+        <p>Considere a interação</p>
+        <pre><code class="language-scheme">(define x (list 'a 'b))
+(define y (list 'c 'd))
+(define z (append x y))
+
+z
+(a b c d)
+
+(cdr x)
+⟨resposta⟩
+
+(define w (append! x y))
+
+w
+(a b c d)
+
+(cdr x)
+⟨resposta⟩</code></pre>
+
+        <p>
+          Quais são as <code>⟨resposta⟩</code>s ausentes? Desenhe diagramas de
+          caixa e ponteiro para explicar sua resposta.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e13"></a>Exercício 3.13:</strong>
+          Considere o seguinte procedimento <code>make-cycle</code>, que usa o
+          procedimento <code>last-pair</code> definido no
+          <a href="#Exercise-3_002e12">Exercício 3.12</a>:
+        </p>
+        <pre><code class="language-scheme">(define (make-cycle x)
+  (set-cdr! (last-pair x) x)
+  x)</code></pre>
+
+        <p>
+          Desenhe um diagrama de caixa e ponteiro que mostre a estrutura
+          <code>z</code> criada por
+        </p>
+        <pre><code class="language-scheme">(define z (make-cycle (list 'a 'b 'c)))</code></pre>
+
+        <p>O que acontece se tentarmos calcular <code>(last-pair z)</code>?</p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e14"></a>Exercício 3.14:</strong> O
+          seguinte procedimento é bastante útil, embora obscuro:
+        </p>
+        <pre><code class="language-scheme">(define (mystery x)
+  (define (loop x y)
+    (if (null? x)
+        y
+        (let ((temp (cdr x)))
+          (set-cdr! x y)
+          (loop temp x))))
+  (loop x '()))</code></pre>
+
+        <p>
+          <code>Loop</code> usa a variável "temporária" <code>temp</code> para
+          manter o valor antigo do <code>cdr</code> de <code>x</code>, já que o
+          <code>set-cdr!</code> na próxima linha destrói o <code>cdr</code>.
+          Explique o que <code>mystery</code> faz em geral. Suponha que
+          <code>v</code> seja definido por
+          <code>(define v (list 'a 'b 'c 'd))</code>. Desenhe o diagrama de
+          caixa e ponteiro que representa a lista à qual <code>v</code> está
+          vinculada. Suponha que agora avaliamos
+          <code>(define w (mystery v))</code>. Desenhe diagramas de caixa e
+          ponteiro que mostram as estruturas <code>v</code> e
+          <code>w</code> após avaliar esta expressão. O que seria impresso como
+          os valores de <code>v</code> e <code>w</code>?
+        </p>
+      </blockquote>
+
+      <a id="Sharing-and-identity"></a>
+      <h5 class="subsubheading">Compartilhamento e identidade</h5>
+
+      <p>
+        Mencionamos em <a href="3_002e1.xhtml#g_t3_002e1_002e3">3.1.3</a> as
+        questões teóricas de "igualdade" e "mudança" levantadas pela introdução
+        da atribuição. Essas questões surgem na prática quando pares individuais
+        são <a id="index-shared"></a><em>compartilhados</em> entre diferentes
+        objetos de dados. Por exemplo, considere a estrutura formada por
+      </p>
+      <pre><code class="language-scheme">(define x (list 'a 'b))
+(define z1 (cons x x))</code></pre>
+
+      <p>
+        Como mostrado na <a href="#Figure-3_002e16">Figura 3.16</a>,
+        <code>z1</code> é um par cujos <code>car</code> e
+        <code>cdr</code> apontam para o mesmo par <code>x</code>. Esse
+        compartilhamento de <code>x</code> pelo <code>car</code> e
+        <code>cdr</code> de <code>z1</code> é uma consequência da maneira direta
+        em que <code>cons</code> é implementado. Em geral, usar
+        <code>cons</code> para construir listas resultará em uma estrutura
+        interligada de pares em que muitos pares individuais são compartilhados
+        por muitas estruturas diferentes.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e16"></a>
+        <object
+          style="width: 31.08ex; height: 19.69ex"
+          data="fig/chap3/Fig3.16b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.16:</strong> A lista <code>z1</code> formada por
+            <code>(cons x x)</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Em contraste com a <a href="#Figure-3_002e16">Figura 3.16</a>, a
+        <a href="#Figure-3_002e17">Figura 3.17</a> mostra a estrutura criada por
+      </p>
+      <pre><code class="language-scheme">(define z2 
+  (cons (list 'a 'b) (list 'a 'b)))</code></pre>
+
+      <figure class="float">
+        <a id="Figure-3_002e17"></a>
+        <object
+          style="width: 47.57ex; height: 17.96ex"
+          data="fig/chap3/Fig3.17b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.17:</strong> A lista <code>z2</code> formada por
+            <code>(cons (list 'a 'b) (list 'a 'b))</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Nesta estrutura, os pares nas duas listas <code>(a b)</code> são
+        distintos, embora os símbolos reais sejam compartilhados.<a
+          class="footnote_link"
+          id="DOCF147"
+          href="#FOOT147"
+          ><sup>147</sup></a
+        >
+      </p>
+
+      <p>
+        Quando pensamos como uma lista, <code>z1</code> e
+        <code>z2</code> representam "a mesma" lista, <code>((a b) a b)</code>.
+        Em geral, o compartilhamento é completamente indetectável se operarmos
+        em listas usando apenas <code>cons</code>, <code>car</code> e
+        <code>cdr</code>. No entanto, se permitirmos mutadores em estruturas de
+        lista, o compartilhamento se torna significativo. Como exemplo da
+        diferença que o compartilhamento pode fazer, considere o seguinte
+        procedimento, que modifica o <code>car</code> da estrutura à qual é
+        aplicado:
+      </p>
+      <pre><code class="language-scheme">(define (set-to-wow! x)
+  (set-car! (car x) 'wow)
+  x)</code></pre>
+
+      <p>
+        Embora <code>z1</code> e <code>z2</code> sejam "a mesma" estrutura,
+        aplicar <code>set-to-wow!</code> a eles produz resultados diferentes.
+        Com <code>z1</code>, alterar o <code>car</code> também muda o
+        <code>cdr</code>, porque em <code>z1</code> o <code>car</code> e o
+        <code>cdr</code> são o mesmo par. Com <code>z2</code>, o
+        <code>car</code> e o <code>cdr</code> são distintos, então
+        <code>set-to-wow!</code> modifica apenas o <code>car</code>:
+      </p>
+      <pre><code class="language-scheme">z1
+((a b) a b)
+
+(set-to-wow! z1)
+((wow b) wow b)
+
+z2
+((a b) a b)
+
+(set-to-wow! z2)
+((wow b) a b)</code></pre>
+
+      <p>
+        Uma maneira de detectar compartilhamento em estruturas de lista é usar o
+        predicado <code>eq?</code>, que introduzimos em
+        <a href="2_002e3.xhtml#g_t2_002e3_002e1">2.3.1</a> como uma maneira de
+        testar se dois símbolos são iguais. Mais geralmente,
+        <code>(eq? x y)</code> testa se <code>x</code> e <code>y</code> são o
+        mesmo objeto (ou seja, se <code>x</code> e <code>y</code> são iguais
+        como ponteiros). Assim, com <code>z1</code> e <code>z2</code> como
+        definidos na <a href="#Figure-3_002e16">Figura 3.16</a> e
+        <a href="#Figure-3_002e17">Figura 3.17</a>,
+        <code>(eq? (car z1) (cdr z1))</code> é verdadeiro e
+        <code>(eq? (car z2) (cdr z2))</code> é falso.
+      </p>
+
+      <p>
+        Como será visto nas seções seguintes, podemos explorar o
+        compartilhamento para estender muito o repertório de estruturas de dados
+        que podem ser representadas por pares. Por outro lado, o
+        compartilhamento também pode ser perigoso, pois modificações feitas em
+        estruturas também afetarão outras estruturas que compartilham as partes
+        modificadas. As operações de mutação <code>set-car!</code> e
+        <code>set-cdr!</code> devem ser usadas com cuidado; a menos que tenhamos
+        um bom entendimento de como nossos objetos de dados são compartilhados,
+        a mutação pode ter resultados imprevistos.<a
+          class="footnote_link"
+          id="DOCF148"
+          href="#FOOT148"
+          ><sup>148</sup></a
+        >
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e15"></a>Exercício 3.15:</strong> Desenhe
+          diagramas de caixa e ponteiro para explicar o efeito de
+          <code>set-to-wow!</code> nas estruturas <code>z1</code> e
+          <code>z2</code> acima.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e16"></a>Exercício 3.16:</strong> Ben
+          Bitdiddle decide escrever um procedimento para contar o número de
+          pares em qualquer estrutura de lista. "É fácil", ele raciocina. "O
+          número de pares em qualquer estrutura é o número no
+          <code>car</code> mais o número no <code>cdr</code> mais mais um para
+          contar o par atual." Então Ben escreve o seguinte procedimento:
+        </p>
+        <pre><code class="language-scheme">(define (count-pairs x)
+  (if (not (pair? x))
+      0
+      (+ (count-pairs (car x))
+         (count-pairs (cdr x))
+         1)))</code></pre>
+
+        <p>
+          Mostre que este procedimento não está correto. Em particular, desenhe
+          diagramas de caixa e ponteiro representando estruturas de lista
+          compostas de exatamente três pares para as quais o procedimento de Ben
+          retornaria 3; retornaria 4; retornaria 7; nunca retornaria.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e17"></a>Exercício 3.17:</strong> Projete
+          uma versão correta do procedimento <code>count-pairs</code> do
+          <a href="#Exercise-3_002e16">Exercício 3.16</a> que retorne o número
+          de pares distintos em qualquer estrutura. (Dica: Percorra a estrutura,
+          mantendo uma estrutura de dados auxiliar que é usada para rastrear
+          quais pares já foram contados.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e18"></a>Exercício 3.18:</strong> Escreva
+          um procedimento que examine uma lista e determine se ela contém um
+          ciclo, ou seja, se um programa que tentasse encontrar o fim da lista
+          tomando sucessivos <code>cdr</code>s entraria em um loop infinito. O
+          <a href="#Exercise-3_002e13">Exercício 3.13</a> construiu tais listas.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e19"></a>Exercício 3.19:</strong> Refazer
+          o <a href="#Exercise-3_002e18">Exercício 3.18</a> usando um algoritmo
+          que ocupa apenas uma quantidade constante de espaço. (Isso requer uma
+          ideia muito inteligente.)
+        </p>
+      </blockquote>
+
+      <a id="Mutation-is-just-assignment"></a>
+      <h5 class="subsubheading">Mutação é apenas atribuição</h5>
+
+      <p>
+        Quando introduzimos dados compostos, observamos em
+        <a href="2_002e1.xhtml#g_t2_002e1_002e3">2.1.3</a> que pares podem ser
+        representados puramente em termos de procedimentos:
+      </p>
+      <pre><code class="language-scheme">(define (cons x y)
+  (define (dispatch m)
+    (cond ((eq? m 'car) x)
+          ((eq? m 'cdr) y)
+          (else (error "Operação indefinida: CONS" m))))
+  dispatch)
+
+(define (car z) (z 'car))
+(define (cdr z) (z 'cdr))</code></pre>
+
+      <p>
+        A mesma observação é verdadeira para dados mutáveis. Podemos implementar
+        objetos de dados mutáveis como procedimentos usando atribuição e estado
+        local. Por exemplo, podemos estender a implementação de pares acima para
+        lidar com <code>set-car!</code> e <code>set-cdr!</code> de maneira
+        análoga à forma como implementamos contas bancárias usando
+        <code>make-account</code> em
+        <a href="3_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a>:
+      </p>
+      <pre><code class="language-scheme">(define (cons x y)
+  (define (set-x! v) (set! x v))
+  (define (set-y! v) (set! y v))
+  (define (dispatch m)
+    (cond ((eq? m 'car) x)
+          ((eq? m 'cdr) y)
+          ((eq? m 'set-car!) set-x!)
+          ((eq? m 'set-cdr!) set-y!)
+          (else (error "Operação indefinida: CONS" m))))
+  dispatch)
+
+(define (car z) (z 'car))
+(define (cdr z) (z 'cdr))
+
+(define (set-car! z new-value)
+  ((z 'set-car!) new-value)
+  z)
+
+(define (set-cdr! z new-value)
+  ((z 'set-cdr!) new-value)
+  z)</code></pre>
+
+      <p>
+        A atribuição é tudo o que é necessário, teoricamente, para explicar o
+        comportamento de dados mutáveis. Assim que admitimos
+        <code>set!</code> em nossa linguagem, levantamos todas as questões, não
+        apenas de atribuição, mas de dados mutáveis em geral.<a
+          class="footnote_link"
+          id="DOCF149"
+          href="#FOOT149"
+          ><sup>149</sup></a
+        >
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e20"></a>Exercício 3.20:</strong> Desenhe
+          diagramas de ambiente para ilustrar a avaliação da sequência de
+          expressões
+        </p>
+        <pre><code class="language-scheme">(define x (cons 1 2))
+(define z (cons x x))
+
+(set-car! (cdr z) 17)
+
+(car x)
+17</code></pre>
+
+        <p>
+          usando a implementação procedural de pares dada acima. (Compare com o
+          <a href="3_002e2.xhtml#Exercise-3_002e11">Exercício 3.11</a>.)
+        </p>
+      </blockquote>
+
+      <a id="g_t3_002e3_002e2"></a>
+      <a id="Representing-Queues"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.3.2</span
+        ><span class="sectitle">Representando Filas</span>
+      </h4>
+
+      <p>
+        Os mutadores <code>set-car!</code> e <code>set-cdr!</code> nos permitem
+        usar pares para construir estruturas de dados que não podem ser
+        construídas com <code>cons</code>, <code>car</code> e
+        <code>cdr</code> sozinhos. Esta seção mostra como usar pares para
+        representar uma estrutura de dados chamada fila. A Seção
+        <a href="#g_t3_002e3_002e3">3.3.3</a> mostrará como representar
+        estruturas de dados chamadas tabelas.
+      </p>
+
+      <p>
+        Uma <a id="index-queue"></a><em>fila</em> é uma sequência na qual os
+        itens são inseridos em uma extremidade (chamada de
+        <a id="index-rear"></a><em>traseira</em> da fila) e excluídos da outra
+        extremidade (a <a id="index-front"></a><em>frente</em>). A
+        <a href="#Figure-3_002e18">Figura 3.18</a> mostra uma fila inicialmente
+        vazia na qual os itens <code>a</code> e <code>b</code> são inseridos.
+        Então <code>a</code> é removido, <code>c</code> e <code>d</code> são
+        inseridos e <code>b</code> é removido. Como os itens são sempre
+        removidos na ordem em que são inseridos, uma fila é às vezes chamada de
+        <a id="index-FIFO"></a><em>buffer FIFO</em> (primeiro a entrar, primeiro
+        a sair).
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e18"></a>
+        <object
+          style="width: 48.01ex; height: 23.05ex"
+          data="fig/chap3/Fig3.18.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p><strong>Figura 3.18:</strong> Operações de fila.</p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Em termos de abstração de dados, podemos considerar uma fila como
+        definida pelo seguinte conjunto de operações:
+      </p>
+      <ul>
+        <li>
+          um construtor: <code>(make-queue)</code> retorna uma fila vazia (uma
+          fila contendo nenhum item).
+        </li>
+        <li>
+          dois seletores:
+          <pre><code class="language-scheme">(empty-queue? ⟨fila⟩)</code></pre>
+          <p>testa se a fila está vazia.</p>
+          <pre><code class="language-scheme">(front-queue ⟨fila⟩)</code></pre>
+          <p>
+            retorna o objeto na frente da fila, sinalizando um erro se a fila
+            estiver vazia; não modifica a fila.
+          </p>
+        </li>
+        <li>
+          dois mutadores:
+          <pre><code class="language-scheme">(insert-queue! ⟨fila⟩ ⟨item⟩)</code></pre>
+          <p>
+            insere o item na traseira da fila e retorna a fila modificada como
+            seu valor.
+          </p>
+          <pre><code class="language-scheme">(delete-queue! ⟨fila⟩)</code></pre>
+          <p>
+            remove o item na frente da fila e retorna a fila modificada como seu
+            valor, sinalizando um erro se a fila estiver vazia antes da
+            exclusão.
+          </p>
+        </li>
+      </ul>
+
+      <p>
+        Como uma fila é uma sequência de itens, poderíamos certamente
+        representá-la como uma lista comum; a frente da fila seria o
+        <code>car</code> da lista, inserir um item na fila equivaleria a anexar
+        um novo elemento ao final da lista, e excluir um item da fila seria
+        apenas tomar o <code>cdr</code> da lista. No entanto, essa representação
+        é ineficiente, porque para inserir um item devemos percorrer a lista até
+        chegarmos ao final. Como o único método que temos para percorrer uma
+        lista é por operações sucessivas de <code>cdr</code>, essa varredura
+        requer
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mi mathvariant="normal">Θ</mi><mo stretchy="false">(</mo><mi>n</mi
+            ><mo stretchy="false">)</mo></mrow
+          ></math
+        >
+        passos para uma lista de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+        itens. Uma modificação simples na representação da lista supera essa
+        desvantagem, permitindo que as operações de fila sejam implementadas de
+        forma que requeiram
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mi mathvariant="normal">Θ</mi><mo stretchy="false">(</mo><mn>1</mn
+            ><mo stretchy="false">)</mo></mrow
+          ></math
+        >
+        passos; ou seja, o número de passos necessários é independente do
+        comprimento da fila.
+      </p>
+
+      <p>
+        A dificuldade com a representação de lista surge da necessidade de
+        percorrer a lista para encontrar o final. A razão pela qual precisamos
+        percorrer é que, embora a maneira padrão de representar uma lista como
+        uma cadeia de pares nos forneça prontamente um ponteiro para o início da
+        lista, ela não nos dá um ponteiro facilmente acessível para o final. A
+        modificação que evita essa desvantagem é representar a fila como uma
+        lista, junto com um ponteiro adicional que indica o par final na lista.
+        Dessa forma, quando formos inserir um item, podemos consultar o ponteiro
+        traseiro e, assim, evitar percorrer a lista.
+      </p>
+
+      <p>
+        Uma fila é representada, então, como um par de ponteiros,
+        <code>front-ptr</code> e <code>rear-ptr</code>, que indicam,
+        respectivamente, o primeiro e o último par em uma lista comum. Como
+        gostaríamos que a fila fosse um objeto identificável, podemos usar
+        <code>cons</code> para combinar os dois ponteiros. Assim, a fila em si
+        será o <code>cons</code> dos dois ponteiros. A
+        <a href="#Figure-3_002e19">Figura 3.19</a> ilustra essa representação.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e19"></a>
+        <object
+          style="width: 46.54ex; height: 22.45ex"
+          data="fig/chap3/Fig3.19b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.19:</strong> Implementação de uma fila como uma
+            lista com ponteiros de frente e traseira.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Para definir as operações de fila, usamos os seguintes procedimentos,
+        que nos permitem selecionar e modificar os ponteiros de frente e
+        traseira de uma fila:
+      </p>
+      <pre><code class="language-scheme">(define (front-ptr queue) (car queue))
+(define (rear-ptr queue) (cdr queue))
+(define (set-front-ptr! queue item) 
+  (set-car! queue item))
+(define (set-rear-ptr! queue item) 
+  (set-cdr! queue item))</code></pre>
+
+      <p>
+        Agora podemos implementar as operações reais da fila. Consideraremos uma
+        fila vazia se seu ponteiro de frente for a lista vazia:
+      </p>
+      <pre><code class="language-scheme">(define (empty-queue? queue) 
+  (null? (front-ptr queue)))</code></pre>
+
+      <p>
+        O construtor <code>make-queue</code> retorna, como uma fila inicialmente
+        vazia, um par cujo <code>car</code> e <code>cdr</code> são ambos a lista
+        vazia:
+      </p>
+      <pre><code class="language-scheme">(define (make-queue) (cons '() '()))</code></pre>
+
+      <p>
+        Para selecionar o item na frente da fila, retornamos o
+        <code>car</code> do par indicado pelo ponteiro de frente:
+      </p>
+      <pre><code class="language-scheme">(define (front-queue queue)
+  (if (empty-queue? queue)
+      (error "FRONT chamado com uma fila vazia" queue)
+      (car (front-ptr queue))))</code></pre>
+
+      <p>
+        Para inserir um item em uma fila, seguimos o método cujo resultado é
+        indicado na <a href="#Figure-3_002e20">Figura 3.20</a>. Primeiro criamos
+        um novo par cujo <code>car</code> é o item a ser inserido e cujo
+        <code>cdr</code> é a lista vazia. Se a fila estava inicialmente vazia,
+        definimos os ponteiros de frente e traseira da fila para este novo par.
+        Caso contrário, modificamos o par final na fila para apontar para o novo
+        par e também definimos o ponteiro traseiro para o novo par.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e20"></a>
+        <object
+          style="width: 55.09ex; height: 22.45ex"
+          data="fig/chap3/Fig3.20c.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.20:</strong> Resultado de usar
+            <code>(insert-queue! q 'd)</code> na fila da
+            <a href="#Figure-3_002e19">Figura 3.19</a>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <pre><code class="language-scheme">(define (insert-queue! queue item)
+  (let ((new-pair (cons item '())))
+    (cond ((empty-queue? queue)
+           (set-front-ptr! queue new-pair)
+           (set-rear-ptr! queue new-pair)
+           queue)
+          (else (set-cdr! (rear-ptr queue) 
+                          new-pair)
+                (set-rear-ptr! queue new-pair)
+                queue))))</code></pre>
+
+      <p>
+        Para excluir o item na frente da fila, simplesmente modificamos o
+        ponteiro de frente para que ele agora aponte para o segundo item na
+        fila, que pode ser encontrado seguindo o ponteiro <code>cdr</code> do
+        primeiro item (veja a <a href="#Figure-3_002e21">Figura 3.21</a>):<a
+          class="footnote_link"
+          id="DOCF150"
+          href="#FOOT150"
+          ><sup>150</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (delete-queue! queue)
+  (cond ((empty-queue? queue)
+         (error "DELETE! chamado com uma fila vazia" queue))
+        (else (set-front-ptr! 
+               queue 
+               (cdr (front-ptr queue)))
+              queue)))</code></pre>
+
+      <figure class="float">
+        <a id="Figure-3_002e21"></a>
+        <object
+          style="width: 55.09ex; height: 22.45ex"
+          data="fig/chap3/Fig3.21c.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.21:</strong> Resultado de usar
+            <code>(delete-queue! q)</code> na fila da
+            <a href="#Figure-3_002e20">Figura 3.20</a>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e21"></a>Exercício 3.21:</strong> Ben
+          Bitdiddle decide testar a implementação da fila descrita acima. Ele
+          digita os procedimentos no interpretador Lisp e começa a testá-los:
+        </p>
+        <pre><code class="language-scheme">(define q1 (make-queue))
+        
+        (insert-queue! q1 'a)
+        ((a) a)
+        
+        (insert-queue! q1 'b)
+        ((a b) b)
+        
+        (delete-queue! q1)
+        ((b) b)
+        
+        (delete-queue! q1)
+        (() b)</code></pre>
+
+        <p>
+          “Está tudo errado!” ele reclama. “A resposta do interpretador mostra
+          que o último item é inserido na fila duas vezes. E quando eu deleto
+          ambos os itens, o segundo <code>b</code> ainda está lá, então a fila
+          não está vazia, mesmo que deveria estar.” Eva Lu Ator sugere que Ben
+          entendeu mal o que está acontecendo. “Não é que os itens estão
+          entrando na fila duas vezes,” ela explica. “É apenas que a impressora
+          padrão do Lisp não sabe como interpretar a representação da fila. Se
+          você quiser ver a fila impressa corretamente, você terá que definir
+          seu próprio procedimento de impressão para filas.” Explique o que Eva
+          Lu está falando. Em particular, mostre por que os exemplos de Ben
+          produzem os resultados impressos que eles produzem. Defina um
+          procedimento <code>print-queue</code> que recebe uma fila como entrada
+          e imprime a sequência de itens na fila.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e22"></a>Exercício 3.22:</strong> Em vez
+          de representar uma fila como um par de ponteiros, podemos construir
+          uma fila como um procedimento com estado local. O estado local
+          consistirá em ponteiros para o início e o fim de uma lista comum.
+          Assim, o procedimento <code>make-queue</code> terá a forma:
+        </p>
+        <pre><code class="language-scheme">(define (make-queue)
+          (let ((front-ptr … )
+                (rear-ptr … ))
+            ⟨definições de procedimentos internos⟩
+            (define (dispatch m) …)
+            dispatch))</code></pre>
+
+        <p>
+          Complete a definição de <code>make-queue</code> e forneça
+          implementações das operações de fila usando essa representação.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e23"></a>Exercício 3.23:</strong> Um
+          <a id="index-deque"></a><em>deque</em> (“fila de duas extremidades”) é
+          uma sequência na qual os itens podem ser inseridos e deletados tanto
+          na frente quanto no final. As operações em deques são o construtor
+          <code>make-deque</code>, o predicado <code>empty-deque?</code>, os
+          seletores <code>front-deque</code> e <code>rear-deque</code>, e os
+          mutadores <code>front-insert-deque!</code>,
+          <code>rear-insert-deque!</code>, <code>front-delete-deque!</code>, e
+          <code>rear-delete-deque!</code>. Mostre como representar deques usando
+          pares e forneça implementações das operações.<a
+            class="footnote_link"
+            id="DOCF151"
+            href="#FOOT151"
+            ><sup>151</sup></a
+          >
+          Todas as operações devem ser realizadas em
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi mathvariant="normal">Θ<!-- Θ --></mi
+              ><mo stretchy="false">(</mo><mn>1</mn
+              ><mo stretchy="false">)</mo></mrow
+            ></math
+          >
+          passos.
+        </p>
+      </blockquote>
+
+      <a id="g_t3_002e3_002e3"></a>
+      <a id="Representing-Tables"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.3.3</span
+        ><span class="sectitle">Representando Tabelas</span>
+      </h4>
+
+      <p>
+        Quando estudamos várias maneiras de representar conjuntos no
+        <a href="Chapter-2.xhtml#Chapter-2">Capítulo 2</a>, mencionamos em
+        <a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a> a tarefa de manter
+        uma tabela de registros indexados por chaves identificadoras. Na
+        implementação de programação orientada a dados em
+        <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a>, usamos
+        extensivamente tabelas bidimensionais, nas quais as informações são
+        armazenadas e recuperadas usando duas chaves. Aqui vemos como construir
+        tabelas como estruturas de listas mutáveis.
+      </p>
+      <p>
+        Primeiro consideramos uma tabela unidimensional, na qual cada valor é
+        armazenado sob uma única chave. Implementamos a tabela como uma lista de
+        registros, cada um dos quais é implementado como um par consistindo de
+        uma chave e o valor associado. Os registros são unidos para formar uma
+        lista por pares cujos <code>car</code>s apontam para registros
+        sucessivos. Esses pares de união são chamados de
+        <a id="index-backbone"></a><em>espinha dorsal</em> da tabela. Para ter
+        um lugar que possamos alterar quando adicionamos um novo registro à
+        tabela, construímos a tabela como uma <a id="index-headed-list"></a
+        ><em>lista com cabeçalho</em>. Uma lista com cabeçalho tem um par
+        especial no início, que contém um registro “dummy”—neste caso, o símbolo
+        arbitrariamente escolhido <code>*table*</code>.
+        <a href="#Figure-3_002e22">Figura 3.22</a> mostra o diagrama de caixas e
+        ponteiros para a tabela:
+      </p>
+      <pre><code class="language-scheme">a: 1
+        b: 2
+        c: 3</code></pre>
+
+      <figure class="float">
+        <a id="Figure-3_002e22"></a>
+        <object
+          style="width: 53.27ex; height: 27.11ex"
+          data="fig/chap3/Fig3.22c.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.22:</strong> Uma tabela representada como uma lista
+            com cabeçalho.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Para extrair informações de uma tabela, usamos o procedimento
+        <code>lookup</code>, que recebe uma chave como argumento e retorna o
+        valor associado (ou falso se não houver valor armazenado sob essa
+        chave). <code>Lookup</code> é definido em termos da operação
+        <code>assoc</code>, que espera uma chave e uma lista de registros como
+        argumentos. Note que <code>assoc</code> nunca vê o registro dummy.
+        <code>Assoc</code> retorna o registro que tem a chave dada como seu
+        <code>car</code>.<a class="footnote_link" id="DOCF152" href="#FOOT152"
+          ><sup>152</sup></a
+        >
+        <code>Lookup</code> então verifica se o registro retornado por
+        <code>assoc</code> não é falso e retorna o valor (o <code>cdr</code>) do
+        registro.
+      </p>
+      <pre><code class="language-scheme">(define (lookup key table)
+          (let ((record (assoc key (cdr table))))
+            (if record
+                (cdr record)
+                false)))
+        
+        (define (assoc key records)
+          (cond ((null? records) false)
+                ((equal? key (caar records)) 
+                 (car records))
+                (else (assoc key (cdr records))))</code></pre>
+
+      <p>
+        Para inserir um valor em uma tabela sob uma chave especificada, primeiro
+        usamos <code>assoc</code> para ver se já existe um registro na tabela
+        com essa chave. Se não, formamos um novo registro usando
+        <code>cons</code> com a chave e o valor, e inserimos isso no início da
+        lista de registros da tabela, após o registro dummy. Se já existe um
+        registro com essa chave, definimos o <code>cdr</code> desse registro
+        para o novo valor designado. O cabeçalho da tabela nos fornece um local
+        fixo para modificar a fim de inserir o novo registro.<a
+          class="footnote_link"
+          id="DOCF153"
+          href="#FOOT153"
+          ><sup>153</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (insert! key value table)
+          (let ((record (assoc key (cdr table))))
+            (if record
+                (set-cdr! record value)
+                (set-cdr! table
+                          (cons (cons key value) 
+                                (cdr table)))))
+          'ok)</code></pre>
+
+      <p>
+        Para construir uma nova tabela, simplesmente criamos uma lista contendo
+        o símbolo <code>*table*</code>:
+      </p>
+      <pre><code class="language-scheme">(define (make-table)
+          (list '*table*))</code></pre>
+
+      <a id="Two_002ddimensional-tables"></a>
+      <h5 class="subsubheading">Tabelas bidimensionais</h5>
+
+      <p>
+        Em uma tabela bidimensional, cada valor é indexado por duas chaves.
+        Podemos construir tal tabela como uma tabela unidimensional na qual cada
+        chave identifica uma subtabela.
+        <a href="#Figure-3_002e23">Figura 3.23</a> mostra o diagrama de caixas e
+        ponteiros para a tabela:
+      </p>
+      <div class="example">
+        <pre class="example">
+math:  +: 43    letters:  a: 97
+               -: 45              b: 98
+               *: 42</pre
+        >
+      </div>
+
+      <p>
+        que tem duas subtabelas. (As subtabelas não precisam de um símbolo de
+        cabeçalho especial, pois a chave que identifica a subtabela serve para
+        esse propósito.)
+      </p>
+      <figure class="float">
+        <a id="Figure-3_002e23"></a>
+        <object
+          style="width: 57.42ex; height: 55.95ex"
+          data="fig/chap3/Fig3.23b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p><strong>Figura 3.23:</strong> Uma tabela bidimensional.</p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Quando procuramos um item, usamos a primeira chave para identificar a
+        subtabela correta. Em seguida, usamos a segunda chave para identificar o
+        registro dentro da subtabela.
+      </p>
+      <pre><code class="language-scheme">(define (lookup key-1 key-2 table)
+          (let ((subtable (assoc key-1 (cdr table))))
+            (if subtable
+                (let ((record 
+                       (assoc key-2 (cdr subtable))))
+                  (if record (cdr record) false))
+                false)))</code></pre>
+
+      <p>
+        Para inserir um novo item sob um par de chaves, usamos
+        <code>assoc</code> para ver se há uma subtabela armazenada sob a
+        primeira chave. Se não, construímos uma nova subtabela contendo o único
+        registro (<code>key-2</code>, <code>value</code>) e a inserimos na
+        tabela sob a primeira chave. Se uma subtabela já existe para a primeira
+        chave, inserimos o novo registro nessa subtabela, usando o método de
+        inserção para tabelas unidimensionais descrito acima:
+      </p>
+      <pre><code class="language-scheme">(define (insert! key-1 key-2 value table)
+          (let ((subtable (assoc key-1 (cdr table))))
+            (if subtable
+                (let ((record 
+                       (assoc key-2 (cdr subtable))))
+                  (if record
+                      (set-cdr! record value)
+                      (set-cdr! 
+                       subtable
+                       (cons (cons key-2 value)
+                             (cdr subtable)))))
+                (set-cdr! 
+                 table
+                 (cons (list key-1 (cons key-2 value))
+                       (cdr table)))))
+          'ok)</code></pre>
+
+      <a id="Creating-local-tables"></a>
+      <h5 class="subsubheading">Criando tabelas locais</h5>
+
+      <p>
+        As operações <code>lookup</code> e <code>insert!</code> definidas acima
+        recebem a tabela como um argumento. Isso nos permite usar programas que
+        acessam mais de uma tabela. Outra maneira de lidar com múltiplas tabelas
+        é ter procedimentos <code>lookup</code> e <code>insert!</code> separados
+        para cada tabela. Podemos fazer isso representando uma tabela
+        proceduralmente, como um objeto que mantém uma tabela interna como parte
+        de seu estado local. Quando enviada uma mensagem apropriada, esse
+        “objeto de tabela” fornece o procedimento com o qual operar na tabela
+        interna. Aqui está um gerador para tabelas bidimensionais representadas
+        dessa forma:
+      </p>
+      <pre><code class="language-scheme">(define (make-table)
+          (let ((local-table (list '*table*)))
+            (define (lookup key-1 key-2)
+              (let ((subtable 
+                     (assoc key-1 (cdr local-table))))
+                (if subtable
+                    (let ((record 
+                           (assoc key-2 
+                                  (cdr subtable))))
+                      (if record (cdr record) false))
+                    false)))
+            (define (insert! key-1 key-2 value)
+              (let ((subtable 
+                     (assoc key-1 (cdr local-table))))
+                (if subtable
+                    (let ((record 
+                           (assoc key-2 
+                                  (cdr subtable))))
+                      (if record
+                          (set-cdr! record value)
+                          (set-cdr! 
+                           subtable
+                           (cons (cons key-2 value)
+                                 (cdr subtable)))))
+                    (set-cdr! 
+                     local-table
+                     (cons (list key-1
+                                 (cons key-2 value))
+                           (cdr local-table)))))
+              'ok)
+            (define (dispatch m)
+              (cond ((eq? m 'lookup-proc) lookup)
+                    ((eq? m 'insert-proc!) insert!)
+                    (else (error "Unknown operation: 
+                                  TABLE" m))))
+            dispatch))</code></pre>
+
+      <p>
+        Usando <code>make-table</code>, poderíamos implementar as operações
+        <code>get</code> e <code>put</code> usadas em
+        <a href="2_002e4.xhtml#g_t2_002e4_002e3">2.4.3</a> para programação
+        orientada a dados, da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define operation-table (make-table))
+        (define get (operation-table 'lookup-proc))
+        (define put (operation-table 'insert-proc!))</code></pre>
+
+      <p>
+        <code>Get</code> recebe como argumentos duas chaves, e
+        <code>put</code> recebe como argumentos duas chaves e um valor. Ambas as
+        operações acessam a mesma tabela local, que é encapsulada dentro do
+        objeto criado pela chamada a <code>make-table</code>.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e24"></a>Exercício 3.24:</strong> Nas
+          implementações de tabelas acima, as chaves são testadas para igualdade
+          usando <code>equal?</code> (chamado por <code>assoc</code>). Isso nem
+          sempre é o teste apropriado. Por exemplo, podemos ter uma tabela com
+          chaves numéricas nas quais não precisamos de uma correspondência exata
+          para o número que estamos procurando, mas apenas um número dentro de
+          alguma tolerância. Projete um construtor de tabela
+          <code>make-table</code> que recebe como argumento um procedimento
+          <code>same-key?</code> que será usado para testar a “igualdade” das
+          chaves. <code>Make-table</code> deve retornar um procedimento
+          <code>dispatch</code> que pode ser usado para acessar procedimentos
+          <code>lookup</code> e <code>insert!</code> apropriados para uma tabela
+          local.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e25"></a>Exercício 3.25:</strong>
+          Generalizando tabelas uni e bidimensionais, mostre como implementar
+          uma tabela na qual os valores são armazenados sob um número arbitrário
+          de chaves e diferentes valores podem ser armazenados sob diferentes
+          números de chaves. Os procedimentos <code>lookup</code> e
+          <code>insert!</code> devem receber como entrada uma lista de chaves
+          usadas para acessar a tabela.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e26"></a>Exercício 3.26:</strong> Para
+          pesquisar uma tabela como implementada acima, é necessário percorrer a
+          lista de registros. Isso é basicamente a representação de lista não
+          ordenada de <a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a>. Para
+          tabelas grandes, pode ser mais eficiente estruturar a tabela de uma
+          maneira diferente. Descreva uma implementação de tabela onde os
+          registros (chave, valor) são organizados usando uma árvore binária,
+          assumindo que as chaves podem ser ordenadas de alguma forma (por
+          exemplo, numericamente ou alfabeticamente). (Compare com
+          <a href="2_002e3.xhtml#Exercise-2_002e66">Exercício 2.66</a> do
+          <a href="Chapter-2.xhtml#Chapter-2">Capítulo 2</a>.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e27"></a>Exercício 3.27:</strong>
+          <a id="index-Memoization"></a><em>Memoização</em> (também chamada de
+          <a id="index-tabulation-1"></a><em>tabelamento</em>) é uma técnica que
+          permite a um procedimento registrar, em uma tabela local, valores que
+          foram previamente computados. Essa técnica pode fazer uma grande
+          diferença no desempenho de um programa. Um procedimento memoizado
+          mantém uma tabela na qual os valores de chamadas anteriores são
+          armazenados usando como chaves os argumentos que produziram os
+          valores. Quando o procedimento memoizado é solicitado a computar um
+          valor, ele primeiro verifica a tabela para ver se o valor já está lá
+          e, se estiver, simplesmente retorna esse valor. Caso contrário, ele
+          computa o novo valor da maneira usual e armazena isso na tabela. Como
+          exemplo de memoização, lembre-se do processo exponencial para computar
+          números de Fibonacci de
+          <a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>:
+        </p>
+        <pre><code class="language-scheme">(define (fib n)
+          (cond ((= n 0) 0)
+                ((= n 1) 1)
+                (else (+ (fib (- n 1))
+                         (fib (- n 2))))))</code></pre>
+
+        <p>A versão memoizada do mesmo procedimento é:</p>
+        <pre><code class="language-scheme">(define memo-fib
+          (memoize 
+           (lambda (n)
+             (cond ((= n 0) 0)
+                   ((= n 1) 1)
+                   (else 
+                    (+ (memo-fib (- n 1))
+                       (memo-fib (- n 2))))))))</code></pre>
+
+        <p>onde o memoizador é definido como:</p>
+        <pre><code class="language-scheme">(define (memoize f)
+          (let ((table (make-table)))
+            (lambda (x)
+              (let ((previously-computed-result 
+                     (lookup x table)))
+                (or previously-computed-result
+                    (let ((result (f x)))
+                      (insert! x result table)
+                      result))))))</code></pre>
+
+        <p>
+          Desenhe um diagrama de ambiente para analisar a computação de
+          <code>(memo-fib 3)</code>. Explique por que
+          <code>memo-fib</code> computa o
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msup
+              ><mi>n</mi
+              ><mrow class="MJX-TeXAtom-ORD"><mtext>th</mtext></mrow></msup
+            ></math
+          >
+          número de Fibonacci em um número de passos proporcional a
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+          >. O esquema ainda funcionaria se tivéssemos simplesmente definido
+          <code>memo-fib</code> como <code>(memoize fib)</code>?
+        </p>
+      </blockquote>
+
+      <a id="g_t3_002e3_002e4"></a>
+      <a id="A-Simulator-for-Digital-Circuits"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.3.4</span
+        ><span class="sectitle">Um Simulador para Circuitos Digitais</span>
+      </h4>
+
+      <p>
+        Projetar sistemas digitais complexos, como computadores, é uma atividade
+        importante de engenharia. Sistemas digitais são construídos
+        interconectando elementos simples. Embora o comportamento desses
+        elementos individuais seja simples, redes deles podem ter comportamentos
+        muito complexos. A simulação por computador de projetos de circuitos
+        propostos é uma ferramenta importante usada por engenheiros de sistemas
+        digitais. Nesta seção, projetamos um sistema para realizar simulações de
+        lógica digital. Este sistema tipifica um tipo de programa chamado
+        <a id="index-event_002ddriven-simulation"></a
+        ><em>simulação dirigida por eventos</em>, na qual ações (“eventos”)
+        desencadeiam mais eventos que acontecem em um momento posterior, que por
+        sua vez desencadeiam mais eventos, e assim por diante.
+      </p>
+      <p>
+        Nosso modelo computacional de um circuito será composto de objetos que
+        correspondem aos componentes elementares dos quais o circuito é
+        construído. Existem <a id="index-wires"></a><em>fios</em>, que carregam
+        <a id="index-digital-signals"></a><em>sinais digitais</em>. Um sinal
+        digital pode a qualquer momento ter apenas um de dois valores possíveis,
+        0 e 1. Existem também vários tipos de <a id="index-function-boxes"></a
+        ><em>caixas de função</em> digitais, que conectam fios que carregam
+        sinais de entrada a outros fios de saída. Tais caixas produzem sinais de
+        saída computados a partir de seus sinais de entrada. O sinal de saída é
+        atrasado por um tempo que depende do tipo da caixa de função. Por
+        exemplo, um <a id="index-inverter"></a><em>inversor</em> é uma caixa de
+        função primitiva que inverte sua entrada. Se o sinal de entrada para um
+        inversor mudar para 0, então um atraso de inversor depois o inversor
+        mudará seu sinal de saída para 1. Se o sinal de entrada para um inversor
+        mudar para 1, então um atraso de inversor depois o inversor mudará seu
+        sinal de saída para 0. Desenhamos um inversor simbolicamente como na
+        <a href="#Figure-3_002e24">Figura 3.24</a>. Um
+        <a id="index-and_002dgate"></a><em>porta AND</em>, também mostrada na
+        figura 3.24, é uma caixa de função primitiva com duas entradas e uma
+        saída. Ela força seu sinal de saída para um valor que é o
+        <a id="index-logical-and"></a><em>AND lógico</em> das entradas. Ou seja,
+        se ambas as suas entradas se tornarem 1, então um atraso de porta AND
+        depois a porta AND forçará seu sinal de saída a ser 1; caso contrário, a
+        saída será 0. Uma <a id="index-or_002dgate"></a><em>porta OR</em> é uma
+        caixa de função primitiva similar de duas entradas que força seu sinal
+        de saída para um valor que é o <a id="index-logical-or"></a
+        ><em>OR lógico</em> das entradas. Ou seja, a saída se tornará 1 se pelo
+        menos uma das entradas for 1; caso contrário, a saída se tornará 0.
+      </p>
+      <figure class="float">
+        <a id="Figure-3_002e24"></a>
+        <object
+          style="width: 49.3ex; height: 11.14ex"
+          data="fig/chap3/Fig3.24a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.24:</strong> Funções primitivas no simulador de
+            lógica digital.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Podemos conectar funções primitivas para construir funções mais
+        complexas. Para isso, conectamos as saídas de algumas caixas de função
+        às entradas de outras caixas de função. Por exemplo, o circuito
+        <a id="index-half_002dadder"></a><em>meio-somador</em> mostrado na
+        <a href="#Figure-3_002e25">Figura 3.25</a> consiste em uma porta OR,
+        duas portas AND e um inversor. Ele recebe dois sinais de entrada, A e B,
+        e tem dois sinais de saída, S e C. S se tornará 1 sempre que exatamente
+        um de A e B for 1, e C se tornará 1 sempre que A e B forem ambos 1.
+        Podemos ver na figura que, devido aos atrasos envolvidos, as saídas
+        podem ser geradas em momentos diferentes. Muitas das dificuldades no
+        projeto de circuitos digitais surgem desse fato.
+      </p>
+      <figure class="float">
+        <a id="Figure-3_002e25"></a>
+        <object
+          style="width: 48.52ex; height: 19.17ex"
+          data="fig/chap3/Fig3.25c.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p><strong>Figura 3.25:</strong> Um circuito meio-somador.</p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Agora construiremos um programa para modelar os circuitos de lógica
+        digital que desejamos estudar. O programa construirá objetos
+        computacionais modelando os fios, que “segurarão” os sinais. As caixas
+        de função serão modeladas por procedimentos que impõem as relações
+        corretas entre os sinais.
+      </p>
+      <p>
+        Um elemento básico de nossa simulação será um procedimento
+        <code>make-wire</code>, que constrói fios. Por exemplo, podemos
+        construir seis fios da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define a (make-wire))
+        (define b (make-wire))
+        (define c (make-wire))
+        (define d (make-wire))
+        (define e (make-wire))
+        (define s (make-wire))</code></pre>
+
+      <p>
+        Conectamos uma caixa de função a um conjunto de fios chamando um
+        procedimento que constrói esse tipo de caixa. Os argumentos para o
+        procedimento construtor são os fios a serem conectados à caixa. Por
+        exemplo, dado que podemos construir portas AND, portas OR e inversores,
+        podemos conectar o meio-somador mostrado na
+        <a href="#Figure-3_002e25">Figura 3.25</a>:
+      </p>
+      <pre><code class="language-scheme">(or-gate a b d)
+        ok
+        
+        (and-gate a b c)
+        ok
+        
+        (inverter c e)
+        ok
+        
+        (and-gate d e s)
+        ok</code></pre>
+
+      <p>
+        Melhor ainda, podemos nomear explicitamente esta operação definindo um
+        procedimento <code>half-adder</code> que constrói este circuito, dados
+        os quatro fios externos a serem conectados ao meio-somador:
+      </p>
+      <pre><code class="language-scheme">(define (half-adder a b s c)
+          (let ((d (make-wire)) (e (make-wire)))
+            (or-gate a b d)
+            (and-gate a b c)
+            (inverter c e)
+            (and-gate d e s)
+            'ok))</code></pre>
+
+      <p>
+        A vantagem de fazer esta definição é que podemos usar
+        <code>half-adder</code> como um bloco de construção para criar circuitos
+        mais complexos. <a href="#Figure-3_002e26">Figura 3.26</a>, por exemplo,
+        mostra um <a id="index-full_002dadder"></a
+        ><em>somador completo</em> composto por dois meio-somadores e uma porta
+        OR.<a class="footnote_link" id="DOCF154" href="#FOOT154"
+          ><sup>154</sup></a
+        >
+        Podemos construir um somador completo da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define (full-adder a b c-in sum c-out)
+          (let ((c1 (make-wire)) 
+                (c2 (make-wire))
+                (s  (make-wire)))
+            (half-adder b c-in s c1)
+            (half-adder a s sum c2)
+            (or-gate c1 c2 c-out)
+            'ok))</code></pre>
+
+      <figure class="float">
+        <a id="Figure-3_002e26"></a>
+        <object
+          style="width: 51.29ex; height: 19.17ex"
+          data="fig/chap3/Fig3.26.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p><strong>Figura 3.26:</strong> Um circuito somador completo.</p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Tendo definido <code>full-adder</code> como um procedimento, podemos
+        agora usá-lo como um bloco de construção para criar circuitos ainda mais
+        complexos. (Por exemplo, veja
+        <a href="#Exercise-3_002e30">Exercício 3.30</a>.)
+      </p>
+      <p>
+        Em essência, nosso simulador nos fornece as ferramentas para construir
+        uma linguagem de circuitos. Se adotarmos a perspectiva geral sobre
+        linguagens com a qual abordamos o estudo de Lisp em
+        <a href="1_002e1.xhtml#g_t1_002e1">1.1</a>, podemos dizer que as caixas
+        de função primitivas formam os elementos primitivos da linguagem, que a
+        conexão de caixas fornece um meio de combinação, e que a especificação
+        de padrões de conexão como procedimentos serve como um meio de
+        abstração.
+      </p>
+      <a id="Primitive-function-boxes"></a>
+      <h5 class="subsubheading">Caixas de função primitivas</h5>
+
+      <p>
+        As caixas de função primitivas implementam as “forças” pelas quais uma
+        mudança no sinal em um fio influencia os sinais em outros fios. Para
+        construir caixas de função, usamos as seguintes operações em fios:
+      </p>
+      <ul>
+        <li>
+          <code>(get-signal ⟨wire⟩)</code>
+          <p>retorna o valor atual do sinal no fio.</p>
+        </li>
+        <li>
+          <code>(set-signal! ⟨wire⟩ ⟨new value⟩)</code>
+          <p>altera o valor do sinal no fio para o novo valor.</p>
+        </li>
+        <li>
+          <code>(add-action! ⟨wire⟩ ⟨procedure of no arguments⟩)</code>
+          <p>
+            afirma que o procedimento designado deve ser executado sempre que o
+            sinal no fio mudar de valor. Tais procedimentos são os veículos
+            pelos quais as mudanças no valor do sinal no fio são comunicadas a
+            outros fios.
+          </p>
+        </li>
+      </ul>
+
+      <p>
+        Além disso, usaremos um procedimento <code>after-delay</code> que recebe
+        um atraso de tempo e um procedimento a ser executado e executa o
+        procedimento dado após o atraso dado.
+      </p>
+      <p>
+        Usando esses procedimentos, podemos definir as funções de lógica digital
+        primitivas. Para conectar uma entrada a uma saída através de um
+        inversor, usamos <code>add-action!</code> para associar ao fio de
+        entrada um procedimento que será executado sempre que o sinal no fio de
+        entrada mudar de valor. O procedimento computa o
+        <code>logical-not</code> do sinal de entrada e, então, após um
+        <code>inverter-delay</code>, define o sinal de saída para este novo
+        valor:
+      </p>
+      <pre><code class="language-scheme">(define (inverter input output)
+          (define (invert-input)
+            (let ((new-value 
+                   (logical-not (get-signal input))))
+              (after-delay 
+               inverter-delay
+               (lambda ()
+                 (set-signal! output new-value)))))
+          (add-action! input invert-input)
+          'ok)
+        
+        (define (logical-not s)
+          (cond ((= s 0) 1)
+                ((= s 1) 0)
+                (else (error "Invalid signal" s))))</code></pre>
+
+      <p>
+        Uma porta AND é um pouco mais complexa. O procedimento de ação deve ser
+        executado se qualquer uma das entradas para a porta mudar. Ele computa o
+        <code>logical-and</code> (usando um procedimento análogo a
+        <code>logical-not</code>) dos valores dos sinais nos fios de entrada e
+        configura uma mudança para o novo valor para ocorrer no fio de saída
+        após um <code>and-gate-delay</code>.
+      </p>
+      <pre><code class="language-scheme">(define (and-gate a1 a2 output)
+          (define (and-action-procedure)
+            (let ((new-value
+                   (logical-and (get-signal a1) 
+                                (get-signal a2))))
+              (after-delay 
+               and-gate-delay
+               (lambda ()
+                 (set-signal! output new-value)))))
+          (add-action! a1 and-action-procedure)
+          (add-action! a2 and-action-procedure)
+          'ok)</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e28"></a>Exercício 3.28:</strong> Defina
+          uma porta OR como uma caixa de função primitiva. Seu construtor
+          <code>or-gate</code> deve ser similar ao <code>and-gate</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e29"></a>Exercício 3.29:</strong> Outra
+          maneira de construir uma porta OR é como um dispositivo de lógica
+          digital composto, construído a partir de portas AND e inversores.
+          Defina um procedimento <code>or-gate</code> que realiza isso. Qual é o
+          tempo de atraso da porta OR em termos de <code>and-gate-delay</code> e
+          <code>inverter-delay</code>?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e30"></a>Exercício 3.30:</strong>
+          <a href="#Figure-3_002e27">Figura 3.27</a> mostra um
+          <a id="index-ripple_002dcarry-adder"></a
+          ><em>somador ripple-carry</em> formado por encadeamento de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+          somadores completos. Esta é a forma mais simples de somador paralelo
+          para adicionar dois números binários de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+          bits. As entradas
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>A</mi><mn>1</mn></msub></math
+          >,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>A</mi><mn>2</mn></msub></math
+          >,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>A</mi><mn>3</mn></msub></math
+          >, …,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>A</mi><mi>n</mi></msub></math
+          >
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>B</mi><mn>1</mn></msub></math
+          >,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>B</mi><mn>2</mn></msub></math
+          >,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>B</mi><mn>3</mn></msub></math
+          >, …,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>B</mi><mi>n</mi></msub></math
+          >
+          são os dois números binários a serem adicionados (cada
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>A</mi><mi>k</mi></msub></math
+          >
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>B</mi><mi>k</mi></msub></math
+          >
+          é um 0 ou um 1). O circuito gera
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>S</mi><mn>1</mn></msub></math
+          >,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>S</mi><mn>2</mn></msub></math
+          >,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>S</mi><mn>3</mn></msub></math
+          >, …,
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>S</mi><mi>n</mi></msub></math
+          >, os
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+          bits da soma, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>C</mi></math
+          >, o carry da adição. Escreva um procedimento
+          <code>ripple-carry-adder</code> que gera este circuito. O procedimento
+          deve receber como argumentos três listas de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+          fios cada—os
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>A</mi><mi>k</mi></msub></math
+          >, os
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>B</mi><mi>k</mi></msub></math
+          >, e os
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><msub><mi>S</mi><mi>k</mi></msub></math
+          >—e também outro fio
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>C</mi></math
+          >. A principal desvantagem do somador ripple-carry é a necessidade de
+          esperar pelos sinais de carry para se propagarem. Qual é o atraso
+          necessário para obter a saída completa de um somador ripple-carry de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+          bits, expresso em termos dos atrasos para portas AND, portas OR e
+          inversores?
+        </p>
+      </blockquote>
+
+      <figure class="float">
+        <a id="Figure-3_002e27"></a>
+        <object
+          style="width: 50.16ex; height: 15.54ex"
+          data="fig/chap3/Fig3.27b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.27:</strong> Um somador ripple-carry para números
+            de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+            bits.
+          </p>
+        </figcaption>
+      </figure>
+
+      <a id="Representing-wires"></a>
+      <h5 class="subsubheading">Representando fios</h5>
+
+      <p>
+        Um fio em nossa simulação será um objeto computacional com duas
+        variáveis de estado local: um <code>signal-value</code> (inicialmente
+        tomado como 0) e uma coleção de <code>action-procedures</code> a serem
+        executadas quando o sinal mudar de valor. Implementamos o fio, usando o
+        estilo de passagem de mensagens, como uma coleção de procedimentos
+        locais junto com um procedimento <code>dispatch</code> que seleciona a
+        operação local apropriada, assim como fizemos com o objeto simples de
+        conta bancária em <a href="3_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a>:
+      </p>
+      <pre><code class="language-scheme">(define (make-wire)
+          (let ((signal-value 0) 
+                (action-procedures '()))
+            (define (set-my-signal! new-value)
+              (if (not (= signal-value new-value))
+                  (begin (set! signal-value new-value)
+                         (call-each 
+                          action-procedures))
+                  'done))
+            (define (accept-action-procedure! proc)
+              (set! action-procedures 
+                    (cons proc action-procedures))
+              (proc))
+            (define (dispatch m)
+              (cond ((eq? m 'get-signal) 
+                     signal-value)
+                    ((eq? m 'set-signal!) 
+                     set-my-signal!)
+                    ((eq? m 'add-action!) 
+                     accept-action-procedure!)
+                    (else (error "Unknown operation: 
+                                  WIRE" m))))
+            dispatch))</code></pre>
+
+      <p>
+        O procedimento local <code>set-my-signal!</code> testa se o novo valor
+        do sinal muda o sinal no fio. Se sim, ele executa cada um dos
+        procedimentos de ação, usando o seguinte procedimento
+        <code>call-each</code>, que chama cada um dos itens em uma lista de
+        procedimentos sem argumentos:
+      </p>
+      <pre><code class="language-scheme">(define (call-each procedures)
+          (if (null? procedures)
+              'done
+              (begin ((car procedures))
+                     (call-each (cdr procedures)))))</code></pre>
+
+      <p>
+        O procedimento local <code>accept-action-procedure!</code> adiciona o
+        procedimento dado à lista de procedimentos a serem executados e, em
+        seguida, executa o novo procedimento uma vez. (Veja
+        <a href="#Exercise-3_002e31">Exercício 3.31</a>.)
+      </p>
+      <p>
+        Com o procedimento local <code>dispatch</code> configurado conforme
+        especificado, podemos fornecer os seguintes procedimentos para acessar
+        as operações locais em fios:<a
+          class="footnote_link"
+          id="DOCF155"
+          href="#FOOT155"
+          ><sup>155</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (get-signal wire)
+          (wire 'get-signal))
+        (define (set-signal! wire new-value)
+          ((wire 'set-signal!) new-value))
+        (define (add-action! wire action-procedure)
+          ((wire 'add-action!) action-procedure))</code></pre>
+
+      <p>
+        Fios, que têm sinais variáveis no tempo e podem ser incrementalmente
+        conectados a dispositivos, são típicos de objetos mutáveis. Nós os
+        modelamos como procedimentos com variáveis de estado local que são
+        modificadas por atribuição. Quando um novo fio é criado, um novo
+        conjunto de variáveis de estado é alocado (pela expressão
+        <code>let</code> em <code>make-wire</code>) e um novo procedimento
+        <code>dispatch</code> é construído e retornado, capturando o ambiente
+        com as novas variáveis de estado.
+      </p>
+      <p>
+        Os fios são compartilhados entre os vários dispositivos que foram
+        conectados a eles. Assim, uma mudança feita por uma interação com um
+        dispositivo afetará todos os outros dispositivos conectados ao fio. O
+        fio comunica a mudança aos seus vizinhos chamando os procedimentos de
+        ação fornecidos a ele quando as conexões foram estabelecidas.
+      </p>
+      <a id="The-agenda"></a>
+      <h5 class="subsubheading">A agenda</h5>
+
+      <p>
+        A única coisa necessária para completar o simulador é
+        <code>after-delay</code>. A ideia aqui é que mantemos uma estrutura de
+        dados, chamada <a id="index-agenda"></a><em>agenda</em>, que contém um
+        cronograma de coisas a fazer. As seguintes operações são definidas para
+        agendas:
+      </p>
+      <ul>
+        <li><code>(make-agenda)</code> retorna uma nova agenda vazia.</li>
+        <li>
+          <code>(empty-agenda? ⟨agenda⟩)</code> é verdadeiro se a agenda
+          especificada estiver vazia.
+        </li>
+        <li>
+          <code>(first-agenda-item ⟨agenda⟩)</code> retorna o primeiro item na
+          agenda.
+        </li>
+        <li>
+          <code>(remove-first-agenda-item! ⟨agenda⟩)</code> modifica a agenda
+          removendo o primeiro item.
+        </li>
+        <li>
+          <code>(add-to-agenda! ⟨time⟩ ⟨action⟩ ⟨agenda⟩)</code> modifica a
+          agenda adicionando o procedimento de ação dado para ser executado no
+          tempo especificado.
+        </li>
+        <li>
+          <code>(current-time ⟨agenda⟩)</code> retorna o tempo atual da
+          simulação.
+        </li>
+      </ul>
+
+      <p>
+        A agenda particular que usamos é denotada por <code>the-agenda</code>. O
+        procedimento <code>after-delay</code> adiciona novos elementos a
+        <code>the-agenda</code>:
+      </p>
+      <pre><code class="language-scheme">(define (after-delay delay action)
+          (add-to-agenda! 
+           (+ delay (current-time the-agenda))
+           action
+           the-agenda))</code></pre>
+
+      <p>
+        A simulação é conduzida pelo procedimento <code>propagate</code>, que
+        opera em <code>the-agenda</code>, executando cada procedimento na agenda
+        em sequência. Em geral, à medida que a simulação é executada, novos
+        itens serão adicionados à agenda, e <code>propagate</code> continuará a
+        simulação enquanto houver itens na agenda:
+      </p>
+      <pre><code class="language-scheme">(define (propagate)
+          (if (empty-agenda? the-agenda)
+              'done
+              (let ((first-item 
+                     (first-agenda-item the-agenda)))
+                (first-item)
+                (remove-first-agenda-item! the-agenda)
+                (propagate))))</code></pre>
+
+      <a id="A-sample-simulation"></a>
+      <h5 class="subsubheading">Uma simulação de exemplo</h5>
+
+      <p>
+        O seguinte procedimento, que coloca uma “sonda” em um fio, mostra o
+        simulador em ação. A sonda diz ao fio que, sempre que seu sinal mudar de
+        valor, ele deve imprimir o novo valor do sinal, junto com o tempo atual
+        e um nome que identifica o fio:
+      </p>
+      <pre><code class="language-scheme">(define (probe name wire)
+          (add-action! 
+           wire
+           (lambda ()
+             (newline)
+             (display name)
+             (display " ")
+             (display (current-time the-agenda))
+             (display "  New-value = ")
+             (display (get-signal wire)))))</code></pre>
+
+      <p>
+        Começamos inicializando a agenda e especificando atrasos para as caixas
+        de função primitivas:
+      </p>
+      <pre><code class="language-scheme">(define the-agenda (make-agenda))
+        (define inverter-delay 2)
+        (define and-gate-delay 3)
+        (define or-gate-delay 5)</code></pre>
+
+      <p>Agora definimos quatro fios, colocando sondas em dois deles:</p>
+      <pre><code class="language-scheme">(define input-1 (make-wire))
+        (define input-2 (make-wire))
+        (define sum (make-wire))
+        (define carry (make-wire))
+        
+        (probe 'sum sum)
+        sum 0  New-value = 0
+        
+        (probe 'carry carry)
+        carry 0  New-value = 0</code></pre>
+
+      <p>
+        Em seguida, conectamos os fios em um circuito meio-somador (como na
+        <a href="#Figure-3_002e25">Figura 3.25</a>), definimos o sinal em
+        <code>input-1</code> para 1 e executamos a simulação:
+      </p>
+      <pre><code class="language-scheme">(half-adder input-1 input-2 sum carry)
+        ok
+        
+        (set-signal! input-1 1)
+        done
+        
+        (propagate)
+        sum 8  New-value = 1
+        done</code></pre>
+
+      <p>
+        O sinal <code>sum</code> muda para 1 no tempo 8. Agora estamos oito
+        unidades de tempo desde o início da simulação. Neste ponto, podemos
+        definir o sinal em <code>input-2</code> para 1 e permitir que os valores
+        se propaguem:
+      </p>
+      <pre><code class="language-scheme">(set-signal! input-2 1)
+        done
+        
+        (propagate)
+        carry 11  New-value = 1
+        sum 16  New-value = 0
+        done</code></pre>
+
+      <p>
+        O <code>carry</code> muda para 1 no tempo 11 e o <code>sum</code> muda
+        para 0 no tempo 16.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e31"></a>Exercício 3.31:</strong> O
+          procedimento interno <code>accept-action-procedure!</code> definido em
+          <code>make-wire</code> especifica que, quando um novo procedimento de
+          ação é adicionado a um fio, o procedimento é imediatamente executado.
+          Explique por que essa inicialização é necessária. Em particular,
+          percorra o exemplo do meio-somador nos parágrafos acima e diga como a
+          resposta do sistema seria diferente se tivéssemos definido
+          <code>accept-action-procedure!</code> como:
+        </p>
+        <pre><code class="language-scheme">(define (accept-action-procedure! proc)
+          (set! action-procedures 
+                (cons proc action-procedures)))</code></pre>
+      </blockquote>
+
+      <!--Aqui-->
+      <a id="Implementing-the-agenda"></a>
+      <h5 class="subsubheading">Implementing the agenda</h5>
+
+      <p>
+        Finalmente, damos detalhes da estrutura de dados da agenda, que contém
+        os procedimentos agendados para execução futura.
+      </p>
+      <p>
+        A agenda é composta por <a id="index-time-segments"></a
+        ><em>segmentos de tempo</em>. Cada segmento de tempo é um par
+        consistindo de um número (o tempo) e uma fila (veja
+        <a href="#Exercise-3_002e32">Exercício 3.32</a>) que contém os
+        procedimentos agendados para serem executados durante esse segmento de
+        tempo.
+      </p>
+
+      <pre><code class="language-scheme">(define (make-time-segment time queue)
+  (cons time queue))
+(define (segment-time s) (car s))
+(define (segment-queue s) (cdr s))</code></pre>
+
+      <p>
+        Operaremos nas filas dos segmentos de tempo usando as operações de fila
+        descritas em <a href="#g_t3_002e3_002e2">3.3.2</a>.
+      </p>
+      <p>
+        A agenda em si é uma tabela unidimensional de segmentos de tempo. Ela
+        difere das tabelas descritas em <a href="#g_t3_002e3_002e3">3.3.3</a> no
+        fato de que os segmentos serão ordenados em ordem crescente de tempo.
+        Além disso, armazenamos o <a id="index-current-time"></a
+        ><em>tempo atual</em> (ou seja, o tempo da última ação processada) no
+        início da agenda. Uma agenda recém-construída não tem segmentos de tempo
+        e tem um tempo atual de 0:<a
+          class="footnote_link"
+          id="DOCF156"
+          href="#FOOT156"
+          ><sup>156</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (make-agenda) (list 0))
+(define (current-time agenda) (car agenda))
+(define (set-current-time! agenda time)
+  (set-car! agenda time))
+(define (segments agenda) (cdr agenda))
+(define (set-segments! agenda segments)
+  (set-cdr! agenda segments))
+(define (first-segment agenda) 
+  (car (segments agenda)))
+(define (rest-segments agenda) 
+  (cdr (segments agenda)))</code></pre>
+
+      <p>Uma agenda está vazia se não tiver segmentos de tempo:</p>
+
+      <pre><code class="language-scheme">(define (empty-agenda? agenda)
+  (null? (segments agenda)))</code></pre>
+
+      <p>
+        Para adicionar uma ação a uma agenda, primeiro verificamos se a agenda
+        está vazia. Se estiver, criamos um segmento de tempo para a ação e o
+        instalamos na agenda. Caso contrário, percorremos a agenda, examinando o
+        tempo de cada segmento. Se encontrarmos um segmento para o tempo
+        designado, adicionamos a ação à fila associada. Se chegarmos a um tempo
+        posterior ao que estamos designando, inserimos um novo segmento de tempo
+        na agenda logo antes dele. Se chegarmos ao final da agenda, devemos
+        criar um novo segmento de tempo no final.
+      </p>
+
+      <pre><code class="language-scheme">(define (add-to-agenda! time action agenda)
+  (define (belongs-before? segments)
+    (or (null? segments)
+        (< time 
+           (segment-time (car segments)))))
+  (define (make-new-time-segment time action)
+    (let ((q (make-queue)))
+      (insert-queue! q action)
+      (make-time-segment time q)))
+  (define (add-to-segments! segments)
+    (if (= (segment-time (car segments)) time)
+        (insert-queue! 
+         (segment-queue (car segments))
+         action)
+        (let ((rest (cdr segments)))
+          (if (belongs-before? rest)
+              (set-cdr!
+               segments
+               (cons (make-new-time-segment 
+                      time 
+                      action)
+                     (cdr segments)))
+              (add-to-segments! rest)))))
+  (let ((segments (segments agenda)))
+    (if (belongs-before? segments)
+        (set-segments!
+         agenda
+         (cons (make-new-time-segment 
+                time 
+                action)
+               segments))
+        (add-to-segments! segments))))</code></pre>
+
+      <p>
+        O procedimento que remove o primeiro item da agenda deleta o item na
+        frente da fila no primeiro segmento de tempo. Se essa deleção deixar o
+        segmento de tempo vazio, removemos ele da lista de segmentos:<a
+          class="footnote_link"
+          id="DOCF157"
+          href="#FOOT157"
+          ><sup>157</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (remove-first-agenda-item! agenda)
+  (let ((q (segment-queue 
+            (first-segment agenda))))
+    (delete-queue! q)
+    (if (empty-queue? q)
+        (set-segments! 
+         agenda 
+         (rest-segments agenda)))))</code></pre>
+
+      <p>
+        O primeiro item da agenda é encontrado na frente da fila no primeiro
+        segmento de tempo. Sempre que extraímos um item, também atualizamos o
+        tempo atual:<a class="footnote_link" id="DOCF158" href="#FOOT158"
+          ><sup>158</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (first-agenda-item agenda)
+  (if (empty-agenda? agenda)
+      (error "Agenda is empty: 
+              FIRST-AGENDA-ITEM")
+      (let ((first-seg 
+             (first-segment agenda)))
+        (set-current-time! 
+         agenda 
+         (segment-time first-seg))
+        (front-queue 
+         (segment-queue first-seg)))))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e32"></a>Exercício 3.32:</strong> Os
+          procedimentos a serem executados durante cada segmento de tempo da
+          agenda são mantidos em uma fila. Assim, os procedimentos para cada
+          segmento são chamados na ordem em que foram adicionados à agenda
+          (primeiro a entrar, primeiro a sair). Explique por que essa ordem deve
+          ser usada. Em particular, trace o comportamento de uma porta AND cujas
+          entradas mudam de 0, 1 para 1, 0 no mesmo segmento e diga como o
+          comportamento seria diferente se armazenássemos os procedimentos de um
+          segmento em uma lista comum, adicionando e removendo procedimentos
+          apenas na frente (último a entrar, primeiro a sair).
+        </p>
+      </blockquote>
+
+      <a id="g_t3_002e3_002e5"></a>
+      <a id="Propagation-of-Constraints"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.3.5</span
+        ><span class="sectitle">Propagação de Restrições</span>
+      </h4>
+
+      <p>
+        Os programas de computador são tradicionalmente organizados como
+        computações unidirecionais, que realizam operações em argumentos
+        pré-especificados para produzir saídas desejadas. Por outro lado,
+        frequentemente modelamos sistemas em termos de relações entre
+        quantidades. Por exemplo, um modelo matemático de uma estrutura mecânica
+        pode incluir a informação de que a deflexão
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>d</mi>
+        </math>
+        de uma barra de metal está relacionada à força
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>F</mi>
+        </math>
+        na barra, o comprimento
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>L</mi>
+        </math>
+        da barra, a área da seção transversal
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>A</mi>
+        </math>
+        e o módulo de elasticidade
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>E</mi>
+        </math>
+        através da equação
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>d</mi>
+            <mi>A</mi>
+            <mi>E</mi>
+          </mrow>
+          <mspace width="thinmathspace" />
+          <mo>=</mo>
+          <mspace width="thinmathspace" />
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>F</mi>
+            <mi>L</mi>
+            <mo>.</mo>
+          </mrow>
+        </math>
+        Tal equação não é unidirecional. Dadas quaisquer quatro das quantidades,
+        podemos usá-la para calcular a quinta. No entanto, traduzir a equação
+        para uma linguagem de programação tradicional nos forçaria a escolher
+        uma das quantidades para ser calculada em termos das outras quatro.
+        Assim, um procedimento para calcular a área
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>A</mi>
+        </math>
+        não poderia ser usado para calcular a deflexão
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>d</mi> </math>,
+        mesmo que os cálculos de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>A</mi>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>d</mi>
+        </math>
+        surjam da mesma equação.<a
+          class="footnote_link"
+          id="DOCF159"
+          href="#FOOT159"
+          ><sup>159</sup></a
+        >
+      </p>
+
+      <p>
+        Nesta seção, esboçamos o design de uma linguagem que nos permite
+        trabalhar em termos das próprias relações. Os elementos primitivos da
+        linguagem são <a id="index-primitive-constraints"></a
+        ><em>restrições primitivas</em>, que afirmam que certas relações
+        mantêm-se entre quantidades. Por exemplo,
+        <code>(adder a b c)</code> especifica que as quantidades
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>a</mi> </math>,
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>b</mi>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>c</mi>
+        </math>
+        devem estar relacionadas pela equação
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>a</mi>
+            <mo>+</mo>
+            <mi>b</mi>
+            <mo>=</mo>
+            <mi>c</mi>
+          </mrow> </math
+        >, <code>(multiplier x y z)</code> expressa a restrição
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>x</mi>
+            <mi>y</mi>
+            <mo>=</mo>
+            <mi>z</mi>
+          </mrow> </math
+        >, e <code>(constant 3.14 x)</code> diz que o valor de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>x</mi>
+        </math>
+        deve ser 3.14.
+      </p>
+
+      <p>
+        Nossa linguagem fornece um meio de combinar restrições primitivas para
+        expressar relações mais complexas. Combinamos restrições construindo
+        <a id="index-constraint-networks"></a><em>redes de restrições</em>, nas
+        quais as restrições são unidas por <a id="index-connectors"></a
+        ><em>conectores</em>. Um conector é um objeto que "segura" um valor que
+        pode participar de uma ou mais restrições. Por exemplo, sabemos que a
+        relação entre as temperaturas Fahrenheit e Celsius é
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>9</mn>
+            <mi>C</mi>
+          </mrow>
+          <mspace width="thinmathspace" />
+          <mo>=</mo>
+          <mspace width="thinmathspace" />
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>5</mn>
+            <mo stretchy="false">(</mo>
+            <mi>F</mi>
+            <mo>−<!-- − --></mo>
+            <mn>32</mn>
+            <mo stretchy="false">)</mo>
+            <mo>.</mo>
+          </mrow>
+        </math>
+        Tal restrição pode ser pensada como uma rede consistindo de restrições
+        primitivas de soma, multiplicação e constante (<a
+          href="#Figure-3_002e28"
+          >Figura 3.28</a
+        >). Na figura, vemos à esquerda uma caixa de multiplicação com três
+        terminais, rotulados
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>m</mi>
+            <mn>1</mn>
+          </mrow> </math
+        >,
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>m</mi>
+            <mn>2</mn>
+          </mrow> </math
+        >, e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>p</mi> </math>.
+        Esses conectam o multiplicador ao resto da rede da seguinte forma: O
+        terminal
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>m</mi>
+            <mn>1</mn>
+          </mrow>
+        </math>
+        está ligado a um conector
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>C</mi> </math>,
+        que conterá a temperatura Celsius. O terminal
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>m</mi>
+            <mn>2</mn>
+          </mrow>
+        </math>
+        está ligado a um conector
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>w</mi> </math>,
+        que também está ligado a uma caixa constante que contém 9. O terminal
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>p</mi> </math>,
+        que a caixa de multiplicação restringe a ser o produto de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>m</mi>
+            <mn>1</mn>
+          </mrow>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>m</mi>
+            <mn>2</mn>
+          </mrow> </math
+        >, está ligado ao terminal
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>p</mi>
+        </math>
+        de outra caixa de multiplicação, cujo
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>m</mi>
+            <mn>2</mn>
+          </mrow>
+        </math>
+        está conectado a uma constante 5 e cujo
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>m</mi>
+            <mn>1</mn>
+          </mrow>
+        </math>
+        está conectado a um dos termos em uma soma.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e28"></a>
+        <object
+          style="width: 58.11ex; height: 18.3ex"
+          data="fig/chap3/Fig3.28.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.28:</strong> A relação
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mn>9</mn>
+                <mi>C</mi>
+                <mo>=</mo>
+                <mn>5</mn>
+                <mo stretchy="false">(</mo>
+                <mi>F</mi>
+                <mo>−<!-- − --></mo>
+                <mn>32</mn>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+            expressa como uma rede de restrições.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        A computação por tal rede procede da seguinte forma: Quando um conector
+        recebe um valor (pelo usuário ou por uma caixa de restrição à qual está
+        ligado), ele acorda todas as suas restrições associadas (exceto a
+        restrição que acabou de acordá-lo) para informá-las de que tem um valor.
+        Cada caixa de restrição acordada então consulta seus conectores para ver
+        se há informações suficientes para determinar um valor para um conector.
+        Se houver, a caixa define esse conector, que então acorda todas as suas
+        restrições associadas, e assim por diante. Por exemplo, na conversão
+        entre Celsius e Fahrenheit,
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>w</mi> </math>,
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>x</mi>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>y</mi>
+        </math>
+        são imediatamente definidos pelas caixas constantes para 9, 5 e 32,
+        respectivamente. Os conectores acordam os multiplicadores e o somador,
+        que determinam que não há informações suficientes para prosseguir. Se o
+        usuário (ou alguma outra parte da rede) definir
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>C</mi>
+        </math>
+        para um valor (digamos 25), o multiplicador mais à esquerda será
+        acordado, e ele definirá
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>u</mi>
+        </math>
+        para
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mn>25</mn>
+            <mo>⋅<!-- ⋅ --></mo>
+            <mn>9</mn>
+            <mo>=</mo>
+            <mn>225</mn>
+          </mrow> </math
+        >. Então
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>u</mi>
+        </math>
+        acorda o segundo multiplicador, que define
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>v</mi>
+        </math>
+        para 45, e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>v</mi>
+        </math>
+        acorda o somador, que define
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>F</mi>
+        </math>
+        para 77.
+      </p>
+
+      <a id="Using-the-constraint-system"></a>
+      <h5 class="subsubheading">Usando o sistema de restrições</h5>
+
+      <p>
+        Para usar o sistema de restrições para realizar a computação de
+        temperatura descrita acima, primeiro criamos dois conectores,
+        <code>C</code> e <code>F</code>, chamando o construtor
+        <code>make-connector</code>, e ligamos <code>C</code> e
+        <code>F</code> em uma rede apropriada:
+      </p>
+
+      <pre><code class="language-scheme">(define C (make-connector))
+(define F (make-connector))
+(celsius-fahrenheit-converter C F)
+<i>ok</i></code></pre>
+
+      <p>O procedimento que cria a rede é definido da seguinte forma:</p>
+
+      <pre><code class="language-scheme">(define (celsius-fahrenheit-converter c f)
+  (let ((u (make-connector))
+        (v (make-connector))
+        (w (make-connector))
+        (x (make-connector))
+        (y (make-connector)))
+    (multiplier c w u)
+    (multiplier v x u)
+    (adder v y f)
+    (constant 9 w)
+    (constant 5 x)
+    (constant 32 y)
+    'ok))</code></pre>
+
+      <p>
+        Este procedimento cria os conectores internos <code>u</code>,
+        <code>v</code>, <code>w</code>, <code>x</code> e <code>y</code>, e os
+        liga como mostrado na <a href="#Figure-3_002e28">Figura 3.28</a> usando
+        os construtores de restrições primitivas <code>adder</code>,
+        <code>multiplier</code> e <code>constant</code>. Assim como no simulador
+        de circuitos digitais de <a href="#g_t3_002e3_002e4">3.3.4</a>,
+        expressar essas combinações de elementos primitivos em termos de
+        procedimentos fornece automaticamente à nossa linguagem um meio de
+        abstração para objetos compostos.
+      </p>
+
+      <p>
+        Para observar a rede em ação, podemos colocar sondas nos conectores
+        <code>C</code> e <code>F</code>, usando um procedimento
+        <code>probe</code> semelhante ao que usamos para monitorar fios em
+        <a href="#g_t3_002e3_002e4">3.3.4</a>. Colocar uma sonda em um conector
+        fará com que uma mensagem seja impressa sempre que o conector receber um
+        valor:
+      </p>
+
+      <pre><code class="language-scheme">(probe "Celsius temp" C)
+(probe "Fahrenheit temp" F)</code></pre>
+
+      <p>
+        Em seguida, definimos o valor de <code>C</code> para 25. (O terceiro
+        argumento para <code>set-value!</code> diz a <code>C</code> que esta
+        diretiva vem do <code>user</code>.)
+      </p>
+
+      <pre><code class="language-scheme">(set-value! C 25 'user)
+<i>Probe: Celsius temp = 25</i>
+<i>Probe: Fahrenheit temp = 77</i>
+<i>done</i></code></pre>
+
+      <p>
+        A sonda em <code>C</code> acorda e relata o valor. <code>C</code> também
+        propaga seu valor através da rede como descrito acima. Isso define
+        <code>F</code> para 77, que é relatado pela sonda em <code>F</code>.
+      </p>
+
+      <p>
+        Agora podemos tentar definir <code>F</code> para um novo valor, digamos
+        212:
+      </p>
+
+      <pre><code class="language-scheme">(set-value! F 212 'user)
+<i>Error! Contradiction (77 212)</i></code></pre>
+
+      <p>
+        O conector reclama que detectou uma contradição: Seu valor é 77, e
+        alguém está tentando defini-lo para 212. Se realmente quisermos
+        reutilizar a rede com novos valores, podemos dizer a <code>C</code> para
+        esquecer seu valor antigo:
+      </p>
+
+      <pre><code class="language-scheme">(forget-value! C 'user)
+<i>Probe: Celsius temp = ?</i>
+<i>Probe: Fahrenheit temp = ?</i>
+<i>done</i></code></pre>
+
+      <p>
+        <code>C</code> descobre que o <code>user</code>, que definiu seu valor
+        originalmente, está agora retirando esse valor, então
+        <code>C</code> concorda em perder seu valor, como mostrado pela sonda, e
+        informa o resto da rede sobre esse fato. Essa informação eventualmente
+        se propaga para <code>F</code>, que agora descobre que não tem mais
+        razão para acreditar que seu próprio valor é 77. Assim,
+        <code>F</code> também desiste de seu valor, como mostrado pela sonda.
+      </p>
+
+      <p>
+        Agora que <code>F</code> não tem valor, estamos livres para defini-lo
+        para 212:
+      </p>
+
+      <pre><code class="language-scheme">(set-value! F 212 'user)
+<i>Probe: Fahrenheit temp = 212</i>
+<i>Probe: Celsius temp = 100</i>
+<i>done</i></code></pre>
+
+      <p>
+        Este novo valor, quando propagado através da rede, força
+        <code>C</code> a ter um valor de 100, e isso é registrado pela sonda em
+        <code>C</code>. Observe que a mesma rede está sendo usada para calcular
+        <code>C</code> dado <code>F</code> e para calcular <code>F</code> dado
+        <code>C</code>. Essa não-direcionalidade da computação é a
+        característica distintiva dos sistemas baseados em restrições.
+      </p>
+
+      <a id="Implementing-the-constraint-system"></a>
+      <h5 class="subsubheading">Implementando o sistema de restrições</h5>
+
+      <p>
+        O sistema de restrições é implementado por meio de objetos procedurais
+        com estado local, de maneira muito semelhante ao simulador de circuitos
+        digitais de <a href="#g_t3_002e3_002e4">3.3.4</a>. Embora os objetos
+        primitivos do sistema de restrições sejam um pouco mais complexos, o
+        sistema geral é mais simples, já que não há preocupação com agendas e
+        atrasos lógicos.
+      </p>
+
+      <p>As operações básicas em conectores são as seguintes:</p>
+      <ul>
+        <li>
+          <code>(has-value? ⟨connector⟩)</code> diz se o conector tem um valor.
+        </li>
+        <li>
+          <code>(get-value ⟨connector⟩)</code> retorna o valor atual do
+          conector.
+        </li>
+        <li>
+          <code>(set-value! ⟨connector⟩ ⟨new-value⟩ ⟨informant⟩)</code> indica
+          que o informante está solicitando que o conector defina seu valor para
+          o novo valor.
+        </li>
+        <li>
+          <code>(forget-value! ⟨connector⟩ ⟨retractor⟩)</code> diz ao conector
+          que o retrator está solicitando que ele esqueça seu valor.
+        </li>
+        <li>
+          <code>(connect ⟨connector⟩ ⟨new-constraint⟩)</code> diz ao conector
+          para participar da nova restrição.
+        </li>
+      </ul>
+
+      <p>
+        Os conectores se comunicam com as restrições por meio dos procedimentos
+        <code>inform-about-value</code>, que informa à restrição dada que o
+        conector tem um valor, e <code>inform-about-no-value</code>, que informa
+        à restrição que o conector perdeu seu valor.
+      </p>
+
+      <p>
+        <code>Adder</code> constrói uma restrição de soma entre os conectores de
+        soma <code>a1</code> e <code>a2</code> e um conector de soma
+        <code>sum</code>. Um somador é implementado como um procedimento com
+        estado local (o procedimento <code>me</code> abaixo):
+      </p>
+
+      <pre><code class="language-scheme">(define (adder a1 a2 sum)
+  (define (process-new-value)
+    (cond ((and (has-value? a1) 
+                (has-value? a2))
+           (set-value! sum
+                       (+ (get-value a1) 
+                          (get-value a2))
+                       me))
+          ((and (has-value? a1) 
+                (has-value? sum))
+           (set-value! a2
+                       (- (get-value sum) 
+                          (get-value a1))
+                       me))
+          ((and (has-value? a2) 
+                (has-value? sum))
+           (set-value! a1
+                       (- (get-value sum) 
+                          (get-value a2))
+                       me))))
+  (define (process-forget-value)
+    (forget-value! sum me)
+    (forget-value! a1 me)
+    (forget-value! a2 me)
+    (process-new-value))
+  (define (me request)
+    (cond ((eq? request 'I-have-a-value)
+           (process-new-value))
+          ((eq? request 'I-lost-my-value)
+           (process-forget-value))
+          (else (error "Unknown request: 
+                        ADDER" request))))
+  (connect a1 me)
+  (connect a2 me)
+  (connect sum me)
+  me)</code></pre>
+
+      <p>
+        <code>Adder</code> conecta o novo somador aos conectores designados e o
+        retorna como seu valor. O procedimento <code>me</code>, que representa o
+        somador, age como um despachante para os procedimentos locais. As
+        seguintes "interfaces de sintaxe" (veja
+        <a href="#Footnote-155">Nota de rodapé 155</a> em
+        <a href="#g_t3_002e3_002e4">3.3.4</a>) são usadas em conjunto com o
+        despachante:
+      </p>
+
+      <pre><code class="language-scheme">(define (inform-about-value constraint)
+  (constraint 'I-have-a-value))
+(define (inform-about-no-value constraint)
+  (constraint 'I-lost-my-value))</code></pre>
+
+      <p>
+        O procedimento local <code>process-new-value</code> do somador é chamado
+        quando o somador é informado de que um de seus conectores tem um valor.
+        O somador primeiro verifica se ambos <code>a1</code> e
+        <code>a2</code> têm valores. Se tiverem, ele diz a <code>sum</code> para
+        definir seu valor como a soma dos dois adendos. O argumento
+        <code>informant</code> para <code>set-value!</code> é <code>me</code>,
+        que é o próprio objeto somador. Se <code>a1</code> e <code>a2</code> não
+        tiverem ambos valores, então o somador verifica se talvez
+        <code>a1</code> e <code>sum</code> tenham valores. Se tiverem, ele
+        define <code>a2</code> como a diferença entre esses dois. Finalmente, se
+        <code>a2</code> e <code>sum</code> tiverem valores, isso dá ao somador
+        informações suficientes para definir <code>a1</code>. Se o somador for
+        informado de que um de seus conectores perdeu um valor, ele solicita que
+        todos os seus conectores agora percam seus valores. (Apenas os valores
+        que foram definidos por este somador são realmente perdidos.) Em
+        seguida, ele executa <code>process-new-value</code>. A razão para esta
+        última etapa é que um ou mais conectores ainda podem ter um valor (ou
+        seja, um conector pode ter tido um valor que não foi originalmente
+        definido pelo somador), e esses valores podem precisar ser propagados de
+        volta através do somador.
+      </p>
+
+      <p>
+        Um multiplicador é muito semelhante a um somador. Ele definirá seu
+        <code>product</code> como 0 se qualquer um dos fatores for 0, mesmo que
+        o outro fator não seja conhecido.
+      </p>
+
+      <pre><code class="language-scheme">(define (multiplier m1 m2 product)
+  (define (process-new-value)
+    (cond ((or (and (has-value? m1) 
+                    (= (get-value m1) 0))
+               (and (has-value? m2) 
+                    (= (get-value m2) 0)))
+           (set-value! product 0 me))
+          ((and (has-value? m1) 
+                (has-value? m2))
+           (set-value! product
+                       (* (get-value m1) 
+                          (get-value m2))
+                       me))
+          ((and (has-value? product) 
+                (has-value? m1))
+           (set-value! m2
+                       (/ (get-value product) 
+                          (get-value m1))
+                       me))
+          ((and (has-value? product) 
+                (has-value? m2))
+           (set-value! m1
+                       (/ (get-value product) 
+                          (get-value m2))
+                       me))))
+  (define (process-forget-value)
+    (forget-value! product me)
+    (forget-value! m1 me)
+    (forget-value! m2 me)
+    (process-new-value))
+  (define (me request)
+    (cond ((eq? request 'I-have-a-value)
+           (process-new-value))
+          ((eq? request 'I-lost-my-value)
+           (process-forget-value))
+          (else
+           (error "Unknown request: 
+                   MULTIPLIER" 
+                  request))))
+  (connect m1 me)
+  (connect m2 me)
+  (connect product me)
+  me)</code></pre>
+
+      <p>
+        Um construtor <code>constant</code> simplesmente define o valor do
+        conector designado. Qualquer mensagem <code>I-have-a-value</code> ou
+        <code>I-lost-my-value</code> enviada à caixa constante produzirá um
+        erro.
+      </p>
+
+      <pre><code class="language-scheme">(define (constant value connector)
+  (define (me request)
+    (error "Unknown request: CONSTANT" 
+           request))
+  (connect connector me)
+  (set-value! connector value me)
+  me)</code></pre>
+
+      <p>
+        Finalmente, uma sonda imprime uma mensagem sobre a definição ou
+        indefinição do conector designado:
+      </p>
+
+      <pre><code class="language-scheme">(define (probe name connector)
+  (define (print-probe value)
+    (newline) (display "Probe: ")
+    (display name) (display " = ")
+    (display value))
+  (define (process-new-value)
+    (print-probe (get-value connector)))
+  (define (process-forget-value)
+    (print-probe "?"))
+  (define (me request)
+    (cond ((eq? request 'I-have-a-value)
+           (process-new-value))
+          ((eq? request 'I-lost-my-value)
+           (process-forget-value))
+          (else (error "Unknown request: 
+                        PROBE" request))))
+  (connect connector me)
+  me)</code></pre>
+
+      <a id="Representing-connectors"></a>
+      <h5 class="subsubheading">Representando conectores</h5>
+
+      <p>
+        Um conector é representado como um objeto procedimental com variáveis de
+        estado local <code>value</code>, o valor atual do conector;
+        <code>informant</code>, o objeto que definiu o valor do conector; e
+        <code>constraints</code>, uma lista das restrições nas quais o conector
+        participa.
+      </p>
+
+      <pre><code class="language-scheme">(define (make-connector)
+  (let ((value false) 
+        (informant false) 
+        (constraints '()))
+    (define (set-my-value newval setter)
+      (cond ((not (has-value? me))
+             (set! value newval)
+             (set! informant setter)
+             (for-each-except 
+              setter
+              inform-about-value
+              constraints))
+            ((not (= value newval))
+             (error "Contradiction" 
+                    (list value newval)))
+            (else 'ignored)))
+    (define (forget-my-value retractor)
+      (if (eq? retractor informant)
+          (begin (set! informant false)
+                 (for-each-except 
+                  retractor
+                  inform-about-no-value
+                  constraints))
+          'ignored))
+    (define (connect new-constraint)
+      (if (not (memq new-constraint 
+                     constraints))
+          (set! constraints
+                (cons new-constraint 
+                      constraints)))
+      (if (has-value? me)
+          (inform-about-value new-constraint))
+      'done)
+    (define (me request)
+      (cond ((eq? request 'has-value?)
+             (if informant true false))
+            ((eq? request 'value) value)
+            ((eq? request 'set-value!) 
+             set-my-value)
+            ((eq? request 'forget) 
+             forget-my-value)
+            ((eq? request 'connect) connect)
+            (else (error "Unknown operation: 
+                          CONNECTOR"
+                         request))))
+    me))</code></pre>
+
+      <p>
+        O procedimento local <code>set-my-value</code> do conector é chamado
+        quando há uma solicitação para definir o valor do conector. Se o
+        conector não tiver atualmente um valor, ele definirá seu valor e
+        lembrará como <code>informant</code> a restrição que solicitou que o
+        valor fosse definido.<a
+          class="footnote_link"
+          id="DOCF160"
+          href="#FOOT160"
+          ><sup>160</sup></a
+        >
+        Então, o conector notificará todas as suas restrições participantes,
+        exceto a restrição que solicitou que o valor fosse definido. Isso é
+        realizado usando o seguinte iterador, que aplica um procedimento
+        designado a todos os itens em uma lista, exceto um dado:
+      </p>
+
+      <pre><code class="language-scheme">(define (for-each-except exception 
+                         procedure 
+                         list)
+  (define (loop items)
+    (cond ((null? items) 'done)
+          ((eq? (car items) exception) 
+           (loop (cdr items)))
+          (else (procedure (car items))
+                (loop (cdr items)))))
+  (loop list))</code></pre>
+
+      <p>
+        Se um conector for solicitado a esquecer seu valor, ele executará o
+        procedimento local <code>forget-my-value</code>, que primeiro verifica
+        se a solicitação está vindo do mesmo objeto que definiu o valor
+        originalmente. Se estiver, o conector informa suas restrições associadas
+        sobre a perda do valor.
+      </p>
+
+      <p>
+        O procedimento local <code>connect</code> adiciona a nova restrição
+        designada à lista de restrições se ela ainda não estiver nessa lista.
+        Então, se o conector tiver um valor, ele informa a nova restrição sobre
+        esse fato.
+      </p>
+
+      <p>
+        O procedimento <code>me</code> do conector serve como um despachante
+        para os outros procedimentos internos e também representa o conector
+        como um objeto. Os seguintes procedimentos fornecem uma interface de
+        sintaxe para o despachante:
+      </p>
+
+      <pre><code class="language-scheme">(define (has-value? connector)
+  (connector 'has-value?))
+(define (get-value connector)
+  (connector 'value))
+(define (set-value! connector 
+                    new-value 
+                    informant)
+  ((connector 'set-value!) 
+   new-value 
+   informant))
+(define (forget-value! connector retractor)
+  ((connector 'forget) retractor))
+(define (connect connector new-constraint)
+  ((connector 'connect) new-constraint))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e33"></a>Exercício 3.33:</strong> Usando
+          restrições primitivas de multiplicação, soma e constante, defina um
+          procedimento <code>averager</code> que recebe três conectores
+          <code>a</code>, <code>b</code> e <code>c</code> como entradas e
+          estabelece a restrição de que o valor de <code>c</code> é a média dos
+          valores de <code>a</code> e <code>b</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e34"></a>Exercício 3.34:</strong> Louis
+          Reasoner quer construir um quadrador, um dispositivo de restrição com
+          dois terminais tal que o valor do conector <code>b</code> no segundo
+          terminal será sempre o quadrado do valor <code>a</code> no primeiro
+          terminal. Ele propõe o seguinte dispositivo simples feito de um
+          multiplicador:
+        </p>
+        <pre><code class="language-scheme">(define (squarer a b) (multiplier a a b))</code></pre>
+
+        <p>Há uma falha séria nesta ideia. Explique.</p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e35"></a>Exercício 3.35:</strong> Ben
+          Bitdiddle diz a Louis que uma maneira de evitar o problema no
+          <a href="#Exercise-3_002e34">Exercício 3.34</a> é definir um quadrador
+          como uma nova restrição primitiva. Preencha as partes ausentes no
+          esboço de Ben para um procedimento que implementa tal restrição:
+        </p>
+        <pre><code class="language-scheme">(define (squarer a b)
+  (define (process-new-value)
+    (if (has-value? b)
+        (if (< (get-value b) 0)
+            (error "square less than 0: 
+                    SQUARER" 
+                   (get-value b))
+            ⟨alternative1⟩)
+        ⟨alternative2⟩))
+  (define (process-forget-value) ⟨body1⟩)
+  (define (me request) ⟨body2⟩)
+  ⟨rest of definition⟩
+  me)</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e36"></a>Exercício 3.36:</strong> Suponha
+          que avaliamos a seguinte sequência de expressões no ambiente global:
+        </p>
+        <pre><code class="language-scheme">(define a (make-connector))
+(define b (make-connector))
+(set-value! a 10 'user)</code></pre>
+
+        <p>
+          Em algum momento durante a avaliação de <code>set-value!</code>, a
+          seguinte expressão do procedimento local do conector é avaliada:
+        </p>
+        <pre><code class="language-scheme">(for-each-except 
+  setter inform-about-value constraints)</code></pre>
+
+        <p>
+          Desenhe um diagrama de ambiente mostrando o ambiente no qual a
+          expressão acima é avaliada.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e37"></a>Exercício 3.37:</strong> O
+          procedimento <code>celsius-fahrenheit-converter</code> é incômodo
+          quando comparado com um estilo de definição mais orientado a
+          expressões, como
+        </p>
+        <pre><code class="language-scheme">(define (celsius-fahrenheit-converter x)
+  (c+ (c* (c/ (cv 9) (cv 5))
+          x)
+      (cv 32)))
+
+(define C (make-connector))
+(define F (celsius-fahrenheit-converter C))</code></pre>
+
+        <p>
+          Aqui <code>c+</code>, <code>c*</code>, etc. são as versões
+          "restritivas" das operações aritméticas. Por exemplo,
+          <code>c+</code> recebe dois conectores como argumentos e retorna um
+          conector que está relacionado a esses por uma restrição de soma:
+        </p>
+        <pre><code class="language-scheme">(define (c+ x y)
+  (let ((z (make-connector)))
+    (adder x y z)
+    z))</code></pre>
+
+        <p>
+          Defina procedimentos análogos <code>c-</code>, <code>c*</code>,
+          <code>c/</code> e <code>cv</code> (valor constante) que nos permitam
+          definir restrições compostas como no exemplo do conversor acima.<a
+            class="footnote_link"
+            id="DOCF161"
+            href="#FOOT161"
+            ><sup>161</sup></a
+          >
+        </p>
+      </blockquote>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+
+        <div id="FOOT144">
+          <p>
+            <a class="footnote_backlink" href="#DOCF144"><sup>144</sup></a>
+            <code>Set-car!</code> e <code>set-cdr!</code> retornam valores
+            dependentes da implementação. Como <code>set!</code>, eles devem ser
+            usados apenas para seu efeito.
+          </p>
+        </div>
+        <div id="FOOT145">
+          <p>
+            <a class="footnote_backlink" href="#DOCF145"><sup>145</sup></a>
+            Vemos disso que operações de mutação em listas podem criar "lixo"
+            que não faz parte de nenhuma estrutura acessível. Veremos em
+            <a href="5_002e3.xhtml#g_t5_002e3_002e2">5.3.2</a> que os sistemas
+            de gerenciamento de memória do Lisp incluem um
+            <a id="index-garbage-collector"></a><em>coletor de lixo</em>, que
+            identifica e recicla o espaço de memória usado por pares
+            desnecessários.
+          </p>
+        </div>
+        <div id="FOOT146">
+          <p>
+            <a class="footnote_backlink" href="#DOCF146"><sup>146</sup></a>
+            <code>Get-new-pair</code> é uma das operações que deve ser
+            implementada como parte do gerenciamento de memória exigido por uma
+            implementação do Lisp. Discutiremos isso em
+            <a href="5_002e3.xhtml#g_t5_002e3_002e1">5.3.1</a>.
+          </p>
+        </div>
+        <div id="FOOT147">
+          <p>
+            <a class="footnote_backlink" href="#DOCF147"><sup>147</sup></a> Os
+            dois pares são distintos porque cada chamada para
+            <code>cons</code> retorna um novo par. Os símbolos são
+            compartilhados; no Scheme, há um único símbolo com qualquer nome
+            dado. Como o Scheme não fornece uma maneira de mutar um símbolo,
+            esse compartilhamento é indetectável. Observe também que o
+            compartilhamento é o que nos permite comparar símbolos usando
+            <code>eq?</code>, que simplesmente verifica a igualdade de
+            ponteiros.
+          </p>
+        </div>
+        <div id="FOOT148">
+          <p>
+            <a class="footnote_backlink" href="#DOCF148"><sup>148</sup></a> As
+            sutilezas de lidar com o compartilhamento de objetos de dados
+            mutáveis refletem as questões subjacentes de "identidade" e
+            "mudança" que foram levantadas em
+            <a href="3_002e1.xhtml#g_t3_002e1_002e3">3.1.3</a>. Mencionamos lá
+            que admitir mudanças em nossa linguagem requer que um objeto
+            composto tenha uma "identidade" que seja algo diferente das peças
+            das quais é composto. No Lisp, consideramos essa "identidade" como a
+            qualidade que é testada por <code>eq?</code>, ou seja, pela
+            igualdade de ponteiros. Como na maioria das implementações do Lisp
+            um ponteiro é essencialmente um endereço de memória, estamos
+            "resolvendo o problema" de definir a identidade dos objetos
+            estipulando que um objeto de dados "em si" é a informação armazenada
+            em algum conjunto particular de locais de memória no computador.
+            Isso é suficiente para programas simples em Lisp, mas dificilmente é
+            uma maneira geral de resolver a questão da "identidade" em modelos
+            computacionais.
+          </p>
+        </div>
+        <div id="FOOT149">
+          <p>
+            <a class="footnote_backlink" href="#DOCF149"><sup>149</sup></a> Por
+            outro lado, do ponto de vista da implementação, a atribuição requer
+            que modifiquemos o ambiente, que é em si uma estrutura de dados
+            mutável. Assim, atribuição e mutação são equipotentes: Cada uma pode
+            ser implementada em termos da outra.
+          </p>
+        </div>
+        <div id="FOOT150">
+          <p>
+            <a class="footnote_backlink" href="#DOCF150"><sup>150</sup></a> Se o
+            primeiro item for o item final na fila, o ponteiro frontal será a
+            lista vazia após a exclusão, o que marcará a fila como vazia; não
+            precisamos nos preocupar em atualizar o ponteiro traseiro, que ainda
+            apontará para o item excluído, porque <code>empty-queue?</code> olha
+            apenas para o ponteiro frontal.
+          </p>
+        </div>
+        <div id="FOOT151">
+          <p>
+            <a class="footnote_backlink" href="#DOCF151"><sup>151</sup></a>
+            Tenha cuidado para não fazer o interpretador tentar imprimir uma
+            estrutura que contém ciclos. (Veja
+            <a href="#Exercise-3_002e13">Exercício 3.13</a>.)
+          </p>
+        </div>
+        <div id="FOOT152">
+          <p>
+            <a class="footnote_backlink" href="#DOCF152"><sup>152</sup></a> Como
+            <code>assoc</code> usa <code>equal?</code>, ele pode reconhecer
+            chaves que são símbolos, números ou estrutura de lista.
+          </p>
+        </div>
+        <div id="FOOT153">
+          <p>
+            <a class="footnote_backlink" href="#DOCF153"><sup>153</sup></a>
+            Assim, o primeiro par de backbone é o objeto que representa a tabela
+            "em si"; ou seja, um ponteiro para a tabela é um ponteiro para este
+            par. Esse mesmo par de backbone sempre começa a tabela. Se não
+            organizássemos as coisas dessa maneira, <code>insert!</code> teria
+            que retornar um novo valor para o início da tabela quando
+            adicionasse um novo registro.
+          </p>
+        </div>
+        <div id="FOOT154">
+          <p>
+            <a class="footnote_backlink" href="#DOCF154"><sup>154</sup></a> Um
+            somador completo é um elemento básico de circuito usado na adição de
+            dois números binários. Aqui A e B são os bits nas posições
+            correspondentes nos dois números a serem somados, e
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <msub>
+                <mi mathvariant="normal">C</mi>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi mathvariant="normal">i</mi>
+                  <mi mathvariant="normal">n</mi>
+                </mrow>
+              </msub>
+            </math>
+            é o bit de carry da adição uma posição à direita. O circuito gera
+            SUM, que é o bit de soma na posição correspondente, e
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <msub>
+                <mi mathvariant="normal">C</mi>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi mathvariant="normal">o</mi>
+                  <mi mathvariant="normal">u</mi>
+                  <mi mathvariant="normal">t</mi>
+                </mrow>
+              </msub> </math
+            >, que é o bit de carry a ser propagado para a esquerda.
+          </p>
+        </div>
+        <div id="FOOT155">
+          <p>
+            <a class="footnote_backlink" href="#DOCF155"><sup>155</sup></a>
+            <a id="Footnote-155"></a>Esses procedimentos são simplesmente açúcar
+            sintático que nos permite usar a sintaxe procedimental comum para
+            acessar os procedimentos locais de objetos. É impressionante que
+            possamos intercambiar o papel de "procedimentos" e "dados" de
+            maneira tão simples. Por exemplo, se escrevermos
+            <code>(wire 'get-signal)</code>, pensamos em <code>wire</code> como
+            um procedimento que é chamado com a mensagem
+            <code>get-signal</code> como entrada. Alternativamente, escrever
+            <code>(get-signal wire)</code> nos encoraja a pensar em
+            <code>wire</code> como um objeto de dados que é a entrada para um
+            procedimento <code>get-signal</code>. A verdade é que, em uma
+            linguagem na qual podemos lidar com procedimentos como objetos, não
+            há diferença fundamental entre "procedimentos" e "dados", e podemos
+            escolher nosso açúcar sintático para nos permitir programar no
+            estilo que escolhermos.
+          </p>
+        </div>
+        <div id="FOOT156">
+          <p>
+            <a class="footnote_backlink" href="#DOCF156"><sup>156</sup></a> A
+            agenda é uma lista com cabeça, como as tabelas em
+            <a href="#g_t3_002e3_002e3">3.3.3</a>, mas como a lista é encabeçada
+            pelo tempo, não precisamos de um cabeçalho adicional (como o símbolo
+            <code>*table*</code> usado com tabelas).
+          </p>
+        </div>
+        <div id="FOOT157">
+          <p>
+            <a class="footnote_backlink" href="#DOCF157"><sup>157</sup></a>
+            Observe que a expressão <code>if</code> neste procedimento não tem
+            uma expressão <code>⟨</code><var>alternative</var><code>⟩</code>.
+            Tal "declaração <code>if</code> de um braço" é usada para decidir se
+            algo deve ser feito, em vez de selecionar entre duas expressões. Uma
+            expressão <code>if</code> retorna um valor não especificado se o
+            predicado for falso e não houver <code>⟨</code><var>alternative</var
+            ><code>⟩</code>.
+          </p>
+        </div>
+        <div id="FOOT158">
+          <p>
+            <a class="footnote_backlink" href="#DOCF158"><sup>158</sup></a>
+            Dessa forma, o tempo atual será sempre o tempo da ação mais
+            recentemente processada. Armazenar esse tempo no início da agenda
+            garante que ele ainda estará disponível mesmo que o segmento de
+            tempo associado tenha sido excluído.
+          </p>
+        </div>
+        <div id="FOOT159">
+          <p>
+            <a class="footnote_backlink" href="#DOCF159"><sup>159</sup></a> A
+            propagação de restrições apareceu pela primeira vez no incrivelmente
+            visionário sistema <abbr>SKETCHPAD</abbr> de Ivan
+            <a href="References.xhtml#Sutherland-_00281963_0029"
+              >Sutherland (1963)</a
+            >. Um belo sistema de propagação de restrições baseado na linguagem
+            Smalltalk foi desenvolvido por Alan
+            <a href="References.xhtml#Borning-_00281977_0029">Borning (1977)</a>
+            no Xerox Palo Alto Research Center. Sussman, Stallman e Steele
+            aplicaram a propagação de restrições à análise de circuitos
+            elétricos (<a href="References.xhtml#Sussman-and-Stallman-1975"
+              >Sussman e Stallman 1975</a
+            >;
+            <a href="References.xhtml#Sussman-and-Steele-1980"
+              >Sussman e Steele 1980</a
+            >). TK!Solver (<a
+              href="References.xhtml#Konopasek-and-Jayaraman-1984"
+              >Konopasek e Jayaraman 1984</a
+            >) é um ambiente de modelagem extensivo baseado em restrições.
+          </p>
+        </div>
+        <div id="FOOT160">
+          <p>
+            <a class="footnote_backlink" href="#DOCF160"><sup>160</sup></a> O
+            <code>setter</code> pode não ser uma restrição. Em nosso exemplo de
+            temperatura, usamos <code>user</code> como o <code>setter</code>.
+          </p>
+        </div>
+        <div id="FOOT161">
+          <p>
+            <a class="footnote_backlink" href="#DOCF161"><sup>161</sup></a> O
+            formato orientado a expressões é conveniente porque evita a
+            necessidade de nomear as expressões intermediárias em uma
+            computação. Nossa formulação original da linguagem de restrições é
+            incômoda da mesma forma que muitas linguagens são incômodas ao lidar
+            com operações em dados compostos. Por exemplo, se quiséssemos
+            calcular o produto
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo stretchy="false">(</mo>
+                <mi>a</mi>
+                <mo>+</mo>
+                <mi>b</mi>
+                <mo stretchy="false">)</mo>
+                <mo>⋅<!-- ⋅ --></mo>
+                <mo stretchy="false">(</mo>
+                <mi>c</mi>
+                <mo>+</mo>
+                <mi>d</mi>
+                <mo stretchy="false">)</mo>
+              </mrow> </math
+            >, onde as variáveis representam vetores, poderíamos trabalhar em
+            "estilo imperativo", usando procedimentos que definem os valores de
+            argumentos vetoriais designados, mas não retornam vetores como
+            valores:
+          </p>
+          <pre><code class="language-scheme">(v-sum a b temp1)
+(v-sum c d temp2)
+(v-prod temp1 temp2 answer)</code></pre>
+
+          <p>
+            Alternativamente, poderíamos lidar com expressões, usando
+            procedimentos que retornam vetores como valores e, assim, evitar
+            mencionar explicitamente <code>temp1</code> e <code>temp2</code>:
+          </p>
+          <pre><code class="language-scheme">(define answer 
+  (v-prod (v-sum a b) (v-sum c d)))</code></pre>
+
+          <p>
+            Como o Lisp nos permite retornar objetos compostos como valores de
+            procedimentos, podemos transformar nossa linguagem de restrições de
+            estilo imperativo em um estilo orientado a expressões, como mostrado
+            neste exercício. Em linguagens que são pobres em lidar com objetos
+            compostos, como Algol, Basic e Pascal (a menos que se use
+            explicitamente variáveis de ponteiro Pascal), geralmente se fica
+            preso ao estilo imperativo ao manipular objetos compostos. Dada a
+            vantagem do formato orientado a expressões, pode-se perguntar se há
+            alguma razão para ter implementado o sistema em estilo imperativo,
+            como fizemos nesta seção. Uma razão é que a linguagem de restrições
+            não orientada a expressões fornece um controle sobre objetos de
+            restrição (por exemplo, o valor do procedimento <code>adder</code>)
+            bem como sobre objetos de conector. Isso é útil se quisermos
+            estender o sistema com novas operações que se comunicam diretamente
+            com restrições, em vez de apenas indiretamente por meio de operações
+            em conectores. Embora seja fácil implementar o estilo orientado a
+            expressões em termos da implementação imperativa, é muito difícil
+            fazer o contrário.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e4.xhtml#g_t3_002e4" accesskey="n" rel="next">3.4</a>,
+          Anterior:
+          <a href="3_002e2.xhtml#g_t3_002e2" accesskey="p" rel="prev">3.2</a>,
+          Acima: <a href="#g_t3_002e3" accesskey="u" rel="prev">3.3</a> [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Jump to bottom"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
+</html>
