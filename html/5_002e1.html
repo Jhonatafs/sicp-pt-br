@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.1"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.1"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.1
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t5_002e1"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="5_002e2.html#g_t5_002e2" accesskey="n" rel="next">5.2</a>,
+          Anterior:
+          <a href="Chapter-5.html#Chapter-5" accesskey="p" rel="prev"
+            >Capítulo 5</a
+          >, Acima:
+          <a href="Chapter-5.html#Chapter-5" accesskey="u" rel="prev"
+            >Capítulo 5</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+      <a id="Designing-Register-Machines"></a>
+      <h3 class="section">
+        <span class="secnum">5.1</span
+        ><span class="sectitle">Projetando Máquinas de Registro</span>
+      </h3>
+
+      <p>
+        Para projetar uma máquina de registro, devemos projetar seus
+        <a id="index-data-paths"></a> <em>caminhos de dados</em> (registros e
+        operações) e o <a id="index-controller"></a> <em>controlador</em> que
+        sequencia essas operações. Para ilustrar o projeto de uma máquina de
+        registro simples, vamos examinar o Algoritmo de Euclides, que é usado
+        para calcular o máximo divisor comum (<abbr>MDC</abbr>) de dois
+        inteiros. Como vimos em
+        <a href="1_002e2.html#g_t1_002e2_002e5">1.2.5</a>, o Algoritmo de
+        Euclides pode ser realizado por um processo iterativo, conforme
+        especificado pelo seguinte procedimento:
+      </p>
+      <pre><code class="language-scheme">(define (gcd a b)
+  (if (= b 0)
+      a
+      (gcd b (remainder a b))))</code></pre>
+
+      <p>
+        Uma máquina para realizar esse algoritmo deve acompanhar dois números,
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>a</mi>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>b</mi> </math>,
+        então vamos assumir que esses números são armazenados em dois registros
+        com esses nomes. As operações básicas necessárias são testar se o
+        conteúdo do registro <code>b</code> é zero e calcular o resto da divisão
+        do conteúdo do registro <code>a</code> pelo conteúdo do registro
+        <code>b</code>. A operação de resto é um processo complexo, mas vamos
+        assumir por enquanto que temos um dispositivo primitivo que calcula
+        restos. Em cada ciclo do algoritmo <abbr>MDC</abbr>, o conteúdo do
+        registro <code>a</code> deve ser substituído pelo conteúdo do registro
+        <code>b</code>, e o conteúdo de <code>b</code> deve ser substituído pelo
+        resto da divisão do conteúdo antigo de <code>a</code> pelo conteúdo
+        antigo de <code>b</code>. Seria conveniente se essas substituições
+        pudessem ser feitas simultaneamente, mas em nosso modelo de máquinas de
+        registro, assumiremos que apenas um registro pode receber um novo valor
+        a cada passo. Para realizar as substituições, nossa máquina usará um
+        terceiro registro "temporário", que chamaremos de <code>t</code>.
+        (Primeiro, o resto será colocado em <code>t</code>, depois o conteúdo de
+        <code>b</code> será colocado em <code>a</code>, e finalmente o resto
+        armazenado em <code>t</code> será colocado em <code>b</code>.)
+      </p>
+      <p>
+        Podemos ilustrar os registros e operações necessárias para essa máquina
+        usando o diagrama de caminhos de dados mostrado na
+        <a href="#Figure-5_002e1">Figura 5.1</a>. Neste diagrama, os registros
+        (<code>a</code>, <code>b</code> e <code>t</code>) são representados por
+        retângulos. Cada maneira de atribuir um valor a um registro é indicada
+        por uma seta com um <code>X</code> atrás da cabeça, apontando da fonte
+        de dados para o registro. Podemos pensar no <code>X</code> como um botão
+        que, quando pressionado, permite que o valor na fonte "flua" para o
+        registro designado. O rótulo ao lado de cada botão é o nome que usaremos
+        para nos referir ao botão. Os nomes são arbitrários e podem ser
+        escolhidos para ter valor mnemônico (por exemplo,
+        <code>a&lt;-b</code> denota pressionar o botão que atribui o conteúdo do
+        registro <code>b</code> ao registro <code>a</code>). A fonte de dados
+        para um registro pode ser outro registro (como na atribuição
+        <code>a&lt;-b</code>), o resultado de uma operação (como na atribuição
+        <code>t&lt;-r</code>) ou uma constante (um valor embutido que não pode
+        ser alterado, representado em um diagrama de caminhos de dados por um
+        triângulo contendo a constante).
+      </p>
+      <figure class="float">
+        <a id="Figure-5_002e1"></a>
+        <object
+          style="width: 37.9ex; height: 26.07ex"
+          data="fig/chap5/Fig5.1a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 5.1:</strong> Caminhos de dados para uma máquina
+            <abbr>MDC</abbr>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Uma operação que calcula um valor a partir de constantes e do conteúdo
+        de registros é representada em um diagrama de caminhos de dados por um
+        trapézio contendo um nome para a operação. Por exemplo, a caixa marcada
+        como <code>rem</code> na
+        <a href="#Figure-5_002e1">Figura 5.1</a> representa uma operação que
+        calcula o resto da divisão do conteúdo dos registros <code>a</code> e
+        <code>b</code> aos quais está conectada. Setas (sem botões) apontam dos
+        registros de entrada e constantes para a caixa, e setas conectam o valor
+        de saída da operação aos registros. Um teste é representado por um
+        círculo contendo um nome para o teste. Por exemplo, nossa máquina
+        <abbr>MDC</abbr> tem uma operação que testa se o conteúdo do registro
+        <code>b</code> é zero. Um teste também tem setas de seus registros de
+        entrada e constantes, mas não tem setas de saída; seu valor é usado pelo
+        controlador em vez dos caminhos de dados. No geral, o diagrama de
+        caminhos de dados mostra os registros e operações necessários para a
+        máquina e como eles devem ser conectados. Se visualizarmos as setas como
+        fios e os botões <code>X</code> como interruptores, o diagrama de
+        caminhos de dados é muito semelhante ao diagrama de fiação de uma
+        máquina que poderia ser construída a partir de componentes elétricos.
+      </p>
+      <p>
+        Para que os caminhos de dados realmente calculem <abbr>MDC</abbr>s, os
+        botões devem ser pressionados na sequência correta. Descreveremos essa
+        sequência em termos de um diagrama de controlador, conforme ilustrado na
+        <a href="#Figure-5_002e2">Figura 5.2</a>. Os elementos do diagrama do
+        controlador indicam como os componentes dos caminhos de dados devem ser
+        operados. As caixas retangulares no diagrama do controlador identificam
+        os botões dos caminhos de dados que devem ser pressionados, e as setas
+        descrevem a sequência de um passo para o próximo. O losango no diagrama
+        representa uma decisão. Uma das duas setas de sequência será seguida,
+        dependendo do valor do teste dos caminhos de dados identificado no
+        losango. Podemos interpretar o controlador em termos de uma analogia
+        física: pense no diagrama como um labirinto no qual uma bola está
+        rolando. Quando a bola rola para uma caixa, ela pressiona o botão dos
+        caminhos de dados que é nomeado pela caixa. Quando a bola rola para um
+        nó de decisão (como o teste para <code>b</code> = 0), ela deixa o nó no
+        caminho determinado pelo resultado do teste indicado. Juntos, os
+        caminhos de dados e o controlador descrevem completamente uma máquina
+        para calcular <abbr>MDC</abbr>s. Iniciamos o controlador (a bola
+        rolante) no lugar marcado como <code>start</code>, após colocar números
+        nos registros <code>a</code> e <code>b</code>. Quando o controlador
+        atinge <code>done</code>, encontraremos o valor do <abbr>MDC</abbr> no
+        registro <code>a</code>.
+      </p>
+      <figure class="float">
+        <a id="Figure-5_002e2"></a>
+        <object
+          style="width: 27.46ex; height: 30.74ex"
+          data="fig/chap5/Fig5.2.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 5.2:</strong> Controlador para uma máquina
+            <abbr>MDC</abbr>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e1"></a>Exercício 5.1:</strong> Projete
+          uma máquina de registro para calcular fatoriais usando o algoritmo
+          iterativo especificado pelo seguinte procedimento. Desenhe diagramas
+          de caminhos de dados e controlador para essa máquina.
+        </p>
+        <pre><code class="language-scheme">(define (factorial n)
+  (define (iter product counter)
+    (if (> counter n)
+        product
+        (iter (* counter product)
+              (+ counter 1))))
+  (iter 1 1))</code></pre>
+      </blockquote>
+
+      <a id="g_t5_002e1_002e1"></a>
+      <a id="A-Language-for-Describing-Register-Machines"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.1.1</span
+        ><span class="sectitle"
+          >Uma Linguagem para Descrever Máquinas de Registro</span
+        >
+      </h4>
+
+      <p>
+        Diagramas de caminhos de dados e controlador são adequados para
+        representar máquinas simples, como a de <abbr>MDC</abbr>, mas são
+        difíceis de usar para descrever máquinas grandes, como um interpretador
+        Lisp. Para possibilitar o trabalho com máquinas complexas, criaremos uma
+        linguagem que apresenta, em forma textual, todas as informações
+        fornecidas pelos diagramas de caminhos de dados e controlador.
+        Começaremos com uma notação que espelha diretamente os diagramas.
+      </p>
+      <p>
+        Definimos os caminhos de dados de uma máquina descrevendo os registros e
+        as operações. Para descrever um registro, damos a ele um nome e
+        especificamos os botões que controlam a atribuição a ele. Damos a cada
+        um desses botões um nome e especificamos a fonte dos dados que entram no
+        registro sob o controle do botão. (A fonte é um registro, uma constante
+        ou uma operação.) Para descrever uma operação, damos a ela um nome e
+        especificamos suas entradas (registros ou constantes).
+      </p>
+      <p>
+        Definimos o controlador de uma máquina como uma sequência de
+        <a id="index-instructions-1"></a> <em>instruções</em> junto com
+        <a id="index-labels"></a> <em>rótulos</em> que identificam
+        <a id="index-entry-points"></a> <em>pontos de entrada</em> na sequência.
+        Uma instrução é uma das seguintes:
+      </p>
+      <ul>
+        <li>
+          O nome de um botão dos caminhos de dados para pressionar e atribuir um
+          valor a um registro. (Isso corresponde a uma caixa no diagrama do
+          controlador.)
+        </li>
+        <li>
+          Uma instrução <code>test</code>, que realiza um teste especificado.
+        </li>
+        <li>
+          Um desvio condicional (<code>branch</code>) para um local indicado por
+          um rótulo do controlador, com base no resultado do teste anterior. (O
+          teste e o desvio juntos correspondem a um losango no diagrama do
+          controlador.) Se o teste for falso, o controlador deve continuar com a
+          próxima instrução na sequência. Caso contrário, o controlador deve
+          continuar com a instrução após o rótulo.
+        </li>
+        <li>
+          Um desvio incondicional (<code>goto</code>) nomeando um rótulo do
+          controlador para continuar a execução.
+        </li>
+      </ul>
+
+      <p>
+        A máquina começa no início da sequência de instruções do controlador e
+        para quando a execução atinge o final da sequência. Exceto quando um
+        desvio muda o fluxo de controle, as instruções são executadas na ordem
+        em que são listadas.
+      </p>
+      <p>
+        A <a href="#Figure-5_002e3">Figura 5.3</a> mostra a máquina
+        <abbr>MDC</abbr> descrita dessa forma. Este exemplo apenas sugere a
+        generalidade dessas descrições, já que a máquina <abbr>MDC</abbr> é um
+        caso muito simples: cada registro tem apenas um botão, e cada botão e
+        teste é usado apenas uma vez no controlador.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Figure-5_002e3"></a>Figura 5.3:</strong>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mo stretchy="false">↓</mo>
+          </math>
+          Uma especificação da máquina <abbr>MDC</abbr>.
+        </p>
+        <pre><code class="language-scheme">(data-paths
+ (registers
+  ((name a)
+   (buttons ((name a&lt;-b) 
+             (source (register b)))))
+  ((name b)
+   (buttons ((name b&lt;-t)
+             (source (register t)))))
+  ((name t)
+   (buttons ((name t&lt;-r)
+             (source (operation rem))))))
+ (operations
+  ((name rem)
+   (inputs (register a) (register b)))
+  ((name =)
+   (inputs (register b) (constant 0)))))
+
+(controller
+ test-b                ; rótulo
+   (test =)            ; teste
+   (branch 
+    (label gcd-done))  ; desvio condicional
+   (t&lt;-r)              ; pressionar botão
+   (a&lt;-b)              ; pressionar botão
+   (b&lt;-t)              ; pressionar botão
+   (goto 
+    (label test-b))    ; desvio incondicional
+ gcd-done)             ; rótulo</code></pre>
+      </blockquote>
+
+      <p>
+        Infelizmente, é difícil ler uma descrição como essa. Para entender as
+        instruções do controlador, devemos constantemente nos referir às
+        definições dos nomes dos botões e das operações, e para entender o que
+        os botões fazem, podemos ter que nos referir às definições dos nomes das
+        operações. Portanto, transformaremos nossa notação para combinar as
+        informações das descrições dos caminhos de dados e do controlador, de
+        modo que possamos ver tudo junto.
+      </p>
+      <p>
+        Para obter essa forma de descrição, substituiremos os nomes arbitrários
+        dos botões e operações pelas definições de seu comportamento. Ou seja,
+        em vez de dizer (no controlador) "Pressione o botão
+        <code>t&lt;-r</code>" e separadamente dizer (nos caminhos de dados) "O
+        botão <code>t&lt;-r</code> atribui o valor da operação
+        <code>rem</code> ao registro <code>t</code>" e "As entradas da operação
+        <code>rem</code> são os conteúdos dos registros <code>a</code> e
+        <code>b</code>", diremos (no controlador) "Pressione o botão que atribui
+        ao registro <code>t</code> o valor da operação <code>rem</code> sobre os
+        conteúdos dos registros <code>a</code> e <code>b</code>". Da mesma
+        forma, em vez de dizer (no controlador) "Realize o teste <code>=</code>"
+        e separadamente dizer (nos caminhos de dados) "O teste
+        <code>=</code> opera sobre o conteúdo do registro <code>b</code> e a
+        constante 0", diremos "Realize o teste <code>=</code> sobre o conteúdo
+        do registro <code>b</code> e a constante 0". Omitiremos a descrição dos
+        caminhos de dados, deixando apenas a sequência do controlador. Assim, a
+        máquina <abbr>MDC</abbr> é descrita da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(controller
+ test-b
+   (test (op =) (reg b) (const 0))
+   (branch (label gcd-done))
+   (assign t (op rem) (reg a) (reg b))
+   (assign a (reg b))
+   (assign b (reg t))
+   (goto (label test-b))
+ gcd-done)</code></pre>
+
+      <p>
+        Essa forma de descrição é mais fácil de ler do que a ilustrada na
+        <a href="#Figure-5_002e3">Figura 5.3</a>, mas também tem desvantagens:
+      </p>
+      <ul>
+        <li>
+          É mais verbosa para máquinas grandes, porque descrições completas dos
+          elementos dos caminhos de dados são repetidas sempre que os elementos
+          são mencionados na sequência de instruções do controlador. (Isso não é
+          um problema no exemplo do <abbr>MDC</abbr>, porque cada operação e
+          botão é usado apenas uma vez.) Além disso, repetir as descrições dos
+          caminhos de dados obscurece a estrutura real dos caminhos de dados da
+          máquina; não é óbvio para uma máquina grande quantos registros,
+          operações e botões existem e como eles estão interconectados.
+        </li>
+        <li>
+          Como as instruções do controlador em uma definição de máquina se
+          parecem com expressões Lisp, é fácil esquecer que elas não são
+          expressões Lisp arbitrárias. Elas só podem notar operações legais da
+          máquina. Por exemplo, as operações só podem operar diretamente sobre
+          constantes e os conteúdos dos registros, não sobre os resultados de
+          outras operações.
+        </li>
+      </ul>
+
+      <p>
+        Apesar dessas desvantagens, usaremos essa linguagem de máquina de
+        registro ao longo deste capítulo, porque estaremos mais preocupados em
+        entender os controladores do que em entender os elementos e conexões nos
+        caminhos de dados. Devemos manter em mente, no entanto, que o projeto
+        dos caminhos de dados é crucial no projeto de máquinas reais.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e2"></a>Exercício 5.2:</strong> Use a
+          linguagem de máquina de registro para descrever a máquina de fatorial
+          iterativa do <a href="#Exercise-5_002e1">Exercício 5.1</a>.
+        </p>
+      </blockquote>
+
+      <a id="Actions"></a>
+      <h5 class="subsubheading">Ações</h5>
+
+      <p>
+        Vamos modificar a máquina <abbr>MDC</abbr> para que possamos digitar os
+        números cujo <abbr>MDC</abbr> queremos e obter a resposta impressa no
+        nosso terminal. Não discutiremos como fazer uma máquina que possa ler e
+        imprimir, mas assumiremos (como fazemos quando usamos
+        <code>read</code> e <code>display</code> em Scheme) que elas estão
+        disponíveis como operações primitivas.<a
+          class="footnote_link"
+          id="DOCF286"
+          href="#FOOT286"
+          ><sup>286</sup></a
+        >
+      </p>
+      <p>
+        <code>Read</code> é como as operações que temos usado, pois produz um
+        valor que pode ser armazenado em um registro. Mas <code>read</code> não
+        recebe entradas de nenhum registro; seu valor depende de algo que
+        acontece fora das partes da máquina que estamos projetando. Permitiremos
+        que as operações da nossa máquina tenham esse comportamento e, portanto,
+        desenharemos e notaremos o uso de <code>read</code> como fazemos com
+        qualquer outra operação que calcula um valor.
+      </p>
+      <p>
+        <code>Print</code>, por outro lado, difere das operações que temos usado
+        de uma maneira fundamental: ele não produz um valor de saída para ser
+        armazenado em um registro. Embora tenha um efeito, esse efeito não é
+        sobre uma parte da máquina que estamos projetando. Chamaremos esse tipo
+        de operação de <a id="index-action"></a> <em>ação</em>. Representaremos
+        uma ação em um diagrama de caminhos de dados da mesma forma que
+        representamos uma operação que calcula um valor—como um trapézio que
+        contém o nome da ação. Setas apontam para a caixa da ação de quaisquer
+        entradas (registros ou constantes). Também associamos um botão à ação.
+        Pressionar o botão faz a ação acontecer. Para fazer o controlador
+        pressionar um botão de ação, usamos um novo tipo de instrução chamado
+        <code>perform</code>. Assim, a ação de imprimir o conteúdo do registro
+        <code>a</code> é representada em uma sequência de controlador pela
+        instrução
+      </p>
+      <pre><code class="language-scheme">(perform (op print) (reg a))</code></pre>
+
+      <p>
+        A <a href="#Figure-5_002e4">Figura 5.4</a> mostra os caminhos de dados e
+        o controlador para a nova máquina <abbr>MDC</abbr>. Em vez de fazer a
+        máquina parar após imprimir a resposta, fizemos com que ela recomece, de
+        modo que ela repetidamente lê um par de números, calcula seu
+        <abbr>MDC</abbr> e imprime o resultado. Essa estrutura é semelhante aos
+        loops de driver que usamos nos interpretadores do
+        <a href="Chapter-4.html#Chapter-4">Capítulo 4</a>.
+      </p>
+      <figure class="float">
+        <a id="Figure-5_002e4"></a>
+        <object
+          style="width: 59.92ex; height: 69.76ex"
+          data="fig/chap5/Fig5.4c.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 5.4:</strong> Uma máquina <abbr>MDC</abbr> que lê
+            entradas e imprime resultados.
+          </p>
+        </figcaption>
+      </figure>
+
+      <a id="g_t5_002e1_002e2"></a>
+      <a id="Abstraction-in-Machine-Design"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.1.2</span
+        ><span class="sectitle">Abstração no Projeto de Máquinas</span>
+      </h4>
+
+      <p>
+        Frequentemente definiremos uma máquina para incluir operações
+        "primitivas" que são, na verdade, muito complexas. Por exemplo, em
+        <a href="5_002e4.html#g_t5_002e4">5.4</a> e
+        <a href="5_002e5.html#g_t5_002e5">5.5</a>, trataremos as manipulações de
+        ambiente do Scheme como primitivas. Essa abstração é valiosa porque nos
+        permite ignorar os detalhes de partes de uma máquina para que possamos
+        nos concentrar em outros aspectos do projeto. O fato de termos escondido
+        muita complexidade, no entanto, não significa que o projeto de uma
+        máquina seja irrealista. Sempre podemos substituir as "primitivas"
+        complexas por operações primitivas mais simples.
+      </p>
+      <p>
+        Considere a máquina <abbr>MDC</abbr>. A máquina tem uma instrução que
+        calcula o resto da divisão dos conteúdos dos registros <code>a</code> e
+        <code>b</code> e atribui o resultado ao registro <code>t</code>. Se
+        quisermos construir a máquina <abbr>MDC</abbr> sem usar uma operação
+        primitiva de resto, devemos especificar como calcular restos em termos
+        de operações mais simples, como subtração. De fato, podemos escrever um
+        procedimento Scheme que encontra restos dessa forma:
+      </p>
+      <pre><code class="language-scheme">(define (remainder n d)
+  (if (< n d)
+      n
+      (remainder (- n d) d)))</code></pre>
+
+      <p>
+        Podemos, portanto, substituir a operação de resto nos caminhos de dados
+        da máquina <abbr>MDC</abbr> por uma operação de subtração e um teste de
+        comparação. A <a href="#Figure-5_002e5">Figura 5.5</a> mostra os
+        caminhos de dados e o controlador para a máquina elaborada. A instrução
+      </p>
+      <pre><code class="language-scheme">(assign t (op rem) (reg a) (reg b))</code></pre>
+
+      <p>
+        na definição do controlador do <abbr>MDC</abbr> é substituída por uma
+        sequência de instruções que contém um loop, como mostrado na
+        <a href="#Figure-5_002e6">Figura 5.6</a>.
+      </p>
+      <figure class="float">
+        <a id="Figure-5_002e5"></a>
+        <object
+          style="width: 44.03ex; height: 70.71ex"
+          data="fig/chap5/Fig5.5b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 5.5:</strong> Caminhos de dados e controlador para a
+            máquina <abbr>MDC</abbr> elaborada.
+          </p>
+        </figcaption>
+      </figure>
+
+      <blockquote>
+        <p>
+          <strong><a id="Figure-5_002e6"></a>Figura 5.6:</strong>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mo stretchy="false">↓</mo>
+          </math>
+          Sequência de instruções do controlador para a máquina
+          <abbr>MDC</abbr> na <a href="#Figure-5_002e5">Figura 5.5</a>.
+        </p>
+        <pre><code class="language-scheme">(controller
+ test-b
+   (test (op =) (reg b) (const 0))
+   (branch (label gcd-done))
+   (assign t (reg a))
+ rem-loop
+   (test (op <) (reg t) (reg b))
+   (branch (label rem-done))
+   (assign t (op -) (reg t) (reg b))
+   (goto (label rem-loop))
+ rem-done
+   (assign a (reg b))
+   (assign b (reg t))
+   (goto (label test-b))
+ gcd-done)</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e3"></a>Exercício 5.3:</strong> Projete
+          uma máquina para calcular raízes quadradas usando o método de Newton,
+          conforme descrito em
+          <a href="1_002e1.html#Sec_002e1_002e1_002e7">1.1.7</a>:
+        </p>
+        <pre><code class="language-scheme">(define (sqrt x)
+  (define (good-enough? guess)
+    (< (abs (- (square guess) x)) 0.001))
+  (define (improve guess)
+    (average guess (/ x guess)))
+  (define (sqrt-iter guess)
+    (if (good-enough? guess)
+        guess
+        (sqrt-iter (improve guess))))
+  (sqrt-iter 1.0))</code></pre>
+
+        <p>
+          Comece assumindo que as operações <code>good-enough?</code> e
+          <code>improve</code> estão disponíveis como primitivas. Em seguida,
+          mostre como expandir essas operações em termos de operações
+          aritméticas. Descreva cada versão do projeto da máquina
+          <code>sqrt</code> desenhando um diagrama de caminhos de dados e
+          escrevendo uma definição de controlador na linguagem de máquina de
+          registro.
+        </p>
+      </blockquote>
+
+      <a id="g_t5_002e1_002e3"></a>
+      <a id="Subroutines"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.1.3</span
+        ><span class="sectitle">Sub-rotinas</span>
+      </h4>
+
+      <p>
+        Ao projetar uma máquina para realizar uma computação, muitas vezes
+        preferimos organizar os componentes para que sejam compartilhados por
+        diferentes partes da computação, em vez de duplicar os componentes.
+        Considere uma máquina que inclui duas computações de
+        <abbr>MDC</abbr>—uma que encontra o <abbr>MDC</abbr> dos conteúdos dos
+        registros <code>a</code> e <code>b</code> e outra que encontra o
+        <abbr>MDC</abbr> dos conteúdos dos registros <code>c</code> e
+        <code>d</code>. Podemos começar assumindo que temos uma operação
+        primitiva <code>gcd</code>, então expandir as duas instâncias de
+        <code>gcd</code> em termos de operações mais primitivas. A
+        <a href="#Figure-5_002e7">Figura 5.7</a> mostra apenas as partes dos
+        caminhos de dados da máquina resultante relacionadas ao
+        <abbr>MDC</abbr>, sem mostrar como elas se conectam ao resto da máquina.
+        A figura também mostra as partes correspondentes da sequência de
+        controlador da máquina.
+      </p>
+      <figure class="float">
+        <a id="Figure-5_002e7"></a>
+        <object
+          style="width: 56.64ex; height: 63.2ex"
+          data="fig/chap5/Fig5.7b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 5.7:</strong> Partes dos caminhos de dados e
+            sequência de controlador para uma máquina com duas computações de
+            <abbr>MDC</abbr>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Essa máquina tem duas caixas de operação de resto e duas caixas para
+        testar igualdade. Se os componentes duplicados forem complicados, como a
+        caixa de resto, essa não será uma maneira econômica de construir a
+        máquina. Podemos evitar duplicar os componentes dos caminhos de dados
+        usando os mesmos componentes para ambas as computações de
+        <abbr>MDC</abbr>, desde que isso não afete o restante da computação da
+        máquina maior. Se os valores nos registros <code>a</code> e
+        <code>b</code> não forem necessários quando o controlador chegar a
+        <code>gcd-2</code> (ou se esses valores puderem ser movidos para outros
+        registros para segurança), podemos mudar a máquina para que ela use os
+        registros <code>a</code> e <code>b</code>, em vez dos registros
+        <code>c</code> e <code>d</code>, para calcular o segundo
+        <abbr>MDC</abbr> além do primeiro. Se fizermos isso, obteremos a
+        sequência de controlador mostrada na
+        <a href="#Figure-5_002e8">Figura 5.8</a>.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Figure-5_002e8"></a>Figura 5.8:</strong>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mo stretchy="false">↓</mo>
+          </math>
+          Partes da sequência de controlador para uma máquina que usa os mesmos
+          componentes dos caminhos de dados para duas computações de
+          <abbr>MDC</abbr> diferentes.
+        </p>
+        <pre><code class="language-scheme">gcd-1
+ (test (op =) (reg b) (const 0))
+ (branch (label after-gcd-1))
+ (assign t (op rem) (reg a) (reg b))
+ (assign a (reg b))
+ (assign b (reg t))
+ (goto (label gcd-1))
+after-gcd-1
+  …
+gcd-2
+ (test (op =) (reg b) (const 0))
+ (branch (label after-gcd-2))
+ (assign t (op rem) (reg a) (reg b))
+ (assign a (reg b))
+ (assign b (reg t))
+ (goto (label gcd-2))
+after-gcd-2</code></pre>
+      </blockquote>
+
+      <p>
+        Removemos os componentes duplicados dos caminhos de dados (de modo que
+        os caminhos de dados são novamente como na
+        <a href="#Figure-5_002e1">Figura 5.1</a>), mas o controlador agora tem
+        duas sequências de <abbr>MDC</abbr> que diferem apenas em seus rótulos
+        de ponto de entrada. Seria melhor substituir essas duas sequências por
+        desvios para uma única sequência—uma <code>gcd</code>
+        <a id="index-subroutine"></a> <em>sub-rotina</em>—no final da qual
+        desviamos de volta para o lugar correto na sequência de instruções
+        principal. Podemos realizar isso da seguinte forma: Antes de desviar
+        para <code>gcd</code>, colocamos um valor distinto (como 0 ou 1) em um
+        registro especial, <code>continue</code>. No final da sub-rotina
+        <code>gcd</code>, retornamos para <code>after-gcd-1</code> ou
+        <code>after-gcd-2</code>, dependendo do valor do registro
+        <code>continue</code>. A <a href="#Figure-5_002e9">Figura 5.9</a> mostra
+        a parte relevante da sequência de controlador resultante, que inclui
+        apenas uma cópia das instruções <code>gcd</code>.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Figure-5_002e9"></a>Figura 5.9:</strong>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mo stretchy="false">↓</mo>
+          </math>
+          Usando um registro <code>continue</code> para evitar a sequência de
+          controlador duplicada na <a href="#Figure-5_002e8">Figura 5.8</a>.
+        </p>
+        <pre><code class="language-scheme">gcd
+ (test (op =) (reg b) (const 0))
+ (branch (label gcd-done))
+ (assign t (op rem) (reg a) (reg b))
+ (assign a (reg b))
+ (assign b (reg t))
+ (goto (label gcd))
+gcd-done
+ (test (op =) (reg continue) (const 0))
+ (branch (label after-gcd-1))
+ (goto (label after-gcd-2))
+  …
+;; Antes de desviar para <code>gcd</code> do primeiro lugar onde é necessário,
+;; colocamos 0 no registro <code>continue</code>
+ (assign continue (const 0))
+ (goto (label gcd))
+after-gcd-1
+  …
+;; Antes do segundo uso de <code>gcd</code>,
+;; colocamos 1 no registro <code>continue</code>
+ (assign continue (const 1))
+ (goto (label gcd))
+after-gcd-2</code></pre>
+      </blockquote>
+
+      <p>
+        Essa é uma abordagem razoável para lidar com problemas pequenos, mas
+        seria incômoda se houvesse muitas instâncias de computações de
+        <abbr>MDC</abbr> na sequência de controlador. Para decidir onde
+        continuar a execução após a sub-rotina <code>gcd</code>, precisaríamos
+        de testes nos caminhos de dados e instruções de desvio no controlador
+        para todos os lugares que usam <code>gcd</code>. Um método mais poderoso
+        para implementar sub-rotinas é fazer com que o registro
+        <code>continue</code> mantenha o rótulo do ponto de entrada na sequência
+        de controlador onde a execução deve continuar quando a sub-rotina
+        terminar. Implementar essa estratégia requer um novo tipo de conexão
+        entre os caminhos de dados e o controlador de uma máquina de registro:
+        Deve haver uma maneira de atribuir a um registro um rótulo na sequência
+        de controlador de forma que esse valor possa ser recuperado do registro
+        e usado para continuar a execução no ponto de entrada designado.
+      </p>
+      <p>
+        Para refletir essa capacidade, estenderemos a instrução
+        <code>assign</code> da linguagem de máquina de registro para permitir
+        que um registro seja atribuído como valor um rótulo da sequência de
+        controlador (como um tipo especial de constante). Também estenderemos a
+        instrução <code>goto</code> para permitir que a execução continue no
+        ponto de entrada descrito pelo conteúdo de um registro, em vez de apenas
+        em um ponto de entrada descrito por um rótulo constante. Usando esses
+        novos construtos, podemos terminar a sub-rotina <code>gcd</code> com um
+        desvio para o local armazenado no registro <code>continue</code>. Isso
+        leva à sequência de controlador mostrada na
+        <a href="#Figure-5_002e10">Figura 5.10</a>.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Figure-5_002e10"></a>Figura 5.10:</strong>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mo stretchy="false">↓</mo>
+          </math>
+          Atribuir rótulos ao registro <code>continue</code> simplifica e
+          generaliza a estratégia mostrada na
+          <a href="#Figure-5_002e9">Figura 5.9</a>.
+        </p>
+        <pre><code class="language-scheme">gcd
+ (test (op =) (reg b) (const 0))
+ (branch (label gcd-done))
+ (assign t (op rem) (reg a) (reg b))
+ (assign a (reg b))
+ (assign b (reg t))
+ (goto (label gcd))
+gcd-done
+ (goto (reg continue))
+  …
+;; Antes de chamar <code>gcd</code>,
+;; atribuímos ao <code>continue</code> o rótulo
+;; para o qual <code>gcd</code> deve retornar.
+ (assign continue (label after-gcd-1))
+ (goto (label gcd))
+after-gcd-1
+  …
+;; Aqui está a segunda chamada para <code>gcd</code>,
+;; com uma continuação diferente.
+ (assign continue (label after-gcd-2))
+ (goto (label gcd))
+after-gcd-2</code></pre>
+      </blockquote>
+
+      <p>
+        Uma máquina com mais de uma sub-rotina poderia usar múltiplos registros
+        de continuação (por exemplo, <code>gcd-continue</code>,
+        <code>factorial-continue</code>) ou poderíamos ter todas as sub-rotinas
+        compartilhando um único registro <code>continue</code>. Compartilhar é
+        mais econômico, mas devemos ter cuidado se tivermos uma sub-rotina
+        (<code>sub1</code>) que chama outra sub-rotina (<code>sub2</code>). A
+        menos que <code>sub1</code> salve o conteúdo de <code>continue</code> em
+        algum outro registro antes de configurar <code>continue</code> para a
+        chamada a <code>sub2</code>, <code>sub1</code> não saberá para onde ir
+        quando terminar. O mecanismo desenvolvido na próxima seção para lidar
+        com recursão também fornece uma solução melhor para esse problema de
+        chamadas de sub-rotinas aninhadas.
+      </p>
+      <a id="g_t5_002e1_002e4"></a>
+      <a id="Using-a-Stack-to-Implement-Recursion"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.1.4</span
+        ><span class="sectitle"
+          >Usando uma Pilha para Implementar Recursão</span
+        >
+      </h4>
+
+      <p>
+        Com as ideias ilustradas até agora, podemos implementar qualquer
+        processo iterativo especificando uma máquina de registro que tenha um
+        registro correspondente a cada variável de estado do processo. A máquina
+        executa repetidamente um loop de controlador, alterando o conteúdo dos
+        registros, até que alguma condição de término seja satisfeita. Em cada
+        ponto da sequência de controlador, o estado da máquina (representando o
+        estado do processo iterativo) é completamente determinado pelo conteúdo
+        dos registros (os valores das variáveis de estado).
+      </p>
+      <p>
+        Implementar processos recursivos, no entanto, requer um mecanismo
+        adicional. Considere o seguinte método recursivo para calcular
+        fatoriais, que examinamos pela primeira vez em
+        <a href="1_002e2.html#g_t1_002e2_002e1">1.2.1</a>:
+      </p>
+      <pre><code class="language-scheme">(define (factorial n)
+  (if (= n 1) 
+      1
+      (* (factorial (- n 1)) n)))</code></pre>
+
+      <p>
+        Como vemos no procedimento, calcular
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>!</mo>
+          </mrow>
+        </math>
+        requer calcular
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>1</mn>
+            <mo stretchy="false">)</mo>
+            <mo>!</mo>
+          </mrow> </math
+        >. Nossa máquina <abbr>MDC</abbr>, modelada no procedimento
+      </p>
+      <pre><code class="language-scheme">(define (gcd a b)
+  (if (= b 0) 
+      a
+      (gcd b (remainder a b))))</code></pre>
+
+      <p>
+        da mesma forma teve que calcular outro <abbr>MDC</abbr>. Mas há uma
+        diferença importante entre o procedimento <code>gcd</code>, que reduz a
+        computação original a uma nova computação de <abbr>MDC</abbr>, e
+        <code>factorial</code>, que requer calcular outro fatorial como um
+        subproblema. Em <abbr>MDC</abbr>, a resposta para a nova computação de
+        <abbr>MDC</abbr> é a resposta para o problema original. Para calcular o
+        próximo <abbr>MDC</abbr>, simplesmente colocamos os novos argumentos nos
+        registros de entrada da máquina <abbr>MDC</abbr> e reutilizamos os
+        caminhos de dados da máquina executando a mesma sequência de
+        controlador. Quando a máquina termina de resolver o problema final de
+        <abbr>MDC</abbr>, ela concluiu toda a computação.
+      </p>
+      <p>
+        No caso de fatorial (ou qualquer processo recursivo), a resposta para o
+        novo subproblema de fatorial não é a resposta para o problema original.
+        O valor obtido para
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>1</mn>
+            <mo stretchy="false">)</mo>
+            <mo>!</mo>
+          </mrow>
+        </math>
+        deve ser multiplicado por
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>n</mi>
+        </math>
+        para obter a resposta final. Se tentarmos imitar o projeto do
+        <abbr>MDC</abbr> e resolver o subproblema de fatorial decrementando o
+        registro <code>n</code> e reexecutando a máquina de fatorial, não
+        teremos mais disponível o valor antigo de <code>n</code> pelo qual
+        multiplicar o resultado. Precisamos, portanto, de uma segunda máquina de
+        fatorial para trabalhar no subproblema. Essa segunda computação de
+        fatorial tem, por sua vez, um subproblema de fatorial, que requer uma
+        terceira máquina de fatorial, e assim por diante. Como cada máquina de
+        fatorial contém outra máquina de fatorial dentro dela, a máquina total
+        contém um ninho infinito de máquinas semelhantes e, portanto, não pode
+        ser construída a partir de um número fixo e finito de partes.
+      </p>
+      <p>
+        No entanto, podemos implementar o processo de fatorial como uma máquina
+        de registro se pudermos organizar para usar os mesmos componentes para
+        cada instância aninhada da máquina. Especificamente, a máquina que
+        calcula
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>!</mo>
+          </mrow>
+        </math>
+        deve usar os mesmos componentes para trabalhar no subproblema de
+        calcular
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>1</mn>
+            <mo stretchy="false">)</mo>
+            <mo>!</mo>
+          </mrow> </math
+        >, no subproblema para
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>2</mn>
+            <mo stretchy="false">)</mo>
+            <mo>!</mo>
+          </mrow> </math
+        >, e assim por diante. Isso é plausível porque, embora o processo de
+        fatorial exija que um número ilimitado de cópias da mesma máquina sejam
+        necessárias para realizar uma computação, apenas uma dessas cópias
+        precisa estar ativa a qualquer momento. Quando a máquina encontra um
+        subproblema recursivo, ela pode suspender o trabalho no problema
+        principal, reutilizar as mesmas partes físicas para trabalhar no
+        subproblema e, em seguida, continuar a computação suspensa.
+      </p>
+      <p>
+        No subproblema, o conteúdo dos registros será diferente do que era no
+        problema principal. (Nesse caso, o registro <code>n</code> é
+        decrementado.) Para poder continuar a computação suspensa, a máquina
+        deve salvar o conteúdo de quaisquer registros que serão necessários após
+        o subproblema ser resolvido, para que esses valores possam ser
+        restaurados para continuar a computação suspensa. No caso de fatorial,
+        salvaremos o valor antigo de <code>n</code>, para ser restaurado quando
+        terminarmos de calcular o fatorial do registro
+        <code>n</code> decrementado.<a
+          class="footnote_link"
+          id="DOCF287"
+          href="#FOOT287"
+          ><sup>287</sup></a
+        >
+      </p>
+      <p>
+        Como não há limite <em>a priori</em> para a profundidade de chamadas
+        recursivas aninhadas, podemos precisar salvar um número arbitrário de
+        valores de registros. Esses valores devem ser restaurados na ordem
+        inversa àquela em que foram salvos, já que em um ninho de recursões o
+        último subproblema a ser entrado é o primeiro a ser concluído. Isso dita
+        o uso de uma <a id="index-stack-1"></a> <em>pilha</em>, ou estrutura de
+        dados "último a entrar, primeiro a sair", para salvar os valores dos
+        registros. Podemos estender a linguagem de máquina de registro para
+        incluir uma pilha adicionando dois tipos de instruções: Valores são
+        colocados na pilha usando uma instrução <code>save</code> e restaurados
+        da pilha usando uma instrução <code>restore</code>. Após uma sequência
+        de valores ter sido <code>save</code>d na pilha, uma sequência de
+        <code>restore</code>s recuperará esses valores na ordem inversa.<a
+          class="footnote_link"
+          id="DOCF288"
+          href="#FOOT288"
+          ><sup>288</sup></a
+        >
+      </p>
+      <p>
+        Com a ajuda da pilha, podemos reutilizar uma única cópia dos caminhos de
+        dados da máquina de fatorial para cada subproblema de fatorial. Há uma
+        questão de projeto semelhante na reutilização da sequência de
+        controlador que opera os caminhos de dados. Para reexecutar a computação
+        de fatorial, o controlador não pode simplesmente voltar ao início, como
+        em um processo iterativo, porque após resolver o subproblema de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>1</mn>
+            <mo stretchy="false">)</mo>
+            <mo>!</mo>
+          </mrow> </math
+        >, a máquina ainda deve multiplicar o resultado por
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>n</mi> </math>. O
+        controlador deve suspender sua computação de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>!</mo>
+          </mrow> </math
+        >, resolver o subproblema de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>1</mn>
+            <mo stretchy="false">)</mo>
+            <mo>!</mo>
+          </mrow> </math
+        >, e então continuar sua computação de
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>!</mo>
+          </mrow> </math
+        >. Essa visão da computação de fatorial sugere o uso do mecanismo de
+        sub-rotina descrito em <a href="#g_t5_002e1_002e3">5.1.3</a>, que faz o
+        controlador usar um registro <code>continue</code> para transferir para
+        a parte da sequência que resolve um subproblema e, em seguida, continuar
+        de onde parou no problema principal. Podemos, portanto, fazer uma
+        sub-rotina de fatorial que retorna ao ponto de entrada armazenado no
+        registro <code>continue</code>. Em torno de cada chamada de sub-rotina,
+        salvamos e restauramos <code>continue</code> assim como fazemos com o
+        registro <code>n</code>, já que cada "nível" da computação de fatorial
+        usará o mesmo registro <code>continue</code>. Ou seja, a sub-rotina de
+        fatorial deve colocar um novo valor em <code>continue</code> quando
+        chama a si mesma para um subproblema, mas precisará do valor antigo para
+        retornar ao lugar que a chamou para resolver um subproblema.
+      </p>
+      <p>
+        A <a href="#Figure-5_002e11">Figura 5.11</a> mostra os caminhos de dados
+        e o controlador para uma máquina que implementa o procedimento recursivo
+        <code>factorial</code>. A máquina tem uma pilha e três registros,
+        chamados <code>n</code>, <code>val</code> e <code>continue</code>. Para
+        simplificar o diagrama de caminhos de dados, não nomeamos os botões de
+        atribuição de registros, apenas os botões de operação de pilha (<code
+          >sc</code
+        >
+        e <code>sn</code> para salvar registros, <code>rc</code> e
+        <code>rn</code> para restaurar registros). Para operar a máquina,
+        colocamos no registro <code>n</code> o número cujo fatorial desejamos
+        calcular e iniciamos a máquina. Quando a máquina atinge
+        <code>fact-done</code>, a computação é concluída e a resposta será
+        encontrada no registro <code>val</code>. Na sequência de controlador,
+        <code>n</code> e <code>continue</code> são salvos antes de cada chamada
+        recursiva e restaurados após o retorno da chamada. O retorno de uma
+        chamada é realizado desviando para o local armazenado em
+        <code>continue</code>. <code>Continue</code> é inicializado quando a
+        máquina é iniciada para que o último retorno vá para
+        <code>fact-done</code>. O registro <code>val</code>, que contém o
+        resultado da computação de fatorial, não é salvo antes da chamada
+        recursiva, porque o conteúdo antigo de <code>val</code> não é útil após
+        o retorno da sub-rotina. Apenas o novo valor, que é o valor produzido
+        pela subcomputação, é necessário.
+      </p>
+      <figure class="float">
+        <a id="Figure-5_002e11"></a>
+        <object
+          style="width: 66.14ex; height: 73.13ex"
+          data="fig/chap5/Fig5.11b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 5.11:</strong> Uma máquina de fatorial recursiva.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Embora, em princípio, a computação de fatorial exija uma máquina
+        infinita, a máquina na <a href="#Figure-5_002e11">Figura 5.11</a> é, na
+        verdade, finita, exceto pela pilha, que é potencialmente ilimitada.
+        Qualquer implementação física de uma pilha, no entanto, terá um tamanho
+        finito, e isso limitará a profundidade de chamadas recursivas que podem
+        ser tratadas pela máquina. Essa implementação de fatorial ilustra a
+        estratégia geral para realizar algoritmos recursivos como máquinas de
+        registro comuns aumentadas por pilhas. Quando um subproblema recursivo é
+        encontrado, salvamos na pilha os registros cujos valores atuais serão
+        necessários após o subproblema ser resolvido, resolvemos o subproblema
+        recursivo e, em seguida, restauramos os registros salvos e continuamos a
+        execução no problema principal. O registro <code>continue</code> deve
+        sempre ser salvo. Se há outros registros que precisam ser salvos depende
+        da máquina específica, já que nem todas as computações recursivas
+        precisam dos valores originais dos registros que são modificados durante
+        a solução do subproblema (veja
+        <a href="#Exercise-5_002e4">Exercício 5.4</a>).
+      </p>
+      <a id="A-double-recursion"></a>
+      <h5 class="subsubheading">Uma dupla recursão</h5>
+
+      <p>
+        Vamos examinar um processo recursivo mais complexo, a computação
+        recursiva em árvore dos números de Fibonacci, que introduzimos em
+        <a href="1_002e2.html#g_t1_002e2_002e2">1.2.2</a>:
+      </p>
+      <pre><code class="language-scheme">(define (fib n)
+  (if (< n 2) 
+      n 
+      (+ (fib (- n 1)) (fib (- n 2)))))</code></pre>
+
+      <p>
+        Assim como com fatorial, podemos implementar a computação recursiva de
+        Fibonacci como uma máquina de registro com registros <code>n</code>,
+        <code>val</code> e <code>continue</code>. A máquina é mais complexa que
+        a de fatorial, porque há dois lugares na sequência de controlador onde
+        precisamos realizar chamadas recursivas—uma para calcular
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mtext>Fib</mtext>
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>1</mn>
+            <mo stretchy="false">)</mo>
+          </mrow>
+        </math>
+        e outra para calcular
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mtext>Fib</mtext>
+            <mo stretchy="false">(</mo>
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>2</mn>
+            <mo stretchy="false">)</mo>
+          </mrow> </math
+        >. Para configurar cada uma dessas chamadas, salvamos os registros cujos
+        valores serão necessários posteriormente, definimos o registro
+        <code>n</code> para o número cujo Fib precisamos calcular recursivamente
+        (<math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>1</mn>
+          </mrow>
+        </math>
+        ou
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mi>n</mi>
+            <mo>−</mo>
+            <mn>2</mn>
+          </mrow> </math
+        >), e atribuímos ao <code>continue</code> o ponto de entrada na
+        sequência principal para o qual retornar (<code>afterfib-n-1</code> ou
+        <code>afterfib-n-2</code>, respectivamente). Em seguida, vamos para
+        <code>fib-loop</code>. Quando retornamos da chamada recursiva, a
+        resposta está em <code>val</code>. A
+        <a href="#Figure-5_002e12">Figura 5.12</a> mostra a sequência de
+        controlador para essa máquina.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Figure-5_002e12"></a>Figura 5.12:</strong>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mo stretchy="false">↓</mo>
+          </math>
+          Controlador para uma máquina que calcula números de Fibonacci.
+        </p>
+        <pre><code class="language-scheme">(controller
+   (assign continue (label fib-done))
+ fib-loop
+   (test (op <) (reg n) (const 2))
+   (branch (label immediate-answer))
+   ;; configurar para calcular Fib(n − 1)
+   (save continue)
+   (assign continue (label afterfib-n-1))
+   (save n)           ; salvar o valor antigo de <code>n</code>
+   (assign n 
+           (op -)
+           (reg n)
+           (const 1)) ; sobrescrever <code>n</code> para <code>n-1</code>
+   (goto 
+    (label fib-loop)) ; realizar chamada recursiva
+ afterfib-n-1 ; ao retornar, <code>val</code> contém Fib(n − 1)
+   (restore n)
+   (restore continue)
+   ;; configurar para calcular Fib(n − 2)
+   (assign n (op -) (reg n) (const 2))
+   (save continue)
+   (assign continue (label afterfib-n-2))
+   (save val)         ; salvar Fib(n − 1)
+   (goto (label fib-loop))
+ afterfib-n-2 ; ao retornar, <code>val</code> contém Fib(n − 2)
+   (assign n 
+           (reg val)) ; <code>n</code> agora contém Fib(n − 2)
+   (restore val)      ; <code>val</code> agora contém Fib(n − 1)
+   (restore continue)
+   (assign val        ; Fib(n − 1) + Fib(n − 2)
+           (op +) 
+           (reg val)
+           (reg n))
+   (goto              ; retornar ao chamador,
+    (reg continue))   ; a resposta está em <code>val</code>
+ immediate-answer
+   (assign val 
+           (reg n))   ; caso base: Fib(n) = n
+   (goto (reg continue))
+ fib-done)</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e4"></a>Exercício 5.4:</strong>
+          Especifique máquinas de registro que implementem cada um dos seguintes
+          procedimentos. Para cada máquina, escreva uma sequência de instruções
+          de controlador e desenhe um diagrama mostrando os caminhos de dados.
+        </p>
+        <ol>
+          <li>
+            Exponenciação recursiva:
+
+            <pre><code class="language-scheme">(define (expt b n)
+  (if (= n 0)
+      1
+      (* b (expt b (- n 1)))))</code></pre>
+          </li>
+          <li>
+            Exponenciação iterativa:
+
+            <pre><code class="language-scheme">(define (expt b n)
+  (define (expt-iter counter product)
+    (if (= counter 0)
+        product
+        (expt-iter (- counter 1)
+                   (* b product))))
+  (expt-iter n 1))</code></pre>
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e5"></a>Exercício 5.5:</strong> Simule
+          manualmente as máquinas de fatorial e Fibonacci, usando alguma entrada
+          não trivial (exigindo a execução de pelo menos uma chamada recursiva).
+          Mostre o conteúdo da pilha em cada ponto significativo da execução.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e6"></a>Exercício 5.6:</strong> Ben
+          Bitdiddle observa que a sequência de controlador da máquina de
+          Fibonacci tem um <code>save</code> e um <code>restore</code> extras,
+          que podem ser removidos para fazer uma máquina mais rápida. Onde estão
+          essas instruções?
+        </p>
+      </blockquote>
+
+      <a id="g_t5_002e1_002e5"></a>
+      <a id="Instruction-Summary"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.1.5</span
+        ><span class="sectitle">Resumo das Instruções</span>
+      </h4>
+
+      <p>
+        Uma instrução de controlador em nossa linguagem de máquina de registro
+        tem uma das seguintes formas, onde cada
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mspace width="0.06em" />
+            <mi>i</mi>
+            <mi>n</mi>
+            <mi>p</mi>
+            <mi>u</mi>
+            <msub>
+              <mi>t</mi>
+              <mi>i</mi>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        é <code>(reg ⟨<var>nome-do-registro</var>⟩)</code> ou
+        <code>(const ⟨<var>valor-constante</var>⟩)</code>. Essas instruções
+        foram introduzidas em <a href="#g_t5_002e1_002e1">5.1.1</a>:
+      </p>
+      <pre><code class="language-scheme">(assign ⟨nome-do-registro⟩ (reg ⟨nome-do-registro⟩))
+(assign ⟨nome-do-registro⟩ 
+        (const ⟨valor-constante⟩))
+(assign ⟨nome-do-registro⟩ 
+        (op ⟨nome-da-operação⟩) 
+        ⟨input₁⟩ … ⟨inputₙ⟩)
+(perform (op ⟨nome-da-operação⟩) 
+         ⟨input₁⟩ 
+         … 
+         ⟨inputₙ⟩)
+(test (op ⟨nome-da-operação⟩) 
+      ⟨input₁⟩ 
+      … 
+      ⟨inputₙ⟩)
+(branch (label ⟨nome-do-rótulo⟩))
+(goto (label ⟨nome-do-rótulo⟩))</code></pre>
+
+      <p>
+        O uso de registros para armazenar rótulos foi introduzido em
+        <a href="#g_t5_002e1_002e3">5.1.3</a>:
+      </p>
+      <pre><code class="language-scheme">(assign ⟨nome-do-registro⟩ (label ⟨nome-do-rótulo⟩))
+(goto (reg ⟨nome-do-registro⟩))</code></pre>
+
+      <p>
+        As instruções para usar a pilha foram introduzidas em
+        <a href="#g_t5_002e1_002e4">5.1.4</a>:
+      </p>
+      <pre><code class="language-scheme">(save ⟨nome-do-registro⟩)
+(restore ⟨nome-do-registro⟩)</code></pre>
+
+      <p>
+        O único tipo de <code>⟨</code><var>valor-constante</var
+        ><code>⟩</code> que vimos até agora é um número, mas mais tarde usaremos
+        strings, símbolos e listas. Por exemplo,<br />
+        <code>(const "abc")</code> é a string <code>"abc"</code>,<br />
+        <code>(const abc)</code> é o símbolo <code>abc</code>,<br />
+        <code>(const (a b c))</code> é a lista <code>(a b c)</code>,<br />
+        e <code>(const ())</code> é a lista vazia.
+      </p>
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+
+        <div id="FOOT286">
+          <p>
+            <a class="footnote_backlink" href="#DOCF286"><sup>286</sup></a> Essa
+            suposição ignora uma grande quantidade de complexidade. Normalmente,
+            uma grande parte da implementação de um sistema Lisp é dedicada a
+            fazer a leitura e impressão funcionarem.
+          </p>
+        </div>
+        <div id="FOOT287">
+          <p>
+            <a class="footnote_backlink" href="#DOCF287"><sup>287</sup></a>
+            Pode-se argumentar que não precisamos salvar o valor antigo de
+            <code>n</code>; após decrementá-lo e resolver o subproblema,
+            poderíamos simplesmente incrementá-lo para recuperar o valor antigo.
+            Embora essa estratégia funcione para fatorial, ela não pode
+            funcionar em geral, já que o valor antigo de um registro nem sempre
+            pode ser calculado a partir do novo.
+          </p>
+        </div>
+        <div id="FOOT288">
+          <p>
+            <a class="footnote_backlink" href="#DOCF288"><sup>288</sup></a> Em
+            <a href="5_002e3.html#g_t5_002e3">5.3</a> veremos como implementar
+            uma pilha em termos de operações mais primitivas.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="5_002e2.html#g_t5_002e2" accesskey="n" rel="next">5.2</a>,
+          Anterior:
+          <a href="Chapter-5.html#Chapter-5" accesskey="p" rel="prev"
+            >Capítulo 5</a
+          >, Acima: <a href="#g_t5_002e1" accesskey="u" rel="prev">5.1</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Jump to bottom"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
+</html>

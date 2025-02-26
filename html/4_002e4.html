@@ -1,0 +1,4200 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.4"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.4"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.4
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t4_002e4"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="Chapter-5.html#Chapter-5" accesskey="n" rel="next"
+            >Capítulo 5</a
+          >, Anterior:
+          <a href="4_002e3.html#g_t4_002e3" accesskey="p" rel="prev">4.3</a>,
+          Acima:
+          <a href="Chapter-4.html#Chapter-4" accesskey="u" rel="prev"
+            >Capítulo 4</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <a id="Logic-Programming"></a>
+      <h3 class="section">
+        <span class="secnum">4.4</span
+        ><span class="sectitle">Programação Lógica</span>
+      </h3>
+
+      <p>
+        No <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>, enfatizamos que a
+        ciência da computação lida com conhecimento imperativo (como fazer),
+        enquanto a matemática lida com conhecimento declarativo (o que é). De
+        fato, as linguagens de programação exigem que o programador expresse o
+        conhecimento de uma forma que indique os métodos passo a passo para
+        resolver problemas específicos. Por outro lado, linguagens de alto nível
+        fornecem, como parte da implementação da linguagem, uma quantidade
+        substancial de conhecimento metodológico que libera o usuário da
+        preocupação com inúmeros detalhes de como uma computação especificada
+        progredirá.
+      </p>
+
+      <p>
+        A maioria das linguagens de programação, incluindo Lisp, é organizada em
+        torno do cálculo dos valores de funções matemáticas. Linguagens
+        orientadas a expressões (como Lisp, Fortran e Algol) se aproveitam do
+        "trocadilho" de que uma expressão que descreve o valor de uma função
+        também pode ser interpretada como um meio de calcular esse valor. Por
+        causa disso, a maioria das linguagens de programação é fortemente
+        tendenciosa em direção a computações unidirecionais (computações com
+        entradas e saídas bem definidas). No entanto, existem linguagens de
+        programação radicalmente diferentes que relaxam essa tendência. Vimos um
+        exemplo disso em <a href="3_002e3.html#g_t3_002e3_002e5">3.3.5</a>, onde
+        os objetos de computação eram restrições aritméticas. Em um sistema de
+        restrições, a direção e a ordem da computação não são tão bem
+        especificadas; ao realizar uma computação, o sistema deve, portanto,
+        fornecer um conhecimento mais detalhado de "como fazer" do que seria o
+        caso com uma computação aritmética comum. Isso não significa, no
+        entanto, que o usuário seja totalmente liberado da responsabilidade de
+        fornecer conhecimento imperativo. Existem muitas redes de restrições que
+        implementam o mesmo conjunto de restrições, e o usuário deve escolher,
+        entre o conjunto de redes matematicamente equivalentes, uma rede
+        adequada para especificar uma computação específica.
+      </p>
+
+      <p>
+        O avaliador de programas não determinístico de
+        <a href="4_002e3.html#g_t4_002e3">4.3</a> também se afasta da visão de
+        que programar é sobre a construção de algoritmos para calcular funções
+        unidirecionais. Em uma linguagem não determinística, as expressões podem
+        ter mais de um valor e, como resultado, a computação lida com relações
+        em vez de funções de valor único. A programação lógica estende essa
+        ideia combinando uma visão relacional da programação com um tipo
+        poderoso de correspondência de padrões simbólicos chamado
+        <a id="index-unification"></a><em>unificação</em>.<a
+          class="footnote_link"
+          id="DOCF262"
+          href="#FOOT262"
+          ><sup>262</sup></a
+        >
+      </p>
+
+      <p>
+        Essa abordagem, quando funciona, pode ser uma maneira muito poderosa de
+        escrever programas. Parte do poder vem do fato de que um único fato "o
+        que é" pode ser usado para resolver vários problemas diferentes que
+        teriam diferentes componentes de "como fazer". Como exemplo, considere a
+        operação <code>append</code>, que recebe duas listas como argumentos e
+        combina seus elementos para formar uma única lista. Em uma linguagem
+        procedural como Lisp, poderíamos definir <code>append</code> em termos
+        do construtor básico de listas <code>cons</code>, como fizemos em
+        <a href="2_002e2.html#g_t2_002e2_002e1">2.2.1</a>:
+      </p>
+
+      <pre><code class="language-scheme">(define (append x y)
+  (if (null? x) 
+      y 
+      (cons (car x) (append (cdr x) y))))</code></pre>
+
+      <p>
+        Este procedimento pode ser considerado uma tradução para Lisp das duas
+        regras a seguir, a primeira das quais cobre o caso em que a primeira
+        lista está vazia e a segunda lida com o caso de uma lista não vazia, que
+        é um <code>cons</code> de duas partes:
+      </p>
+
+      <ul>
+        <li>
+          Para qualquer lista <code>y</code>, a lista vazia e <code>y</code> se
+          juntam para formar <code>y</code>.
+        </li>
+        <li>
+          Para qualquer <code>u</code>, <code>v</code>, <code>y</code> e
+          <code>z</code>, <code>(cons u v)</code> e <code>y</code> se juntam
+          para formar <code>(cons u z)</code> se <code>v</code> e
+          <code>y</code> se juntarem para formar <code>z</code>.<a
+            class="footnote_link"
+            id="DOCF263"
+            href="#FOOT263"
+            ><sup>263</sup></a
+          >
+        </li>
+      </ul>
+
+      <p>
+        Usando o procedimento <code>append</code>, podemos responder a perguntas
+        como:
+      </p>
+
+      <blockquote>
+        <p>
+          Encontre o <code>append</code> de <code>(a b)</code> e
+          <code>(c d)</code>.
+        </p>
+      </blockquote>
+
+      <p>
+        Mas as mesmas duas regras também são suficientes para responder aos
+        seguintes tipos de perguntas, que o procedimento não pode responder:
+      </p>
+
+      <blockquote>
+        <p>
+          Encontre uma lista <code>y</code> que, ao ser concatenada com
+          <code>(a b)</code>, produza <code>(a b c d)</code>.
+        </p>
+        <p>
+          Encontre todos os <code>x</code> e <code>y</code> que, ao serem
+          concatenados, formem <code>(a b c d)</code>.
+        </p>
+      </blockquote>
+
+      <p>
+        Em uma linguagem de programação lógica, o programador escreve um
+        procedimento <code>append</code> declarando as duas regras sobre
+        <code>append</code> dadas acima. O conhecimento de "como fazer" é
+        fornecido automaticamente pelo interpretador para permitir que esse
+        único par de regras seja usado para responder a todos os três tipos de
+        perguntas sobre <code>append</code>.<a
+          class="footnote_link"
+          id="DOCF264"
+          href="#FOOT264"
+          ><sup>264</sup></a
+        >
+      </p>
+
+      <p>
+        As linguagens de programação lógicas contemporâneas (incluindo a que
+        implementamos aqui) têm deficiências substanciais, pois seus métodos
+        gerais de "como fazer" podem levá-las a loops infinitos espúrios ou
+        outros comportamentos indesejáveis. A programação lógica é um campo
+        ativo de pesquisa em ciência da computação.<a
+          class="footnote_link"
+          id="DOCF265"
+          href="#FOOT265"
+          ><sup>265</sup></a
+        >
+      </p>
+
+      <p>
+        Anteriormente neste capítulo, exploramos a tecnologia de implementação
+        de interpretadores e descrevemos os elementos essenciais para um
+        interpretador de uma linguagem semelhante ao Lisp (na verdade, para um
+        interpretador de qualquer linguagem convencional). Agora aplicaremos
+        essas ideias para discutir um interpretador para uma linguagem de
+        programação lógica. Chamamos essa linguagem de
+        <a id="index-query-language"></a><em>linguagem de consulta</em>, porque
+        é muito útil para recuperar informações de bancos de dados formulando
+        <a id="index-queries"></a><em>consultas</em>, ou perguntas, expressas na
+        linguagem. Embora a linguagem de consulta seja muito diferente do Lisp,
+        achamos conveniente descrevê-la em termos da mesma estrutura geral que
+        temos usado até agora: como uma coleção de elementos primitivos,
+        juntamente com meios de combinação que nos permitem combinar elementos
+        simples para criar elementos mais complexos e meios de abstração que nos
+        permitem considerar elementos complexos como unidades conceituais
+        únicas. Um interpretador para uma linguagem de programação lógica é
+        consideravelmente mais complexo que um interpretador para uma linguagem
+        como Lisp. No entanto, veremos que nosso interpretador de linguagem de
+        consulta contém muitos dos mesmos elementos encontrados no interpretador
+        de <a href="4_002e1.html#g_t4_002e1">4.1</a>. Em particular, haverá uma
+        parte "eval" que classifica expressões de acordo com o tipo e uma parte
+        "apply" que implementa o mecanismo de abstração da linguagem
+        (procedimentos no caso do Lisp e <a id="index-rules"></a
+        ><em>regras</em> no caso da programação lógica). Além disso, uma
+        estrutura de dados de quadro desempenha um papel central na
+        implementação, determinando a correspondência entre símbolos e seus
+        valores associados. Um aspecto adicional interessante de nossa
+        implementação da linguagem de consulta é que fazemos uso substancial de
+        fluxos, que foram introduzidos no
+        <a href="Chapter-3.html#Chapter-3">Capítulo 3</a>.
+      </p>
+
+      <a id="g_t4_002e4_002e1"></a>
+      <a id="Deductive-Information-Retrieval"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.4.1</span
+        ><span class="sectitle">Recuperação de Informações Dedutivas</span>
+      </h4>
+
+      <p>
+        A programação lógica se destaca em fornecer interfaces para bancos de
+        dados para recuperação de informações. A linguagem de consulta que
+        implementaremos neste capítulo foi projetada para ser usada dessa
+        maneira.
+      </p>
+
+      <p>
+        Para ilustrar o que o sistema de consulta faz, mostraremos como ele pode
+        ser usado para gerenciar o banco de dados de registros de pessoal da
+        Microshaft, uma próspera empresa de alta tecnologia na área de Boston. A
+        linguagem fornece acesso direcionado por padrão a informações de pessoal
+        e também pode tirar proveito de regras gerais para fazer deduções
+        lógicas.
+      </p>
+
+      <a id="A-sample-data-base"></a>
+      <h5 class="subsubheading">Um banco de dados de exemplo</h5>
+
+      <p>
+        O banco de dados de pessoal da Microshaft contém
+        <a id="index-assertions"></a><em>asserções</em> sobre o pessoal da
+        empresa. Aqui estão as informações sobre Ben Bitdiddle, o residente
+        especialista em computação:
+      </p>
+
+      <pre><code class="language-scheme">(address (Bitdiddle Ben) 
+         (Slumerville (Ridge Road) 10))
+(job (Bitdiddle Ben) (computer wizard))
+(salary (Bitdiddle Ben) 60000)</code></pre>
+
+      <p>
+        Cada asserção é uma lista (neste caso, uma tripla) cujos elementos podem
+        ser listas.
+      </p>
+
+      <p>
+        Como residente especialista, Ben é responsável pela divisão de
+        computação da empresa e supervisiona dois programadores e um técnico.
+        Aqui estão as informações sobre eles:
+      </p>
+
+      <pre><code class="language-scheme">(address (Hacker Alyssa P) 
+         (Cambridge (Mass Ave) 78))
+(job (Hacker Alyssa P) (computer programmer))
+(salary (Hacker Alyssa P) 40000)
+(supervisor (Hacker Alyssa P) (Bitdiddle Ben))
+
+(address (Fect Cy D) 
+         (Cambridge (Ames Street) 3))
+(job (Fect Cy D) (computer programmer))
+(salary (Fect Cy D) 35000)
+(supervisor (Fect Cy D) (Bitdiddle Ben))
+
+(address (Tweakit Lem E) 
+         (Boston (Bay State Road) 22))
+(job (Tweakit Lem E) (computer technician))
+(salary (Tweakit Lem E) 25000)
+(supervisor (Tweakit Lem E) (Bitdiddle Ben))</code></pre>
+
+      <p>
+        Há também um estagiário de programação, que é supervisionado por Alyssa:
+      </p>
+
+      <pre><code class="language-scheme">(address (Reasoner Louis) 
+         (Slumerville (Pine Tree Road) 80))
+(job (Reasoner Louis) 
+     (computer programmer trainee))
+(salary (Reasoner Louis) 30000)
+(supervisor (Reasoner Louis) 
+            (Hacker Alyssa P))</code></pre>
+
+      <p>
+        Todas essas pessoas estão na divisão de computação, como indicado pela
+        palavra <code>computer</code> como o primeiro item em suas descrições de
+        trabalho.
+      </p>
+
+      <p>
+        Ben é um funcionário de alto nível. Seu supervisor é o grande chefe da
+        empresa:
+      </p>
+
+      <pre><code class="language-scheme">(supervisor (Bitdiddle Ben) (Warbucks Oliver))
+(address (Warbucks Oliver) 
+         (Swellesley (Top Heap Road)))
+(job (Warbucks Oliver) 
+     (administration big wheel))
+(salary (Warbucks Oliver) 150000)</code></pre>
+
+      <p>
+        Além da divisão de computação supervisionada por Ben, a empresa tem uma
+        divisão de contabilidade, consistindo de um contador-chefe e seu
+        assistente:
+      </p>
+
+      <pre><code class="language-scheme">(address (Scrooge Eben) 
+         (Weston (Shady Lane) 10))
+(job (Scrooge Eben) 
+     (accounting chief accountant))
+(salary (Scrooge Eben) 75000)
+(supervisor (Scrooge Eben) (Warbucks Oliver))
+
+(address (Cratchet Robert) 
+         (Allston (N Harvard Street) 16))
+(job (Cratchet Robert) (accounting scrivener))
+(salary (Cratchet Robert) 18000)
+(supervisor (Cratchet Robert) (Scrooge Eben))</code></pre>
+
+      <p>Há também uma secretária para o grande chefe:</p>
+
+      <pre><code class="language-scheme">(address (Aull DeWitt) 
+         (Slumerville (Onion Square) 5))
+(job (Aull DeWitt) (administration secretary))
+(salary (Aull DeWitt) 25000)
+(supervisor (Aull DeWitt) (Warbucks Oliver))</code></pre>
+
+      <p>
+        O banco de dados também contém asserções sobre quais tipos de trabalhos
+        podem ser feitos por pessoas que ocupam outros tipos de trabalhos. Por
+        exemplo, um especialista em computação pode fazer os trabalhos de um
+        programador de computador e de um técnico de computador:
+      </p>
+
+      <pre><code class="language-scheme">(can-do-job (computer wizard) 
+            (computer programmer))
+
+(can-do-job (computer wizard) 
+            (computer technician))</code></pre>
+
+      <p>Um programador de computador poderia substituir um estagiário:</p>
+
+      <pre><code class="language-scheme">(can-do-job (computer programmer)
+            (computer programmer trainee))</code></pre>
+
+      <p>Além disso, como é bem conhecido,</p>
+
+      <pre><code class="language-scheme">(can-do-job (administration secretary)
+            (administration big wheel))</code></pre>
+
+      <a id="Simple-queries"></a>
+      <h5 class="subsubheading">Consultas simples</h5>
+
+      <p>
+        A linguagem de consulta permite que os usuários recuperem informações do
+        banco de dados fazendo consultas em resposta ao prompt do sistema. Por
+        exemplo, para encontrar todos os programadores de computador, pode-se
+        dizer:
+      </p>
+
+      <pre><code class="language-scheme">;;; Entrada da consulta:
+(job ?x (computer programmer))</code></pre>
+
+      <p>O sistema responderá com os seguintes itens:</p>
+
+      <pre><code class="language-scheme">;;; Resultados da consulta:
+(job (Hacker Alyssa P) (computer programmer))
+(job (Fect Cy D) (computer programmer))</code></pre>
+
+      <p>
+        A consulta de entrada especifica que estamos procurando entradas no
+        banco de dados que correspondam a um determinado
+        <a id="index-pattern"></a><em>padrão</em>. Neste exemplo, o padrão
+        especifica entradas consistindo de três itens, dos quais o primeiro é o
+        símbolo literal <code>job</code>, o segundo pode ser qualquer coisa e o
+        terceiro é a lista literal <code>(computer programmer)</code>. O
+        "qualquer coisa" que pode ser o segundo item na lista correspondente é
+        especificado por uma <a id="index-pattern-variable"></a
+        ><em>variável de padrão</em>, <code>?x</code>. A forma geral de uma
+        variável de padrão é um símbolo, tomado como o nome da variável,
+        precedido por um ponto de interrogação. Veremos abaixo por que é útil
+        especificar nomes para variáveis de padrão em vez de apenas colocar
+        <code>?</code> nos padrões para representar "qualquer coisa". O sistema
+        responde a uma consulta simples mostrando todas as entradas no banco de
+        dados que correspondem ao padrão especificado.
+      </p>
+
+      <p>Um padrão pode ter mais de uma variável. Por exemplo, a consulta:</p>
+
+      <pre><code class="language-scheme">(address ?x ?y)</code></pre>
+
+      <p>listará todos os endereços dos funcionários.</p>
+
+      <p>
+        Um padrão pode não ter variáveis, caso em que a consulta simplesmente
+        determina se esse padrão é uma entrada no banco de dados. Se for, haverá
+        uma correspondência; se não, não haverá correspondências.
+      </p>
+
+      <p>
+        A mesma variável de padrão pode aparecer mais de uma vez em uma
+        consulta, especificando que o mesmo "qualquer coisa" deve aparecer em
+        cada posição. É por isso que as variáveis têm nomes. Por exemplo:
+      </p>
+
+      <pre><code class="language-scheme">(supervisor ?x ?x)</code></pre>
+
+      <p>
+        encontra todas as pessoas que se supervisionam (embora não haja tais
+        asserções em nosso banco de dados de exemplo).
+      </p>
+
+      <p>A consulta:</p>
+
+      <pre><code class="language-scheme">(job ?x (computer ?type))</code></pre>
+
+      <p>
+        corresponde a todas as entradas de trabalho cujo terceiro item é uma
+        lista de dois elementos cujo primeiro item é <code>computer</code>:
+      </p>
+
+      <pre><code class="language-scheme">(job (Bitdiddle Ben) (computer wizard))
+(job (Hacker Alyssa P) (computer programmer))
+(job (Fect Cy D) (computer programmer))
+(job (Tweakit Lem E) (computer technician))</code></pre>
+
+      <p>Esse mesmo padrão <em>não</em> corresponde a:</p>
+
+      <pre><code class="language-scheme">(job (Reasoner Louis) 
+     (computer programmer trainee))</code></pre>
+
+      <p>
+        porque o terceiro item na entrada é uma lista de três elementos, e o
+        terceiro item do padrão especifica que deve haver dois elementos. Se
+        quiséssemos mudar o padrão para que o terceiro item pudesse ser qualquer
+        lista começando com <code>computer</code>, poderíamos especificar<a
+          class="footnote_link"
+          id="DOCF266"
+          href="#FOOT266"
+          ><sup>266</sup></a
+        >:
+      </p>
+
+      <pre><code class="language-scheme">(job ?x (computer . ?type))</code></pre>
+
+      <p>Por exemplo:</p>
+
+      <pre><code class="language-scheme">(computer . ?type)</code></pre>
+
+      <p>corresponde aos dados:</p>
+
+      <pre><code class="language-scheme">(computer programmer trainee)</code></pre>
+
+      <p>
+        com <code>?type</code> como a lista <code>(programmer trainee)</code>.
+        Também corresponde aos dados:
+      </p>
+
+      <pre><code class="language-scheme">(computer programmer)</code></pre>
+
+      <p>
+        com <code>?type</code> como a lista <code>(programmer)</code>, e
+        corresponde aos dados:
+      </p>
+
+      <pre><code class="language-scheme">(computer)</code></pre>
+
+      <p>com <code>?type</code> como a lista vazia <code>()</code>.</p>
+
+      <p>
+        Podemos descrever o processamento de consultas simples pela linguagem de
+        consulta da seguinte forma:
+      </p>
+
+      <ul>
+        <li>
+          O sistema encontra todas as atribuições às variáveis no padrão de
+          consulta que <a id="index-satisfy"></a><em>satisfazem</em> o padrão—ou
+          seja, todos os conjuntos de valores para as variáveis tais que, se as
+          variáveis de padrão forem <a id="index-instantiated-with"></a
+          ><em>instanciadas com</em> (substituídas por) os valores, o resultado
+          estará no banco de dados.
+        </li>
+        <li>
+          O sistema responde à consulta listando todas as instanciações do
+          padrão de consulta com as atribuições de variáveis que a satisfazem.
+        </li>
+      </ul>
+
+      <p>
+        Observe que, se o padrão não tiver variáveis, a consulta se reduz a uma
+        determinação de se esse padrão está no banco de dados. Se estiver, a
+        atribuição vazia, que não atribui valores a variáveis, satisfaz esse
+        padrão para esse banco de dados.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e55"></a>Exercício 4.55:</strong> Dê
+          consultas simples que recuperem as seguintes informações do banco de
+          dados:
+        </p>
+        <ol>
+          <li>todas as pessoas supervisionadas por Ben Bitdiddle;</li>
+          <li>
+            os nomes e empregos de todas as pessoas na divisão de contabilidade;
+          </li>
+          <li>
+            os nomes e endereços de todas as pessoas que moram em Slumerville.
+          </li>
+        </ol>
+      </blockquote>
+
+      <a id="Compound-queries"></a>
+      <h5 class="subsubheading">Consultas compostas</h5>
+
+      <p>
+        Consultas simples formam as operações primitivas da linguagem de
+        consulta. Para formar operações compostas, a linguagem de consulta
+        fornece meios de combinação. Uma coisa que torna a linguagem de consulta
+        uma linguagem de programação lógica é que os meios de combinação
+        espelham os meios de combinação usados na formação de expressões
+        lógicas: <code>and</code>, <code>or</code> e <code>not</code>. (Aqui
+        <code>and</code>, <code>or</code> e <code>not</code> não são os
+        primitivos do Lisp, mas sim operações embutidas na linguagem de
+        consulta.)
+      </p>
+
+      <p>
+        Podemos usar <code>and</code> da seguinte forma para encontrar os
+        endereços de todos os programadores de computador:
+      </p>
+
+      <pre><code class="language-scheme">(and (job ?person (computer programmer))
+     (address ?person ?where))</code></pre>
+
+      <p>O resultado é:</p>
+
+      <pre><code class="language-scheme">(and (job (Hacker Alyssa P) 
+          (computer programmer))
+     (address (Hacker Alyssa P) 
+              (Cambridge (Mass Ave) 78)))
+
+(and (job (Fect Cy D) (computer programmer))
+     (address (Fect Cy D) 
+              (Cambridge (Ames Street) 3))</code></pre>
+
+      <p>Em geral:</p>
+
+      <pre><code class="language-scheme">(and ⟨query₁⟩ ⟨query₂⟩ … ⟨queryₙ⟩)</code></pre>
+
+      <p>
+        é satisfeito por todos os conjuntos de valores para as variáveis de
+        padrão que satisfazem simultaneamente
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">⟨</mo><mspace width="0.1em" /><mi>q</mi
+            ><mi>u</mi><mi>e</mi><mi>r</mi><msub><mi>y</mi><mn>1</mn></msub
+            ><mo stretchy="false">⟩</mo></mrow
+          ></math
+        >
+        <span class="roman">…</span>
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">⟨</mo><mspace width="0.1em" /><mi>q</mi
+            ><mi>u</mi><mi>e</mi><mi>r</mi><msub><mi>y</mi><mi>n</mi></msub
+            ><mo stretchy="false">⟩</mo></mrow
+          ></math
+        >.
+      </p>
+
+      <p>
+        Como para consultas simples, o sistema processa uma consulta composta
+        encontrando todas as atribuições às variáveis de padrão que satisfazem a
+        consulta, então exibindo instanciações da consulta com esses valores.
+      </p>
+
+      <p>
+        Outro meio de construir consultas compostas é através de
+        <code>or</code>. Por exemplo:
+      </p>
+
+      <pre><code class="language-scheme">(or (supervisor ?x (Bitdiddle Ben))
+    (supervisor ?x (Hacker Alyssa P)))</code></pre>
+
+      <p>
+        encontrará todos os funcionários supervisionados por Ben Bitdiddle ou
+        Alyssa P. Hacker:
+      </p>
+
+      <pre><code class="language-scheme">(or (supervisor (Hacker Alyssa P) 
+                (Bitdiddle Ben))
+    (supervisor (Hacker Alyssa P) 
+                (Hacker Alyssa P)))
+
+(or (supervisor (Fect Cy D) 
+                (Bitdiddle Ben))
+    (supervisor (Fect Cy D) 
+                (Hacker Alyssa P)))
+
+(or (supervisor (Tweakit Lem E) 
+                (Bitdiddle Ben))
+    (supervisor (Tweakit Lem E) 
+                (Hacker Alyssa P)))
+
+(or (supervisor (Reasoner Louis) 
+                (Bitdiddle Ben))
+    (supervisor (Reasoner Louis) 
+                (Hacker Alyssa P)))</code></pre>
+
+      <p>Em geral:</p>
+
+      <pre><code class="language-scheme">(or ⟨query₁⟩ ⟨query₂⟩ … ⟨queryₙ⟩)</code></pre>
+
+      <p>
+        é satisfeito por todos os conjuntos de valores para as variáveis de
+        padrão que satisfazem pelo menos um de
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">⟨</mo><mspace width="0.1em" /><mi>q</mi
+            ><mi>u</mi><mi>e</mi><mi>r</mi><msub><mi>y</mi><mn>1</mn></msub
+            ><mo stretchy="false">⟩</mo></mrow
+          ></math
+        >
+        <span class="roman">…</span>
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">⟨</mo><mspace width="0.1em" /><mi>q</mi
+            ><mi>u</mi><mi>e</mi><mi>r</mi><msub><mi>y</mi><mi>n</mi></msub
+            ><mo stretchy="false">⟩</mo></mrow
+          ></math
+        >.
+      </p>
+
+      <p>
+        Consultas compostas também podem ser formadas com <code>not</code>. Por
+        exemplo:
+      </p>
+
+      <pre><code class="language-scheme">(and (supervisor ?x (Bitdiddle Ben))
+     (not (job ?x (computer programmer))))</code></pre>
+
+      <p>
+        encontra todas as pessoas supervisionadas por Ben Bitdiddle que não são
+        programadores de computador. Em geral:
+      </p>
+
+      <pre><code class="language-scheme">(not ⟨query₁⟩)</code></pre>
+
+      <p>
+        é satisfeito por todas as atribuições às variáveis de padrão que não
+        satisfazem
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">⟨</mo><mspace width="0.1em" /><mi>q</mi
+            ><mi>u</mi><mi>e</mi><mi>r</mi><msub><mi>y</mi><mn>1</mn></msub
+            ><mo stretchy="false">⟩</mo></mrow
+          ></math
+        >.<a class="footnote_link" id="DOCF267" href="#FOOT267"
+          ><sup>267</sup></a
+        >
+      </p>
+
+      <p>
+        A forma final de combinação é chamada <code>lisp-value</code>. Quando
+        <code>lisp-value</code> é o primeiro elemento de um padrão, ele
+        especifica que o próximo elemento é um predicado Lisp a ser aplicado ao
+        resto dos elementos (instanciados) como argumentos. Em geral:
+      </p>
+
+      <pre><code class="language-scheme">(lisp-value ⟨predicate⟩ ⟨arg₁⟩ … ⟨argₙ⟩)</code></pre>
+
+      <p>
+        será satisfeito por atribuições às variáveis de padrão para as quais o
+        <code>⟨</code><var>predicate</var><code>⟩</code> aplicado aos
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">⟨</mo><mspace width="0.1em" /><mi>a</mi
+            ><mi>r</mi><msub><mi>g</mi><mn>1</mn></msub
+            ><mo stretchy="false">⟩</mo></mrow
+          ></math
+        >
+        <span class="roman">…</span>
+        <math xmlns="http://www.w3.org/1998/Math/MathML"
+          ><mrow class="MJX-TeXAtom-ORD"
+            ><mo stretchy="false">⟨</mo><mspace width="0.1em" /><mi>a</mi
+            ><mi>r</mi><msub><mi>g</mi><mi>n</mi></msub
+            ><mo stretchy="false">⟩</mo></mrow
+          ></math
+        >
+        é verdadeiro. Por exemplo, para encontrar todas as pessoas cujo salário
+        é maior que $30.000, poderíamos escrever<a
+          class="footnote_link"
+          id="DOCF268"
+          href="#FOOT268"
+          ><sup>268</sup></a
+        >:
+      </p>
+
+      <pre><code class="language-scheme">(and (salary ?person ?amount)
+     (lisp-value > ?amount 30000))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e56"></a>Exercício 4.56:</strong> Formule
+          consultas compostas que recuperem as seguintes informações:
+        </p>
+        <ol>
+          <li>
+            os nomes de todas as pessoas que são supervisionadas por Ben
+            Bitdiddle, juntamente com seus endereços;
+          </li>
+          <li>
+            todas as pessoas cujo salário é menor que o de Ben Bitdiddle,
+            juntamente com seus salários e o salário de Ben Bitdiddle;
+          </li>
+          <li>
+            todas as pessoas que são supervisionadas por alguém que não está na
+            divisão de computação, juntamente com o nome e o emprego do
+            supervisor.
+          </li>
+        </ol>
+      </blockquote>
+
+      <a id="Rules"></a>
+      <h5 class="subsubheading">Regras</h5>
+
+      <p>
+        Além de consultas primitivas e consultas compostas, a linguagem de
+        consulta fornece meios para abstrair consultas. Esses são dados por
+        <a id="index-rules-1"></a><em>regras</em>. A regra:
+      </p>
+
+      <pre><code class="language-scheme">(rule (lives-near ?person-1 ?person-2)
+      (and (address ?person-1 
+                    (?town . ?rest-1))
+           (address ?person-2 
+                    (?town . ?rest-2))
+           (not (same ?person-1 ?person-2))))</code></pre>
+
+      <p>
+        especifica que duas pessoas moram perto uma da outra se moram na mesma
+        cidade. A cláusula final <code>not</code> impede que a regra diga que
+        todas as pessoas moram perto de si mesmas. A relação <code>same</code> é
+        definida por uma regra muito simples:<a
+          class="footnote_link"
+          id="DOCF269"
+          href="#FOOT269"
+          ><sup>269</sup></a
+        >:
+      </p>
+
+      <pre><code class="language-scheme">(rule (same ?x ?x))</code></pre>
+
+      <p>
+        A seguinte regra declara que uma pessoa é um "grande chefe" em uma
+        organização se ela supervisiona alguém que, por sua vez, é um
+        supervisor:
+      </p>
+
+      <pre><code class="language-scheme">(rule (wheel ?person)
+      (and (supervisor ?middle-manager 
+                       ?person)
+           (supervisor ?x ?middle-manager)))</code></pre>
+
+      <p>A forma geral de uma regra é:</p>
+
+      <pre><code class="language-scheme">(rule ⟨conclusion⟩ ⟨body⟩)</code></pre>
+
+      <p>
+        onde <code>⟨</code><var>conclusion</var><code>⟩</code> é um padrão e
+        <code>⟨</code><var>body</var><code>⟩</code> é qualquer consulta.<a
+          class="footnote_link"
+          id="DOCF270"
+          href="#FOOT270"
+          ><sup>270</sup></a
+        >
+        Podemos pensar em uma regra como representando um grande (ou mesmo
+        infinito) conjunto de asserções, ou seja, todas as instanciações da
+        conclusão da regra com atribuições de variáveis que satisfazem o corpo
+        da regra. Quando descrevemos consultas simples (padrões), dissemos que
+        uma atribuição a variáveis satisfaz um padrão se o padrão instanciado
+        estiver no banco de dados. Mas o padrão não precisa estar explicitamente
+        no banco de dados como uma asserção. Ele pode ser uma asserção implícita
+        implicada por uma regra. Por exemplo, a consulta:
+      </p>
+
+      <pre><code class="language-scheme">(lives-near ?x (Bitdiddle Ben))</code></pre>
+
+      <p>resulta em:</p>
+
+      <pre><code class="language-scheme">(lives-near (Reasoner Louis) (Bitdiddle Ben))
+(lives-near (Aull DeWitt) (Bitdiddle Ben))</code></pre>
+
+      <p>
+        Para encontrar todos os programadores de computador que moram perto de
+        Ben Bitdiddle, podemos perguntar:
+      </p>
+
+      <pre><code class="language-scheme">(and (job ?x (computer programmer))
+     (lives-near ?x (Bitdiddle Ben)))</code></pre>
+
+      <p>
+        Como no caso de procedimentos compostos, as regras podem ser usadas como
+        partes de outras regras (como vimos com a regra
+        <code>lives-near</code> acima) ou até mesmo ser definidas
+        recursivamente. Por exemplo, a regra:
+      </p>
+
+      <pre><code class="language-scheme">(rule (outranked-by ?staff-person ?boss)
+      (or (supervisor ?staff-person ?boss)
+          (and (supervisor ?staff-person 
+                           ?middle-manager)
+               (outranked-by ?middle-manager 
+                             ?boss))))</code></pre>
+
+      <p>
+        diz que um funcionário é superado por um chefe na organização se o chefe
+        é o supervisor da pessoa ou (recursivamente) se o supervisor da pessoa é
+        superado pelo chefe.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e57"></a>Exercício 4.57:</strong> Defina
+          uma regra que diga que a pessoa 1 pode substituir a pessoa 2 se a
+          pessoa 1 faz o mesmo trabalho que a pessoa 2 ou alguém que faz o
+          trabalho da pessoa 1 também pode fazer o trabalho da pessoa 2, e se a
+          pessoa 1 e a pessoa 2 não são a mesma pessoa. Usando sua regra, dê
+          consultas que encontrem o seguinte:
+        </p>
+        <ol>
+          <li>todas as pessoas que podem substituir Cy D. Fect;</li>
+          <li>
+            todas as pessoas que podem substituir alguém que está sendo pago
+            mais do que elas, juntamente com os dois salários.
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e58"></a>Exercício 4.58:</strong> Defina
+          uma regra que diga que uma pessoa é um "grande chefe" em uma divisão
+          se a pessoa trabalha na divisão, mas não tem um supervisor que
+          trabalha na divisão.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e59"></a>Exercício 4.59:</strong> Ben
+          Bitdiddle perdeu uma reunião demais. Temendo que seu hábito de
+          esquecer reuniões possa custar-lhe o emprego, Ben decide fazer algo a
+          respeito. Ele adiciona todas as reuniões semanais da empresa ao banco
+          de dados da Microshaft, afirmando o seguinte:
+        </p>
+
+        <pre><code class="language-scheme">(meeting accounting (Monday 9am))
+(meeting administration (Monday 10am))
+(meeting computer (Wednesday 3pm))
+(meeting administration (Friday 1pm))</code></pre>
+
+        <p>
+          Cada uma das afirmações acima é para uma reunião de uma divisão
+          inteira. Ben também adiciona uma entrada para a reunião da empresa que
+          abrange todas as divisões. Todos os funcionários da empresa participam
+          dessa reunião.
+        </p>
+
+        <pre><code class="language-scheme">(meeting whole-company (Wednesday 4pm))</code></pre>
+
+        <ol>
+          <li>
+            Na manhã de sexta-feira, Ben quer consultar o banco de dados para
+            todas as reuniões que ocorrem naquele dia. Qual consulta ele deve
+            usar?
+          </li>
+          <li>
+            Alyssa P. Hacker não está impressionada. Ela acha que seria muito
+            mais útil poder perguntar por suas reuniões especificando seu nome.
+            Então, ela projeta uma regra que diz que as reuniões de uma pessoa
+            incluem todas as reuniões <code>whole-company</code> mais todas as
+            reuniões da divisão dessa pessoa. Preencha o corpo da regra de
+            Alyssa.
+          </li>
+          <li>
+            Alyssa chega ao trabalho na manhã de quarta-feira e se pergunta
+            quais reuniões ela tem que participar naquele dia. Tendo definido a
+            regra acima, qual consulta ela deve fazer para descobrir isso?
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e60"></a>Exercício 4.60:</strong> Ao
+          fazer a consulta:
+        </p>
+
+        <pre><code class="language-scheme">(lives-near ?person (Hacker Alyssa P))</code></pre>
+
+        <p>
+          Alyssa P. Hacker é capaz de encontrar pessoas que moram perto dela,
+          com quem ela pode ir para o trabalho. Por outro lado, quando ela tenta
+          encontrar todos os pares de pessoas que moram perto uma da outra,
+          consultando:
+        </p>
+
+        <pre><code class="language-scheme">(lives-near ?person-1 ?person-2)</code></pre>
+
+        <p>
+          ela percebe que cada par de pessoas que moram perto uma da outra é
+          listado duas vezes; por exemplo:
+        </p>
+
+        <pre><code class="language-scheme">(lives-near (Hacker Alyssa P) (Fect Cy D))
+(lives-near (Fect Cy D) (Hacker Alyssa P))</code></pre>
+
+        <p>
+          Por que isso acontece? Existe uma maneira de encontrar uma lista de
+          pessoas que moram perto uma da outra, na qual cada par aparece apenas
+          uma vez? Explique.
+        </p>
+      </blockquote>
+
+      <a id="Logic-as-programs"></a>
+      <h5 class="subsubheading">Lógica como programas</h5>
+
+      <p>
+        Podemos considerar uma regra como um tipo de implicação lógica:
+        <em>Se</em> uma atribuição de valores a variáveis de padrão satisfaz o
+        corpo, <em>então</em> ela satisfaz a conclusão. Consequentemente,
+        podemos considerar a linguagem de consulta como tendo a capacidade de
+        realizar <a id="index-logical-deductions"></a
+        ><em>deduções lógicas</em> com base nas regras. Como exemplo, considere
+        a operação <code>append</code> descrita no início de
+        <a href="#g_t4_002e4">4.4</a>. Como dissemos, <code>append</code> pode
+        ser caracterizada pelas duas regras a seguir:
+      </p>
+
+      <ul>
+        <li>
+          Para qualquer lista <code>y</code>, a lista vazia e <code>y</code> se
+          juntam para formar <code>y</code>.
+        </li>
+        <li>
+          Para qualquer <code>u</code>, <code>v</code>, <code>y</code> e
+          <code>z</code>, <code>(cons u v)</code> e <code>y</code> se juntam
+          para formar <code>(cons u z)</code> se <code>v</code> e
+          <code>y</code> se juntarem para formar <code>z</code>.
+        </li>
+      </ul>
+
+      <p>
+        Para expressar isso em nossa linguagem de consulta, definimos duas
+        regras para uma relação:
+      </p>
+
+      <pre><code class="language-scheme">(append-to-form x y z)</code></pre>
+
+      <p>
+        que podemos interpretar como "<code>x</code> e <code>y</code> se juntam
+        para formar <code>z</code>":
+      </p>
+
+      <pre><code class="language-scheme">(rule (append-to-form () ?y ?y))
+(rule (append-to-form (?u . ?v) ?y (?u . ?z))
+      (append-to-form ?v ?y ?z))</code></pre>
+
+      <p>
+        A primeira regra não tem corpo, o que significa que a conclusão vale
+        para qualquer valor de <code>?y</code>. Observe como a segunda regra faz
+        uso da notação de cauda pontilhada para nomear o <code>car</code> e o
+        <code>cdr</code> de uma lista.
+      </p>
+
+      <p>
+        Dadas essas duas regras, podemos formular consultas que calculam o
+        <code>append</code> de duas listas:
+      </p>
+
+      <pre><code class="language-scheme">;;; Entrada da consulta:
+(append-to-form (a b) (c d) ?z)
+
+;;; Resultados da consulta:
+(append-to-form (a b) (c d) (a b c d))</code></pre>
+
+      <p>
+        O que é mais impressionante, podemos usar as mesmas regras para fazer a
+        pergunta "Qual lista, quando concatenada com <code>(a b)</code>, produz
+        <code>(a b c d)</code>?" Isso é feito da seguinte forma:
+      </p>
+
+      <pre><code class="language-scheme">;;; Entrada da consulta:
+(append-to-form (a b) ?y (a b c d))
+
+;;; Resultados da consulta:
+(append-to-form (a b) (c d) (a b c d))</code></pre>
+
+      <p>
+        Também podemos pedir todos os pares de listas que se juntam para formar
+        <code>(a b c d)</code>:
+      </p>
+
+      <pre><code class="language-scheme">;;; Entrada da consulta:
+(append-to-form ?x ?y (a b c d))
+
+;;; Resultados da consulta:
+(append-to-form () (a b c d) (a b c d))
+(append-to-form (a) (b c d) (a b c d))
+(append-to-form (a b) (c d) (a b c d))
+(append-to-form (a b c) (d) (a b c d))
+(append-to-form (a b c d) () (a b c d))</code></pre>
+
+      <p>
+        O sistema de consulta pode parecer exibir uma quantidade considerável de
+        inteligência ao usar as regras para deduzir as respostas às consultas
+        acima. Na verdade, como veremos na próxima seção, o sistema está
+        seguindo um algoritmo bem determinado ao desvendar as regras.
+        Infelizmente, embora o sistema funcione de forma impressionante no caso
+        do <code>append</code>, os métodos gerais podem falhar em casos mais
+        complexos, como veremos em <a href="#g_t4_002e4_002e3">4.4.3</a>.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e61"></a>Exercício 4.61:</strong> As
+          seguintes regras implementam uma relação <code>next-to</code> que
+          encontra elementos adjacentes de uma lista:
+        </p>
+
+        <pre><code class="language-scheme">(rule (?x next-to ?y in (?x ?y . ?u)))
+(rule (?x next-to ?y in (?v . ?z))
+      (?x next-to ?y in ?z))</code></pre>
+
+        <p>Qual será a resposta às seguintes consultas?</p>
+
+        <pre><code class="language-scheme">(?x next-to ?y in (1 (2 3) 4))
+(?x next-to 1 in (2 1 3 1))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e62"></a>Exercício 4.62:</strong> Defina
+          regras para implementar a operação <code>last-pair</code> do
+          <a href="2_002e2.html#Exercise-2_002e17">Exercício 2.17</a>, que
+          retorna uma lista contendo o último elemento de uma lista não vazia.
+          Verifique suas regras em consultas como
+          <code>(last-pair (3) ?x)</code>, <code>(last-pair (1 2 3) ?x)</code> e
+          <code>(last-pair (2 ?x) (3))</code>. Suas regras funcionam
+          corretamente em consultas como <code>(last-pair ?x (3))</code>?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e63"></a>Exercício 4.63:</strong> O
+          seguinte banco de dados (veja Gênesis 4) traça a genealogia dos
+          descendentes de Ada até Adão, por meio de Caim:
+        </p>
+
+        <pre><code class="language-scheme">(son Adam Cain) (son Cain Enoch)
+(son Enoch Irad) (son Irad Mehujael)
+(son Mehujael Methushael)
+(son Methushael Lamech)
+(wife Lamech Ada) (son Ada Jabal)
+(son Ada Jubal)</code></pre>
+
+        <p>
+          Formule regras como "Se
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math> é o
+          filho de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>f</mi></math
+          >, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>f</mi></math> é o
+          filho de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>G</mi></math
+          >, então
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math> é o
+          neto de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>G</mi></math
+          >" e "Se
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>W</mi></math> é a
+          esposa de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>M</mi></math
+          >, e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math> é o
+          filho de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>W</mi></math
+          >, então
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>S</mi></math> é o
+          filho de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>M</mi></math
+          >" (o que supostamente era mais verdadeiro nos tempos bíblicos do que
+          hoje) que permitirão ao sistema de consulta encontrar o neto de Caim;
+          os filhos de Lamech; os netos de Metusalém. (Veja
+          <a href="#Exercise-4_002e69">Exercício 4.69</a> para algumas regras
+          para deduzir relacionamentos mais complicados.)
+        </p>
+      </blockquote>
+
+      <a id="g_t4_002e4_002e2"></a>
+      <a id="How-the-Query-System-Works"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.4.2</span
+        ><span class="sectitle">Como o Sistema de Consulta Funciona</span>
+      </h4>
+
+      <p>
+        Na seção <a href="#g_t4_002e4_002e4">4.4.4</a>, apresentaremos uma
+        implementação do interpretador de consultas como uma coleção de
+        procedimentos. Nesta seção, damos uma visão geral que explica a
+        estrutura geral do sistema independentemente de detalhes de
+        implementação de baixo nível. Depois de descrever a implementação do
+        interpretador, estaremos em posição de entender algumas de suas
+        limitações e algumas das maneiras sutis pelas quais as operações lógicas
+        da linguagem de consulta diferem das operações da lógica matemática.
+      </p>
+
+      <p>
+        Deve ficar claro que o avaliador de consultas deve realizar algum tipo
+        de busca para corresponder consultas a fatos e regras no banco de dados.
+        Uma maneira de fazer isso seria implementar o sistema de consultas como
+        um programa não determinístico, usando o avaliador <code>amb</code> de
+        <a href="4_002e3.html#g_t4_002e3">4.3</a> (veja
+        <a href="#Exercise-4_002e78">Exercício 4.78</a>). Outra possibilidade
+        seria gerenciar a busca com a ajuda de fluxos. Nossa implementação segue
+        essa segunda abordagem.
+      </p>
+      <p>
+        O sistema de consulta é organizado em torno de duas operações centrais
+        chamadas
+        <a id="index-pattern-matching"></a>
+        <em>correspondência de padrões</em> e <a id="index-unification-1"></a>
+        <em>unificação</em>. Primeiro descrevemos a correspondência de padrões e
+        explicamos como essa operação, juntamente com a organização da
+        informação em termos de fluxos de quadros, nos permite implementar tanto
+        consultas simples quanto compostas. Em seguida, discutimos a unificação,
+        uma generalização da correspondência de padrões necessária para
+        implementar regras. Finalmente, mostramos como todo o interpretador de
+        consultas se encaixa através de um procedimento que classifica
+        expressões de maneira análoga à forma como <code>eval</code> classifica
+        expressões para o interpretador descrito em
+        <a href="4_002e1.html#g_t4_002e1">4.1</a>.
+      </p>
+      <a id="Pattern-matching"></a>
+      <h5 class="subsubheading">Correspondência de padrões</h5>
+
+      <p>
+        Um <a id="index-pattern-matcher"></a>
+        <em>correspondente de padrões</em> é um programa que testa se algum dado
+        se encaixa em um padrão especificado. Por exemplo, a lista de dados
+        <code>((a b) c (a b))</code> corresponde ao padrão
+        <code>(?x c ?x)</code> com a variável de padrão
+        <code>?x</code> vinculada a <code>(a b)</code>. A mesma lista de dados
+        corresponde ao padrão <code>(?x ?y ?z)</code> com <code>?x</code> e
+        <code>?z</code> ambos vinculados a <code>(a b)</code> e
+        <code>?y</code> vinculado a <code>c</code>. Ela também corresponde ao
+        padrão <code>((?x ?y) c (?x ?y))</code> com <code>?x</code> vinculado a
+        <code>a</code> e <code>?y</code> vinculado a <code>b</code>. No entanto,
+        ela não corresponde ao padrão <code>(?x a ?y)</code>, já que esse padrão
+        especifica uma lista cujo segundo elemento é o símbolo <code>a</code>.
+      </p>
+      <p>
+        O correspondente de padrões usado pelo sistema de consulta recebe como
+        entradas um padrão, um dado e um <a id="index-frame"></a>
+        <em>quadro</em> que especifica vinculações para várias variáveis de
+        padrão. Ele verifica se o dado corresponde ao padrão de uma forma que
+        seja consistente com as vinculações já presentes no quadro. Se for o
+        caso, ele retorna o quadro dado, aumentado por quaisquer vinculações que
+        possam ter sido determinadas pela correspondência. Caso contrário, ele
+        indica que a correspondência falhou.
+      </p>
+      <p>
+        Por exemplo, usar o padrão <code>(?x ?y ?x)</code> para corresponder a
+        <code>(a b a)</code> dado um quadro vazio retornará um quadro
+        especificando que <code>?x</code> está vinculado a <code>a</code> e
+        <code>?y</code> está vinculado a <code>b</code>. Tentar a
+        correspondência com o mesmo padrão, o mesmo dado e um quadro
+        especificando que <code>?y</code> está vinculado a
+        <code>a</code> falhará. Tentar a correspondência com o mesmo padrão, o
+        mesmo dado, e um quadro em que <code>?y</code> está vinculado a
+        <code>b</code> e <code>?x</code> não está vinculado retornará o quadro
+        dado, aumentado por uma vinculação de <code>?x</code> a <code>a</code>.
+      </p>
+      <p>
+        O correspondente de padrões é todo o mecanismo necessário para processar
+        consultas simples que não envolvem regras. Por exemplo, para processar a
+        consulta
+      </p>
+      <pre><code class="language-scheme">(job ?x (computer programmer))</code></pre>
+
+      <p>
+        nós varremos todas as asserções na base de dados e selecionamos aquelas
+        que correspondem ao padrão em relação a um quadro inicialmente vazio.
+        Para cada correspondência que encontramos, nós usamos o quadro retornado
+        pela correspondência para instanciar o padrão com um valor para
+        <code>?x</code>.
+      </p>
+      <a id="Streams-of-frames"></a>
+      <h5 class="subsubheading">Fluxos de quadros</h5>
+
+      <p>
+        O teste de padrões contra quadros é organizado através do uso de fluxos.
+        Dado um único quadro, o processo de correspondência percorre as entradas
+        da base de dados uma por uma. Para cada entrada da base de dados, o
+        correspondente gera ou um símbolo especial indicando que a
+        correspondência falhou ou uma extensão do quadro. Os resultados para
+        todas as entradas da base de dados são coletados em um fluxo, que é
+        passado por um filtro para eliminar as falhas. O resultado é um fluxo de
+        todos os quadros que estendem o quadro dado por meio de uma
+        correspondência com alguma asserção na base de dados.<a
+          class="footnote_link"
+          id="DOCF271"
+          href="#FOOT271"
+          ><sup>271</sup></a
+        >
+      </p>
+      <p>
+        Em nosso sistema, uma consulta recebe um fluxo de entrada de quadros e
+        realiza a operação de correspondência descrita acima para cada quadro no
+        fluxo, como indicado em <a href="#Figure-4_002e4">Figura 4.4</a>. Ou
+        seja, para cada quadro no fluxo de entrada, a consulta gera um novo
+        fluxo consistindo de todas as extensões daquele quadro por
+        correspondências com asserções na base de dados. Todos esses fluxos são
+        então combinados para formar um grande fluxo, que contém todas as
+        extensões possíveis de cada quadro no fluxo de entrada. Esse fluxo é a
+        saída da consulta.
+      </p>
+      <figure class="float">
+        <a id="Figure-4_002e4"></a>
+        <object
+          style="width: 56.21ex; height: 22.19ex"
+          data="fig/chap4/Fig4.4a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 4.4:</strong> Uma consulta processa um fluxo de
+            quadros.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Para responder a uma consulta simples, usamos a consulta com um fluxo de
+        entrada consistindo de um único quadro vazio. O fluxo de saída
+        resultante contém todas as extensões ao quadro vazio (ou seja, todas as
+        respostas à nossa consulta). Esse fluxo de quadros é então usado para
+        gerar um fluxo de cópias do padrão de consulta original com as variáveis
+        instanciadas pelos valores em cada quadro, e esse é o fluxo que é
+        finalmente impresso.
+      </p>
+      <a id="Compound-queries-1"></a>
+      <h5 class="subsubheading">Consultas compostas</h5>
+
+      <p>
+        A verdadeira elegância da implementação de fluxos de quadros é evidente
+        quando lidamos com consultas compostas. O processamento de consultas
+        compostas faz uso da capacidade do nosso correspondente de exigir que
+        uma correspondência seja consistente com um quadro especificado. Por
+        exemplo, para lidar com o <code>and</code> de duas consultas, como
+      </p>
+      <pre><code class="language-scheme">(and (can-do-job 
+                ?x 
+                (computer programmer trainee))
+               (job ?person ?x))</code></pre>
+
+      <p>
+        (informalmente, “Encontre todas as pessoas que podem fazer o trabalho de
+        um estagiário de programação de computadores”), primeiro encontramos
+        todas as entradas que correspondem ao padrão
+      </p>
+      <pre><code class="language-scheme">(can-do-job ?x (computer programmer trainee))</code></pre>
+
+      <p>
+        Isso produz um fluxo de quadros, cada um dos quais contém uma vinculação
+        para <code>?x</code>. Então, para cada quadro no fluxo, encontramos
+        todas as entradas que correspondem a
+      </p>
+      <pre><code class="language-scheme">(job ?person ?x)</code></pre>
+
+      <p>
+        de uma forma que seja consistente com a vinculação dada para
+        <code>?x</code>. Cada uma dessas correspondências produzirá um quadro
+        contendo vinculações para <code>?x</code> e <code>?person</code>. O
+        <code>and</code> de duas consultas pode ser visto como uma combinação em
+        série das duas consultas componentes, como mostrado em
+        <a href="#Figure-4_002e5">Figura 4.5</a>. Os quadros que passam pelo
+        primeiro filtro de consulta são filtrados e ainda mais estendidos pela
+        segunda consulta.
+      </p>
+      <figure class="float">
+        <a id="Figure-4_002e5"></a>
+        <object
+          style="width: 55.69ex; height: 22.28ex"
+          data="fig/chap4/Fig4.5a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 4.5:</strong> A combinação <code>and</code> de duas
+            consultas é produzida operando no fluxo de quadros em série.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        <a href="#Figure-4_002e6">Figura 4.6</a> mostra o método análogo para
+        calcular o <code>or</code> de duas consultas como uma combinação
+        paralela das duas consultas componentes. O fluxo de entrada de quadros é
+        estendido separadamente por cada consulta. Os dois fluxos resultantes
+        são então mesclados para produzir o fluxo de saída final.
+      </p>
+      <figure class="float">
+        <a id="Figure-4_002e6"></a>
+        <object
+          style="width: 58.02ex; height: 35.92ex"
+          data="fig/chap4/Fig4.6a.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 4.6:</strong> A combinação <code>or</code> de duas
+            consultas é produzida operando no fluxo de quadros em paralelo e
+            mesclando os resultados.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Mesmo a partir desta descrição de alto nível, é aparente que o
+        processamento de consultas compostas pode ser lento. Por exemplo, como
+        uma consulta pode produzir mais de um quadro de saída para cada quadro
+        de entrada, e cada consulta em um <code>and</code> recebe seus quadros
+        de entrada da consulta anterior, uma consulta <code>and</code> poderia,
+        no pior caso, ter que realizar um número de correspondências que é
+        exponencial no número de consultas (veja
+        <a href="#Exercise-4_002e76">Exercício 4.76</a>).<a
+          class="footnote_link"
+          id="DOCF272"
+          href="#FOOT272"
+          ><sup>272</sup></a
+        >
+        Embora sistemas para lidar apenas com consultas simples sejam bastante
+        práticos, lidar com consultas complexas é extremamente difícil.<a
+          class="footnote_link"
+          id="DOCF273"
+          href="#FOOT273"
+          ><sup>273</sup></a
+        >
+      </p>
+      <p>
+        Do ponto de vista do fluxo de quadros, o <code>not</code> de alguma
+        consulta age como um filtro que remove todos os quadros para os quais a
+        consulta pode ser satisfeita. Por exemplo, dado o padrão
+      </p>
+      <pre><code class="language-scheme">(not (job ?x (computer programmer)))</code></pre>
+
+      <p>
+        nós tentamos, para cada quadro no fluxo de entrada, produzir quadros de
+        extensão que satisfaçam <code>(job ?x (computer programmer))</code>.
+        Removemos do fluxo de entrada todos os quadros para os quais tais
+        extensões existem. O resultado é um fluxo consistindo apenas daqueles
+        quadros em que a vinculação para <code>?x</code> não satisfaz
+        <code>(job ?x (computer programmer))</code>. Por exemplo, ao processar a
+        consulta
+      </p>
+      <pre><code class="language-scheme">(and (supervisor ?x ?y)
+               (not (job ?x (computer programmer))))</code></pre>
+
+      <p>
+        a primeira cláusula gerará quadros com vinculações para
+        <code>?x</code> e <code>?y</code>. A cláusula <code>not</code> então
+        filtrará esses quadros, removendo todos os quadros em que a vinculação
+        para <code>?x</code> satisfaz a restrição de que <code>?x</code> é um
+        programador de computadores.<a
+          class="footnote_link"
+          id="DOCF274"
+          href="#FOOT274"
+          ><sup>274</sup></a
+        >
+      </p>
+      <p>
+        A forma especial <code>lisp-value</code> é implementada como um filtro
+        semelhante em fluxos de quadros. Usamos cada quadro no fluxo para
+        instanciar quaisquer variáveis no padrão, então aplicamos o predicado
+        Lisp. Removemos do fluxo de entrada todos os quadros para os quais o
+        predicado falha.
+      </p>
+      <a id="Unification"></a>
+      <h5 class="subsubheading">Unificação</h5>
+
+      <p>
+        Para lidar com regras na linguagem de consulta, devemos ser capazes de
+        encontrar as regras cujas conclusões correspondem a um padrão de
+        consulta dado. As conclusões das regras são como asserções, exceto que
+        elas podem conter variáveis, então precisaremos de uma generalização da
+        correspondência de padrões—chamada <a id="index-unification-2"></a>
+        <em>unificação</em>—na qual tanto o “padrão” quanto o “dado” podem
+        conter variáveis.
+      </p>
+      <p>
+        Um unificador recebe dois padrões, cada um contendo constantes e
+        variáveis, e determina se é possível atribuir valores às variáveis que
+        tornarão os dois padrões iguais. Se for o caso, ele retorna um quadro
+        contendo essas vinculações. Por exemplo, unificar
+        <code>(?x a ?y)</code> e <code>(?y ?z a)</code> irá especificar um
+        quadro em que <code>?x</code>, <code>?y</code> e <code>?z</code> devem
+        estar todos vinculados a <code>a</code>. Por outro lado, unificar
+        <code>(?x ?y a)</code> e <code>(?x b ?y)</code> falhará, porque não há
+        valor para <code>?y</code> que possa tornar os dois padrões iguais.
+        (Para os segundos elementos dos padrões serem iguais,
+        <code>?y</code> teria que ser <code>b</code>; no entanto, para os
+        terceiros elementos serem iguais, <code>?y</code> teria que ser
+        <code>a</code>.) O unificador usado no sistema de consulta, como o
+        correspondente de padrões, recebe um quadro como entrada e realiza
+        unificações que são consistentes com esse quadro.
+      </p>
+      <p>
+        O algoritmo de unificação é a parte tecnicamente mais difícil do sistema
+        de consultas. Com padrões complexos, realizar a unificação pode parecer
+        exigir dedução. Para unificar <code>(?x ?x)</code> e
+        <code>((a ?y c) (a b ?z))</code>, por exemplo, o algoritmo deve inferir
+        que <code>?x</code> deve ser <code>(a b c)</code>, <code>?y</code> deve
+        ser <code>b</code> e <code>?z</code> deve ser <code>c</code>. Podemos
+        pensar nesse processo como resolver um conjunto de equações entre os
+        componentes do padrão. Em geral, essas são equações simultâneas, que
+        podem exigir manipulação substancial para resolver.<a
+          class="footnote_link"
+          id="DOCF275"
+          href="#FOOT275"
+          ><sup>275</sup></a
+        >
+        Por exemplo, unificar <code>(?x ?x)</code> e
+        <code>((a ?y c) (a b ?z))</code> pode ser pensado como especificar as
+        equações simultâneas
+      </p>
+      <pre><code class="language-scheme">?x = (a ?y c)
+          ?x = (a b ?z)</code></pre>
+
+      <p>Essas equações implicam que</p>
+      <pre><code class="language-scheme">(a ?y c) = (a b ?z)</code></pre>
+
+      <p>que por sua vez implica que</p>
+      <pre><code class="language-scheme">a = a, ?y = b, c = ?z,</code></pre>
+
+      <p>e, portanto, que</p>
+      <pre><code class="language-scheme">?x = (a b c)</code></pre>
+
+      <p>
+        Em uma correspondência de padrões bem-sucedida, todas as variáveis de
+        padrão se tornam vinculadas, e os valores aos quais elas estão
+        vinculadas contêm apenas constantes. Isso também é verdadeiro para todos
+        os exemplos de unificação que vimos até agora. Em geral, no entanto, uma
+        unificação bem-sucedida pode não determinar completamente os valores das
+        variáveis; algumas variáveis podem permanecer desvinculadas e outras
+        podem estar vinculadas a valores que contêm variáveis.
+      </p>
+      <p>
+        Considere a unificação de <code>(?x a)</code> e
+        <code>((b ?y) ?z)</code>. Podemos deduzir que <code>?x = (b ?y)</code> e
+        <code>a = ?z</code>, mas não podemos resolver para <code>?x</code> ou
+        <code>?y</code>. A unificação não falha, pois é certamente possível
+        tornar os dois padrões iguais atribuindo valores a <code>?x</code> e
+        <code>?y</code>. Como essa correspondência de forma alguma restringe os
+        valores que <code>?y</code> pode assumir, nenhuma vinculação para
+        <code>?y</code> é colocada no quadro resultante. A correspondência, no
+        entanto, restringe o valor de <code>?x</code>. Qualquer valor que
+        <code>?y</code> tenha, <code>?x</code> deve ser <code>(b ?y)</code>. Uma
+        vinculação de <code>?x</code> ao padrão <code>(b ?y)</code> é, portanto,
+        colocada no quadro. Se um valor para <code>?y</code> for posteriormente
+        determinado e adicionado ao quadro (por uma correspondência de padrões
+        ou unificação que é exigida para ser consistente com esse quadro), o
+        <code>?x</code> previamente vinculado se referirá a esse valor.<a
+          class="footnote_link"
+          id="DOCF276"
+          href="#FOOT276"
+          ><sup>276</sup></a
+        >
+      </p>
+      <a id="Applying-rules"></a>
+      <h5 class="subsubheading">Aplicando regras</h5>
+
+      <p>
+        A unificação é a chave para o componente do sistema de consulta que faz
+        inferências a partir de regras. Para ver como isso é realizado,
+        considere o processamento de uma consulta que envolve a aplicação de uma
+        regra, como
+      </p>
+      <pre><code class="language-scheme">(lives-near ?x (Hacker Alyssa P))</code></pre>
+
+      <p>
+        Para processar essa consulta, primeiro usamos o procedimento de
+        correspondência de padrões comum descrito acima para ver se há alguma
+        asserção na base de dados que corresponda a esse padrão. (Não haverá
+        nenhuma neste caso, já que nossa base de dados não inclui asserções
+        diretas sobre quem mora perto de quem.) O próximo passo é tentar
+        unificar o padrão da consulta com a conclusão de cada regra. Descobrimos
+        que o padrão se unifica com a conclusão da regra
+      </p>
+      <pre><code class="language-scheme">(rule (lives-near ?person-1 ?person-2)
+                (and (address ?person-1 
+                              (?town . ?rest-1))
+                     (address ?person-2 
+                              (?town . ?rest-2))
+                     (not (same ?person-1 ?person-2))))</code></pre>
+
+      <p>
+        resultando em um quadro especificando que <code>?person-2</code> está
+        vinculado a <code>(Hacker Alyssa P)</code> e que <code>?x</code> deve
+        estar vinculado a (ter o mesmo valor que) <code>?person-1</code>. Agora,
+        em relação a esse quadro, avaliamos a consulta composta dada pelo corpo
+        da regra. Correspondências bem-sucedidas estenderão esse quadro,
+        fornecendo uma vinculação para <code>?person-1</code> e,
+        consequentemente, um valor para <code>?x</code>, que podemos usar para
+        instanciar o padrão de consulta original.
+      </p>
+      <p>
+        Em geral, o avaliador de consultas usa o seguinte método para aplicar
+        uma regra ao tentar estabelecer um padrão de consulta em um quadro que
+        especifica vinculações para algumas das variáveis do padrão:
+      </p>
+      <ul>
+        <li>
+          Unifique a consulta com a conclusão da regra para formar, se
+          bem-sucedido, uma extensão do quadro original.
+        </li>
+        <li>
+          Em relação ao quadro estendido, avalie a consulta formada pelo corpo
+          da regra.
+        </li>
+      </ul>
+
+      <p>
+        Observe como isso é semelhante ao método para aplicar um procedimento no
+        avaliador <code>eval</code>/<code>apply</code> para Lisp:
+      </p>
+      <ul>
+        <li>
+          Vincule os parâmetros do procedimento aos seus argumentos para formar
+          um quadro que estenda o ambiente original do procedimento.
+        </li>
+        <li>
+          Em relação ao ambiente estendido, avalie a expressão formada pelo
+          corpo do procedimento.
+        </li>
+      </ul>
+
+      <p>
+        A semelhança entre os dois avaliadores não deve ser surpreendente. Assim
+        como as definições de procedimentos são o meio de abstração em Lisp, as
+        definições de regras são o meio de abstração na linguagem de consulta.
+        Em cada caso, desenrolamos a abstração criando vinculações apropriadas e
+        avaliando o corpo da regra ou do procedimento em relação a essas
+        vinculações.
+      </p>
+      <a id="Simple-queries-1"></a>
+      <h5 class="subsubheading">Consultas simples</h5>
+
+      <p>
+        Vimos anteriormente nesta seção como avaliar consultas simples na
+        ausência de regras. Agora que vimos como aplicar regras, podemos
+        descrever como avaliar consultas simples usando tanto regras quanto
+        asserções.
+      </p>
+      <p>
+        Dado o padrão de consulta e um fluxo de quadros, produzimos, para cada
+        quadro no fluxo de entrada, dois fluxos:
+      </p>
+      <ul>
+        <li>
+          um fluxo de quadros estendidos obtidos pela correspondência do padrão
+          contra todas as asserções na base de dados (usando o correspondente de
+          padrões), e
+        </li>
+        <li>
+          um fluxo de quadros estendidos obtidos pela aplicação de todas as
+          regras possíveis (usando o unificador).<a
+            class="footnote_link"
+            id="DOCF277"
+            href="#FOOT277"
+            ><sup>277</sup></a
+          >
+        </li>
+      </ul>
+
+      <p>
+        Anexar esses dois fluxos produz um fluxo que consiste em todas as formas
+        que o padrão dado pode ser satisfeito de forma consistente com o quadro
+        original. Esses fluxos (um para cada quadro no fluxo de entrada) são
+        agora todos combinados para formar um grande fluxo, que, portanto,
+        consiste em todas as formas que qualquer um dos quadros no fluxo de
+        entrada original pode ser estendido para produzir uma correspondência
+        com o padrão dado.
+      </p>
+      <a id="The-query-evaluator-and-the-driver-loop"></a>
+      <h5 class="subsubheading">
+        O avaliador de consultas e o loop de controle
+      </h5>
+
+      <p>
+        Apesar da complexidade das operações de correspondência subjacentes, o
+        sistema é organizado de forma muito semelhante a um avaliador para
+        qualquer linguagem. O procedimento que coordena as operações de
+        correspondência é chamado <code>qeval</code>, e ele desempenha um papel
+        análogo ao do procedimento <code>eval</code> para Lisp.
+        <code>Qeval</code> recebe como entradas uma consulta e um fluxo de
+        quadros. Sua saída é um fluxo de quadros, correspondendo a
+        correspondências bem-sucedidas com o padrão de consulta, que estendem
+        algum quadro no fluxo de entrada, como indicado em
+        <a href="#Figure-4_002e4">Figura 4.4</a>. Como <code>eval</code>,
+        <code>qeval</code> classifica os diferentes tipos de expressões
+        (consultas) e despacha para um procedimento apropriado para cada um. Há
+        um procedimento para cada forma especial (<code>and</code>,
+        <code>or</code>, <code>not</code> e <code>lisp-value</code>) e um para
+        consultas simples.
+      </p>
+      <p>
+        O loop de controle, que é análogo ao procedimento
+        <code>driver-loop</code> para os outros avaliadores neste capítulo, lê
+        consultas do terminal. Para cada consulta, ele chama
+        <code>qeval</code> com a consulta e um fluxo que consiste em um único
+        quadro vazio. Isso produzirá o fluxo de todas as correspondências
+        possíveis (todas as extensões possíveis ao quadro vazio). Para cada
+        quadro no fluxo resultante, ele instancia a consulta original usando os
+        valores das variáveis encontrados no quadro. Esse fluxo de consultas
+        instanciadas é então impresso.<a
+          class="footnote_link"
+          id="DOCF278"
+          href="#FOOT278"
+          ><sup>278</sup></a
+        >
+      </p>
+      <p>
+        O loop de controle também verifica o comando especial
+        <code>assert!</code>, que sinaliza que a entrada não é uma consulta, mas
+        sim uma asserção ou regra a ser adicionada à base de dados. Por exemplo,
+      </p>
+      <pre><code class="language-scheme">(assert!
+           (job (Bitdiddle Ben)
+                (computer wizard)))
+          
+          (assert!
+           (rule (wheel ?person)
+                 (and (supervisor 
+                       ?middle-manager ?person)
+                      (supervisor
+                       ?x ?middle-manager))))</code></pre>
+
+      <a id="g_t4_002e4_002e3"></a>
+      <a id="Is-Logic-Programming-Mathematical-Logic_003f"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.4.3</span
+        ><span class="sectitle">A programação lógica é lógica matemática?</span>
+      </h4>
+
+      <p>
+        Os meios de combinação usados na linguagem de consulta podem, a
+        princípio, parecer idênticos às operações <code>and</code>,
+        <code>or</code> e <code>not</code> da lógica matemática, e a aplicação
+        de regras da linguagem de consulta é, de fato, realizada através de um
+        método legítimo de inferência.<a
+          class="footnote_link"
+          id="DOCF279"
+          href="#FOOT279"
+          ><sup>279</sup></a
+        >
+        Essa identificação da linguagem de consulta com a lógica matemática não
+        é realmente válida, no entanto, porque a linguagem de consulta fornece
+        uma <a id="index-control-structure"></a>
+        <em>estrutura de controle</em>
+        que interpreta as declarações lógicas de forma procedural. Podemos
+        frequentemente aproveitar essa estrutura de controle. Por exemplo, para
+        encontrar todos os supervisores de programadores, poderíamos formular
+        uma consulta em qualquer uma de duas formas logicamente equivalentes:
+      </p>
+      <pre><code class="language-scheme">(and (job ?x (computer programmer))
+               (supervisor ?x ?y))</code></pre>
+
+      <p>ou</p>
+      <pre><code class="language-scheme">(and (supervisor ?x ?y)
+               (job ?x (computer programmer)))</code></pre>
+
+      <p>
+        Se uma empresa tiver muito mais supervisores do que programadores (o
+        caso usual), é melhor usar a primeira forma em vez da segunda, porque a
+        base de dados deve ser varrida para cada resultado intermediário
+        (quadro) produzido pela primeira cláusula do <code>and</code>.
+      </p>
+      <p>
+        O objetivo da programação lógica é fornecer ao programador técnicas para
+        decompor um problema computacional em dois problemas separados: “o que”
+        deve ser computado e “como” isso deve ser computado. Isso é realizado
+        selecionando um subconjunto das declarações da lógica matemática que
+        seja poderoso o suficiente para descrever qualquer coisa que se queira
+        computar, mas fraco o suficiente para ter uma interpretação procedural
+        controlável. A intenção aqui é que, por um lado, um programa
+        especificado em uma linguagem de programação lógica deve ser um programa
+        efetivo que pode ser executado por um computador. O controle (“como”
+        computar) é efetuado usando a ordem de avaliação da linguagem. Devemos
+        ser capazes de organizar a ordem das cláusulas e a ordem dos
+        subobjetivos dentro de cada cláusula para que a computação seja feita em
+        uma ordem considerada efetiva e eficiente. Ao mesmo tempo, devemos ser
+        capazes de ver o resultado da computação (“o que” computar) como uma
+        simples consequência das leis da lógica.
+      </p>
+      <p>
+        Nossa linguagem de consulta pode ser considerada como um subconjunto
+        procedimentalmente interpretável da lógica matemática. Uma asserção
+        representa um fato simples (uma proposição atômica). Uma regra
+        representa a implicação de que a conclusão da regra vale para aqueles
+        casos em que o corpo da regra vale. Uma regra tem uma interpretação
+        procedural natural: Para estabelecer a conclusão da regra, estabeleça o
+        corpo da regra. As regras, portanto, especificam computações. No
+        entanto, como as regras também podem ser consideradas como declarações
+        da lógica matemática, podemos justificar qualquer “inferência” realizada
+        por um programa lógico afirmando que o mesmo resultado poderia ser
+        obtido trabalhando inteiramente dentro da lógica matemática.<a
+          class="footnote_link"
+          id="DOCF280"
+          href="#FOOT280"
+          ><sup>280</sup></a
+        >
+      </p>
+      <a id="Infinite-loops"></a>
+      <h5 class="subsubheading">Loops infinitos</h5>
+
+      <p>
+        Uma consequência da interpretação procedural de programas lógicos é que
+        é possível construir programas desesperadamente ineficientes para
+        resolver certos problemas. Um caso extremo de ineficiência ocorre quando
+        o sistema entra em loops infinitos ao fazer deduções. Como um exemplo
+        simples, suponha que estamos configurando uma base de dados de
+        casamentos famosos, incluindo
+      </p>
+      <pre><code class="language-scheme">(assert! (married Minnie Mickey))</code></pre>
+
+      <p>Se agora perguntarmos</p>
+      <pre><code class="language-scheme">(married Mickey ?who)</code></pre>
+
+      <p>
+        não obteremos resposta, porque o sistema não sabe que se
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>A</mi>
+        </math>
+        é casado com
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>B</mi> </math>,
+        então
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>B</mi>
+        </math>
+        é casado com
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>A</mi> </math>.
+        Então, afirmamos a regra
+      </p>
+      <pre><code class="language-scheme">(assert! (rule (married ?x ?y)
+                         (married ?y ?x)))</code></pre>
+
+      <p>e novamente consultamos</p>
+      <pre><code class="language-scheme">(married Mickey ?who)</code></pre>
+
+      <p>Infelizmente, isso levará o sistema a um loop infinito, como segue:</p>
+      <ul>
+        <li>
+          O sistema descobre que a regra <code>married</code> é aplicável; ou
+          seja, a conclusão da regra <code>(married ?x ?y)</code> se unifica com
+          sucesso com o padrão de consulta
+          <code>(married Mickey ?who)</code> para produzir um quadro em que
+          <code>?x</code> está vinculado a <code>Mickey</code> e
+          <code>?y</code> está vinculado a <code>?who</code>. Então, o
+          interpretador prossegue para avaliar o corpo da regra
+          <code>(married ?y ?x)</code> nesse quadro—em efeito, para processar a
+          consulta <code>(married ?who Mickey)</code>.
+        </li>
+        <li>
+          Uma resposta aparece diretamente como uma asserção na base de dados:
+          <code>(married Minnie Mickey)</code>.
+        </li>
+        <li>
+          A regra <code>married</code> também é aplicável, então o interpretador
+          novamente avalia o corpo da regra, que desta vez é equivalente a
+          <code>(married Mickey ?who)</code>.
+        </li>
+      </ul>
+
+      <p>
+        O sistema está agora em um loop infinito. De fato, se o sistema
+        encontrará a resposta simples <code>(married Minnie Mickey)</code> antes
+        de entrar no loop depende de detalhes de implementação sobre a ordem em
+        que o sistema verifica os itens na base de dados. Este é um exemplo
+        muito simples dos tipos de loops que podem ocorrer. Coleções de regras
+        inter-relacionadas podem levar a loops muito mais difíceis de antecipar,
+        e a aparência de um loop pode depender da ordem das cláusulas em um
+        <code>and</code> (veja <a href="#Exercise-4_002e64">Exercício 4.64</a>)
+        ou de detalhes de baixo nível sobre a ordem em que o sistema processa
+        consultas.<a class="footnote_link" id="DOCF281" href="#FOOT281"
+          ><sup>281</sup></a
+        >
+      </p>
+      <a id="Problems-with-not"></a>
+      <h5 class="subsubheading">Problemas com <code>not</code></h5>
+
+      <p>
+        Outra peculiaridade no sistema de consulta diz respeito a
+        <code>not</code>. Dada a base de dados de
+        <a href="#g_t4_002e4_002e1">4.4.1</a>, considere as duas consultas a
+        seguir:
+      </p>
+      <pre><code class="language-scheme">(and (supervisor ?x ?y)
+               (not (job ?x (computer programmer))))
+          
+          (and (not (job ?x (computer programmer)))
+               (supervisor ?x ?y))</code></pre>
+
+      <p>
+        Essas duas consultas não produzem o mesmo resultado. A primeira consulta
+        começa por encontrar todas as entradas na base de dados que correspondem
+        a <code>(supervisor ?x ?y)</code>, e então filtra os quadros
+        resultantes, removendo aqueles em que o valor de
+        <code>?x</code> satisfaz <code>(job ?x (computer programmer))</code>. A
+        segunda consulta começa filtrando os quadros de entrada para remover
+        aqueles que podem satisfazer
+        <code>(job ?x (computer programmer))</code>. Como o único quadro de
+        entrada é vazio, ela verifica a base de dados para ver se há algum
+        padrão que satisfaça <code>(job ?x (computer programmer))</code>. Como
+        geralmente há entradas dessa forma, a cláusula <code>not</code> filtra o
+        quadro vazio e retorna um fluxo vazio de quadros. Consequentemente, toda
+        a consulta composta retorna um fluxo vazio.
+      </p>
+      <p>
+        O problema é que nossa implementação de <code>not</code> realmente serve
+        como um filtro sobre valores para as variáveis. Se uma cláusula
+        <code>not</code> é processada com um quadro em que algumas das variáveis
+        permanecem desvinculadas (como <code>?x</code> no exemplo acima), o
+        sistema produzirá resultados inesperados. Problemas semelhantes ocorrem
+        com o uso de <code>lisp-value</code>—o predicado Lisp não pode funcionar
+        se alguns de seus argumentos estiverem desvinculados. Veja
+        <a href="#Exercise-4_002e77">Exercício 4.77</a>.
+      </p>
+      <p>
+        Há também uma maneira muito mais séria em que o <code>not</code> da
+        linguagem de consulta diferente do <code>not</code> da lógica
+        matemática. Em lógica, interpretamos a declaração “não
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>P</mi> </math>”
+        para significar que
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>P</mi>
+        </math>
+        não é verdadeira. No sistema de consulta, no entanto, “não
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>P</mi> </math>”
+        significa que
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mi>P</mi>
+        </math>
+        não é dedutível a partir do conhecimento na base de dados. Por exemplo,
+        dada a base de dados de pessoal de
+        <a href="#g_t4_002e4_002e1">4.4.1</a>, o sistema deduziria alegremente
+        todos os tipos de declarações <code>not</code>, como que Ben Bitdiddle
+        não é um fã de beisebol, que não está chovendo lá fora, e que 2 + 2 não
+        é 4.<a class="footnote_link" id="DOCF282" href="#FOOT282"
+          ><sup>282</sup></a
+        >
+        Em outras palavras, o <code>not</code> de linguagens de programação
+        lógica reflete a chamada <a id="index-closed-world-assumption"></a>
+        <em>suposição de mundo fechado</em> de que toda a informação relevante
+        foi incluída na base de dados.<a
+          class="footnote_link"
+          id="DOCF283"
+          href="#FOOT283"
+          ><sup>283</sup></a
+        >
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e64"></a>Exercício 4.64:</strong> Louis
+          Reasoner exclui por engano a regra <code>outranked-by</code> (<a
+            href="#g_t4_002e4_002e1"
+            >4.4.1</a
+          >) da base de dados. Quando ele percebe isso, ele rapidamente a
+          reinstala. Infelizmente, ele faz uma pequena mudança na regra e a
+          digita como
+        </p>
+        <pre><code class="language-scheme">(rule (outranked-by ?staff-person ?boss)
+            (or (supervisor ?staff-person ?boss)
+                (and (outranked-by ?middle-manager
+                                   ?boss)
+                     (supervisor ?staff-person 
+                                 ?middle-manager))))</code></pre>
+
+        <p>
+          Logo após Louis digitar essa informação no sistema, DeWitt Aull vem
+          descobrir quem supera Ben Bitdiddle. Ele faz a consulta
+        </p>
+        <pre><code class="language-scheme">(outranked-by (Bitdiddle Ben) ?who)</code></pre>
+
+        <p>
+          Depois de responder, o sistema entra em um loop infinito. Explique por
+          quê.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e65"></a>Exercício 4.65:</strong> Cy D.
+          Fect, ansioso pelo dia em que ele subirá na organização, faz uma
+          consulta para encontrar todas as rodas (usando a regra
+          <code>wheel</code> de <a href="#g_t4_002e4_002e1">4.4.1</a>):
+        </p>
+        <pre><code class="language-scheme">(wheel ?who)</code></pre>
+
+        <p>Para sua surpresa, o sistema responde</p>
+        <pre><code class="language-scheme">;;; Resultados da consulta:
+          (wheel (Warbucks Oliver))
+          (wheel (Bitdiddle Ben))
+          (wheel (Warbucks Oliver))
+          (wheel (Warbucks Oliver))
+          (wheel (Warbucks Oliver))</code></pre>
+
+        <p>Por que Oliver Warbucks é listado quatro vezes?</p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e66"></a>Exercício 4.66:</strong> Ben tem
+          generalizado o sistema de consulta para fornecer estatísticas sobre a
+          empresa. Por exemplo, para encontrar o total de salários de todos os
+          programadores de computadores, será possível dizer
+        </p>
+        <pre><code class="language-scheme">(sum ?amount
+               (and (job ?x (computer programmer))
+                    (salary ?x ?amount)))</code></pre>
+
+        <p>Em geral, o novo sistema de Ben permite expressões da forma</p>
+        <pre><code class="language-scheme">(accumulation-function ⟨variável⟩
+                                 ⟨padrão de consulta⟩)</code></pre>
+
+        <p>
+          onde <code>accumulation-function</code> pode ser coisas como
+          <code>sum</code>, <code>average</code> ou <code>maximum</code>. Ben
+          raciocina que deve ser fácil implementar isso. Ele simplesmente
+          alimentará o padrão de consulta a <code>qeval</code>. Isso produzirá
+          um fluxo de quadros. Ele então passará esse fluxo por uma função de
+          mapeamento que extrai o valor da variável designada de cada quadro no
+          fluxo e alimentará o fluxo resultante de valores para a função de
+          acumulação. Assim que Ben completa a implementação e está prestes a
+          testá-la, Cy passa por perto, ainda intrigado com o resultado da
+          consulta <code>wheel</code> em
+          <a href="#Exercise-4_002e65">Exercício 4.65</a>. Quando Cy mostra a
+          Ben a resposta do sistema, Ben geme, “Oh, não, meu esquema de
+          acumulação simples não funcionará!”
+        </p>
+        <p>
+          O que Ben acabou de perceber? Esboce um método que ele pode usar para
+          salvar a situação.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e67"></a>Exercício 4.67:</strong> Projete
+          uma maneira de instalar um detector de loops no sistema de consulta
+          para evitar os tipos de loops simples ilustrados no texto e em
+          <a href="#Exercise-4_002e64">Exercício 4.64</a>. A ideia geral é que o
+          sistema deve manter algum tipo de histórico de sua cadeia atual de
+          deduções e não deve começar a processar uma consulta que já está
+          trabalhando. Descreva que tipo de informação (padrões e quadros) é
+          incluída nesse histórico e como a verificação deve ser feita. (Depois
+          de estudar os detalhes da implementação do sistema de consulta em
+          <a href="#g_t4_002e4_002e4">4.4.4</a>, você pode querer modificar o
+          sistema para incluir seu detector de loops.)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e68"></a>Exercício 4.68:</strong> Defina
+          regras para implementar a operação <code>reverse</code> de
+          <a href="2_002e2.html#Exercise-2_002e18">Exercício 2.18</a>, que
+          retorna uma lista contendo os mesmos elementos de uma lista dada em
+          ordem inversa. (Dica: Use <code>append-to-form</code>.) Suas regras
+          podem responder tanto a <code>(reverse (1 2 3) ?x)</code> quanto a
+          <code>(reverse ?x (1 2 3))</code>?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e69"></a>Exercício 4.69:</strong>
+          Começando com a base de dados e as regras que você formulou em
+          <a href="#Exercise-4_002e63">Exercício 4.63</a>, projete uma regra
+          para adicionar “grandes” a uma relação de neto. Isso deve permitir que
+          o sistema deduza que Irad é o bisneto de Adam, ou que Jabal e Jubal
+          são os tetranetos de Adam. (Dica: Represente o fato sobre Irad, por
+          exemplo, como <code>((great grandson) Adam Irad)</code>. Escreva
+          regras que determinam se uma lista termina com a palavra
+          <code>grandson</code>. Use isso para expressar uma regra que permite
+          derivar a relação <code>((great . ?rel) ?x ?y)</code>, onde
+          <code>?rel</code> é uma lista que termina com <code>grandson</code>.)
+          Teste suas regras em consultas como
+          <code>((great grandson) ?g ?ggs)</code> e
+          <code>(?relationship Adam Irad)</code>.
+        </p>
+      </blockquote>
+
+      <a id="g_t4_002e4_002e4"></a>
+      <a id="Implementing-the-Query-System"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.4.4</span
+        ><span class="sectitle">Implementando o Sistema de Consulta</span>
+      </h4>
+
+      <p>
+        A seção <a href="#g_t4_002e4_002e2">4.4.2</a> descreveu como o sistema
+        de consulta funciona. Agora preenchemos os detalhes apresentando uma
+        implementação completa do sistema.
+      </p>
+
+      <a id="g_t4_002e4_002e4_002e1"></a>
+      <a id="The-Driver-Loop-and-Instantiation"></a>
+      <h5 class="subsubsection">
+        <span class="secnum">4.4.4.1</span
+        ><span class="sectitle">O Loop de Controle e a Instanciação</span>
+      </h5>
+
+      <p>
+        O loop de controle para o sistema de consulta repetidamente lê
+        expressões de entrada. Se a expressão for uma regra ou asserção a ser
+        adicionada à base de dados, então a informação é adicionada. Caso
+        contrário, a expressão é assumida como uma consulta. O loop de controle
+        passa essa consulta para o avaliador <code>qeval</code> junto com um
+        fluxo inicial de quadros consistindo de um único quadro vazio. O
+        resultado da avaliação é um fluxo de quadros gerados pela satisfação da
+        consulta com valores de variáveis encontrados na base de dados. Esses
+        quadros são usados para formar um novo fluxo consistindo de cópias da
+        consulta original em que as variáveis são instanciadas com valores
+        fornecidos pelo fluxo de quadros, e esse fluxo final é impresso no
+        terminal:
+      </p>
+      <pre><code class="language-scheme">(define input-prompt  ";;; Entrada da consulta:")
+          (define output-prompt ";;; Resultados da consulta:")
+          
+          (define (query-driver-loop)
+            (prompt-for-input input-prompt)
+            (let ((q (query-syntax-process (read))))
+              (cond ((assertion-to-be-added? q)
+                     (add-rule-or-assertion! 
+                      (add-assertion-body q))
+                     (newline)
+                     (display 
+                      "Asserção adicionada à base de dados.")
+                     (query-driver-loop))
+                    (else
+                     (newline)
+                     (display output-prompt)
+                     (display-stream
+                      (stream-map
+                       (lambda (frame)
+                         (instantiate
+                          q
+                          frame
+                          (lambda (v f)
+                            (contract-question-mark v))))
+                       (qeval q (singleton-stream '()))))))))</code></pre>
+
+      <p>
+        Aqui, como nos outros avaliadores neste capítulo, usamos uma sintaxe
+        abstrata para as expressões da linguagem de consulta. A implementação da
+        sintaxe de expressão, incluindo o predicado
+        <code>assertion-to-be-added?</code> e o seletor
+        <code>add-assertion-body</code>, é dada em
+        <a href="#g_t4_002e4_002e4_002e7">4.4.4.7</a>.
+        <code>Add-rule-or-assertion!</code> é definido em
+        <a href="#g_t4_002e4_002e4_002e5">4.4.4.5</a>.
+      </p>
+      <p>
+        Antes de fazer qualquer processamento em uma expressão de entrada, o
+        loop de controle a transforma sintaticamente em uma forma que torna o
+        processamento mais eficiente. Isso envolve mudar a representação das
+        variáveis de padrão. Quando a consulta é instanciada, quaisquer
+        variáveis que permaneçam desvinculadas são transformadas de volta para a
+        representação de entrada antes de serem impressas. Essas transformações
+        são realizadas pelos dois procedimentos
+        <code>query-syntax-process</code> e
+        <code>contract-question-mark</code> (<a href="#g_t4_002e4_002e4_002e7"
+          >4.4.4.7</a
+        >).
+      </p>
+      <p>
+        Para instanciar uma expressão, nós a copiamos, substituindo quaisquer
+        variáveis na expressão por seus valores em um quadro dado. Os valores
+        são eles mesmos instanciados, já que eles podem conter variáveis (por
+        exemplo, se <code>?x</code> em <code>exp</code> está vinculado a
+        <code>?y</code> como resultado da unificação e <code>?y</code> está por
+        sua vez vinculado a 5). A ação a ser tomada se uma variável não puder
+        ser instanciada é dada por um argumento procedural para
+        <code>instantiate</code>.
+      </p>
+      <pre><code class="language-scheme">(define (instantiate 
+                   exp frame unbound-var-handler)
+            (define (copy exp)
+              (cond ((var? exp)
+                     (let ((binding 
+                            (binding-in-frame 
+                             exp frame)))
+                       (if binding
+                           (copy 
+                            (binding-value binding))
+                           (unbound-var-handler 
+                            exp frame))))
+                    ((pair? exp)
+                     (cons (copy (car exp)) 
+                           (copy (cdr exp))))
+                    (else exp)))
+            (copy exp))</code></pre>
+
+      <p>
+        Os procedimentos que manipulam vinculações são definidos em
+        <a href="#g_t4_002e4_002e4_002e8">4.4.4.8</a>.
+      </p>
+      <a id="g_t4_002e4_002e4_002e2"></a>
+      <a id="The-Evaluator"></a>
+      <h5 class="subsubsection">
+        <span class="secnum">4.4.4.2</span
+        ><span class="sectitle">O Avaliador</span>
+      </h5>
+
+      <p>
+        O procedimento <code>qeval</code>, chamado pelo
+        <code>query-driver-loop</code>, é o avaliador básico do sistema de
+        consultas. Ele recebe como entradas uma consulta e um fluxo de quadros
+        (frames), e retorna um fluxo de quadros estendidos. Ele identifica
+        formas especiais por meio de um despacho direcionado por dados usando
+        <code>get</code> e <code>put</code>, assim como fizemos na implementação
+        de operações genéricas no
+        <a href="Chapter-2.html#Chapter-2">Capítulo 2</a>. Qualquer consulta que
+        não seja identificada como uma forma especial é assumida como uma
+        consulta simples, a ser processada por <code>simple-query</code>.
+      </p>
+
+      <pre><code class="language-scheme">(define (qeval query frame-stream)
+              (let ((qproc (get (type query) 'qeval)))
+                (if qproc
+                    (qproc (contents query) frame-stream)
+                    (simple-query query frame-stream))))</code></pre>
+
+      <p>
+        <code>Type</code> e <code>contents</code>, definidos em
+        <a href="#g_t4_002e4_002e4_002e7">4.4.4.7</a>, implementam a sintaxe
+        abstrata das formas especiais.
+      </p>
+
+      <a id="Simple-queries-2"></a>
+      <h5 class="subsubheading">Consultas simples</h5>
+
+      <p>
+        O procedimento <code>simple-query</code> lida com consultas simples. Ele
+        recebe como argumentos uma consulta simples (um padrão) junto com um
+        fluxo de quadros, e retorna o fluxo formado pela extensão de cada quadro
+        por todas as correspondências da consulta no banco de dados.
+      </p>
+
+      <pre><code class="language-scheme">(define (simple-query query-pattern 
+                                  frame-stream)
+              (stream-flatmap
+               (lambda (frame)
+                 (stream-append-delayed
+                  (find-assertions query-pattern frame)
+                  (delay 
+                    (apply-rules query-pattern frame))))
+               frame-stream))</code></pre>
+
+      <p>
+        Para cada quadro no fluxo de entrada, usamos
+        <code>find-assertions</code> (<a href="#g_t4_002e4_002e4_002e3"
+          >4.4.4.3</a
+        >) para corresponder o padrão contra todas as asserções no banco de
+        dados, produzindo um fluxo de quadros estendidos, e usamos
+        <code>apply-rules</code> (<a href="#g_t4_002e4_002e4_002e4">4.4.4.4</a>)
+        para aplicar todas as regras possíveis, produzindo outro fluxo de
+        quadros estendidos. Esses dois fluxos são combinados (usando
+        <code>stream-append-delayed</code>,
+        <a href="#g_t4_002e4_002e4_002e6">4.4.4.6</a>) para formar um fluxo de
+        todas as maneiras que o padrão dado pode ser satisfeito de forma
+        consistente com o quadro original (veja
+        <a href="#Exercise-4_002e71">Exercício 4.71</a>). Os fluxos para os
+        quadros individuais de entrada são combinados usando
+        <code>stream-flatmap</code> (<a href="#g_t4_002e4_002e4_002e6"
+          >4.4.4.6</a
+        >) para formar um grande fluxo de todas as maneiras que qualquer um dos
+        quadros no fluxo de entrada original pode ser estendido para produzir
+        uma correspondência com o padrão dado.
+      </p>
+
+      <a id="Compound-queries-2"></a>
+      <h5 class="subsubheading">Consultas compostas</h5>
+
+      <p>
+        Consultas <code>and</code> são tratadas como ilustrado em
+        <a href="#Figure-4_002e5">Figura 4.5</a> pelo procedimento
+        <code>conjoin</code>. <code>Conjoin</code> recebe como entradas os
+        conjuntos e o fluxo de quadros e retorna o fluxo de quadros estendidos.
+        Primeiro, <code>conjoin</code> processa o fluxo de quadros para
+        encontrar o fluxo de todas as extensões possíveis de quadros que
+        satisfazem a primeira consulta na conjunção. Então, usando isso como o
+        novo fluxo de quadros, ele aplica recursivamente <code>conjoin</code> ao
+        restante das consultas.
+      </p>
+
+      <pre><code class="language-scheme">(define (conjoin conjuncts frame-stream)
+              (if (empty-conjunction? conjuncts)
+                  frame-stream
+                  (conjoin (rest-conjuncts conjuncts)
+                           (qeval 
+                            (first-conjunct conjuncts)
+                            frame-stream))))</code></pre>
+
+      <p>A expressão</p>
+
+      <pre><code class="language-scheme">(put 'and 'qeval conjoin)</code></pre>
+
+      <p>
+        configura <code>qeval</code> para despachar para
+        <code>conjoin</code> quando uma forma <code>and</code> é encontrada.
+      </p>
+
+      <p>
+        Consultas <code>or</code> são tratadas de forma semelhante, como
+        mostrado em <a href="#Figure-4_002e6">Figura 4.6</a>. Os fluxos de saída
+        para os vários disjuntos do <code>or</code> são computados separadamente
+        e mesclados usando o procedimento <code>interleave-delayed</code> de
+        <a href="#g_t4_002e4_002e4_002e6">4.4.4.6</a>. (Veja
+        <a href="#Exercise-4_002e71">Exercício 4.71</a> e
+        <a href="#Exercise-4_002e72">Exercício 4.72</a>.)
+      </p>
+
+      <pre><code class="language-scheme">(define (disjoin disjuncts frame-stream)
+              (if (empty-disjunction? disjuncts)
+                  the-empty-stream
+                  (interleave-delayed
+                   (qeval (first-disjunct disjuncts) 
+                          frame-stream)
+                   (delay (disjoin 
+                           (rest-disjuncts disjuncts)
+                           frame-stream)))))
+            (put 'or 'qeval disjoin)</code></pre>
+
+      <p>
+        Os predicados e seletores para a sintaxe de conjuntos e disjuntos são
+        dados em <a href="#g_t4_002e4_002e4_002e7">4.4.4.7</a>.
+      </p>
+
+      <a id="Filters"></a>
+      <h5 class="subsubheading">Filtros</h5>
+
+      <p>
+        <code>Not</code> é tratado pelo método delineado em
+        <a href="#g_t4_002e4_002e2">4.4.2</a>. Tentamos estender cada quadro no
+        fluxo de entrada para satisfazer a consulta sendo negada, e incluímos um
+        determinado quadro no fluxo de saída apenas se ele não puder ser
+        estendido.
+      </p>
+
+      <pre><code class="language-scheme">(define (negate operands frame-stream)
+              (stream-flatmap
+               (lambda (frame)
+                 (if (stream-null? 
+                      (qeval (negated-query operands)
+                             (singleton-stream frame)))
+                     (singleton-stream frame)
+                     the-empty-stream))
+               frame-stream))
+            (put 'not 'qeval negate)</code></pre>
+
+      <p>
+        <code>Lisp-value</code> é um filtro semelhante a <code>not</code>. Cada
+        quadro no fluxo é usado para instanciar as variáveis no padrão, o
+        predicado indicado é aplicado, e os quadros para os quais o predicado
+        retorna falso são filtrados do fluxo de entrada. Um erro resulta se
+        houver variáveis de padrão não vinculadas.
+      </p>
+
+      <pre><code class="language-scheme">(define (lisp-value call frame-stream)
+              (stream-flatmap
+               (lambda (frame)
+                 (if (execute
+                      (instantiate
+                       call
+                       frame
+                       (lambda (v f)
+                         (error 
+                          "Unknown pat var: LISP-VALUE" 
+                          v))))
+                     (singleton-stream frame)
+                     the-empty-stream))
+               frame-stream))
+            (put 'lisp-value 'qeval lisp-value)</code></pre>
+
+      <p>
+        <code>Execute</code>, que aplica o predicado aos argumentos, deve
+        <code>eval</code>
+        a expressão do predicado para obter o procedimento a ser aplicado. No
+        entanto, ele não deve avaliar os argumentos, pois eles já são os
+        argumentos reais, não expressões cuja avaliação (em Lisp) produzirá os
+        argumentos. Observe que
+        <code>execute</code> é implementado usando <code>eval</code> e
+        <code>apply</code> do sistema Lisp subjacente.
+      </p>
+
+      <pre><code class="language-scheme">(define (execute exp)
+              (apply (eval (predicate exp) 
+                           user-initial-environment)
+                     (args exp)))</code></pre>
+
+      <p>
+        A forma especial <code>always-true</code> fornece uma consulta que é
+        sempre satisfeita. Ela ignora seu conteúdo (normalmente vazio) e
+        simplesmente passa todos os quadros no fluxo de entrada.
+        <code>Always-true</code> é usado pelo seletor <code>rule-body</code> (<a
+          href="#g_t4_002e4_002e4_002e7"
+          >4.4.4.7</a
+        >) para fornecer corpos para regras que foram definidas sem corpos (ou
+        seja, regras cujas conclusões são sempre satisfeitas).
+      </p>
+
+      <pre><code class="language-scheme">(define (always-true ignore frame-stream) 
+              frame-stream)
+            (put 'always-true 'qeval always-true)</code></pre>
+
+      <p>
+        Os seletores que definem a sintaxe de <code>not</code> e
+        <code>lisp-value</code> são dados em
+        <a href="#g_t4_002e4_002e4_002e7">4.4.4.7</a>.
+      </p>
+
+      <a id="g_t4_002e4_002e4_002e3"></a>
+      <a id="Finding-Assertions-by-Pattern-Matching"></a>
+      <h5 class="subsubsection">
+        <span class="secnum">4.4.4.3</span
+        ><span class="sectitle"
+          >Encontrando Asserções por Correspondência de Padrões</span
+        >
+      </h5>
+
+      <p>
+        <code>Find-assertions</code>, chamado por <code>simple-query</code> (<a
+          href="#g_t4_002e4_002e4_002e2"
+          >4.4.4.2</a
+        >), recebe como entrada um padrão e um quadro. Ele retorna um fluxo de
+        quadros, cada um estendendo o dado por uma correspondência no banco de
+        dados do padrão dado. Ele usa <code>fetch-assertions</code> (<a
+          href="#g_t4_002e4_002e4_002e5"
+          >4.4.4.5</a
+        >) para obter um fluxo de todas as asserções no banco de dados que devem
+        ser verificadas para uma correspondência contra o padrão e o quadro. A
+        razão para <code>fetch-assertions</code> aqui é que podemos aplicar
+        testes simples que eliminarão muitas das entradas no banco de dados do
+        conjunto de candidatos para uma correspondência bem-sucedida. O sistema
+        ainda funcionaria se eliminássemos <code>fetch-assertions</code> e
+        simplesmente verificássemos um fluxo de todas as asserções no banco de
+        dados, mas a computação seria menos eficiente porque precisaríamos fazer
+        muito mais chamadas ao correspondente.
+      </p>
+
+      <pre><code class="language-scheme">(define (find-assertions pattern frame)
+              (stream-flatmap 
+                (lambda (datum) 
+                  (check-an-assertion datum pattern frame))
+                (fetch-assertions pattern frame)))</code></pre>
+
+      <p>
+        <code>Check-an-assertion</code> recebe como argumentos um padrão, um
+        objeto de dados (asserção) e um quadro e retorna ou um fluxo de um
+        elemento contendo o quadro estendido ou <code>the-empty-stream</code> se
+        a correspondência falhar.
+      </p>
+
+      <pre><code class="language-scheme">(define (check-an-assertion 
+                     assertion query-pat query-frame)
+              (let ((match-result
+                     (pattern-match 
+                      query-pat assertion query-frame)))
+                (if (eq? match-result 'failed)
+                    the-empty-stream
+                    (singleton-stream match-result))))</code></pre>
+
+      <p>
+        O correspondente de padrão básico retorna ou o símbolo
+        <code>failed</code> ou uma extensão do quadro dado. A ideia básica do
+        correspondente é verificar o padrão contra o objeto de dados, elemento
+        por elemento, acumulando vinculações para as variáveis do padrão. Se o
+        padrão e o objeto de dados forem iguais, a correspondência é
+        bem-sucedida e retornamos o quadro de vinculações acumuladas até agora.
+        Caso contrário, se o padrão for uma variável, estendemos o quadro atual
+        vinculando a variável ao dado, desde que isso seja consistente com as
+        vinculações já no quadro. Se o padrão e o dado forem ambos pares,
+        correspondemos (recursivamente) o <code>car</code> do padrão contra o
+        <code>car</code> do dado para produzir um quadro; neste quadro, então
+        correspondemos o <code>cdr</code> do padrão contra o <code>cdr</code> do
+        dado. Se nenhum desses casos for aplicável, a correspondência falha e
+        retornamos o símbolo <code>failed</code>.
+      </p>
+
+      <pre><code class="language-scheme">(define (pattern-match pat dat frame)
+              (cond ((eq? frame 'failed) 'failed)
+                    ((equal? pat dat) frame)
+                    ((var? pat) 
+                     (extend-if-consistent 
+                      pat dat frame))
+                    ((and (pair? pat) (pair? dat))
+                     (pattern-match 
+                      (cdr pat) 
+                      (cdr dat)
+                      (pattern-match
+                       (car pat) (car dat) frame)))
+                    (else 'failed)))</code></pre>
+
+      <p>
+        Aqui está o procedimento que estende um quadro adicionando uma nova
+        vinculação, se isso for consistente com as vinculações já no quadro:
+      </p>
+
+      <pre><code class="language-scheme">(define (extend-if-consistent var dat frame)
+              (let ((binding (binding-in-frame var frame)))
+                (if binding
+                    (pattern-match 
+                     (binding-value binding) dat frame)
+                    (extend var dat frame))))</code></pre>
+
+      <p>
+        Se não houver vinculação para a variável no quadro, simplesmente
+        adicionamos a vinculação da variável ao dado. Caso contrário,
+        correspondemos, no quadro, o dado contra o valor da variável no quadro.
+        Se o valor armazenado contiver apenas constantes, como deve ser se foi
+        armazenado durante a correspondência de padrões por
+        <code>extend-if-consistent</code>, então a correspondência simplesmente
+        testa se os valores armazenados e novos são iguais. Se forem, ele
+        retorna o quadro inalterado; se não, ele retorna uma indicação de falha.
+        O valor armazenado pode, no entanto, conter variáveis de padrão se foi
+        armazenado durante a unificação (veja
+        <a href="#g_t4_002e4_002e4_002e4">4.4.4.4</a>). A correspondência
+        recursiva do padrão armazenado contra o novo dado adicionará ou
+        verificará vinculações para as variáveis neste padrão. Por exemplo,
+        suponha que temos um quadro no qual <code>?x</code> está vinculado a
+        <code>(f ?y)</code> e <code>?y</code> não está vinculado, e desejamos
+        aumentar este quadro com uma vinculação de <code>?x</code> a
+        <code>(f b)</code>. Procuramos <code>?x</code> e descobrimos que ele
+        está vinculado a <code>(f ?y)</code>. Isso nos leva a corresponder
+        <code>(f ?y)</code> contra o novo valor proposto <code>(f b)</code> no
+        mesmo quadro. Eventualmente, essa correspondência estende o quadro
+        adicionando uma vinculação de <code>?y</code> a <code>b</code>.
+        <code>?X</code> permanece vinculado a <code>(f ?y)</code>. Nunca
+        modificamos uma vinculação armazenada e nunca armazenamos mais de uma
+        vinculação para uma dada variável.
+      </p>
+
+      <p>
+        Os procedimentos usados por <code>extend-if-consistent</code> para
+        manipular vinculações são definidos em
+        <a href="#g_t4_002e4_002e4_002e8">4.4.4.8</a>.
+      </p>
+
+      <a id="Patterns-with-dotted-tails"></a>
+      <h5 class="subsubheading">Padrões com caudas pontilhadas</h5>
+
+      <p>
+        Se um padrão contiver um ponto seguido por uma variável de padrão, a
+        variável de padrão corresponderá ao restante da lista de dados (em vez
+        do próximo elemento da lista de dados), assim como seria de se esperar
+        com a notação de cauda pontilhada descrita em
+        <a href="2_002e2.html#Exercise-2_002e20">Exercício 2.20</a>. Embora o
+        correspondente de padrões que implementamos não procure por pontos, ele
+        se comporta como desejamos. Isso ocorre porque o primitivo
+        <code>read</code> do Lisp, que é usado por
+        <code>query-driver-loop</code> para ler a consulta e representá-la como
+        uma estrutura de lista, trata pontos de uma maneira especial.
+      </p>
+
+      <p>
+        Quando <code>read</code> vê um ponto, em vez de fazer o próximo item ser
+        o próximo elemento de uma lista (o <code>car</code> de um
+        <code>cons</code> cujo <code>cdr</code> será o restante da lista), ele
+        faz o próximo item ser o <code>cdr</code> da estrutura de lista. Por
+        exemplo, a estrutura de lista produzida por <code>read</code> para o
+        padrão <code>(computer ?type)</code> poderia ser construída avaliando a
+        expressão <code>(cons 'computer (cons '?type '()))</code>, e aquela para
+        <code>(computer . ?type)</code> poderia ser construída avaliando a
+        expressão <code>(cons 'computer '?type)</code>.
+      </p>
+
+      <p>
+        Assim, conforme <code>pattern-match</code> compara recursivamente
+        <code>car</code>s e <code>cdr</code>s de uma lista de dados e um padrão
+        que tinha um ponto, ele eventualmente corresponde a variável após o
+        ponto (que é um <code>cdr</code> do padrão) contra uma sublista da lista
+        de dados, vinculando a variável a essa lista. Por exemplo,
+        correspondendo o padrão <code>(computer . ?type)</code> contra
+        <code>(computer programmer trainee)</code> corresponderá
+        <code>?type</code> à lista <code>(programmer trainee)</code>.
+      </p>
+
+      <a id="g_t4_002e4_002e4_002e4"></a>
+      <a id="Rules-and-Unification"></a>
+      <h5 class="subsubsection">
+        <span class="secnum">4.4.4.4</span
+        ><span class="sectitle">Regras e Unificação</span>
+      </h5>
+
+      <p>
+        <code>Apply-rules</code> é o análogo de regras de
+        <code>find-assertions</code> (<a href="#g_t4_002e4_002e4_002e3"
+          >4.4.4.3</a
+        >). Ele recebe como entrada um padrão e um quadro, e forma um fluxo de
+        quadros estendidos aplicando regras do banco de dados.
+        <code>Stream-flatmap</code> mapeia <code>apply-a-rule</code> ao longo do
+        fluxo de regras possivelmente aplicáveis (selecionadas por
+        <code>fetch-rules</code>, <a href="#g_t4_002e4_002e4_002e5">4.4.4.5</a>)
+        e combina os fluxos resultantes de quadros.
+      </p>
+
+      <pre><code class="language-scheme">(define (apply-rules pattern frame)
+              (stream-flatmap 
+               (lambda (rule)
+                 (apply-a-rule rule pattern frame))
+               (fetch-rules pattern frame)))</code></pre>
+
+      <p>
+        <code>Apply-a-rule</code> aplica regras usando o método delineado em
+        <a href="#g_t4_002e4_002e2">4.4.2</a>. Ele primeiro aumenta seu quadro
+        de argumentos unificando a conclusão da regra com o padrão no quadro
+        dado. Se isso for bem-sucedido, ele avalia o corpo da regra neste novo
+        quadro.
+      </p>
+
+      <p>
+        Antes que qualquer uma dessas coisas aconteça, no entanto, o programa
+        renomeia todas as variáveis na regra com novos nomes únicos. A razão
+        para isso é evitar que as variáveis para diferentes aplicações de regras
+        se confundam umas com as outras. Por exemplo, se duas regras usarem uma
+        variável chamada <code>?x</code>, então cada uma pode adicionar uma
+        vinculação para <code>?x</code> ao quadro quando for aplicada. Esses
+        dois <code>?x</code> não têm nada a ver um com o outro, e não devemos
+        ser enganados pensando que as duas vinculações devem ser consistentes.
+        Em vez de renomear variáveis, poderíamos criar uma estrutura de ambiente
+        mais inteligente; no entanto, a abordagem de renomeação que escolhemos
+        aqui é a mais direta, mesmo que não seja a mais eficiente. (Veja
+        <a href="#Exercise-4_002e79">Exercício 4.79</a>.) Aqui está o
+        procedimento <code>apply-a-rule</code>:
+      </p>
+
+      <pre><code class="language-scheme">(define (apply-a-rule rule
+                                  query-pattern
+                                  query-frame)
+              (let ((clean-rule 
+                     (rename-variables-in rule)))
+                (let ((unify-result
+                       (unify-match query-pattern
+                                    (conclusion clean-rule)
+                                    query-frame)))
+                  (if (eq? unify-result 'failed)
+                      the-empty-stream
+                      (qeval (rule-body clean-rule)
+                             (singleton-stream 
+                              unify-result))))))</code></pre>
+
+      <p>
+        Os seletores <code>rule-body</code> e <code>conclusion</code> que
+        extraem partes de uma regra são definidos em
+        <a href="#g_t4_002e4_002e4_002e7">4.4.4.7</a>.
+      </p>
+
+      <p>
+        Geramos nomes de variáveis únicos associando um identificador único
+        (como um número) a cada aplicação de regra e combinando esse
+        identificador com os nomes de variáveis originais. Por exemplo, se o
+        identificador de aplicação de regra for 7, podemos mudar cada
+        <code>?x</code> na regra para <code>?x-7</code> e cada
+        <code>?y</code> na regra para <code>?y-7</code>. (<code
+          >Make-new-variable</code
+        >
+        e <code>new-rule-application-id</code> são incluídos com os
+        procedimentos de sintaxe em
+        <a href="#g_t4_002e4_002e4_002e7">4.4.4.7</a>.)
+      </p>
+
+      <pre><code class="language-scheme">(define (rename-variables-in rule)
+              (let ((rule-application-id 
+                     (new-rule-application-id)))
+                (define (tree-walk exp)
+                  (cond ((var? exp)
+                         (make-new-variable 
+                          exp 
+                          rule-application-id))
+                        ((pair? exp)
+                         (cons (tree-walk (car exp))
+                               (tree-walk (cdr exp))))
+                        (else exp)))
+                (tree-walk rule)))</code></pre>
+
+      <p>
+        O algoritmo de unificação é implementado como um procedimento que recebe
+        como entradas dois padrões e um quadro e retorna ou o quadro estendido
+        ou o símbolo <code>failed</code>. O unificador é como o correspondente
+        de padrões, exceto que ele é simétrico—variáveis são permitidas em ambos
+        os lados da correspondência. <code>Unify-match</code> é basicamente o
+        mesmo que <code>pattern-match</code>, exceto que há código extra
+        (marcado com “<code>***</code>” abaixo) para lidar com o caso em que o
+        objeto no lado direito da correspondência é uma variável.
+      </p>
+
+      <pre><code class="language-scheme">(define (unify-match p1 p2 frame)
+              (cond ((eq? frame 'failed) 'failed)
+                    ((equal? p1 p2) frame)
+                    ((var? p1)
+                     (extend-if-possible p1 p2 frame))
+                    ((var? p2)
+                     (extend-if-possible 
+                      p2 
+                      p1 
+                      frame))        ; ***
+                    ((and (pair? p1) 
+                          (pair? p2))
+                     (unify-match 
+                      (cdr p1) 
+                      (cdr p2)
+                      (unify-match 
+                       (car p1)
+                       (car p2)
+                       frame)))
+                    (else 'failed)))</code></pre>
+
+      <p>
+        Na unificação, assim como na correspondência de padrões unilateral,
+        queremos aceitar uma proposta de extensão do quadro apenas se ela for
+        consistente com as vinculações existentes. O procedimento
+        <code>extend-if-possible</code> usado na unificação é o mesmo que o
+        <code>extend-if-consistent</code> usado na correspondência de padrões,
+        exceto por duas verificações especiais, marcadas com “<code>***</code>”
+        no programa abaixo. No primeiro caso, se a variável que estamos tentando
+        corresponder não estiver vinculada, mas o valor que estamos tentando
+        corresponder for ele mesmo uma (diferente) variável, é necessário
+        verificar se o valor está vinculado, e se estiver, corresponder seu
+        valor. Se ambas as partes da correspondência não estiverem vinculadas,
+        podemos vincular qualquer uma à outra.
+      </p>
+
+      <p>
+        A segunda verificação lida com tentativas de vincular uma variável a um
+        padrão que inclui essa variável. Tal situação pode ocorrer sempre que
+        uma variável é repetida em ambos os padrões. Considere, por exemplo,
+        unificar os dois padrões <code>(?x ?x)</code> e
+        <code
+          >(?y ⟨<var>expressão envolvendo <code>?y</code></var
+          >⟩)</code
+        >
+        em um quadro onde ambos <code>?x</code> e <code>?y</code> não estão
+        vinculados. Primeiro <code>?x</code> é correspondido contra
+        <code>?y</code>, fazendo uma vinculação de <code>?x</code> a
+        <code>?y</code>. Em seguida, o mesmo <code>?x</code> é correspondido
+        contra a expressão dada envolvendo <code>?y</code>. Como
+        <code>?x</code> já está vinculado a <code>?y</code>, isso resulta em
+        corresponder <code>?y</code> contra a expressão. Se pensarmos no
+        unificador como encontrando um conjunto de valores para as variáveis de
+        padrão que tornam os padrões iguais, então esses padrões implicam
+        instruções para encontrar um <code>?y</code> tal que
+        <code>?y</code> seja igual a a expressão envolvendo <code>?y</code>. Não
+        há um método geral para resolver tais equações, então rejeitamos tais
+        vinculações; esses casos são reconhecidos pelo predicado
+        <code>depends-on?</code>.<a
+          class="footnote_link"
+          id="DOCF284"
+          href="#FOOT284"
+          ><sup>284</sup></a
+        >
+        Por outro lado, não queremos rejeitar tentativas de vincular uma
+        variável a si mesma. Por exemplo, considere unificar
+        <code>(?x ?x)</code> e <code>(?y ?y)</code>. A segunda tentativa de
+        vincular <code>?x</code> a <code>?y</code> corresponde
+        <code>?y</code> (o valor armazenado de <code>?x</code>) contra
+        <code>?y</code> (o novo valor de <code>?x</code>). Isso é tratado pela
+        cláusula <code>equal?</code> de <code>unify-match</code>.
+      </p>
+
+      <pre><code class="language-scheme">(define (extend-if-possible var val frame)
+              (let ((binding (binding-in-frame var frame)))
+                (cond (binding
+                       (unify-match
+                        (binding-value binding) val frame))
+                      ((var? val)                   ; ***
+                       (let ((binding 
+                              (binding-in-frame 
+                               val
+                               frame)))
+                         (if binding
+                             (unify-match
+                              var 
+                              (binding-value binding) 
+                              frame)
+                             (extend var val frame))))
+                      ((depends-on? val var frame)  ; ***
+                       'failed)
+                      (else (extend var val frame)))))</code></pre>
+
+      <p>
+        <code>Depends-on?</code> é um predicado que testa se uma expressão
+        proposta para ser o valor de uma variável de padrão depende da variável.
+        Isso deve ser feito relativamente ao quadro atual porque a expressão
+        pode conter ocorrências de uma variável que já tem um valor que depende
+        de nossa variável de teste. A estrutura de <code>depends-on?</code> é
+        uma simples caminhada recursiva em árvore na qual substituímos pelos
+        valores das variáveis sempre que necessário.
+      </p>
+
+      <pre><code class="language-scheme">(define (depends-on? exp var frame)
+              (define (tree-walk e)
+                (cond ((var? e)
+                       (if (equal? var e)
+                           true
+                           (let
+                             ((b (binding-in-frame 
+                                  e 
+                                  frame)))
+                              (if b
+                                  (tree-walk 
+                                   (binding-value b))
+                                  false))))
+                      ((pair? e)
+                       (or (tree-walk (car e))
+                           (tree-walk (cdr e))))
+                      (else false)))
+              (tree-walk exp))</code></pre>
+
+      <a id="g_t4_002e4_002e4_002e5"></a>
+      <a id="Maintaining-the-Data-Base"></a>
+      <h5 class="subsubsection">
+        <span class="secnum">4.4.4.5</span
+        ><span class="sectitle">Mantendo o Banco de Dados</span>
+      </h5>
+
+      <p>
+        Um problema importante no projeto de linguagens de programação lógica é
+        o de organizar as coisas de forma que o menor número possível de
+        entradas irrelevantes no banco de dados seja examinado ao verificar um
+        determinado padrão. Em nosso sistema, além de armazenar todas as
+        asserções em um grande fluxo, armazenamos todas as asserções cujos
+        <code>car</code>s são símbolos constantes em fluxos separados, em uma
+        tabela indexada pelo símbolo. Para buscar uma asserção que pode
+        corresponder a um padrão, primeiro verificamos se o <code>car</code> do
+        padrão é um símbolo constante. Se for, retornamos (para serem testados
+        usando o correspondente) todas as asserções armazenadas que têm o mesmo
+        <code>car</code>. Se o <code>car</code> do padrão não for um símbolo
+        constante, retornamos todas as asserções armazenadas. Métodos mais
+        inteligentes também poderiam tirar vantagem de informações no quadro, ou
+        tentar otimizar o caso em que o <code>car</code> do padrão não é um
+        símbolo constante. Evitamos construir nossos critérios para indexação
+        (usando o <code>car</code>, lidando apenas com o caso de símbolos
+        constantes) no programa; em vez disso, chamamos predicados e seletores
+        que incorporam nossos critérios.
+      </p>
+
+      <pre><code class="language-scheme">(define THE-ASSERTIONS the-empty-stream)
+            
+            (define (fetch-assertions pattern frame)
+              (if (use-index? pattern)
+                  (get-indexed-assertions pattern)
+                  (get-all-assertions)))
+            
+            (define (get-all-assertions) THE-ASSERTIONS)
+            
+            (define (get-indexed-assertions pattern)
+              (get-stream (index-key-of pattern)
+                          'assertion-stream))</code></pre>
+
+      <p>
+        <code>Get-stream</code> procura um fluxo na tabela e retorna um fluxo
+        vazio se nada estiver armazenado lá.
+      </p>
+
+      <pre><code class="language-scheme">(define (get-stream key1 key2)
+              (let ((s (get key1 key2)))
+                (if s s the-empty-stream)))</code></pre>
+
+      <p>
+        As regras são armazenadas de forma semelhante, usando o
+        <code>car</code> da conclusão da regra. As conclusões das regras são
+        padrões arbitrários, no entanto, então elas diferem das asserções em que
+        podem conter variáveis. Um padrão cujo <code>car</code> é um símbolo
+        constante pode corresponder a regras cujas conclusões começam com uma
+        variável, bem como regras cujas conclusões têm o mesmo
+        <code>car</code> que o padrão. Assim, ao buscar regras que podem
+        corresponder a um padrão cujo <code>car</code> é um símbolo constante,
+        buscamos todas as regras cujas conclusões começam com uma variável, bem
+        como aquelas cujas conclusões têm o mesmo <code>car</code> que o padrão.
+        Para esse propósito, armazenamos todas as regras cujas conclusões
+        começam com uma variável em um fluxo separado em nossa tabela, indexado
+        pelo símbolo <code>?</code>.
+      </p>
+
+      <pre><code class="language-scheme">(define THE-RULES the-empty-stream)
+            
+            (define (fetch-rules pattern frame)
+              (if (use-index? pattern)
+                  (get-indexed-rules pattern)
+                  (get-all-rules)))
+            
+            (define (get-all-rules) THE-RULES)
+            
+            (define (get-indexed-rules pattern)
+              (stream-append
+               (get-stream (index-key-of pattern)
+                           'rule-stream)
+               (get-stream '? 'rule-stream)))</code></pre>
+
+      <p>
+        <code>Add-rule-or-assertion!</code> é usado por
+        <code>query-driver-loop</code> para adicionar asserções e regras ao
+        banco de dados. Cada item é armazenado no índice, se apropriado, e em um
+        fluxo de todas as asserções ou regras no banco de dados.
+      </p>
+
+      <pre><code class="language-scheme">(define (add-rule-or-assertion! assertion)
+              (if (rule? assertion)
+                  (add-rule! assertion)
+                  (add-assertion! assertion)))
+            
+            (define (add-assertion! assertion)
+              (store-assertion-in-index assertion)
+              (let ((old-assertions THE-ASSERTIONS))
+                (set! THE-ASSERTIONS
+                      (cons-stream assertion 
+                                   old-assertions))
+                'ok))
+            
+            (define (add-rule! rule)
+              (store-rule-in-index rule)
+              (let ((old-rules THE-RULES))
+                (set! THE-RULES
+                      (cons-stream rule old-rules))
+                'ok))</code></pre>
+
+      <p>
+        Para realmente armazenar uma asserção ou uma regra, verificamos se ela
+        pode ser indexada. Se puder, a armazenamos no fluxo apropriado.
+      </p>
+
+      <pre><code class="language-scheme">(define (store-assertion-in-index assertion)
+              (if (indexable? assertion)
+                  (let ((key (index-key-of assertion)))
+                    (let ((current-assertion-stream
+                           (get-stream 
+                            key 'assertion-stream)))
+                      (put key
+                           'assertion-stream
+                           (cons-stream 
+                            assertion
+                            current-assertion-stream))))))
+            
+            (define (store-rule-in-index rule)
+              (let ((pattern (conclusion rule)))
+                (if (indexable? pattern)
+                    (let ((key (index-key-of pattern)))
+                      (let ((current-rule-stream
+                             (get-stream 
+                              key 'rule-stream)))
+                        (put key
+                             'rule-stream
+                             (cons-stream 
+                              rule
+                              current-rule-stream)))))))</code></pre>
+
+      <p>
+        Os procedimentos a seguir definem como o índice do banco de dados é
+        usado. Um padrão (uma asserção ou uma conclusão de regra) será
+        armazenado na tabela se começar com uma variável ou um símbolo
+        constante.
+      </p>
+
+      <pre><code class="language-scheme">(define (indexable? pat)
+              (or (constant-symbol? (car pat))
+                  (var? (car pat))))</code></pre>
+
+      <p>
+        A chave sob a qual um padrão é armazenado na tabela é <code>?</code> (se
+        ele começar com uma variável) ou o símbolo constante com o qual ele
+        começa.
+      </p>
+
+      <pre><code class="language-scheme">(define (index-key-of pat)
+              (let ((key (car pat)))
+                (if (var? key) '? key)))</code></pre>
+
+      <p>
+        O índice será usado para recuperar itens que podem corresponder a um
+        padrão se o padrão começar com um símbolo constante.
+      </p>
+
+      <pre><code class="language-scheme">(define (use-index? pat)
+              (constant-symbol? (car pat)))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e70"></a>Exercício 4.70:</strong> Qual é
+          o propósito das vinculações <code>let</code> nos procedimentos
+          <code>add-assertion!</code> e <code>add-rule!</code>? O que estaria
+          errado com a seguinte implementação de <code>add-assertion!</code>?
+          Dica: Lembre-se da definição do fluxo infinito de uns em
+          <a href="3_002e5.html#g_t3_002e5_002e2">3.5.2</a>:
+          <code>(define ones (cons-stream 1 ones))</code>.
+        </p>
+
+        <pre><code class="language-scheme">(define (add-assertion! assertion)
+              (store-assertion-in-index assertion)
+              (set! THE-ASSERTIONS
+                    (cons-stream assertion 
+                                 THE-ASSERTIONS))
+              'ok)</code></pre>
+      </blockquote>
+
+      <a id="g_t4_002e4_002e4_002e6"></a>
+      <a id="Stream-Operations"></a>
+      <h5 class="subsubsection">
+        <span class="secnum">4.4.4.6</span
+        ><span class="sectitle">Operações de Fluxo</span>
+      </h5>
+
+      <p>
+        O sistema de consultas usa algumas operações de fluxo que não foram
+        apresentadas em <a href="Chapter-3.html#Chapter-3">Capítulo 3</a>.
+      </p>
+
+      <p>
+        <code>Stream-append-delayed</code> e <code>interleave-delayed</code> são
+        como <code>stream-append</code> e <code>interleave</code> (<a
+          href="3_002e5.html#g_t3_002e5_002e3"
+          >3.5.3</a
+        >), exceto que eles recebem um argumento atrasado (como o procedimento
+        <code>integral</code> em
+        <a href="3_002e5.html#g_t3_002e5_002e4">3.5.4</a>). Isso adia o loop em
+        alguns casos (veja <a href="#Exercise-4_002e71">Exercício 4.71</a>).
+      </p>
+
+      <pre><code class="language-scheme">(define (stream-append-delayed s1 delayed-s2)
+              (if (stream-null? s1)
+                  (force delayed-s2)
+                  (cons-stream
+                   (stream-car s1)
+                   (stream-append-delayed (stream-cdr s1)
+                                          delayed-s2))))
+            
+            (define (interleave-delayed s1 delayed-s2)
+              (if (stream-null? s1)
+                  (force delayed-s2)
+                  (cons-stream
+                   (stream-car s1)
+                   (interleave-delayed 
+                    (force delayed-s2)
+                    (delay (stream-cdr s1))))))</code></pre>
+
+      <p>
+        <code>Stream-flatmap</code>, que é usado em todo o avaliador de
+        consultas para mapear um procedimento sobre um fluxo de quadros e
+        combinar os fluxos resultantes de quadros, é o análogo de fluxo do
+        procedimento <code>flatmap</code> introduzido para listas ordinárias em
+        <a href="2_002e2.html#g_t2_002e2_002e3">2.2.3</a>. Ao contrário do
+        <code>flatmap</code> ordinário, no entanto, acumulamos os fluxos com um
+        processo de intercalação, em vez de simplesmente anexá-los (veja
+        <a href="#Exercise-4_002e72">Exercício 4.72</a> e
+        <a href="#Exercise-4_002e73">Exercício 4.73</a>).
+      </p>
+
+      <pre><code class="language-scheme">(define (stream-flatmap proc s)
+              (flatten-stream (stream-map proc s)))
+            
+            (define (flatten-stream stream)
+              (if (stream-null? stream)
+                  the-empty-stream
+                  (interleave-delayed
+                   (stream-car stream)
+                   (delay (flatten-stream
+                           (stream-cdr stream))))))</code></pre>
+
+      <p>
+        O avaliador também usa o seguinte procedimento simples para gerar um
+        fluxo consistindo de um único elemento:
+      </p>
+
+      <pre><code class="language-scheme">(define (singleton-stream x)
+              (cons-stream x the-empty-stream))</code></pre>
+
+      <a id="g_t4_002e4_002e4_002e7"></a>
+      <a id="Query-Syntax-Procedures"></a>
+      <h5 class="subsubsection">
+        <span class="secnum">4.4.4.7</span
+        ><span class="sectitle">Procedimentos de Sintaxe de Consulta</span>
+      </h5>
+
+      <p>
+        <code>Type</code> e <code>contents</code>, usados por
+        <code>qeval</code> (<a href="#g_t4_002e4_002e4_002e2">4.4.4.2</a>),
+        especificam que uma forma especial é identificada pelo símbolo em seu
+        <code>car</code>. Eles são os mesmos que os procedimentos
+        <code>type-tag</code> e <code>contents</code> em
+        <a href="2_002e4.html#g_t2_002e4_002e2">2.4.2</a>, exceto pela mensagem
+        de erro.
+      </p>
+
+      <pre><code class="language-scheme">(define (type exp)
+              (if (pair? exp)
+                  (car exp)
+                  (error "Unknown expression TYPE"
+                         exp)))
+            
+            (define (contents exp)
+              (if (pair? exp)
+                  (cdr exp)
+                  (error "Unknown expression CONTENTS"
+                         exp)))</code></pre>
+
+      <p>
+        Os seguintes procedimentos, usados por
+        <code>query-driver-loop</code> (em
+        <a href="#g_t4_002e4_002e4_002e1">4.4.4.1</a>), especificam que regras e
+        asserções são adicionadas ao banco de dados por expressões da forma
+        <code>(assert! ⟨<var>regra-ou-asserção</var>⟩)</code>:
+      </p>
+
+      <pre><code class="language-scheme">(define (assertion-to-be-added? exp)
+              (eq? (type exp) 'assert!))
+            
+            (define (add-assertion-body exp)
+              (car (contents exp)))</code></pre>
+
+      <p>
+        Aqui estão as definições de sintaxe para as formas especiais
+        <code>and</code>, <code>or</code>, <code>not</code> e
+        <code>lisp-value</code> (<a href="#g_t4_002e4_002e4_002e2">4.4.4.2</a>):
+      </p>
+
+      <pre><code class="language-scheme">(define (empty-conjunction? exps) (null? exps))
+            (define (first-conjunct exps) (car exps))
+            (define (rest-conjuncts exps) (cdr exps))
+            (define (empty-disjunction? exps) (null? exps))
+            (define (first-disjunct exps) (car exps))
+            (define (rest-disjuncts exps) (cdr exps))
+            (define (negated-query exps) (car exps))
+            (define (predicate exps) (car exps))
+            (define (args exps) (cdr exps))</code></pre>
+
+      <p>Os seguintes três procedimentos definem a sintaxe das regras:</p>
+
+      <pre><code class="language-scheme">(define (rule? statement)
+              (tagged-list? statement 'rule))
+            
+            (define (conclusion rule) (cadr rule))
+            
+            (define (rule-body rule)
+              (if (null? (cddr rule))
+                  '(always-true)
+                  (caddr rule)))</code></pre>
+
+      <p>
+        <code>Query-driver-loop</code> (<a href="#g_t4_002e4_002e4_002e1"
+          >4.4.4.1</a
+        >) chama <code>query-syntax-process</code> para transformar variáveis de
+        padrão na expressão, que têm a forma <code>?symbol</code>, no formato
+        interno <code>(? symbol)</code>. Ou seja, um padrão como
+        <code>(job ?x ?y)</code> é realmente representado internamente pelo
+        sistema como <code>(job (? x) (? y))</code>. Isso aumenta a eficiência
+        do processamento de consultas, pois significa que o sistema pode
+        verificar se uma expressão é uma variável de padrão verificando se o
+        <code>car</code> da expressão é o símbolo <code>?</code>, em vez de ter
+        que extrair caracteres do símbolo. A transformação de sintaxe é
+        realizada pelo seguinte procedimento:<a
+          class="footnote_link"
+          id="DOCF285"
+          href="#FOOT285"
+          ><sup>285</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">(define (query-syntax-process exp)
+              (map-over-symbols expand-question-mark exp))
+            
+            (define (map-over-symbols proc exp)
+              (cond ((pair? exp)
+                     (cons (map-over-symbols 
+                            proc (car exp))
+                           (map-over-symbols 
+                            proc (cdr exp))))
+                    ((symbol? exp) (proc exp))
+                    (else exp)))
+            
+            (define (expand-question-mark symbol)
+              (let ((chars (symbol-&gt;string symbol)))
+                (if (string=? (substring chars 0 1) "?")
+                    (list '? (string-&gt;symbol
+                              (substring
+                               chars 
+                               1 
+                               (string-length chars))))
+                    symbol)))</code></pre>
+
+      <p>
+        Uma vez que as variáveis são transformadas dessa forma, as variáveis em
+        um padrão são listas começando com <code>?</code>, e os símbolos
+        constantes (que precisam ser reconhecidos para indexação do banco de
+        dados, <a href="#g_t4_002e4_002e4_002e5">4.4.4.5</a>) são apenas os
+        símbolos.
+      </p>
+
+      <pre><code class="language-scheme">(define (var? exp) (tagged-list? exp '?))
+            (define (constant-symbol? exp) (symbol? exp))</code></pre>
+
+      <p>
+        Variáveis únicas são construídas durante a aplicação de regras (em
+        <a href="#g_t4_002e4_002e4_002e4">4.4.4.4</a>) por meio dos seguintes
+        procedimentos. O identificador único para uma aplicação de regra é um
+        número, que é incrementado cada vez que uma regra é aplicada.
+      </p>
+
+      <pre><code class="language-scheme">(define rule-counter 0)
+            
+            (define (new-rule-application-id)
+              (set! rule-counter (+ 1 rule-counter))
+              rule-counter)
+            
+            (define (make-new-variable 
+                     var rule-application-id)
+              (cons '? (cons rule-application-id
+                             (cdr var))))</code></pre>
+
+      <p>
+        Quando <code>query-driver-loop</code> instancia a consulta para imprimir
+        a resposta, ele converte quaisquer variáveis de padrão não vinculadas de
+        volta para a forma correta para impressão, usando
+      </p>
+
+      <pre><code class="language-scheme">(define (contract-question-mark variable)
+              (string-&gt;symbol
+               (string-append "?"
+                 (if (number? (cadr variable))
+                     (string-append
+                      (symbol-&gt;string (caddr variable))
+                      "-"
+                      (number-&gt;string (cadr variable)))
+                     (symbol-&gt;string (cadr variable))))))</code></pre>
+
+      <a id="g_t4_002e4_002e4_002e8"></a>
+      <a id="Frames-and-Bindings"></a>
+      <h5 class="subsubsection">
+        <span class="secnum">4.4.4.8</span
+        ><span class="sectitle">Quadros e Vinculações</span>
+      </h5>
+
+      <p>
+        Quadros são representados como listas de vinculações, que são pares
+        variável-valor:
+      </p>
+
+      <pre><code class="language-scheme">(define (make-binding variable value)
+              (cons variable value))
+            
+            (define (binding-variable binding)
+              (car binding))
+            
+            (define (binding-value binding)
+              (cdr binding))
+            
+            (define (binding-in-frame variable frame)
+              (assoc variable frame))
+            
+            (define (extend variable value frame)
+              (cons (make-binding variable value) frame))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e71"></a>Exercício 4.71:</strong> Louis
+          Reasoner se pergunta por que os procedimentos
+          <code>simple-query</code> e <code>disjoin</code> (<a
+            href="#g_t4_002e4_002e4_002e2"
+            >4.4.4.2</a
+          >) são implementados usando operações explícitas de
+          <code>delay</code>, em vez de serem definidos como segue:
+        </p>
+
+        <pre><code class="language-scheme">(define (simple-query 
+                     query-pattern frame-stream)
+              (stream-flatmap
+               (lambda (frame)
+                 (stream-append
+                  (find-assertions query-pattern frame)
+                  (apply-rules query-pattern frame)))
+               frame-stream))
+            
+            (define (disjoin disjuncts frame-stream)
+              (if (empty-disjunction? disjuncts)
+                  the-empty-stream
+                  (interleave
+                   (qeval (first-disjunct disjuncts)
+                          frame-stream)
+                   (disjoin (rest-disjuncts disjuncts)
+                            frame-stream))))</code></pre>
+
+        <p>
+          Você pode dar exemplos de consultas onde essas definições mais simples
+          levariam a comportamentos indesejáveis?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e72"></a>Exercício 4.72:</strong> Por que
+          <code>disjoin</code> e <code>stream-flatmap</code> intercalam os
+          fluxos em vez de simplesmente anexá-los? Dê exemplos que ilustrem por
+          que a intercalação funciona melhor. (Dica: Por que usamos
+          <code>interleave</code> em
+          <a href="3_002e5.html#g_t3_002e5_002e3">3.5.3</a>?)
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e73"></a>Exercício 4.73:</strong> Por que
+          <code>flatten-stream</code> usa <code>delay</code> explicitamente? O
+          que estaria errado com defini-lo como segue:
+        </p>
+
+        <pre><code class="language-scheme">(define (flatten-stream stream)
+              (if (stream-null? stream)
+                  the-empty-stream
+                  (interleave (stream-car stream)
+                              (flatten-stream 
+                               (stream-cdr stream)))))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e74"></a>Exercício 4.74:</strong> Alyssa
+          P. Hacker propõe usar uma versão mais simples de
+          <code>stream-flatmap</code> em <code>negate</code>,
+          <code>lisp-value</code>, e <code>find-assertions</code>. Ela observa
+          que o procedimento que é mapeado sobre o fluxo de quadros nesses casos
+          sempre produz ou o fluxo vazio ou um fluxo de um único elemento, então
+          nenhuma intercalação é necessária ao combinar esses fluxos.
+        </p>
+        <ol>
+          <li>
+            Preencha as expressões ausentes no programa de Alyssa.
+
+            <pre><code class="language-scheme">(define (simple-stream-flatmap proc s)
+              (simple-flatten (stream-map proc s)))
+            
+            (define (simple-flatten stream)
+              (stream-map ⟨??⟩
+                          (stream-filter ⟨??⟩ 
+                                         stream)))</code></pre>
+          </li>
+          <li>
+            O comportamento do sistema de consultas muda se o alterarmos dessa
+            forma?
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e75"></a>Exercício 4.75:</strong>
+          Implemente para a linguagem de consulta uma nova forma especial
+          chamada <code>unique</code>. <code>Unique</code> deve ter sucesso se
+          houver exatamente um item no banco de dados que satisfaça uma consulta
+          especificada. Por exemplo,
+        </p>
+
+        <pre><code class="language-scheme">(unique (job ?x (computer wizard)))</code></pre>
+
+        <p>deve imprimir o fluxo de um único elemento</p>
+
+        <pre><code class="language-scheme">(unique (job (Bitdiddle Ben)
+                         (computer wizard)))</code></pre>
+
+        <p>já que Ben é o único mago da computação, e</p>
+
+        <pre><code class="language-scheme">(unique (job ?x (computer programmer)))</code></pre>
+
+        <p>
+          deve imprimir o fluxo vazio, já que há mais de um programador de
+          computador. Além disso,
+        </p>
+
+        <pre><code class="language-scheme">(and (job ?x ?j) 
+                 (unique (job ?anyone ?j)))</code></pre>
+
+        <p>
+          deve listar todos os empregos que são preenchidos por apenas uma
+          pessoa, e as pessoas que os preenchem.
+        </p>
+        <p>
+          Há duas partes para implementar <code>unique</code>. A primeira é
+          escrever um procedimento que lida com essa forma especial, e a segunda
+          é fazer <code>qeval</code> despachar para esse procedimento. A segunda
+          parte é trivial, já que <code>qeval</code> faz seu despacho de forma
+          direcionada por dados. Se seu procedimento for chamado
+          <code>uniquely-asserted</code>, tudo o que você precisa fazer é
+        </p>
+
+        <pre><code class="language-scheme">(put 'unique 'qeval uniquely-asserted)</code></pre>
+
+        <p>
+          e <code>qeval</code> despachará para esse procedimento para cada
+          consulta cujo <code>type</code> (<code>car</code>) seja o símbolo
+          <code>unique</code>.
+        </p>
+        <p>
+          O verdadeiro problema é escrever o procedimento
+          <code>uniquely-asserted</code>. Ele deve receber como entrada o
+          <code>contents</code> (<code>cdr</code>) da consulta
+          <code>unique</code>, junto com um fluxo de quadros. Para cada quadro
+          no fluxo, ele deve usar <code>qeval</code> para encontrar o fluxo de
+          todas as extensões ao quadro que satisfazem a consulta dada. Qualquer
+          fluxo que não tenha exatamente um item nele deve ser eliminado. Os
+          fluxos restantes devem ser passados de volta para serem acumulados em
+          um grande fluxo que é o resultado da consulta <code>unique</code>.
+          Isso é semelhante à implementação da forma especial <code>not</code>.
+        </p>
+        <p>
+          Teste sua implementação formando uma consulta que liste todas as
+          pessoas que supervisionam exatamente uma pessoa.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e76"></a>Exercício 4.76:</strong> Nossa
+          implementação de <code>and</code> como uma combinação em série de
+          consultas (<a href="#Figure-4_002e5">Figura 4.5</a>) é elegante, mas é
+          ineficiente porque, ao processar a segunda consulta do
+          <code>and</code>, devemos varrer o banco de dados para cada quadro
+          produzido pela primeira consulta. Se o banco de dados tiver
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>n</mi>
+          </math>
+          elementos, e uma consulta típica produzir um número de quadros de
+          saída proporcional a
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>n</mi>
+          </math>
+          (digamos
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>n</mi>
+              <mspace width="thinmathspace" />
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>/</mo>
+              </mrow>
+              <mspace width="thinmathspace" />
+              <mi>k</mi>
+            </mrow> </math
+          >), então varrer o banco de dados para cada quadro produzido pela
+          primeira consulta exigirá
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <msup>
+                <mi>n</mi>
+                <mn>2</mn>
+              </msup>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>/</mo>
+              </mrow>
+              <mspace width="thinmathspace" />
+              <mi>k</mi>
+            </mrow>
+          </math>
+          chamadas ao correspondente de padrões. Outra abordagem seria processar
+          as duas cláusulas do <code>and</code> separadamente, então procurar
+          por todos os pares de quadros de saída que são compatíveis. Se cada
+          consulta produzir
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>n</mi>
+              <mspace width="thinmathspace" />
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>/</mo>
+              </mrow>
+              <mspace width="thinmathspace" />
+              <mi>k</mi>
+            </mrow>
+          </math>
+          quadros de saída, então isso significa que devemos realizar
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <msup>
+                <mi>n</mi>
+                <mn>2</mn>
+              </msup>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>/</mo>
+              </mrow>
+              <mspace width="thinmathspace" />
+              <msup>
+                <mi>k</mi>
+                <mn>2</mn>
+              </msup>
+            </mrow>
+          </math>
+          verificações de compatibilidade—um fator de
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>k</mi>
+          </math>
+          menor que o número de correspondências exigidas em nosso método atual.
+        </p>
+        <p>
+          Desenvolva uma implementação de <code>and</code> que use essa
+          estratégia. Você deve implementar um procedimento que receba dois
+          quadros como entradas, verifique se as vinculações nos quadros são
+          compatíveis e, se forem, produza um quadro que mescle os dois
+          conjuntos de vinculações. Essa operação é semelhante à unificação.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e77"></a>Exercício 4.77:</strong> Em
+          <a href="#g_t4_002e4_002e3">4.4.3</a> vimos que <code>not</code> e
+          <code>lisp-value</code> podem fazer com que a linguagem de consulta dê
+          respostas “erradas” se essas operações de filtragem forem aplicadas a
+          quadros nos quais as variáveis não estão vinculadas. Desenvolva uma
+          maneira de corrigir essa deficiência. Uma ideia é realizar a filtragem
+          de forma “atrasada” anexando ao quadro uma “promessa” de filtrar que é
+          cumprida apenas quando variáveis suficientes tiverem sido vinculadas
+          para tornar a operação possível. Poderíamos esperar para realizar a
+          filtragem até que todas as outras operações tivessem sido realizadas.
+          No entanto, por questões de eficiência, gostaríamos de realizar a
+          filtragem o mais cedo possível para reduzir o número de quadros
+          intermediários gerados.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e78"></a>Exercício 4.78:</strong>
+          Redesenhe a linguagem de consulta como um programa não determinístico
+          a ser implementado usando o avaliador de
+          <a href="4_002e3.html#g_t4_002e3">4.3</a>, em vez de como um processo
+          de fluxo. Nessa abordagem, cada consulta produzirá uma única resposta
+          (em vez do fluxo de todas as respostas) e o usuário poderá digitar
+          <code>try-again</code> para ver mais respostas. Você deve descobrir
+          que muito do mecanismo que construímos nesta seção é subsumido pela
+          busca não determinística e retrocesso. Você provavelmente também
+          descobrirá, no entanto, que sua nova linguagem de consulta tem
+          diferenças sutis de comportamento em relação à implementada aqui. Você
+          pode encontrar exemplos que ilustram essa diferença?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e79"></a>Exercício 4.79:</strong> Quando
+          implementamos o avaliador Lisp em
+          <a href="4_002e1.html#g_t4_002e1">4.1</a>, vimos como usar ambientes
+          locais para evitar conflitos de nomes entre os parâmetros de
+          procedimentos. Por exemplo, ao avaliar
+        </p>
+
+        <pre><code class="language-scheme">(define (square x) 
+              (* x x))
+            
+            (define (sum-of-squares x y)
+              (+ (square x) (square y)))
+            
+            (sum-of-squares 3 4)</code></pre>
+
+        <p>
+          não há confusão entre o <code>x</code> em <code>square</code> e o
+          <code>x</code> em <code>sum-of-squares</code>, porque avaliamos o
+          corpo de cada procedimento em um ambiente que é especialmente
+          construído para conter vinculações para as variáveis locais. No
+          sistema de consultas, usamos uma estratégia diferente para evitar
+          conflitos de nomes ao aplicar regras. Cada vez que aplicamos uma
+          regra, renomeamos as variáveis com novos nomes que são garantidos como
+          únicos. A estratégia análoga para o avaliador Lisp seria abolir
+          ambientes locais e simplesmente renomear as variáveis no corpo de um
+          procedimento cada vez que aplicamos o procedimento.
+        </p>
+        <p>
+          Implemente para a linguagem de consulta um método de aplicação de
+          regras que use ambientes em vez de renomeação. Veja se você pode
+          construir sobre sua estrutura de ambiente para criar construções na
+          linguagem de consulta para lidar com grandes sistemas, como o análogo
+          de regras de procedimentos com estrutura de blocos. Você pode
+          relacionar algo disso ao problema de fazer deduções em um contexto
+          (por exemplo, “Se eu supor que
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>P</mi>
+          </math>
+          fosse verdadeiro, então eu seria capaz de deduzir
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>A</mi>
+          </math>
+          e
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>B</mi> </math
+          >.”) como um método de resolução de problemas? (Este problema é
+          aberto. Uma boa resposta provavelmente vale um Ph.D.)
+        </p>
+      </blockquote>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+
+        <div id="FOOT262">
+          <p>
+            <a class="footnote_backlink" href="#DOCF262"><sup>262</sup></a> A
+            programação lógica surgiu de uma longa história de pesquisa em
+            provas automáticas de teoremas. Os primeiros programas de prova de
+            teoremas conseguiam muito pouco, porque pesquisavam exaustivamente o
+            espaço de possíveis provas. O grande avanço que tornou tal pesquisa
+            plausível foi a descoberta no início dos anos 1960 do algoritmo de
+            unificação e do princípio de resolução (<a
+              href="References.html#Robinson-1965"
+              >Robinson 1965</a
+            >). A resolução foi usada, por exemplo, por
+            <a href="References.html#Green-and-Raphael-_00281968_0029"
+              >Green e Raphael (1968)</a
+            >
+            (veja também <a href="References.html#Green-1969">Green 1969</a>)
+            como a base para um sistema de resposta a perguntas dedutivas.
+            Durante a maior parte desse período, os pesquisadores se
+            concentraram em algoritmos que são garantidos para encontrar uma
+            prova se uma existir. Tais algoritmos eram difíceis de controlar e
+            de direcionar para uma prova.
+            <a href="References.html#Hewitt-_00281969_0029">Hewitt (1969)</a>
+            reconheceu a possibilidade de mesclar a estrutura de controle de uma
+            linguagem de programação com as operações de um sistema de
+            manipulação de lógica, levando ao trabalho em busca automática
+            mencionado em <a href="4_002e3.html#g_t4_002e3_002e1">4.3.1</a> (<a
+              href="4_002e3.html#Footnote-250"
+              >Nota de rodapé 250</a
+            >). Ao mesmo tempo que isso estava sendo feito, Colmerauer, em
+            Marseille, estava desenvolvendo sistemas baseados em regras para
+            manipular linguagem natural (veja
+            <a href="References.html#Colmerauer-et-al_002e-1973"
+              >Colmerauer et al. 1973</a
+            >). Ele inventou uma linguagem de programação chamada Prolog para
+            representar essas regras.
+            <a href="References.html#Kowalski-_00281973_003b-1979_0029"
+              >Kowalski (1973; 1979)</a
+            >, em Edinburgh, reconheceu que a execução de um programa Prolog
+            poderia ser interpretada como provando teoremas (usando uma técnica
+            de prova chamada resolução linear de cláusulas de Horn). A fusão das
+            duas últimas vertentes levou ao movimento de programação lógica.
+            Assim, ao atribuir crédito pelo desenvolvimento da programação
+            lógica, os franceses podem apontar para a gênese do Prolog na
+            Universidade de Marseille, enquanto os britânicos podem destacar o
+            trabalho na Universidade de Edinburgh. De acordo com as pessoas do
+            <abbr>MIT</abbr>, a programação lógica foi desenvolvida por esses
+            grupos em uma tentativa de descobrir o que Hewitt estava falando em
+            sua brilhante, mas impenetrável tese de doutorado. Para uma história
+            da programação lógica, veja
+            <a href="References.html#Robinson-1983">Robinson 1983</a>.
+          </p>
+        </div>
+        <div id="FOOT263">
+          <p>
+            <a class="footnote_backlink" href="#DOCF263"><sup>263</sup></a> Para
+            ver a correspondência entre as regras e o procedimento, seja
+            <code>x</code> no procedimento (onde <code>x</code> é não vazio)
+            correspondente a <code>(cons u v)</code> na regra. Então
+            <code>z</code> na regra corresponde ao <code>append</code> de
+            <code>(cdr x)</code> e <code>y</code>.
+          </p>
+        </div>
+
+        <div id="FOOT264">
+          <p>
+            <a class="footnote_backlink" href="#DOCF264"><sup>264</sup></a> Isso
+            certamente não livra o usuário de todo o problema de como calcular a
+            resposta. Existem muitos conjuntos de regras matematicamente
+            equivalentes para formular a relação <code>append</code>, apenas
+            alguns dos quais podem ser transformados em dispositivos eficazes
+            para computação em qualquer direção. Além disso, às vezes a
+            informação "o que é" não dá nenhuma pista sobre "como" calcular uma
+            resposta. Por exemplo, considere o problema de calcular o
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>y</mi>
+            </math>
+            tal que
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <msup>
+                  <mi>y</mi>
+                  <mn>2</mn>
+                </msup>
+                <mo>=</mo>
+                <mi>x</mi>
+              </mrow> </math
+            >.
+          </p>
+        </div>
+        <div id="FOOT265">
+          <p>
+            <a class="footnote_backlink" href="#DOCF265"><sup>265</sup></a> O
+            interesse em programação lógica atingiu o pico durante o início dos
+            anos 80, quando o governo japonês iniciou um projeto ambicioso com o
+            objetivo de construir computadores super rápidos otimizados para
+            executar linguagens de programação lógica. A velocidade desses
+            computadores seria medida em LIPS (Inferências Lógicas Por Segundo)
+            em vez do usual FLOPS (Operações de Ponto Flutuante Por Segundo).
+            Embora o projeto tenha conseguido desenvolver hardware e software
+            conforme planejado originalmente, a indústria internacional de
+            computadores seguiu em uma direção diferente. Veja
+            <a href="References.html#Feigenbaum-and-Shrobe-1993"
+              >Feigenbaum e Shrobe 1993</a
+            >
+            para uma avaliação geral do projeto japonês. A comunidade de
+            programação lógica também seguiu em frente para considerar
+            programação relacional baseada em técnicas diferentes de simples
+            correspondência de padrões, como a capacidade de lidar com
+            restrições numéricas, como as ilustradas no sistema de propagação de
+            restrições de <a href="3_002e3.html#g_t3_002e3_002e5">3.3.5</a>.
+          </p>
+        </div>
+        <div id="FOOT266">
+          <p>
+            <a class="footnote_backlink" href="#DOCF266"><sup>266</sup></a> Isso
+            usa a notação de cauda pontilhada introduzida em
+            <a href="2_002e2.html#Exercise-2_002e20">Exercício 2.20</a>.
+          </p>
+        </div>
+        <div id="FOOT267">
+          <p>
+            <a class="footnote_backlink" href="#DOCF267"><sup>267</sup></a> Na
+            verdade, essa descrição de <code>not</code> é válida apenas para
+            casos simples. O comportamento real de <code>not</code> é mais
+            complexo. Examinaremos as peculiaridades de <code>not</code> em
+            <a href="#g_t4_002e4_002e2">4.4.2</a> e
+            <a href="#g_t4_002e4_002e3">4.4.3</a>.
+          </p>
+        </div>
+        <div id="FOOT268">
+          <p>
+            <a class="footnote_backlink" href="#DOCF268"><sup>268</sup></a>
+            <code>Lisp-value</code> deve ser usado apenas para realizar uma
+            operação não fornecida na linguagem de consulta. Em particular, não
+            deve ser usado para testar igualdade (já que isso é o que a
+            correspondência na linguagem de consulta foi projetada para fazer)
+            ou desigualdade (já que isso pode ser feito com a regra
+            <code>same</code> mostrada abaixo).
+          </p>
+        </div>
+        <div id="FOOT269">
+          <p>
+            <a class="footnote_backlink" href="#DOCF269"><sup>269</sup></a>
+            Observe que não precisamos de <code>same</code> para fazer duas
+            coisas serem iguais: Apenas usamos a mesma variável de padrão para
+            cada uma — na verdade, temos uma coisa em vez de duas coisas em
+            primeiro lugar. Por exemplo, veja <code>?town</code> na regra
+            <code>lives-near</code> e <code>?middle-manager</code> na regra
+            <code>wheel</code> abaixo. <code>Same</code> é útil quando queremos
+            forçar duas coisas a serem diferentes, como <code>?person-1</code> e
+            <code>?person-2</code> na regra <code>lives-near</code>. Embora usar
+            a mesma variável de padrão em duas partes de uma consulta force o
+            mesmo valor a aparecer em ambos os lugares, usar diferentes
+            variáveis de padrão não força valores diferentes a aparecer. (Os
+            valores atribuídos a diferentes variáveis de padrão podem ser iguais
+            ou diferentes.)
+          </p>
+        </div>
+        <div id="FOOT270">
+          <p>
+            <a class="footnote_backlink" href="#DOCF270"><sup>270</sup></a>
+            Também permitiremos regras sem corpos, como em <code>same</code>, e
+            interpretaremos tal regra como significando que a conclusão da regra
+            é satisfeita por quaisquer valores das variáveis.
+          </p>
+        </div>
+        <div id="FOOT271">
+          <p>
+            <a class="footnote_backlink" href="#DOCF271"><sup>271</sup></a> Como
+            a correspondência geralmente é muito cara, gostaríamos de evitar
+            aplicar o correspondente completo a cada elemento do banco de dados.
+            Isso geralmente é organizado dividindo o processo em uma
+            correspondência rápida e grosseira e a correspondência final. A
+            correspondência grosseira filtra o banco de dados para produzir um
+            pequeno conjunto de candidatos para a correspondência final. Com
+            cuidado, podemos organizar nosso banco de dados para que parte do
+            trabalho de correspondência grosseira possa ser feito quando o banco
+            de dados é construído, em vez de quando queremos selecionar os
+            candidatos. Isso é chamado de <a id="index-indexing"></a
+            ><em>indexação</em> do banco de dados. Existe uma vasta tecnologia
+            construída em torno de esquemas de indexação de bancos de dados.
+            Nossa implementação, descrita em
+            <a href="#g_t4_002e4_002e4">4.4.4</a>, contém uma forma simples de
+            tal otimização.
+          </p>
+        </div>
+        <div id="FOOT272">
+          <p>
+            <a class="footnote_backlink" href="#DOCF272"><sup>272</sup></a> Mas
+            esse tipo de explosão exponencial não é comum em consultas
+            <code>and</code> porque as condições adicionadas tendem a reduzir em
+            vez de expandir o número de quadros produzidos.
+          </p>
+        </div>
+        <div id="FOOT273">
+          <p>
+            <a class="footnote_backlink" href="#DOCF273"><sup>273</sup></a>
+            Existe uma grande literatura sobre sistemas de gerenciamento de
+            banco de dados que se preocupa com como lidar com consultas
+            complexas de forma eficiente.
+          </p>
+        </div>
+        <div id="FOOT274">
+          <p>
+            <a class="footnote_backlink" href="#DOCF274"><sup>274</sup></a> Há
+            uma diferença sutil entre essa implementação de filtro de
+            <code>not</code> e o significado usual de <code>not</code> na lógica
+            matemática. Veja <a href="#g_t4_002e4_002e3">4.4.3</a>.
+          </p>
+        </div>
+        <div id="FOOT275">
+          <p>
+            <a class="footnote_backlink" href="#DOCF275"><sup>275</sup></a> Na
+            correspondência de padrões unilateral, todas as equações que contêm
+            variáveis de padrão são explícitas e já estão resolvidas para a
+            incógnita (a variável de padrão).
+          </p>
+        </div>
+        <div id="FOOT276">
+          <p>
+            <a class="footnote_backlink" href="#DOCF276"><sup>276</sup></a>
+            Outra maneira de pensar sobre unificação é que ela gera o padrão
+            mais geral que é uma especialização dos dois padrões de entrada. Ou
+            seja, a unificação de <code>(?x a)</code> e
+            <code>((b ?y) ?z)</code> é <code>((b ?y) a)</code>, e a unificação
+            de <code>(?x a ?y)</code> e <code>(?y ?z a)</code>, discutida acima,
+            é <code>(a a a)</code>. Para nossa implementação, é mais conveniente
+            pensar no resultado da unificação como um quadro em vez de um
+            padrão.
+          </p>
+        </div>
+        <div id="FOOT277">
+          <p>
+            <a class="footnote_backlink" href="#DOCF277"><sup>277</sup></a> Como
+            a unificação é uma generalização da correspondência, poderíamos
+            simplificar o sistema usando o unificador para produzir ambos os
+            fluxos. No entanto, tratar o caso fácil com o correspondente simples
+            ilustra como a correspondência (em oposição à unificação completa)
+            pode ser útil por si só.
+          </p>
+        </div>
+        <div id="FOOT278">
+          <p>
+            <a class="footnote_backlink" href="#DOCF278"><sup>278</sup></a> A
+            razão pela qual usamos fluxos (em vez de listas) de quadros é que a
+            aplicação recursiva de regras pode gerar um número infinito de
+            valores que satisfazem uma consulta. A avaliação atrasada
+            incorporada em fluxos é crucial aqui: O sistema imprimirá respostas
+            uma por uma à medida que são geradas, independentemente de haver um
+            número finito ou infinito de respostas.
+          </p>
+        </div>
+        <div id="FOOT279">
+          <p>
+            <a class="footnote_backlink" href="#DOCF279"><sup>279</sup></a> Que
+            um método particular de inferência seja legítimo não é uma afirmação
+            trivial. Deve-se provar que, se começarmos com premissas
+            verdadeiras, apenas conclusões verdadeiras podem ser derivadas. O
+            método de inferência representado por aplicações de regras é
+            <a id="index-modus-ponens"></a><em>modus ponens</em>, o método
+            familiar de inferência que diz que se
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>A</mi>
+            </math>
+            é verdadeiro e <em>A implica B</em> é verdadeiro, então podemos
+            concluir que
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>B</mi>
+            </math>
+            é verdadeiro.
+          </p>
+        </div>
+        <div id="FOOT280">
+          <p>
+            <a class="footnote_backlink" href="#DOCF280"><sup>280</sup></a>
+            Devemos qualificar essa afirmação concordando que, ao falar da
+            "inferência" realizada por um programa lógico, assumimos que a
+            computação termina. Infelizmente, mesmo essa afirmação qualificada é
+            falsa para nossa implementação da linguagem de consulta (e também
+            para programas em Prolog e na maioria das outras linguagens de
+            programação lógica atuais) devido ao nosso uso de <code>not</code> e
+            <code>lisp-value</code>. Como descreveremos abaixo, o
+            <code>not</code> implementado na linguagem de consulta nem sempre é
+            consistente com o <code>not</code> da lógica matemática, e
+            <code>lisp-value</code> introduz complicações adicionais. Poderíamos
+            implementar uma linguagem consistente com a lógica matemática
+            simplesmente removendo <code>not</code> e <code>lisp-value</code> da
+            linguagem e concordando em escrever programas usando apenas
+            consultas simples, <code>and</code> e <code>or</code>. No entanto,
+            isso restringiria muito o poder expressivo da linguagem. Uma das
+            principais preocupações da pesquisa em programação lógica é
+            encontrar maneiras de alcançar mais consistência com a lógica
+            matemática sem sacrificar indevidamente o poder expressivo.
+          </p>
+        </div>
+        <div id="FOOT281">
+          <p>
+            <a class="footnote_backlink" href="#DOCF281"><sup>281</sup></a> Isso
+            não é um problema da lógica, mas da interpretação procedural da
+            lógica fornecida por nosso interpretador. Poderíamos escrever um
+            interpretador que não entrasse em loop aqui. Por exemplo, poderíamos
+            enumerar todas as provas deriváveis de nossas afirmações e nossas
+            regras em uma ordem de largura em vez de profundidade. No entanto,
+            tal sistema torna mais difícil aproveitar a ordem de deduções em
+            nossos programas. Uma tentativa de construir controle sofisticado em
+            tal programa é descrita em
+            <a href="References.html#deKleer-et-al_002e-1977"
+              >deKleer et al. 1977</a
+            >. Outra técnica, que não leva a problemas de controle tão sérios, é
+            colocar conhecimento especial, como detectores para tipos
+            particulares de loops (<a href="#Exercise-4_002e67"
+              >Exercício 4.67</a
+            >). No entanto, não pode haver um esquema geral para evitar de forma
+            confiável que um sistema percorra caminhos infinitos ao realizar
+            deduções. Imagine uma regra diabólica da forma "Para mostrar
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>P</mi>
+                <mo stretchy="false">(</mo>
+                <mi>x</mi>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+            é verdadeiro, mostre que
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>P</mi>
+                <mo stretchy="false">(</mo>
+                <mi>f</mi>
+                <mo stretchy="false">(</mo>
+                <mi>x</mi>
+                <mo stretchy="false">)</mo>
+                <mo stretchy="false">)</mo>
+              </mrow>
+            </math>
+            é verdadeiro," para alguma função
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>f</mi>
+            </math>
+            escolhida adequadamente.
+          </p>
+        </div>
+        <div id="FOOT282">
+          <p>
+            <a class="footnote_backlink" href="#DOCF282"><sup>282</sup></a>
+            Considere a consulta
+            <code>(not (baseball-fan (Bitdiddle Ben)))</code>. O sistema
+            descobre que <code>(baseball-fan (Bitdiddle Ben))</code> não está no
+            banco de dados, então o quadro vazio não satisfaz o padrão e não é
+            filtrado do fluxo inicial de quadros. O resultado da consulta é,
+            portanto, o quadro vazio, que é usado para instanciar a consulta de
+            entrada para produzir
+            <code>(not (baseball-fan (Bitdiddle Ben)))</code>.
+          </p>
+        </div>
+        <div id="FOOT283">
+          <p>
+            <a class="footnote_backlink" href="#DOCF283"><sup>283</sup></a> Uma
+            discussão e justificativa desse tratamento de <code>not</code> pode
+            ser encontrada no artigo de
+            <a href="References.html#Clark-_00281978_0029">Clark (1978)</a>.
+          </p>
+        </div>
+        <div id="FOOT284">
+          <p>
+            <a class="footnote_backlink" href="#DOCF284"><sup>284</sup></a> Em
+            geral, unificar <code>?y</code> com uma expressão envolvendo
+            <code>?y</code> exigiria que pudéssemos encontrar um ponto fixo da
+            equação <code>?y</code> = <code>⟨</code
+            ><var>expressão envolvendo <code>?y</code></var
+            ><code>⟩</code>. Às vezes é possível formar sintaticamente uma
+            expressão que parece ser a solução. Por exemplo, <code>?y</code> =
+            <code>(f ?y)</code> parece ter o ponto fixo
+            <code>(f (f (f <span class="roman">…</span> )))</code>, que podemos
+            produzir começando com a expressão <code>(f ?y)</code> e
+            substituindo repetidamente <code>(f ?y)</code> por <code>?y</code>.
+            Infelizmente, nem toda equação desse tipo tem um ponto fixo
+            significativo. As questões que surgem aqui são semelhantes às
+            questões de manipulação de séries infinitas em matemática. Por
+            exemplo, sabemos que 2 é a solução para a equação
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>y</mi>
+                <mo>=</mo>
+                <mn>1</mn>
+                <mo>+</mo>
+                <mi>y</mi>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mo>/</mo>
+                </mrow>
+                <mn>2</mn>
+              </mrow> </math
+            >. Começando com a expressão
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mn>1</mn>
+                <mo>+</mo>
+                <mi>y</mi>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mo>/</mo>
+                </mrow>
+                <mn>2</mn>
+              </mrow>
+            </math>
+            e substituindo repetidamente
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mn>1</mn>
+                <mo>+</mo>
+                <mi>y</mi>
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mo>/</mo>
+                </mrow>
+                <mn>2</mn>
+              </mrow>
+            </math>
+            por
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>y</mi>
+            </math>
+            dá
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+              <mn>2</mn>
+              <mo>=</mo>
+              <mi>y</mi>
+              <mo>=</mo>
+              <mn>1</mn>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mfrac>
+                  <mi>y</mi>
+                  <mn>2</mn>
+                </mfrac>
+              </mrow>
+              <mo>=</mo>
+              <mn>1</mn>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mfrac>
+                    <mn>1</mn>
+                    <mn>2</mn>
+                  </mfrac>
+                </mrow>
+                <mrow>
+                  <mo>(</mo>
+                  <mn>1</mn>
+                  <mo>+</mo>
+                  <mrow class="MJX-TeXAtom-ORD">
+                    <mfrac>
+                      <mi>y</mi>
+                      <mn>2</mn>
+                    </mfrac>
+                  </mrow>
+                  <mo>)</mo>
+                </mrow>
+              </mrow>
+              <mo>=</mo>
+              <mn>1</mn>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mfrac>
+                  <mn>1</mn>
+                  <mn>2</mn>
+                </mfrac>
+              </mrow>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mfrac>
+                  <mi>y</mi>
+                  <mn>4</mn>
+                </mfrac>
+              </mrow>
+              <mo>=</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>…<!-- … --></mo>
+                <mo>,</mo>
+              </mrow>
+            </math>
+            o que leva a
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+              <mn>2</mn>
+              <mo>=</mo>
+              <mn>1</mn>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mfrac>
+                  <mn>1</mn>
+                  <mn>2</mn>
+                </mfrac>
+              </mrow>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mfrac>
+                  <mn>1</mn>
+                  <mn>4</mn>
+                </mfrac>
+              </mrow>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mfrac>
+                  <mn>1</mn>
+                  <mn>8</mn>
+                </mfrac>
+              </mrow>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>…<!-- … --></mo>
+                <mo>.</mo>
+              </mrow>
+            </math>
+            No entanto, se tentarmos a mesma manipulação começando com a
+            observação de que
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>−</mo>
+                <mn>1</mn>
+              </mrow>
+            </math>
+            é a solução para a equação
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>y</mi>
+                <mo>=</mo>
+                <mn>1</mn>
+                <mo>+</mo>
+                <mn>2</mn>
+                <mi>y</mi>
+              </mrow> </math
+            >, obtemos
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>−<!-- − --></mo>
+                <mn>1</mn>
+              </mrow>
+              <mo>=</mo>
+              <mi>y</mi>
+              <mo>=</mo>
+              <mn>1</mn>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mn>2</mn>
+                <mi>y</mi>
+              </mrow>
+              <mo>=</mo>
+              <mn>1</mn>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mn>2</mn>
+                <mo stretchy="false">(</mo>
+                <mn>1</mn>
+                <mo>+</mo>
+                <mn>2</mn>
+                <mi>y</mi>
+                <mo stretchy="false">)</mo>
+              </mrow>
+              <mo>=</mo>
+              <mn>1</mn>
+              <mo>+</mo>
+              <mn>2</mn>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mn>4</mn>
+                <mi>y</mi>
+              </mrow>
+              <mo>=</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>…<!-- … --></mo>
+                <mo>,</mo>
+              </mrow>
+            </math>
+            o que leva a
+            <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+              <mo>−<!-- − --></mo>
+              <mn>1</mn>
+              <mo>=</mo>
+              <mn>1</mn>
+              <mo>+</mo>
+              <mn>2</mn>
+              <mo>+</mo>
+              <mn>4</mn>
+              <mo>+</mo>
+              <mn>8</mn>
+              <mo>+</mo>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mo>…<!-- … --></mo>
+                <mo>.</mo>
+              </mrow>
+            </math>
+            Embora as manipulações formais usadas na derivação dessas duas
+            equações sejam idênticas, o primeiro resultado é uma afirmação
+            válida sobre séries infinitas, mas o segundo não é. Da mesma forma,
+            para nossos resultados de unificação, raciocinar com uma expressão
+            sintaticamente construída arbitrariamente pode levar a erros.
+          </p>
+        </div>
+
+        <div id="FOOT285">
+          <p>
+            <a class="footnote_backlink" href="#DOCF285"><sup>285</sup></a> A
+            maioria dos sistemas Lisp dá ao usuário a capacidade de modificar o
+            procedimento <code>read</code> comum para realizar tais
+            transformações, definindo <a id="index-reader-macro-characters"></a
+            ><em>caracteres de macro de leitura</em>. Expressões entre aspas já
+            são tratadas dessa forma: O leitor automaticamente traduz
+            <code>'expression</code> em <code>(quote expression)</code> antes
+            que o avaliador a veja. Poderíamos organizar para que
+            <code>?expression</code> seja transformado em
+            <code>(? expression)</code> da mesma forma; no entanto, para maior
+            clareza, incluímos o procedimento de transformação aqui
+            explicitamente.
+          </p>
+          <p>
+            <code>Expand-question-mark</code> e
+            <code>contract-question-mark</code> usam vários procedimentos com
+            <code>string</code> em seus nomes. Esses são primitivos do Scheme.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="Chapter-5.html#Chapter-5" accesskey="n" rel="next"
+            >Capítulo 5</a
+          >, Anterior:
+          <a href="4_002e3.html#g_t4_002e3" accesskey="p" rel="prev">4.3</a>,
+          Acima:
+          <a href="#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Jump to bottom"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
+</html>
