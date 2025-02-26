@@ -75,8 +75,8 @@
       <p>
         O avaliador metacircular é essencialmente uma formulação em Scheme do
         modelo de avaliação de ambiente descrito em
-        <a href="3_002e2.html#g_t3_002e2">3.2</a>. Lembre-se de que o modelo
-        tem duas partes básicas:
+        <a href="3_002e2.html#g_t3_002e2">3.2</a>. Lembre-se de que o modelo tem
+        duas partes básicas:
       </p>
       <ol>
         <li>
@@ -450,8 +450,8 @@
 
       <p>
         O avaliador é reminiscente do programa de diferenciação simbólica
-        discutido em <a href="2_002e3.html#g_t2_002e3_002e2">2.3.2</a>. Ambos
-        os programas operam em expressões simbólicas. Em ambos os programas, o
+        discutido em <a href="2_002e3.html#g_t2_002e3_002e2">2.3.2</a>. Ambos os
+        programas operam em expressões simbólicas. Em ambos os programas, o
         resultado de operar em uma expressão composta é determinado operando
         recursivamente nas partes da expressão e combinando os resultados de uma
         forma que depende do tipo da expressão. Em ambos os programas, usamos
@@ -1554,406 +1554,418 @@ ok
           ><sup>226</sup></a
         >
       </p>
-      <!--Aqui 2-->
-      <div id="FOOT208">
-        <p>
-          <a class="footnote_backlink" href="#DOCF208"><sup>208</sup></a>
-          Se nos concedermos a capacidade de aplicar primitivas, o que resta
-          para nós implementarmos no avaliador? O trabalho do avaliador não é
-          especificar as primitivas da linguagem, mas sim fornecer o tecido
-          conectivo — os meios de combinação e os meios de abstração — que une
-          uma coleção de primitivas para formar uma linguagem. Especificamente:
-        </p>
-        <ul>
-          <li>
-            O avaliador nos permite lidar com expressões aninhadas. Por exemplo,
-            embora simplesmente aplicar primitivas seja suficiente para avaliar
-            a expressão <code>(+ 1 6)</code>, isso não é adequado para lidar com
-            <code>(+ 1 (* 2 3))</code>. No que diz respeito ao procedimento
-            primitivo <code>+</code>, seus argumentos devem ser números, e ele
-            falharia se passássemos a expressão <code>(* 2 3)</code> como
-            argumento. Um papel importante do avaliador é orquestrar a
-            composição de procedimentos para que <code>(* 2 3)</code> seja
-            reduzido a 6 antes de ser passado como argumento para
-            <code>+</code>.
-          </li>
-          <li>
-            O avaliador nos permite usar variáveis. Por exemplo, o procedimento
-            primitivo para adição não tem como lidar com expressões como
-            <code>(+ x 1)</code>. Precisamos de um avaliador para rastrear
-            variáveis e obter seus valores antes de invocar os procedimentos
-            primitivos.
-          </li>
-          <li>
-            O avaliador nos permite definir procedimentos compostos. Isso
-            envolve rastrear definições de procedimentos, saber como usar essas
-            definições na avaliação de expressões e fornecer um mecanismo que
-            permita que os procedimentos aceitem argumentos.
-          </li>
-          <li>
-            O avaliador fornece as formas especiais, que devem ser avaliadas de
-            maneira diferente das chamadas de procedimento.
-          </li>
-        </ul>
-      </div>
-      <div id="FOOT209">
-        <p>
-          <a class="footnote_backlink" href="#DOCF209"><sup>209</sup></a>
-          Poderíamos ter simplificado a cláusula <code>application?</code> em
-          <code>eval</code> usando <code>map</code> (e estipulando que
-          <code>operands</code> retorna uma lista) em vez de escrever um
-          procedimento explícito <code>list-of-values</code>. Escolhemos não
-          usar <code>map</code> aqui para enfatizar o fato de que o avaliador
-          pode ser implementado sem o uso de procedimentos de ordem superior (e,
-          portanto, poderia ser escrito em uma linguagem que não tem
-          procedimentos de ordem superior), mesmo que a linguagem que ele
-          suporta inclua procedimentos de ordem superior.
-        </p>
-      </div>
-      <div id="FOOT210">
-        <p>
-          <a class="footnote_backlink" href="#DOCF210"><sup>210</sup></a> Neste
-          caso, a linguagem que está sendo implementada e a linguagem de
-          implementação são a mesma. A contemplação do significado de
-          <code>true?</code> aqui resulta em uma expansão da consciência sem o
-          abuso de substância.
-        </p>
-      </div>
-      <div id="FOOT211">
-        <p>
-          <a class="footnote_backlink" href="#DOCF211"><sup>211</sup></a> Esta
-          implementação de <code>define</code> ignora uma questão sutil no
-          tratamento de definições internas, embora funcione corretamente na
-          maioria dos casos. Veremos qual é o problema e como resolvê-lo em
-          <a href="#g_t4_002e1_002e6">4.1.6</a>.
-        </p>
-      </div>
-      <div id="FOOT212">
-        <p>
-          <a class="footnote_backlink" href="#DOCF212"><sup>212</sup></a> Como
-          dissemos quando introduzimos <code>define</code> e <code>set!</code>,
-          esses valores são dependentes da implementação em Scheme — ou seja, o
-          implementador pode escolher qual valor retornar.
-        </p>
-      </div>
-      <div id="FOOT213">
-        <p>
-          <a class="footnote_backlink" href="#DOCF213"><sup>213</sup></a> Como
-          mencionado em <a href="2_002e3.html#g_t2_002e3_002e1">2.3.1</a>, o
-          avaliador vê uma expressão entre aspas como uma lista começando com
-          <code>quote</code>, mesmo que a expressão seja digitada com a marca de
-          aspas. Por exemplo, a expressão <code>'a</code> seria vista pelo
-          avaliador como <code>(quote a)</code>. Veja
-          <a href="2_002e3.html#Exercise-2_002e55">Exercício 2.55</a>.
-        </p>
-      </div>
-      <div id="FOOT214">
-        <p>
-          <a class="footnote_backlink" href="#DOCF214"><sup>214</sup></a> O
-          valor de uma expressão <code>if</code> quando o predicado é falso e
-          não há alternativa é não especificado em Scheme; escolhemos aqui
-          torná-lo falso. Vamos suportar o uso das variáveis <code>true</code> e
-          <code>false</code> em expressões a serem avaliadas, vinculando-as no
-          ambiente global. Veja <a href="#g_t4_002e1_002e4">4.1.4</a>.
-        </p>
-      </div>
-      <div id="FOOT215">
-        <p>
-          <a class="footnote_backlink" href="#DOCF215"><sup>215</sup></a> Esses
-          seletores para uma lista de expressões — e os correspondentes para uma
-          lista de operandos — não são destinados a uma abstração de dados. Eles
-          são introduzidos como nomes mnemônicos para as operações básicas de
-          lista, a fim de facilitar a compreensão do avaliador de controle
-          explícito em <a href="5_002e4.html#g_t5_002e4">5.4</a>.
-        </p>
-      </div>
-      <div id="FOOT216">
-        <p>
-          <a class="footnote_backlink" href="#DOCF216"><sup>216</sup></a> O
-          valor de uma expressão <code>cond</code> quando todos os predicados
-          são falsos e não há cláusula <code>else</code> é não especificado em
-          Scheme; escolhemos aqui torná-lo falso.
-        </p>
-      </div>
-      <div id="FOOT217">
-        <p>
-          <a class="footnote_backlink" href="#DOCF217"><sup>217</sup></a>
-          Sistemas práticos de Lisp fornecem um mecanismo que permite ao usuário
-          adicionar novas expressões derivadas e especificar sua implementação
-          como transformações sintáticas sem modificar o avaliador. Tal
-          transformação definida pelo usuário é chamada de
-          <a id="index-macro"></a> <em>macro</em>. Embora seja fácil adicionar
-          um mecanismo elementar para definir macros, a linguagem resultante tem
-          problemas sutis de conflito de nomes. Houve muita pesquisa sobre
-          mecanismos para definição de macros que não causam essas dificuldades.
-          Veja, por exemplo,
-          <a href="References.html#Kohlbecker-1986">Kohlbecker 1986</a>,
-          <a href="References.html#Clinger-and-Rees-1991"
-            >Clinger e Rees 1991</a
-          >, e <a href="References.html#Hanson-1991">Hanson 1991</a>.
-        </p>
-      </div>
-      <div id="FOOT218">
-        <p>
-          <a class="footnote_backlink" href="#DOCF218"><sup>218</sup></a>
-          Quadros não são realmente uma abstração de dados no seguinte código:
-          <code>Set-variable-value!</code> e <code>define-variable!</code> usam
-          <code>set-car!</code> para modificar diretamente os valores em um
-          quadro. O propósito dos procedimentos de quadro é tornar os
-          procedimentos de manipulação de ambiente fáceis de ler.
-        </p>
-      </div>
-      <div id="FOOT219">
-        <p>
-          <a class="footnote_backlink" href="#DOCF219"><sup>219</sup></a> A
-          desvantagem desta representação (bem como da variante em
-          <a href="#Exercise-4_002e11">Exercício 4.11</a>) é que o avaliador
-          pode ter que pesquisar muitos quadros para encontrar a vinculação de
-          uma determinada variável. (Essa abordagem é chamada de
-          <a id="index-deep-binding"></a> <em>deep binding</em>.) Uma maneira de
-          evitar essa ineficiência é usar uma estratégia chamada
-          <a id="index-lexical-addressing"></a> <em>lexical addressing</em>, que
-          será discutida em <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a>.
-        </p>
-      </div>
-      <div id="FOOT220">
-        <p>
-          <a class="footnote_backlink" href="#DOCF220"><sup>220</sup></a>
-          Qualquer procedimento definido no Lisp subjacente pode ser usado como
-          uma primitiva para o avaliador metacircular. O nome de uma primitiva
-          instalada no avaliador não precisa ser o mesmo que o nome de sua
-          implementação no Lisp subjacente; os nomes são os mesmos aqui porque o
-          avaliador metacircular implementa o próprio Scheme. Assim, por
-          exemplo, poderíamos colocar <code>(list 'first car)</code> ou
-          <code>(list 'square (lambda (x) (* x x)))</code> na lista de
-          <code>primitive-procedures</code>.
-        </p>
-      </div>
-      <div id="FOOT221">
-        <p>
-          <a class="footnote_backlink" href="#DOCF221"><sup>221</sup></a>
-          <code>Apply-in-underlying-scheme</code> é o procedimento
-          <code>apply</code> que usamos nos capítulos anteriores. O procedimento
-          <code>apply</code> do avaliador metacircular (<a
-            href="#g_t4_002e1_002e1"
-            >4.1.1</a
-          >) modela o funcionamento dessa primitiva. Ter duas coisas diferentes
-          chamadas <code>apply</code> leva a um problema técnico na execução do
-          avaliador metacircular, porque definir o <code>apply</code> do
-          avaliador metacircular mascara a definição da primitiva. Uma maneira
-          de contornar isso é renomear o <code>apply</code> metacircular para
-          evitar conflito com o nome do procedimento primitivo. Assumimos, em
-          vez disso, que salvamos uma referência ao
-          <code>apply</code> subjacente fazendo
-        </p>
-        <pre><code class="language-scheme">(define apply-in-underlying-scheme apply)
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+        <div id="FOOT208">
+          <p>
+            <a class="footnote_backlink" href="#DOCF208"><sup>208</sup></a>
+            Se nos concedermos a capacidade de aplicar primitivas, o que resta
+            para nós implementarmos no avaliador? O trabalho do avaliador não é
+            especificar as primitivas da linguagem, mas sim fornecer o tecido
+            conectivo — os meios de combinação e os meios de abstração — que une
+            uma coleção de primitivas para formar uma linguagem.
+            Especificamente:
+          </p>
+          <ul>
+            <li>
+              O avaliador nos permite lidar com expressões aninhadas. Por
+              exemplo, embora simplesmente aplicar primitivas seja suficiente
+              para avaliar a expressão <code>(+ 1 6)</code>, isso não é adequado
+              para lidar com <code>(+ 1 (* 2 3))</code>. No que diz respeito ao
+              procedimento primitivo <code>+</code>, seus argumentos devem ser
+              números, e ele falharia se passássemos a expressão
+              <code>(* 2 3)</code> como argumento. Um papel importante do
+              avaliador é orquestrar a composição de procedimentos para que
+              <code>(* 2 3)</code> seja reduzido a 6 antes de ser passado como
+              argumento para <code>+</code>.
+            </li>
+            <li>
+              O avaliador nos permite usar variáveis. Por exemplo, o
+              procedimento primitivo para adição não tem como lidar com
+              expressões como
+              <code>(+ x 1)</code>. Precisamos de um avaliador para rastrear
+              variáveis e obter seus valores antes de invocar os procedimentos
+              primitivos.
+            </li>
+            <li>
+              O avaliador nos permite definir procedimentos compostos. Isso
+              envolve rastrear definições de procedimentos, saber como usar
+              essas definições na avaliação de expressões e fornecer um
+              mecanismo que permita que os procedimentos aceitem argumentos.
+            </li>
+            <li>
+              O avaliador fornece as formas especiais, que devem ser avaliadas
+              de maneira diferente das chamadas de procedimento.
+            </li>
+          </ul>
+        </div>
+        <div id="FOOT209">
+          <p>
+            <a class="footnote_backlink" href="#DOCF209"><sup>209</sup></a>
+            Poderíamos ter simplificado a cláusula <code>application?</code> em
+            <code>eval</code> usando <code>map</code> (e estipulando que
+            <code>operands</code> retorna uma lista) em vez de escrever um
+            procedimento explícito <code>list-of-values</code>. Escolhemos não
+            usar <code>map</code> aqui para enfatizar o fato de que o avaliador
+            pode ser implementado sem o uso de procedimentos de ordem superior
+            (e, portanto, poderia ser escrito em uma linguagem que não tem
+            procedimentos de ordem superior), mesmo que a linguagem que ele
+            suporta inclua procedimentos de ordem superior.
+          </p>
+        </div>
+        <div id="FOOT210">
+          <p>
+            <a class="footnote_backlink" href="#DOCF210"><sup>210</sup></a>
+            Neste caso, a linguagem que está sendo implementada e a linguagem de
+            implementação são a mesma. A contemplação do significado de
+            <code>true?</code> aqui resulta em uma expansão da consciência sem o
+            abuso de substância.
+          </p>
+        </div>
+        <div id="FOOT211">
+          <p>
+            <a class="footnote_backlink" href="#DOCF211"><sup>211</sup></a> Esta
+            implementação de <code>define</code> ignora uma questão sutil no
+            tratamento de definições internas, embora funcione corretamente na
+            maioria dos casos. Veremos qual é o problema e como resolvê-lo em
+            <a href="#g_t4_002e1_002e6">4.1.6</a>.
+          </p>
+        </div>
+        <div id="FOOT212">
+          <p>
+            <a class="footnote_backlink" href="#DOCF212"><sup>212</sup></a> Como
+            dissemos quando introduzimos <code>define</code> e
+            <code>set!</code>, esses valores são dependentes da implementação em
+            Scheme — ou seja, o implementador pode escolher qual valor retornar.
+          </p>
+        </div>
+        <div id="FOOT213">
+          <p>
+            <a class="footnote_backlink" href="#DOCF213"><sup>213</sup></a> Como
+            mencionado em <a href="2_002e3.html#g_t2_002e3_002e1">2.3.1</a>, o
+            avaliador vê uma expressão entre aspas como uma lista começando com
+            <code>quote</code>, mesmo que a expressão seja digitada com a marca
+            de aspas. Por exemplo, a expressão <code>'a</code> seria vista pelo
+            avaliador como <code>(quote a)</code>. Veja
+            <a href="2_002e3.html#Exercise-2_002e55">Exercício 2.55</a>.
+          </p>
+        </div>
+        <div id="FOOT214">
+          <p>
+            <a class="footnote_backlink" href="#DOCF214"><sup>214</sup></a> O
+            valor de uma expressão <code>if</code> quando o predicado é falso e
+            não há alternativa é não especificado em Scheme; escolhemos aqui
+            torná-lo falso. Vamos suportar o uso das variáveis
+            <code>true</code> e <code>false</code> em expressões a serem
+            avaliadas, vinculando-as no ambiente global. Veja
+            <a href="#g_t4_002e1_002e4">4.1.4</a>.
+          </p>
+        </div>
+        <div id="FOOT215">
+          <p>
+            <a class="footnote_backlink" href="#DOCF215"><sup>215</sup></a>
+            Esses seletores para uma lista de expressões — e os correspondentes
+            para uma lista de operandos — não são destinados a uma abstração de
+            dados. Eles são introduzidos como nomes mnemônicos para as operações
+            básicas de lista, a fim de facilitar a compreensão do avaliador de
+            controle explícito em <a href="5_002e4.html#g_t5_002e4">5.4</a>.
+          </p>
+        </div>
+        <div id="FOOT216">
+          <p>
+            <a class="footnote_backlink" href="#DOCF216"><sup>216</sup></a> O
+            valor de uma expressão <code>cond</code> quando todos os predicados
+            são falsos e não há cláusula <code>else</code> é não especificado em
+            Scheme; escolhemos aqui torná-lo falso.
+          </p>
+        </div>
+        <div id="FOOT217">
+          <p>
+            <a class="footnote_backlink" href="#DOCF217"><sup>217</sup></a>
+            Sistemas práticos de Lisp fornecem um mecanismo que permite ao
+            usuário adicionar novas expressões derivadas e especificar sua
+            implementação como transformações sintáticas sem modificar o
+            avaliador. Tal transformação definida pelo usuário é chamada de
+            <a id="index-macro"></a> <em>macro</em>. Embora seja fácil adicionar
+            um mecanismo elementar para definir macros, a linguagem resultante
+            tem problemas sutis de conflito de nomes. Houve muita pesquisa sobre
+            mecanismos para definição de macros que não causam essas
+            dificuldades. Veja, por exemplo,
+            <a href="References.html#Kohlbecker-1986">Kohlbecker 1986</a>,
+            <a href="References.html#Clinger-and-Rees-1991"
+              >Clinger e Rees 1991</a
+            >, e <a href="References.html#Hanson-1991">Hanson 1991</a>.
+          </p>
+        </div>
+        <div id="FOOT218">
+          <p>
+            <a class="footnote_backlink" href="#DOCF218"><sup>218</sup></a>
+            Quadros não são realmente uma abstração de dados no seguinte código:
+            <code>Set-variable-value!</code> e
+            <code>define-variable!</code> usam <code>set-car!</code> para
+            modificar diretamente os valores em um quadro. O propósito dos
+            procedimentos de quadro é tornar os procedimentos de manipulação de
+            ambiente fáceis de ler.
+          </p>
+        </div>
+        <div id="FOOT219">
+          <p>
+            <a class="footnote_backlink" href="#DOCF219"><sup>219</sup></a> A
+            desvantagem desta representação (bem como da variante em
+            <a href="#Exercise-4_002e11">Exercício 4.11</a>) é que o avaliador
+            pode ter que pesquisar muitos quadros para encontrar a vinculação de
+            uma determinada variável. (Essa abordagem é chamada de
+            <a id="index-deep-binding"></a> <em>deep binding</em>.) Uma maneira
+            de evitar essa ineficiência é usar uma estratégia chamada
+            <a id="index-lexical-addressing"></a> <em>lexical addressing</em>,
+            que será discutida em
+            <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a>.
+          </p>
+        </div>
+        <div id="FOOT220">
+          <p>
+            <a class="footnote_backlink" href="#DOCF220"><sup>220</sup></a>
+            Qualquer procedimento definido no Lisp subjacente pode ser usado
+            como uma primitiva para o avaliador metacircular. O nome de uma
+            primitiva instalada no avaliador não precisa ser o mesmo que o nome
+            de sua implementação no Lisp subjacente; os nomes são os mesmos aqui
+            porque o avaliador metacircular implementa o próprio Scheme. Assim,
+            por exemplo, poderíamos colocar <code>(list 'first car)</code> ou
+            <code>(list 'square (lambda (x) (* x x)))</code> na lista de
+            <code>primitive-procedures</code>.
+          </p>
+        </div>
+        <div id="FOOT221">
+          <p>
+            <a class="footnote_backlink" href="#DOCF221"><sup>221</sup></a>
+            <code>Apply-in-underlying-scheme</code> é o procedimento
+            <code>apply</code> que usamos nos capítulos anteriores. O
+            procedimento <code>apply</code> do avaliador metacircular (<a
+              href="#g_t4_002e1_002e1"
+              >4.1.1</a
+            >) modela o funcionamento dessa primitiva. Ter duas coisas
+            diferentes chamadas <code>apply</code> leva a um problema técnico na
+            execução do avaliador metacircular, porque definir o
+            <code>apply</code> do avaliador metacircular mascara a definição da
+            primitiva. Uma maneira de contornar isso é renomear o
+            <code>apply</code> metacircular para evitar conflito com o nome do
+            procedimento primitivo. Assumimos, em vez disso, que salvamos uma
+            referência ao <code>apply</code> subjacente fazendo
+          </p>
+          <pre><code class="language-scheme">(define apply-in-underlying-scheme apply)
 </code></pre>
 
-        <p>
-          antes de definir o <code>apply</code> metacircular. Isso nos permite
-          acessar a versão original de <code>apply</code> sob um nome diferente.
-        </p>
-      </div>
-      <div id="FOOT222">
-        <p>
-          <a class="footnote_backlink" href="#DOCF222"><sup>222</sup></a> O
-          procedimento primitivo <code>read</code> espera a entrada do usuário e
-          retorna a próxima expressão completa que é digitada. Por exemplo, se o
-          usuário digitar <code>(+ 23 x)</code>, <code>read</code> retorna uma
-          lista de três elementos contendo o símbolo <code>+</code>, o número 23
-          e o símbolo <code>x</code>. Se o usuário digitar <code>'x</code>,
-          <code>read</code> retorna uma lista de dois elementos contendo o
-          símbolo <code>quote</code> e o símbolo <code>x</code>.
-        </p>
-      </div>
-      <div id="FOOT223">
-        <p>
-          <a class="footnote_backlink" href="#DOCF223"><sup>223</sup></a> O fato
-          de as máquinas serem descritas em Lisp é irrelevante. Se dermos ao
-          nosso avaliador um programa Lisp que se comporta como um avaliador
-          para outra linguagem, digamos C, o avaliador Lisp emulará o avaliador
-          C, que por sua vez pode emular qualquer máquina descrita como um
-          programa C. Da mesma forma, escrever um avaliador Lisp em C produz um
-          programa C que pode executar qualquer programa Lisp. A ideia profunda
-          aqui é que qualquer avaliador pode emular qualquer outro. Assim, a
-          noção de “o que pode, em princípio, ser computado” (ignorando as
-          praticidades de tempo e memória necessários) é independente da
-          linguagem ou do computador, e em vez disso reflete uma noção
-          subjacente de <a id="index-computabilidade"></a>
-          <em>computabilidade</em>. Isso foi demonstrado de forma clara pela
-          primeira vez por Alan M. Turing (1912-1954), cujo artigo de 1936
-          estabeleceu as bases para a ciência da computação teórica. No artigo,
-          Turing apresentou um modelo computacional simples — agora conhecido
-          como <a id="index-Turing-machine"></a> <em>máquina de Turing</em> — e
-          argumentou que qualquer “processo efetivo” pode ser formulado como um
-          programa para tal máquina. (Esse argumento é conhecido como
-          <a id="index-Church_002dTuring-thesis"></a>
-          <em>teses de Church-Turing</em>.) Turing então implementou uma máquina
-          universal, ou seja, uma máquina de Turing que se comporta como um
-          avaliador para programas de máquina de Turing. Ele usou esse framework
-          para demonstrar que existem problemas bem colocados que não podem ser
-          computados por máquinas de Turing (veja
-          <a href="#Exercise-4_002e15">Exercício 4.15</a>), e, portanto, por
-          implicação, não podem ser formulados como “processos efetivos.” Turing
-          também fez contribuições fundamentais para a ciência da computação
-          prática. Por exemplo, ele inventou a ideia de estruturar programas
-          usando sub-rotinas de propósito geral. Veja
-          <a href="References.html#Hodges-1983">Hodges 1983</a> para uma
-          biografia de Turing.
-        </p>
-      </div>
-      <div id="FOOT224">
-        <p>
-          <a class="footnote_backlink" href="#DOCF224"><sup>224</sup></a>
-          Algumas pessoas acham contra-intuitivo que um avaliador, que é
-          implementado por um procedimento relativamente simples, possa emular
-          programas que são mais complexos que o próprio avaliador. A existência
-          de uma máquina avaliadora universal é uma propriedade profunda e
-          maravilhosa da computação. <a id="index-Recursion-theory"></a>
-          <em>Teoria da recursão</em>, um ramo da lógica matemática, está
-          preocupado com os limites lógicos da computação. O belo livro de
-          Douglas Hofstadter, <cite>Gödel, Escher, Bach</cite>, explora algumas
-          dessas ideias (<a href="References.html#Hofstadter-1979"
-            >Hofstadter 1979</a
-          >).
-        </p>
-      </div>
-      <div id="FOOT225">
-        <p>
-          <a class="footnote_backlink" href="#DOCF225"><sup>225</sup></a> Aviso:
-          Esta primitiva <code>eval</code> não é idêntica ao procedimento
-          <code>eval</code> que implementamos em
-          <a href="#g_t4_002e1_002e1">4.1.1</a>, porque ela usa ambientes
-          <em>reais</em> de Scheme em vez das estruturas de ambiente de amostra
-          que construímos em <a href="#g_t4_002e1_002e3">4.1.3</a>. Esses
-          ambientes reais não podem ser manipulados pelo usuário como listas
-          comuns; eles devem ser acessados via <code>eval</code> ou outras
-          operações especiais. Da mesma forma, a primitiva
-          <code>apply</code> que vimos anteriormente não é idêntica ao
-          <code>apply</code> metacircular, porque ela usa procedimentos reais de
-          Scheme em vez dos objetos de procedimento que construímos em
-          <a href="#g_t4_002e1_002e3">4.1.3</a> e
-          <a href="#g_t4_002e1_002e4">4.1.4</a>.
-        </p>
-      </div>
-      <div id="FOOT226">
-        <p>
-          <a class="footnote_backlink" href="#DOCF226"><sup>226</sup></a> A
-          implementação do <abbr>MIT</abbr> do Scheme inclui <code>eval</code>,
-          bem como um símbolo <code>user-initial-environment</code> que está
-          vinculado ao ambiente inicial no qual as expressões de entrada do
-          usuário são avaliadas.
-        </p>
-      </div>
-      <div id="FOOT227">
-        <p>
-          <a class="footnote_backlink" href="#DOCF227"><sup>227</sup></a> Embora
-          tenhamos estipulado que <code>halts?</code> recebe um objeto de
-          procedimento, observe que esse raciocínio ainda se aplica mesmo se
-          <code>halts?</code> puder acessar o texto do procedimento e seu
-          ambiente. Este é o celebrado <a id="index-Halting-Theorem"></a>
-          <em>Teorema da Parada</em> de Turing, que deu o primeiro exemplo claro
-          de um <a id="index-non_002dcomputable"></a>
-          <em>problema não computável</em>, ou seja, uma tarefa bem colocada que
-          não pode ser realizada como um procedimento computacional.
-        </p>
-      </div>
-      <div id="FOOT228">
-        <p>
-          <a class="footnote_backlink" href="#DOCF228"><sup>228</sup></a> O
-          desejo de que os programas não dependam desse mecanismo de avaliação é
-          a razão para a observação “a administração não é responsável” em
-          <a href="1_002e1.html#Footnote-28">Nota de rodapé 28</a> de
-          <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>. Ao insistir que as
-          definições internas venham primeiro e não se usem mutuamente enquanto
-          as definições estão sendo avaliadas, o padrão <abbr>IEEE</abbr> para
-          Scheme deixa aos implementadores alguma escolha no mecanismo usado
-          para avaliar essas definições. A escolha de uma regra de avaliação em
-          vez de outra aqui pode parecer uma questão pequena, afetando apenas a
-          interpretação de programas “mal formados”. No entanto, veremos em
-          <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a> que mudar para um
-          modelo de escopo simultâneo para definições internas evita algumas
-          dificuldades desagradáveis que surgiriam de outra forma na
-          implementação de um compilador.
-        </p>
-      </div>
-      <div id="FOOT229">
-        <p>
-          <a class="footnote_backlink" href="#DOCF229"><sup>229</sup></a> O
-          padrão <abbr>IEEE</abbr> para Scheme permite diferentes estratégias de
-          implementação, especificando que cabe ao programador obedecer a essa
-          restrição, e não à implementação para impô-la. Algumas implementações
-          de Scheme, incluindo o <abbr>MIT</abbr> Scheme, usam a transformação
-          mostrada acima. Assim, alguns programas que não obedecem a essa
-          restrição de fato rodarão nessas implementações.
-        </p>
-      </div>
-      <div id="FOOT230">
-        <p>
-          <a class="footnote_backlink" href="#DOCF230"><sup>230</sup></a> Os
-          implementadores do <abbr>MIT</abbr> do Scheme apoiam Alyssa nos
-          seguintes termos: Eva está, em princípio, correta — as definições
-          devem ser consideradas simultâneas. Mas parece difícil implementar um
-          mecanismo geral e eficiente que faça o que Eva exige. Na ausência de
-          tal mecanismo, é melhor gerar um erro nos casos difíceis de definições
-          simultâneas (a noção de Alyssa) do que produzir uma resposta incorreta
-          (como Ben teria).
-        </p>
-      </div>
-      <div id="FOOT231">
-        <p>
-          <a class="footnote_backlink" href="#DOCF231"><sup>231</sup></a> Este
-          exemplo ilustra um truque de programação para formular procedimentos
-          recursivos sem usar <code>define</code>. O truque mais geral desse
-          tipo é o
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>Y</mi>
-          </math>
-          <a id="index-operator-1"></a> <em>operador</em>, que pode ser usado
-          para dar uma implementação de recursão “pura λ-cálculo”. (Veja
-          <a href="References.html#Stoy-1977">Stoy 1977</a> para detalhes sobre
-          o λ-cálculo, e
-          <a href="References.html#Gabriel-1988">Gabriel 1988</a> para uma
-          exposição do operador
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>Y</mi>
-          </math>
-          em Scheme.)
-        </p>
-      </div>
-      <div id="FOOT232">
-        <p>
-          <a class="footnote_backlink" href="#DOCF232"><sup>232</sup></a> Esta
-          técnica é uma parte integral do processo de compilação, que
-          discutiremos em <a href="Chapter-5.html#Chapter-5">Capítulo 5</a>.
-          Jonathan Rees escreveu um interpretador Scheme assim por volta de 1982
-          para o projeto T (<a href="References.html#Rees-and-Adams-1982"
-            >Rees e Adams 1982</a
-          >). Marc
-          <a href="References.html#Feeley-_00281986_0029">Feeley (1986)</a>
-          (veja também
-          <a href="References.html#Feeley-and-Lapalme-1987"
-            >Feeley e Lapalme 1987</a
-          >) inventou independentemente essa técnica em sua tese de mestrado.
-        </p>
-      </div>
-      <div id="FOOT233">
-        <p>
-          <a class="footnote_backlink" href="#DOCF233"><sup>233</sup></a> Há, no
-          entanto, uma parte importante da busca de variáveis que
-          <em>pode</em> ser feita como parte da análise sintática. Como
-          mostraremos em <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a>,
-          pode-se determinar a posição na estrutura do ambiente onde o valor da
-          variável será encontrado, eliminando a necessidade de escanear o
-          ambiente para a entrada que corresponde à variável.
-        </p>
-      </div>
-      <div id="FOOT234">
-        <p>
-          <a class="footnote_backlink" href="#DOCF234"><sup>234</sup></a> Veja
-          <a href="#Exercise-4_002e23">Exercício 4.23</a> para algumas
-          percepções sobre o processamento de sequências.
-        </p>
+          <p>
+            antes de definir o <code>apply</code> metacircular. Isso nos permite
+            acessar a versão original de <code>apply</code> sob um nome
+            diferente.
+          </p>
+        </div>
+        <div id="FOOT222">
+          <p>
+            <a class="footnote_backlink" href="#DOCF222"><sup>222</sup></a> O
+            procedimento primitivo <code>read</code> espera a entrada do usuário
+            e retorna a próxima expressão completa que é digitada. Por exemplo,
+            se o usuário digitar <code>(+ 23 x)</code>,
+            <code>read</code> retorna uma lista de três elementos contendo o
+            símbolo <code>+</code>, o número 23 e o símbolo <code>x</code>. Se o
+            usuário digitar <code>'x</code>, <code>read</code> retorna uma lista
+            de dois elementos contendo o símbolo <code>quote</code> e o símbolo
+            <code>x</code>.
+          </p>
+        </div>
+        <div id="FOOT223">
+          <p>
+            <a class="footnote_backlink" href="#DOCF223"><sup>223</sup></a> O
+            fato de as máquinas serem descritas em Lisp é irrelevante. Se dermos
+            ao nosso avaliador um programa Lisp que se comporta como um
+            avaliador para outra linguagem, digamos C, o avaliador Lisp emulará
+            o avaliador C, que por sua vez pode emular qualquer máquina descrita
+            como um programa C. Da mesma forma, escrever um avaliador Lisp em C
+            produz um programa C que pode executar qualquer programa Lisp. A
+            ideia profunda aqui é que qualquer avaliador pode emular qualquer
+            outro. Assim, a noção de “o que pode, em princípio, ser computado”
+            (ignorando as praticidades de tempo e memória necessários) é
+            independente da linguagem ou do computador, e em vez disso reflete
+            uma noção subjacente de <a id="index-computabilidade"></a>
+            <em>computabilidade</em>. Isso foi demonstrado de forma clara pela
+            primeira vez por Alan M. Turing (1912-1954), cujo artigo de 1936
+            estabeleceu as bases para a ciência da computação teórica. No
+            artigo, Turing apresentou um modelo computacional simples — agora
+            conhecido como <a id="index-Turing-machine"></a>
+            <em>máquina de Turing</em> — e argumentou que qualquer “processo
+            efetivo” pode ser formulado como um programa para tal máquina. (Esse
+            argumento é conhecido como
+            <a id="index-Church_002dTuring-thesis"></a>
+            <em>teses de Church-Turing</em>.) Turing então implementou uma
+            máquina universal, ou seja, uma máquina de Turing que se comporta
+            como um avaliador para programas de máquina de Turing. Ele usou esse
+            framework para demonstrar que existem problemas bem colocados que
+            não podem ser computados por máquinas de Turing (veja
+            <a href="#Exercise-4_002e15">Exercício 4.15</a>), e, portanto, por
+            implicação, não podem ser formulados como “processos efetivos.”
+            Turing também fez contribuições fundamentais para a ciência da
+            computação prática. Por exemplo, ele inventou a ideia de estruturar
+            programas usando sub-rotinas de propósito geral. Veja
+            <a href="References.html#Hodges-1983">Hodges 1983</a> para uma
+            biografia de Turing.
+          </p>
+        </div>
+        <div id="FOOT224">
+          <p>
+            <a class="footnote_backlink" href="#DOCF224"><sup>224</sup></a>
+            Algumas pessoas acham contra-intuitivo que um avaliador, que é
+            implementado por um procedimento relativamente simples, possa emular
+            programas que são mais complexos que o próprio avaliador. A
+            existência de uma máquina avaliadora universal é uma propriedade
+            profunda e maravilhosa da computação.
+            <a id="index-Recursion-theory"></a> <em>Teoria da recursão</em>, um
+            ramo da lógica matemática, está preocupado com os limites lógicos da
+            computação. O belo livro de Douglas Hofstadter,
+            <cite>Gödel, Escher, Bach</cite>, explora algumas dessas ideias (<a
+              href="References.html#Hofstadter-1979"
+              >Hofstadter 1979</a
+            >).
+          </p>
+        </div>
+        <div id="FOOT225">
+          <p>
+            <a class="footnote_backlink" href="#DOCF225"><sup>225</sup></a>
+            Aviso: Esta primitiva <code>eval</code> não é idêntica ao
+            procedimento <code>eval</code> que implementamos em
+            <a href="#g_t4_002e1_002e1">4.1.1</a>, porque ela usa ambientes
+            <em>reais</em> de Scheme em vez das estruturas de ambiente de
+            amostra que construímos em <a href="#g_t4_002e1_002e3">4.1.3</a>.
+            Esses ambientes reais não podem ser manipulados pelo usuário como
+            listas comuns; eles devem ser acessados via <code>eval</code> ou
+            outras operações especiais. Da mesma forma, a primitiva
+            <code>apply</code> que vimos anteriormente não é idêntica ao
+            <code>apply</code> metacircular, porque ela usa procedimentos reais
+            de Scheme em vez dos objetos de procedimento que construímos em
+            <a href="#g_t4_002e1_002e3">4.1.3</a> e
+            <a href="#g_t4_002e1_002e4">4.1.4</a>.
+          </p>
+        </div>
+        <div id="FOOT226">
+          <p>
+            <a class="footnote_backlink" href="#DOCF226"><sup>226</sup></a> A
+            implementação do <abbr>MIT</abbr> do Scheme inclui
+            <code>eval</code>, bem como um símbolo
+            <code>user-initial-environment</code> que está vinculado ao ambiente
+            inicial no qual as expressões de entrada do usuário são avaliadas.
+          </p>
+        </div>
+        <div id="FOOT227">
+          <p>
+            <a class="footnote_backlink" href="#DOCF227"><sup>227</sup></a>
+            Embora tenhamos estipulado que <code>halts?</code> recebe um objeto
+            de procedimento, observe que esse raciocínio ainda se aplica mesmo
+            se <code>halts?</code> puder acessar o texto do procedimento e seu
+            ambiente. Este é o celebrado <a id="index-Halting-Theorem"></a>
+            <em>Teorema da Parada</em> de Turing, que deu o primeiro exemplo
+            claro de um <a id="index-non_002dcomputable"></a>
+            <em>problema não computável</em>, ou seja, uma tarefa bem colocada
+            que não pode ser realizada como um procedimento computacional.
+          </p>
+        </div>
+        <div id="FOOT228">
+          <p>
+            <a class="footnote_backlink" href="#DOCF228"><sup>228</sup></a> O
+            desejo de que os programas não dependam desse mecanismo de avaliação
+            é a razão para a observação “a administração não é responsável” em
+            <a href="1_002e1.html#Footnote-28">Nota de rodapé 28</a> de
+            <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>. Ao insistir que
+            as definições internas venham primeiro e não se usem mutuamente
+            enquanto as definições estão sendo avaliadas, o padrão
+            <abbr>IEEE</abbr> para Scheme deixa aos implementadores alguma
+            escolha no mecanismo usado para avaliar essas definições. A escolha
+            de uma regra de avaliação em vez de outra aqui pode parecer uma
+            questão pequena, afetando apenas a interpretação de programas “mal
+            formados”. No entanto, veremos em
+            <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a> que mudar para um
+            modelo de escopo simultâneo para definições internas evita algumas
+            dificuldades desagradáveis que surgiriam de outra forma na
+            implementação de um compilador.
+          </p>
+        </div>
+        <div id="FOOT229">
+          <p>
+            <a class="footnote_backlink" href="#DOCF229"><sup>229</sup></a> O
+            padrão <abbr>IEEE</abbr> para Scheme permite diferentes estratégias
+            de implementação, especificando que cabe ao programador obedecer a
+            essa restrição, e não à implementação para impô-la. Algumas
+            implementações de Scheme, incluindo o <abbr>MIT</abbr> Scheme, usam
+            a transformação mostrada acima. Assim, alguns programas que não
+            obedecem a essa restrição de fato rodarão nessas implementações.
+          </p>
+        </div>
+        <div id="FOOT230">
+          <p>
+            <a class="footnote_backlink" href="#DOCF230"><sup>230</sup></a> Os
+            implementadores do <abbr>MIT</abbr> do Scheme apoiam Alyssa nos
+            seguintes termos: Eva está, em princípio, correta — as definições
+            devem ser consideradas simultâneas. Mas parece difícil implementar
+            um mecanismo geral e eficiente que faça o que Eva exige. Na ausência
+            de tal mecanismo, é melhor gerar um erro nos casos difíceis de
+            definições simultâneas (a noção de Alyssa) do que produzir uma
+            resposta incorreta (como Ben teria).
+          </p>
+        </div>
+        <div id="FOOT231">
+          <p>
+            <a class="footnote_backlink" href="#DOCF231"><sup>231</sup></a> Este
+            exemplo ilustra um truque de programação para formular procedimentos
+            recursivos sem usar <code>define</code>. O truque mais geral desse
+            tipo é o
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>Y</mi>
+            </math>
+            <a id="index-operator-1"></a> <em>operador</em>, que pode ser usado
+            para dar uma implementação de recursão “pura λ-cálculo”. (Veja
+            <a href="References.html#Stoy-1977">Stoy 1977</a> para detalhes
+            sobre o λ-cálculo, e
+            <a href="References.html#Gabriel-1988">Gabriel 1988</a> para uma
+            exposição do operador
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mi>Y</mi>
+            </math>
+            em Scheme.)
+          </p>
+        </div>
+        <div id="FOOT232">
+          <p>
+            <a class="footnote_backlink" href="#DOCF232"><sup>232</sup></a> Esta
+            técnica é uma parte integral do processo de compilação, que
+            discutiremos em <a href="Chapter-5.html#Chapter-5">Capítulo 5</a>.
+            Jonathan Rees escreveu um interpretador Scheme assim por volta de
+            1982 para o projeto T (<a href="References.html#Rees-and-Adams-1982"
+              >Rees e Adams 1982</a
+            >). Marc
+            <a href="References.html#Feeley-_00281986_0029">Feeley (1986)</a>
+            (veja também
+            <a href="References.html#Feeley-and-Lapalme-1987"
+              >Feeley e Lapalme 1987</a
+            >) inventou independentemente essa técnica em sua tese de mestrado.
+          </p>
+        </div>
+        <div id="FOOT233">
+          <p>
+            <a class="footnote_backlink" href="#DOCF233"><sup>233</sup></a> Há,
+            no entanto, uma parte importante da busca de variáveis que
+            <em>pode</em> ser feita como parte da análise sintática. Como
+            mostraremos em <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a>,
+            pode-se determinar a posição na estrutura do ambiente onde o valor
+            da variável será encontrado, eliminando a necessidade de escanear o
+            ambiente para a entrada que corresponde à variável.
+          </p>
+        </div>
+        <div id="FOOT234">
+          <p>
+            <a class="footnote_backlink" href="#DOCF234"><sup>234</sup></a> Veja
+            <a href="#Exercise-4_002e23">Exercício 4.23</a> para algumas
+            percepções sobre o processamento de sequências.
+          </p>
+        </div>
       </div>
       <nav class="header">
         <p>
