@@ -1,799 +1,1030 @@
-<?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" xml:lang="en" lang="en">
-<!-- Created by GNU Texinfo 5.1, http://www.gnu.org/software/texinfo/ -->
-<head>
-<title>Structure and Interpretation of Computer Programs, 2e: 4.2</title>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.2"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.2
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <a id="pagetop"></a>
+      <a id="g_t4_002e2"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="4_002e3.html#g_t4_002e3" accesskey="n" rel="next">4.3</a>,
+          Anterior:
+          <a href="4_002e1.html#g_t4_002e1" accesskey="p" rel="prev">4.1</a>,
+          Acima:
+          <a href="Chapter-4.html#Chapter-4" accesskey="u" rel="prev"
+            >Capítulo 4</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <a id="Variations-on-a-Scheme-_002d_002d_002d-Lazy-Evaluation"></a>
+      <h3 class="section">
+        <span class="secnum">4.2</span
+        ><span class="sectitle"
+          >Variações em um Esquema — Avaliação Preguiçosa</span
+        >
+      </h3>
 
-<meta name="description" content="Structure and Interpretation of Computer Programs, 2e: 4.2" />
-<meta name="keywords" content="Structure and Interpretation of Computer Programs, 2e: 4.2" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<meta name="Generator" content="texi2any" />
-<meta charset="utf-8" />
-<link href="index.html#Top" rel="start" title="Top" />
-<link href="Term-Index.html#Term-Index" rel="index" title="Term Index" />
-<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents" />
-<link href="Chapter-4.html#Chapter-4" rel="prev" title="Chapter 4" />
-<link href="4_002e3.html#g_t4_002e3" rel="next" title="4.3" />
-<link href="4_002e1.html#g_t4_002e1_002e7" rel="prev" title="4.1.7" />
+      <p>
+        Agora que temos um avaliador expresso como um programa Lisp, podemos
+        experimentar com escolhas alternativas no design da linguagem
+        simplesmente modificando o avaliador. De fato, novas linguagens são
+        frequentemente inventadas primeiro escrevendo um avaliador que incorpora
+        a nova linguagem dentro de uma linguagem de alto nível existente. Por
+        exemplo, se quisermos discutir algum aspecto de uma modificação proposta
+        ao Lisp com outro membro da comunidade Lisp, podemos fornecer um
+        avaliador que incorpora a mudança. O destinatário pode então
+        experimentar o novo avaliador e enviar comentários como modificações
+        adicionais. Não apenas a base de implementação de alto nível facilita o
+        teste e a depuração do avaliador; além disso, a incorporação permite que
+        o designer aproveite características da linguagem subjacente, assim como
+        nosso avaliador Lisp incorporado usa primitivas e estrutura de controle
+        da linguagem Lisp subjacente. Somente mais tarde (se for o caso) o
+        designer precisará se preocupar em construir uma implementação completa
+        em uma linguagem de baixo nível ou em hardware. Nesta seção e na
+        próxima, exploraremos algumas variações no Scheme que fornecem poder
+        expressivo adicional significativo.
+      </p>
 
-<link href="css/style.css" rel="stylesheet" type="text/css" />
-<link href="css/prettify.css" rel="stylesheet" type="text/css" />
+      <a id="g_t4_002e2_002e1"></a>
+      <a id="Normal-Order-and-Applicative-Order"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.2.1</span
+        ><span class="sectitle">Ordem Normal e Ordem Aplicativa</span>
+      </h4>
 
-<script src="js/jquery.min.js" type="text/javascript"></script>
-<script src="js/footnotes.js" type="text/javascript"></script>
-<script src="js/browsertest.js" type="text/javascript"></script>
-</head>
+      <p>
+        Em <a href="1_002e1.html#g_t1_002e1">1.1</a>, onde começamos nossa
+        discussão sobre modelos de avaliação, nós observamos que o Scheme é uma
+        linguagem de <a id="index-applicative_002dorder"></a>
+        <em>ordem aplicativa</em>, ou seja, todos os argumentos para
+        procedimentos do Scheme são avaliados quando o procedimento é aplicado.
+        Em contraste, <a id="index-normal_002dorder"></a>
+        <em>linguagens de ordem normal</em> atrasam a avaliação dos argumentos
+        do procedimento até que os valores reais dos argumentos sejam
+        necessários. Atrasar a avaliação dos argumentos do procedimento até o
+        último momento possível (por exemplo, até que sejam exigidos por uma
+        operação primitiva) é chamado de <a id="index-lazy-evaluation"></a>
+        <em>avaliação preguiçosa</em>.<a
+          class="footnote_link"
+          id="DOCF236"
+          href="#FOOT236"
+          ><sup>236</sup></a
+        >
+        Considere o procedimento
+      </p>
+      <pre><code class="language-scheme">(define (try a b)
+  (if (= a 0) 1 b))</code></pre>
 
-<body>
-<section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t4_002e2"></a>
-<nav class="header">
-<p>
-Next: <a href="4_002e3.html#g_t4_002e3" accesskey="n" rel="next">4.3</a>, Prev: <a href="4_002e1.html#g_t4_002e1" accesskey="p" rel="prev">4.1</a>, Up: <a href="Chapter-4.html#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
-</nav>
-<a id="Variations-on-a-Scheme-_002d_002d_002d-Lazy-Evaluation"></a>
-<h3 class="section"><span class="secnum">4.2</span><span class="sectitle">Variations on a Scheme — Lazy Evaluation</span></h3>
-
-<p>Now that we have an evaluator expressed as a Lisp program, we can experiment
-with alternative choices in language design simply by modifying the evaluator.
-Indeed, new languages are often invented by first writing an evaluator that
-embeds the new language within an existing high-level language.  For example,
-if we wish to discuss some aspect of a proposed modification to Lisp with
-another member of the Lisp community, we can supply an evaluator that embodies
-the change.  The recipient can then experiment with the new evaluator and send
-back comments as further modifications.  Not only does the high-level
-implementation base make it easier to test and debug the evaluator; in
-addition, the embedding enables the designer to snarf<a class="footnote_link" id="DOCF235" href="#FOOT235"><sup>235</sup></a>
-features from the underlying language, just as our embedded Lisp evaluator uses
-primitives and control structure from the underlying Lisp.  Only later (if
-ever) need the designer go to the trouble of building a complete implementation
-in a low-level language or in hardware.  In this section and the next we
-explore some variations on Scheme that provide significant additional
-expressive power.
-</p>
-
-<a id="g_t4_002e2_002e1"></a>
-<a id="Normal-Order-and-Applicative-Order"></a>
-<h4 class="subsection"><span class="secnum">4.2.1</span><span class="sectitle">Normal Order and Applicative Order</span></h4>
-
-<p>In <a href="1_002e1.html#g_t1_002e1">1.1</a>, where we began our discussion of models of evaluation, we
-noted that Scheme is an <a id="index-applicative_002dorder"></a>
-<em>applicative-order</em> language, namely, that all
-the arguments to Scheme procedures are evaluated when the procedure is applied.
-In contrast, <a id="index-normal_002dorder"></a>
-<em>normal-order</em> languages delay evaluation of procedure
-arguments until the actual argument values are needed.  Delaying evaluation of
-procedure arguments until the last possible moment (e.g., until they are
-required by a primitive operation) is called <a id="index-lazy-evaluation"></a>
-<em>lazy evaluation</em>.<a class="footnote_link" id="DOCF236" href="#FOOT236"><sup>236</sup></a>  Consider the procedure
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">try a b</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> a </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> b</span><span class="clo">))</span></pre></div>
-
-<p>Evaluating <code>(try 0 (/ 1 0))</code> generates an error in Scheme.  With lazy
-evaluation, there would be no error.  Evaluating the expression would return 1,
-because the argument <code>(/ 1 0)</code> would never be evaluated.
-</p>
-<p>An example that exploits lazy evaluation is the definition of a procedure
-<code>unless</code>
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">unless condition 
+      <p>
+        Avaliar <code>(try 0 (/ 1 0))</code> gera um erro no Scheme. Com
+        avaliação preguiçosa, não haveria erro. Avaliar a expressão retornaria
+        1, porque o argumento <code>(/ 1 0)</code> nunca seria avaliado.
+      </p>
+      <p>
+        Um exemplo que explora a avaliação preguiçosa é a definição de um
+        procedimento
+        <code>unless</code>
+      </p>
+      <pre><code class="language-scheme">(define (unless condition 
                 usual-value 
-                exceptional-value</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> condition 
+                exceptional-value)
+  (if condition 
       exceptional-value 
-      usual-value</span><span class="clo">))</span></pre></div>
+      usual-value))</code></pre>
 
-<p>that can be used in expressions such as
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="pln">unless </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> b </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
-        </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> a b</span><span class="clo">)</span><span class="pln">
-        </span><span class="opn">(</span><span class="kwd">begin</span><span class="pln"> 
-          </span><span class="opn">(</span><span class="pln">display </span><span class="str">"exception: returning 0"</span><span class="clo">)</span><span class="pln">
-          </span><span class="lit">0</span><span class="clo">))</span></pre></div>
+      <p>que pode ser usado em expressões como</p>
+      <pre><code class="language-scheme">(unless (= b 0)
+        (/ a b)
+        (begin 
+          (display "exception: returning 0")
+          0))</code></pre>
 
-<p>This won’t work in an applicative-order language because both the usual value
-and the exceptional value will be evaluated before <code>unless</code> is called
-(compare <a href="1_002e1.html#Exercise-1_002e6">Exercise 1.6</a>).  An advantage of lazy evaluation is that some
-procedures, such as <code>unless</code>, can do useful computation even if evaluation
-of some of their arguments would produce errors or would not terminate.
-</p>
-<p>If the body of a procedure is entered before an argument has been evaluated we
-say that the procedure is <a id="index-non_002dstrict"></a>
-<em>non-strict</em> in that argument.  If the
-argument is evaluated before the body of the procedure is entered we say that
-the procedure is <a id="index-strict"></a>
-<em>strict</em> in that argument.<a class="footnote_link" id="DOCF237" href="#FOOT237"><sup>237</sup></a>  In a purely applicative-order
-language, all procedures are strict in each argument.  In a purely normal-order
-language, all compound procedures are non-strict in each argument, and
-primitive procedures may be either strict or non-strict.  There are also
-languages (see <a href="#Exercise-4_002e31">Exercise 4.31</a>) that give programmers detailed control over
-the strictness of the procedures they define.
-</p>
-<p>A striking example of a procedure that can usefully be made non-strict is
-<code>cons</code> (or, in general, almost any constructor for data structures).  One
-can do useful computation, combining elements to form data structures and
-operating on the resulting data structures, even if the values of the elements
-are not known.  It makes perfect sense, for instance, to compute the length of
-a list without knowing the values of the individual elements in the list.  We
-will exploit this idea in <a href="#g_t4_002e2_002e3">4.2.3</a> to implement the streams of
-<a href="Chapter-3.html#Chapter-3">Chapter 3</a> as lists formed of non-strict <code>cons</code> pairs.
-</p>
-<blockquote>
-<p><strong><a id="Exercise-4_002e25"></a>Exercise 4.25:</strong> Suppose that (in ordinary
-applicative-order Scheme) we define <code>unless</code> as shown above and then
-define <code>factorial</code> in terms of <code>unless</code> as
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">unless </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)</span><span class="pln">
-          </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> n </span><span class="opn">(</span><span class="pln">factorial </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">)))</span><span class="pln">
-          </span><span class="lit">1</span><span class="clo">))</span></pre></div>
+      <p>
+        Isso não funcionará em uma linguagem de ordem aplicativa porque tanto o
+        valor usual quanto o valor excepcional serão avaliados antes que
+        <code>unless</code> seja chamado (compare
+        <a href="1_002e1.html#Exercise-1_002e6">Exercício 1.6</a>). Uma vantagem
+        da avaliação preguiçosa é que alguns procedimentos, como
+        <code>unless</code>, podem realizar computações úteis mesmo que a
+        avaliação de alguns de seus argumentos produza erros ou não termine.
+      </p>
+      <p>
+        Se o corpo de um procedimento é executado antes que um argumento tenha
+        sido avaliado, dizemos que o procedimento é
+        <a id="index-non_002dstrict"></a> <em>não estrito</em> em relação a esse
+        argumento. Se o argumento é avaliado antes que o corpo do procedimento
+        seja executado, dizemos que o procedimento é <a id="index-strict"></a>
+        <em>estrito</em> em relação a esse argumento.<a
+          class="footnote_link"
+          id="DOCF237"
+          href="#FOOT237"
+          ><sup>237</sup></a
+        >
+        Em uma linguagem puramente de ordem aplicativa, todos os procedimentos
+        são estritos em cada argumento. Em uma linguagem puramente de ordem
+        normal, todos os procedimentos compostos são não estritos em cada
+        argumento, e procedimentos primitivos podem ser estritos ou não
+        estritos. Há também linguagens (veja
+        <a href="#Exercise-4_002e31">Exercício 4.31</a>) que dão aos
+        programadores controle detalhado sobre a estrita dos procedimentos que
+        eles definem.
+      </p>
+      <p>
+        Um exemplo marcante de um procedimento que pode ser útilmente tornado
+        não estrito é <code>cons</code> (ou, em geral, quase qualquer construtor
+        para estruturas de dados). Pode-se realizar computações úteis,
+        combinando elementos para formar estruturas de dados e operando nas
+        estruturas de dados resultantes, mesmo que os valores dos elementos não
+        sejam conhecidos. Faz todo o sentido, por exemplo, calcular o
+        comprimento de uma lista sem conhecer os valores dos elementos
+        individuais na lista. Nós exploraremos essa ideia em
+        <a href="#g_t4_002e2_002e3">4.2.3</a> para implementar os fluxos de
+        <a href="Chapter-3.html#Chapter-3">Capítulo 3</a> como listas formadas
+        por pares <code>cons</code> não estritos.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e25"></a>Exercício 4.25:</strong> Suponha
+          que (no Scheme de ordem aplicativa comum) definimos
+          <code>unless</code> como mostrado acima e então definimos
+          <code>factorial</code> em termos de <code>unless</code> como
+        </p>
+        <pre><code class="language-scheme">(define (factorial n)
+  (unless (= n 1)
+          (* n (factorial (- n 1)))
+          1))</code></pre>
 
-<p>What happens if we attempt to evaluate <code>(factorial 5)</code>?  Will our
-definitions work in a normal-order language?
-</p></blockquote>
+        <p>
+          O que acontece se tentarmos avaliar <code>(factorial 5)</code>? Nossas
+          definições funcionariam em uma linguagem de ordem normal?
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e26"></a>Exercise 4.26:</strong> Ben Bitdiddle and Alyssa
-P. Hacker disagree over the importance of lazy evaluation for implementing
-things such as <code>unless</code>.  Ben points out that it’s possible to implement
-<code>unless</code> in applicative order as a special form.  Alyssa counters that, if
-one did that, <code>unless</code> would be merely syntax, not a procedure that could
-be used in conjunction with higher-order procedures.  Fill in the details on
-both sides of the argument.  Show how to implement <code>unless</code> as a derived
-expression (like <code>cond</code> or <code>let</code>), and give an example of a situation
-where it might be useful to have <code>unless</code> available as a procedure, rather
-than as a special form.
-</p></blockquote>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e26"></a>Exercício 4.26:</strong> Ben
+          Bitdiddle e Alyssa P. Hacker discordam sobre a importância da
+          avaliação preguiçosa para implementar coisas como <code>unless</code>.
+          Ben aponta que é possível implementar <code>unless</code> em ordem
+          aplicativa como uma forma especial. Alyssa contra-argumenta que, se
+          alguém fizesse isso, <code>unless</code> seria meramente sintaxe, não
+          um procedimento que poderia ser usado em conjunto com procedimentos de
+          ordem superior. Preencha os detalhes de ambos os lados do argumento.
+          Mostre como implementar <code>unless</code> como uma expressão
+          derivada (como <code>cond</code> ou <code>let</code>), e dê um exemplo
+          de uma situação onde seria útil ter <code>unless</code> disponível
+          como um procedimento, em vez de como uma forma especial.
+        </p>
+      </blockquote>
 
-<a id="g_t4_002e2_002e2"></a>
-<a id="An-Interpreter-with-Lazy-Evaluation"></a>
-<h4 class="subsection"><span class="secnum">4.2.2</span><span class="sectitle">An Interpreter with Lazy Evaluation</span></h4>
+      <a id="g_t4_002e2_002e2"></a>
+      <a id="An-Interpreter-with-Lazy-Evaluation"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.2.2</span
+        ><span class="sectitle">Um Interpretador com Avaliação Preguiçosa</span>
+      </h4>
 
-<p>In this section we will implement a normal-order language that is the same as
-Scheme except that compound procedures are non-strict in each argument.
-Primitive procedures will still be strict.  It is not difficult to modify the
-evaluator of <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a> so that the language it interprets behaves
-this way.  Almost all the required changes center around procedure application.
-</p>
-<p>The basic idea is that, when applying a procedure, the interpreter must
-determine which arguments are to be evaluated and which are to be delayed.  The
-delayed arguments are not evaluated; instead, they are transformed into objects
-called <a id="index-thunks"></a>
-<em>thunks</em>.<a class="footnote_link" id="DOCF238" href="#FOOT238"><sup>238</sup></a> The thunk must
-contain the information required to produce the value of the argument when it
-is needed, as if it had been evaluated at the time of the application.  Thus,
-the thunk must contain the argument expression and the environment in which the
-procedure application is being evaluated.
-</p>
-<p>The process of evaluating the expression in a thunk is called
-<a id="index-forcing"></a>
-<em>forcing</em>.<a class="footnote_link" id="DOCF239" href="#FOOT239"><sup>239</sup></a>
-In general, a thunk will be forced only when its value is needed: when it is
-passed to a primitive procedure that will use the value of the thunk; when it
-is the value of a predicate of a conditional; and when it is the value of an
-operator that is about to be applied as a procedure.  One design choice we have
-available is whether or not to <a id="index-memoize"></a>
-<em>memoize</em> thunks, as we did with delayed
-objects in <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a>.  With memoization, the first time a thunk is
-forced, it stores the value that is computed.  Subsequent forcings simply
-return the stored value without repeating the computation.  We’ll make our
-interpreter memoize, because this is more efficient for many applications.
-There are tricky considerations here, however.<a class="footnote_link" id="DOCF240" href="#FOOT240"><sup>240</sup></a>
-</p>
-<a id="Modifying-the-evaluator"></a>
-<h5 class="subsubheading">Modifying the evaluator</h5>
+      <p>
+        Nesta seção, implementaremos uma linguagem de ordem normal que é a mesma
+        que o Scheme, exceto que os procedimentos compostos são não estritos em
+        cada argumento. Procedimentos primitivos ainda serão estritos. Não é
+        difícil modificar o avaliador de
+        <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a> para que a linguagem
+        que ele interpreta se comporte dessa maneira. Quase todas as mudanças
+        necessárias giram em torno da aplicação de procedimentos.
+      </p>
+      <p>
+        A ideia básica é que, ao aplicar um procedimento, o interpretador deve
+        determinar quais argumentos devem ser avaliados e quais devem ser
+        atrasados. Os argumentos atrasados não são avaliados; em vez disso, são
+        transformados em objetos chamados <a id="index-thunks"></a>
+        <em>thunks</em>.<a class="footnote_link" id="DOCF238" href="#FOOT238"
+          ><sup>238</sup></a
+        >
+        O thunk deve conter as informações necessárias para produzir o valor do
+        argumento quando ele for necessário, como se tivesse sido avaliado no
+        momento da aplicação. Assim, o thunk deve conter a expressão do
+        argumento e o ambiente em que a aplicação do procedimento está sendo
+        avaliada.
+      </p>
+      <p>
+        O processo de avaliar a expressão em um thunk é chamado de
+        <a id="index-forcing"></a>
+        <em>forçamento</em>.<a
+          class="footnote_link"
+          id="DOCF239"
+          href="#FOOT239"
+          ><sup>239</sup></a
+        >
+        Em geral, um thunk será forçado apenas quando seu valor for necessário:
+        quando ele for passado para um procedimento primitivo que usará o valor
+        do thunk; quando ele for o valor de um predicado de uma condicional; e
+        quando ele for o valor de um operador que está prestes a ser aplicado
+        como um procedimento. Uma escolha de design que temos disponível é se
+        devemos ou não <a id="index-memoize"></a> <em>memorizar</em> thunks,
+        como fizemos com objetos atrasados em
+        <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a>. Com memorização, a
+        primeira vez que um thunk é forçado, ele armazena o valor que é
+        calculado. Forçamentos subsequentes simplesmente retornam o valor
+        armazenado sem repetir a computação. Faremos nosso interpretador
+        memorizar, porque isso é mais eficiente para muitas aplicações. No
+        entanto, há considerações complicadas aqui.<a
+          class="footnote_link"
+          id="DOCF240"
+          href="#FOOT240"
+          ><sup>240</sup></a
+        >
+      </p>
+      <a id="Modifying-the-evaluator"></a>
+      <h5 class="subsubheading">Modificando o avaliador</h5>
 
-<p>The main difference between the lazy evaluator and the one in <a href="4_002e1.html#g_t4_002e1">4.1</a>
-is in the handling of procedure applications in <code>eval</code> and <code>apply</code>.
-</p>
-<p>The <code>application?</code> clause of <code>eval</code> becomes
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">application? exp</span><span class="clo">)</span><span class="pln">
- </span><span class="opn">(</span><span class="pln">apply </span><span class="opn">(</span><span class="pln">actual-value </span><span class="opn">(</span><span class="pln">operator exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
-        </span><span class="opn">(</span><span class="pln">operands exp</span><span class="clo">)</span><span class="pln">
-        env</span><span class="clo">))</span></pre></div>
+      <p>
+        A principal diferença entre o avaliador preguiçoso e o de
+        <a href="4_002e1.html#g_t4_002e1">4.1</a> está no tratamento de
+        aplicações de procedimentos em <code>eval</code> e <code>apply</code>.
+      </p>
+      <p>A cláusula <code>application?</code> de <code>eval</code> se torna</p>
+      <pre><code class="language-scheme">((application? exp)
+ (apply (actual-value (operator exp) env)
+        (operands exp)
+        env))</code></pre>
 
-<p>This is almost the same as the <code>application?</code> clause of <code>eval</code> in
-<a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>.  For lazy evaluation, however, we call <code>apply</code> with
-the operand expressions, rather than the arguments produced by evaluating them.
-Since we will need the environment to construct thunks if the arguments are to
-be delayed, we must pass this as well.  We still evaluate the operator, because
-<code>apply</code> needs the actual procedure to be applied in order to dispatch on
-its type (primitive versus compound) and apply it.
-</p>
-<p>Whenever we need the actual value of an expression, we use
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">actual-value exp env</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">force-it </span><span class="opn">(</span><span class="pln">eval exp env</span><span class="clo">)))</span></pre></div>
+      <p>
+        Isso é quase o mesmo que a cláusula <code>application?</code> de
+        <code>eval</code> em <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>.
+        Para avaliação preguiçosa, no entanto, chamamos <code>apply</code> com
+        as expressões dos operandos, em vez dos argumentos produzidos por sua
+        avaliação. Como precisaremos do ambiente para construir thunks se os
+        argumentos forem atrasados, devemos passá-lo também. Ainda avaliamos o
+        operador, porque <code>apply</code> precisa do procedimento real a ser
+        aplicado para despachar em seu tipo (primitivo versus composto) e
+        aplicá-lo.
+      </p>
+      <p>Sempre que precisamos do valor real de uma expressão, usamos</p>
+      <pre><code class="language-scheme">(define (actual-value exp env)
+  (force-it (eval exp env)))</code></pre>
 
-<p>instead of just <code>eval</code>, so that if the expression’s value is a thunk, it
-will be forced.
-</p>
-<p>Our new version of <code>apply</code> is also almost the same as the version in
-<a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>.  The difference is that <code>eval</code> has passed in
-unevaluated operand expressions: For primitive procedures (which are strict),
-we evaluate all the arguments before applying the primitive; for compound
-procedures (which are non-strict) we delay all the arguments before applying
-the procedure.
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">apply procedure arguments env</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">primitive-procedure? procedure</span><span class="clo">)</span><span class="pln">
-         </span><span class="opn">(</span><span class="pln">apply-primitive-procedure
+      <p>
+        em vez de apenas <code>eval</code>, para que, se o valor da expressão
+        for um thunk, ele seja forçado.
+      </p>
+      <p>
+        Nossa nova versão de <code>apply</code> também é quase a mesma que a
+        versão em <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>. A diferença
+        é que <code>eval</code> passou expressões de operandos não avaliadas:
+        Para procedimentos primitivos (que são estritos), avaliamos todos os
+        argumentos antes de aplicar o primitivo; para procedimentos compostos
+        (que são não estritos), atrasamos todos os argumentos antes de aplicar o
+        procedimento.
+      </p>
+      <pre><code class="language-scheme">(define (apply procedure arguments env)
+  (cond ((primitive-procedure? procedure)
+         (apply-primitive-procedure
           procedure
-          </span><span class="opn">(</span><span class="pln">list-of-arg-values 
+          (list-of-arg-values 
            arguments 
-           env</span><span class="clo">)))</span><span class="pln">  </span><span class="roman"><span class="com">; changed</span></span><span class="pln">
-        </span><span class="opn">((</span><span class="pln">compound-procedure? procedure</span><span class="clo">)</span><span class="pln">
-         </span><span class="opn">(</span><span class="pln">eval-sequence
-          </span><span class="opn">(</span><span class="pln">procedure-body procedure</span><span class="clo">)</span><span class="pln">
-          </span><span class="opn">(</span><span class="pln">extend-environment
-           </span><span class="opn">(</span><span class="pln">procedure-parameters procedure</span><span class="clo">)</span><span class="pln">
-           </span><span class="opn">(</span><span class="pln">list-of-delayed-args 
+           env)))  ; changed
+        ((compound-procedure? procedure)
+         (eval-sequence
+          (procedure-body procedure)
+          (extend-environment
+           (procedure-parameters procedure)
+           (list-of-delayed-args 
             arguments 
-            env</span><span class="clo">)</span><span class="pln">   </span><span class="roman"><span class="com">; changed</span></span><span class="pln">
-           </span><span class="opn">(</span><span class="pln">procedure-environment procedure</span><span class="clo">))))</span><span class="pln">
-        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="err">error</span><span class="pln"> </span><span class="str">"Unknown procedure 
-                      type: APPLY"</span><span class="pln"> 
-                     procedure</span><span class="clo">))))</span></pre></div>
+            env)   ; changed
+           (procedure-environment procedure))))
+        (else (error "Unknown procedure 
+                      type: APPLY" 
+                     procedure))))</code></pre>
 
-<p>The procedures that process the arguments are just like <code>list-of-values</code>
-from <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>, except that <code>list-of-delayed-args</code> delays the
-arguments instead of evaluating them, and <code>list-of-arg-values</code> uses
-<code>actual-value</code> instead of <code>eval</code>:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-of-arg-values exps env</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">no-operands? exps</span><span class="clo">)</span><span class="pln">
-      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">actual-value 
-             </span><span class="opn">(</span><span class="pln">first-operand exps</span><span class="clo">)</span><span class="pln"> 
-             env</span><span class="clo">)</span><span class="pln">
-            </span><span class="opn">(</span><span class="pln">list-of-arg-values 
-             </span><span class="opn">(</span><span class="pln">rest-operands exps</span><span class="clo">)</span><span class="pln">
-             env</span><span class="clo">))))</span><span class="pln">
+      <p>
+        Os procedimentos que processam os argumentos são como
+        <code>list-of-values</code> de
+        <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>, exceto que
+        <code>list-of-delayed-args</code> atrasa os argumentos em vez de
+        avaliá-los, e <code>list-of-arg-values</code> usa
+        <code>actual-value</code> em vez de <code>eval</code>:
+      </p>
+      <pre><code class="language-scheme">(define (list-of-arg-values exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (actual-value 
+             (first-operand exps) 
+             env)
+            (list-of-arg-values 
+             (rest-operands exps)
+             env)))
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-of-delayed-args exps env</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">no-operands? exps</span><span class="clo">)</span><span class="pln">
-      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">delay-it 
-             </span><span class="opn">(</span><span class="pln">first-operand exps</span><span class="clo">)</span><span class="pln"> 
-             env</span><span class="clo">)</span><span class="pln">
-            </span><span class="opn">(</span><span class="pln">list-of-delayed-args 
-             </span><span class="opn">(</span><span class="pln">rest-operands exps</span><span class="clo">)</span><span class="pln">
-             env</span><span class="clo">))))</span></pre></div>
+(define (list-of-delayed-args exps env)
+  (if (no-operands? exps)
+      '()
+      (cons (delay-it 
+             (first-operand exps) 
+             env)
+            (list-of-delayed-args 
+             (rest-operands exps)
+             env))))</code></pre>
 
-<p>The other place we must change the evaluator is in the handling of <code>if</code>,
-where we must use <code>actual-value</code> instead of <code>eval</code> to get the value
-of the predicate expression before testing whether it is true or false:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval-if exp env</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">true? </span><span class="opn">(</span><span class="pln">actual-value </span><span class="opn">(</span><span class="pln">if-predicate exp</span><span class="clo">)</span><span class="pln"> 
-                           env</span><span class="clo">))</span><span class="pln">
-      </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-consequent exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-alternative exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)))</span></pre></div>
+      <p>
+        O outro lugar onde devemos mudar o avaliador é no tratamento de
+        <code>if</code>, onde devemos usar <code>actual-value</code> em vez de
+        <code>eval</code> para obter o valor da expressão do predicado antes de
+        testar se é verdadeiro ou falso:
+      </p>
+      <pre><code class="language-scheme">(define (eval-if exp env)
+  (if (true? (actual-value (if-predicate exp) 
+                           env))
+      (eval (if-consequent exp) env)
+      (eval (if-alternative exp) env)))</code></pre>
 
-<p>Finally, we must change the <code>driver-loop</code> procedure (<a href="4_002e1.html#g_t4_002e1_002e4">4.1.4</a>)
-to use <code>actual-value</code> instead of <code>eval</code>, so that if a delayed value
-is propagated back to the read-eval-print loop, it will be forced before being
-printed.  We also change the prompts to indicate that this is the lazy
-evaluator:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> input-prompt  </span><span class="str">";;; L-Eval input:"</span><span class="clo">)</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> output-prompt </span><span class="str">";;; L-Eval value:"</span><span class="clo">)</span><span class="pln">
+      <p>
+        Finalmente, devemos mudar o procedimento <code>driver-loop</code> (<a
+          href="4_002e1.html#g_t4_002e1_002e4"
+          >4.1.4</a
+        >) para usar <code>actual-value</code> em vez de <code>eval</code>, para
+        que, se um valor atrasado for propagado de volta ao loop de
+        leitura-avaliação-impressão, ele será forçado antes de ser impresso.
+        Também mudamos os prompts para indicar que este é o avaliador
+        preguiçoso:
+      </p>
+      <pre><code class="language-scheme">(define input-prompt  ";;; L-Eval input:")
+(define output-prompt ";;; L-Eval value:")
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">prompt-for-input input-prompt</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">input </span><span class="opn">(</span><span class="pln">read</span><span class="clo">)))</span><span class="pln">
-    </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">output </span><span class="opn">(</span><span class="pln">actual-value 
+(define (driver-loop)
+  (prompt-for-input input-prompt)
+  (let ((input (read)))
+    (let ((output (actual-value 
                    input 
-                   the-global-environment</span><span class="clo">)))</span><span class="pln">
-      </span><span class="opn">(</span><span class="pln">announce-output output-prompt</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="pln">user-print output</span><span class="clo">)))</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">))</span></pre></div>
+                   the-global-environment)))
+      (announce-output output-prompt)
+      (user-print output)))
+  (driver-loop))</code></pre>
 
-<p>With these changes made, we can start the evaluator and test it.  The
-successful evaluation of the <code>try</code> expression discussed in 
-<a href="#g_t4_002e2_002e1">4.2.1</a> indicates that the interpreter is performing lazy evaluation:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> the-global-environment 
-  </span><span class="opn">(</span><span class="pln">setup-environment</span><span class="clo">))</span><span class="pln">
+      <p>
+        Com essas mudanças feitas, podemos iniciar o avaliador e testá-lo. A
+        avaliação bem-sucedida da expressão <code>try</code> discutida em
+        <a href="#g_t4_002e2_002e1">4.2.1</a> indica que o interpretador está
+        realizando avaliação preguiçosa:
+      </p>
+      <pre><code class="language-scheme">(define the-global-environment 
+  (setup-environment))
 
-</span><span class="opn">(</span><span class="pln">driver-loop</span><span class="clo">)</span><span class="pln">
+(driver-loop)
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">try a b</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> a </span><span class="lit">0</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> b</span><span class="clo">))</span><span class="pln">
+;;; L-Eval input:
+(define (try a b) (if (= a 0) 1 b))
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-</span><i><span class="pln">ok</span></i><span class="pln">
+;;; L-Eval value:
+ok
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
-</span><span class="opn">(</span><span class="pln">try </span><span class="lit">0</span><span class="pln"> </span><span class="opn">(</span><span class="pun">/</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0</span><span class="clo">))</span><span class="pln">
+;;; L-Eval input:
+(try 0 (/ 1 0))
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-</span><i><span class="lit">1</span></i>
-</pre></div>
+;;; L-Eval value:
+1</code></pre>
 
-<a id="Representing-thunks"></a>
-<h5 class="subsubheading">Representing thunks</h5>
+      <a id="Representing-thunks"></a>
+      <h5 class="subsubheading">Representando thunks</h5>
 
-<p>Our evaluator must arrange to create thunks when procedures are applied to
-arguments and to force these thunks later.  A thunk must package an expression
-together with the environment, so that the argument can be produced later.  To
-force the thunk, we simply extract the expression and environment from the
-thunk and evaluate the expression in the environment.  We use
-<code>actual-value</code> rather than <code>eval</code> so that in case the value of the
-expression is itself a thunk, we will force that, and so on, until we reach
-something that is not a thunk:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">force-it obj</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk? obj</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="pln">actual-value </span><span class="opn">(</span><span class="pln">thunk-exp obj</span><span class="clo">)</span><span class="pln"> 
-                    </span><span class="opn">(</span><span class="pln">thunk-env obj</span><span class="clo">))</span><span class="pln">
-      obj</span><span class="clo">))</span></pre></div>
+      <p>
+        Nosso avaliador deve organizar a criação de thunks quando procedimentos
+        são aplicados a argumentos e forçar esses thunks posteriormente. Um
+        thunk deve empacotar uma expressão junto com o ambiente, para que o
+        argumento possa ser produzido mais tarde. Para forçar o thunk,
+        simplesmente extraímos a expressão e o ambiente do thunk e avaliamos a
+        expressão no ambiente. Usamos <code>actual-value</code> em vez de
+        <code>eval</code> para que, caso o valor da expressão seja ele mesmo um
+        thunk, nós o forcemos, e assim por diante, até chegarmos a algo que não
+        seja um thunk:
+      </p>
+      <pre><code class="language-scheme">(define (force-it obj)
+  (if (thunk? obj)
+      (actual-value (thunk-exp obj) 
+                    (thunk-env obj))
+      obj))</code></pre>
 
-<p>One easy way to package an expression with an environment is to make a list
-containing the expression and the environment.  Thus, we create a thunk as
-follows:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">delay-it exp env</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">list </span><span class="lit">'thunk</span><span class="pln"> exp env</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk? obj</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">tagged-list? obj </span><span class="lit">'thunk</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk-exp thunk</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> thunk</span><span class="clo">))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk-env thunk</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">caddr</span><span class="pln"> thunk</span><span class="clo">))</span></pre></div>
+      <p>
+        Uma maneira fácil de empacotar uma expressão com um ambiente é fazer uma
+        lista contendo a expressão e o ambiente. Assim, criamos um thunk da
+        seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define (delay-it exp env)
+  (list 'thunk exp env))
+(define (thunk? obj) (tagged-list? obj 'thunk))
+(define (thunk-exp thunk) (cadr thunk))
+(define (thunk-env thunk) (caddr thunk))</code></pre>
 
-<p>Actually, what we want for our interpreter is not quite this, but rather thunks
-that have been memoized.  When a thunk is forced, we will turn it into an
-evaluated thunk by replacing the stored expression with its value and changing
-the <code>thunk</code> tag so that it can be recognized as already
-evaluated.<a class="footnote_link" id="DOCF241" href="#FOOT241"><sup>241</sup></a>
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">evaluated-thunk? obj</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">tagged-list? obj </span><span class="lit">'evaluated-thunk</span><span class="clo">))</span><span class="pln">
+      <p>
+        Na verdade, o que queremos para nosso interpretador não é exatamente
+        isso, mas sim thunks que foram memorizados. Quando um thunk é forçado,
+        nós o transformamos em um thunk avaliado, substituindo a expressão
+        armazenada por seu valor e mudando a tag <code>thunk</code> para que ele
+        possa ser reconhecido como já avaliado.<a
+          class="footnote_link"
+          id="DOCF241"
+          href="#FOOT241"
+          ><sup>241</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (evaluated-thunk? obj)
+  (tagged-list? obj 'evaluated-thunk))
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">thunk-value evaluated-thunk</span><span class="clo">)</span><span class="pln"> 
-  </span><span class="opn">(</span><span class="kwd">cadr</span><span class="pln"> evaluated-thunk</span><span class="clo">))</span><span class="pln">
+(define (thunk-value evaluated-thunk) 
+  (cadr evaluated-thunk))
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">force-it obj</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">thunk? obj</span><span class="clo">)</span><span class="pln">
-         </span><span class="opn">(</span><span class="kwd">let</span><span class="pln"> </span><span class="opn">((</span><span class="pln">result
-                </span><span class="opn">(</span><span class="pln">actual-value 
-                 </span><span class="opn">(</span><span class="pln">thunk-exp obj</span><span class="clo">)</span><span class="pln">
-                 </span><span class="opn">(</span><span class="pln">thunk-env obj</span><span class="clo">))))</span><span class="pln">
-           </span><span class="opn">(</span><span class="pln">set-car! obj </span><span class="lit">'evaluated-thunk</span><span class="clo">)</span><span class="pln">
-           </span><span class="com">;; </span><span class="roman"><span class="com">replace </span><code><span class="com">exp</span></code><span class="com"> with its value:</span></span><span class="pln">
-           </span><span class="opn">(</span><span class="pln">set-car! </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> obj</span><span class="clo">)</span><span class="pln"> result</span><span class="clo">)</span><span class="pln"> 
-           </span><span class="com">;; </span><span class="roman"><span class="com">forget unneeded </span><code><span class="com">env</span></code><span class="com">:</span></span><span class="pln">
-           </span><span class="opn">(</span><span class="pln">set-cdr! </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> obj</span><span class="clo">)</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="clo">))</span><span class="pln"> 
-           result</span><span class="clo">))</span><span class="pln">
-        </span><span class="opn">((</span><span class="pln">evaluated-thunk? obj</span><span class="clo">)</span><span class="pln">
-         </span><span class="opn">(</span><span class="pln">thunk-value obj</span><span class="clo">))</span><span class="pln">
-        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> obj</span><span class="clo">)))</span></pre></div>
+(define (force-it obj)
+  (cond ((thunk? obj)
+         (let ((result
+                (actual-value 
+                 (thunk-exp obj)
+                 (thunk-env obj))))
+           (set-car! obj 'evaluated-thunk)
+           ;; replace exp with its value:
+           (set-car! (cdr obj) result) 
+           ;; forget unneeded env:
+           (set-cdr! (cdr obj) '()) 
+           result))
+        ((evaluated-thunk? obj)
+         (thunk-value obj))
+        (else obj)))</code></pre>
 
-<p>Notice that the same <code>delay-it</code> procedure works both with and without
-memoization.
-</p>
-<blockquote>
-<p><strong><a id="Exercise-4_002e27"></a>Exercise 4.27:</strong> Suppose we type in the following
-definitions to the lazy evaluator:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> count </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">id x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> count </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> count </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> x</span><span class="clo">)</span></pre></div>
+      <p>
+        Observe que o mesmo procedimento <code>delay-it</code> funciona tanto
+        com quanto sem memorização.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e27"></a>Exercício 4.27:</strong> Suponha
+          que digitamos as seguintes definições no avaliador preguiçoso:
+        </p>
+        <pre><code class="language-scheme">(define count 0)
+(define (id x) (set! count (+ count 1)) x)</code></pre>
 
-<p>Give the missing values in the following sequence of interactions, and explain
-your answers.<a class="footnote_link" id="DOCF242" href="#FOOT242"><sup>242</sup></a>
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> w </span><span class="opn">(</span><span class="pln">id </span><span class="opn">(</span><span class="pln">id </span><span class="lit">10</span><span class="clo">)))</span><span class="pln">
+        <p>
+          Forneça os valores ausentes na seguinte sequência de interações e
+          explique suas respostas.<a
+            class="footnote_link"
+            id="DOCF242"
+            href="#FOOT242"
+            ><sup>242</sup></a
+          >
+        </p>
+        <pre><code class="language-scheme">(define w (id (id 10)))
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+;;; L-Eval input:
 count
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-⟨</span><var><span class="pln">response</span></var><span class="pln">⟩
+;;; L-Eval value:
+⟨response⟩
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+;;; L-Eval input:
 w
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-⟨</span><var><span class="pln">response</span></var><span class="pln">⟩
+;;; L-Eval value:
+⟨response⟩
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+;;; L-Eval input:
 count
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-⟨</span><var><span class="pln">response</span></var><span class="pln">⟩</span></pre></div>
-</blockquote>
+;;; L-Eval value:
+⟨response⟩</code></pre>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e28"></a>Exercise 4.28:</strong> <code>Eval</code> uses
-<code>actual-value</code> rather than <code>eval</code> to evaluate the operator before
-passing it to <code>apply</code>, in order to force the value of the operator.  Give
-an example that demonstrates the need for this forcing.
-</p>
-<p><strong><a id="Exercise-4_002e29"></a>Exercise 4.29:</strong> Exhibit a program that you would
-expect to run much more slowly without memoization than with memoization.
-Also, consider the following interaction, where the <code>id</code> procedure is
-defined as in <a href="#Exercise-4_002e27">Exercise 4.27</a> and <code>count</code> starts at 0:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span><span class="pln">
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e28"></a>Exercício 4.28:</strong>
+          <code>Eval</code> usa <code>actual-value</code> em vez de
+          <code>eval</code> para avaliar o operador antes de passá-lo para
+          <code>apply</code>, a fim de forçar o valor do operador. Dê um exemplo
+          que demonstre a necessidade desse forçamento.
+        </p>
+        <p>
+          <strong><a id="Exercise-4_002e29"></a>Exercício 4.29:</strong> Exiba
+          um programa que você esperaria que rodasse muito mais lentamente sem
+          memorização do que com memorização. Além disso, considere a seguinte
+          interação, onde o procedimento <code>id</code> é definido como em
+          <a href="#Exercise-4_002e27">Exercício 4.27</a> e
+          <code>count</code> começa em 0:
+        </p>
+        <pre><code class="language-scheme">(define (square x) (* x x))
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
-</span><span class="opn">(</span><span class="pln">square </span><span class="opn">(</span><span class="pln">id </span><span class="lit">10</span><span class="clo">))</span><span class="pln">
+;;; L-Eval input:
+(square (id 10))
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-⟨</span><var><span class="pln">response</span></var><span class="pln">⟩
+;;; L-Eval value:
+⟨response⟩
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
+;;; L-Eval input:
 count
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-⟨</span><var><span class="pln">response</span></var><span class="pln">⟩</span></pre></div>
+;;; L-Eval value:
+⟨response⟩</code></pre>
 
-<p>Give the responses both when the evaluator memoizes and when it does not.
-</p></blockquote>
+        <p>
+          Forneça as respostas tanto quando o avaliador memoriza quanto quando
+          não memoriza.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e30"></a>Exercise 4.30:</strong> Cy D. Fect, a reformed C
-programmer, is worried that some side effects may never take place, because the
-lazy evaluator doesn’t force the expressions in a sequence.  Since the value of
-an expression in a sequence other than the last one is not used (the expression
-is there only for its effect, such as assigning to a variable or printing),
-there can be no subsequent use of this value (e.g., as an argument to a
-primitive procedure) that will cause it to be forced.  Cy thus thinks that when
-evaluating sequences, we must force all expressions in the sequence except the
-final one.  He proposes to modify <code>eval-sequence</code> from <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>
-to use <code>actual-value</code> rather than <code>eval</code>:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">eval-sequence exps env</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">last-exp? exps</span><span class="clo">)</span><span class="pln"> 
-         </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">first-exp exps</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">))</span><span class="pln">
-        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> 
-         </span><span class="opn">(</span><span class="pln">actual-value </span><span class="opn">(</span><span class="pln">first-exp exps</span><span class="clo">)</span><span class="pln"> 
-                       env</span><span class="clo">)</span><span class="pln">
-         </span><span class="opn">(</span><span class="pln">eval-sequence </span><span class="opn">(</span><span class="pln">rest-exps exps</span><span class="clo">)</span><span class="pln"> 
-                        env</span><span class="clo">))))</span></pre></div>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e30"></a>Exercício 4.30:</strong> Cy D.
+          Fect, um programador C reformado, está preocupado que alguns efeitos
+          colaterais possam nunca ocorrer, porque o avaliador preguiçoso não
+          força as expressões em uma sequência. Como o valor de uma expressão em
+          uma sequência, exceto a última, não é usado (a expressão está lá
+          apenas para seu efeito, como atribuir a uma variável ou imprimir), não
+          pode haver uso subsequente desse valor (por exemplo, como argumento
+          para um procedimento primitivo) que o forçará. Cy, portanto, pensa
+          que, ao avaliar sequências, devemos forçar todas as expressões na
+          sequência, exceto a final. Ele propõe modificar
+          <code>eval-sequence</code> de
+          <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a> para usar
+          <code>actual-value</code> em vez de <code>eval</code>:
+        </p>
+        <pre><code class="language-scheme">(define (eval-sequence exps env)
+  (cond ((last-exp? exps) 
+         (eval (first-exp exps) env))
+        (else 
+         (actual-value (first-exp exps) 
+                       env)
+         (eval-sequence (rest-exps exps) 
+                        env))))</code></pre>
 
-<ol>
-<li> Ben Bitdiddle thinks Cy is wrong.  He shows Cy the <code>for-each</code> procedure
-described in <a href="2_002e2.html#Exercise-2_002e23">Exercise 2.23</a>, which gives an important example of a
-sequence with side effects:
+        <ol>
+          <li>
+            Ben Bitdiddle acha que Cy está errado. Ele mostra a Cy o
+            procedimento <code>for-each</code> descrito em
+            <a href="2_002e2.html#Exercise-2_002e23">Exercício 2.23</a>, que dá
+            um exemplo importante de uma sequência com efeitos colaterais:
 
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">for-each proc items</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? items</span><span class="clo">)</span><span class="pln">
-      </span><span class="lit">'done</span><span class="pln">
-      </span><span class="opn">(</span><span class="kwd">begin</span><span class="pln"> </span><span class="opn">(</span><span class="pln">proc </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> items</span><span class="clo">))</span><span class="pln">
-             </span><span class="opn">(</span><span class="pln">for-each proc 
-                       </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> items</span><span class="clo">)))))</span></pre></div>
+            <pre><code class="language-scheme">(define (for-each proc items)
+  (if (null? items)
+      'done
+      (begin (proc (car items))
+             (for-each proc 
+                       (cdr items)))))</code></pre>
 
-<p>He claims that the evaluator in the text (with the original
-<code>eval-sequence</code>) handles this correctly:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
-</span><span class="opn">(</span><span class="pln">for-each
- </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">newline</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">display x</span><span class="clo">))</span><span class="pln">
- </span><span class="opn">(</span><span class="pln">list </span><span class="lit">57</span><span class="pln"> </span><span class="lit">321</span><span class="pln"> </span><span class="lit">88</span><span class="clo">))</span><span class="pln">
-</span><i><span class="lit">57</span></i><span class="pln">
-</span><i><span class="lit">321</span></i><span class="pln">
-</span><i><span class="lit">88</span></i><span class="pln">
+            <p>
+              Ele afirma que o avaliador no texto (com o
+              <code>eval-sequence</code> original) lida com isso corretamente:
+            </p>
+            <pre><code class="language-scheme">;;; L-Eval input:
+(for-each
+ (lambda (x) (newline) (display x))
+ (list 57 321 88))
+57
+321
+88
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-</span><i><span class="pln">done</span></i>
-</pre></div>
+;;; L-Eval value:
+done</code></pre>
 
-<p>Explain why Ben is right about the behavior of <code>for-each</code>.
-</p>
-</li><li> Cy agrees that Ben is right about the <code>for-each</code> example, but says that
-that’s not the kind of program he was thinking about when he proposed his
-change to <code>eval-sequence</code>.  He defines the following two procedures in the
-lazy evaluator:
+            <p>
+              Explique por que Ben está certo sobre o comportamento de
+              <code>for-each</code>.
+            </p>
+          </li>
+          <li>
+            Cy concorda que Ben está certo sobre o exemplo
+            <code>for-each</code>, mas diz que esse não é o tipo de programa que
+            ele estava pensando quando propôs sua mudança para
+            <code>eval-sequence</code>. Ele define os seguintes dois
+            procedimentos no avaliador preguiçoso:
 
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p1 x</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x </span><span class="lit">'</span><span class="opn">(</span><span class="lit">2</span><span class="clo">)))</span><span class="pln"> x</span><span class="clo">)</span><span class="pln">
+            <pre><code class="language-scheme">(define (p1 x)
+  (set! x (cons x '(2))) x)
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p2 x</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p e</span><span class="clo">)</span><span class="pln"> e x</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">p </span><span class="opn">(</span><span class="kwd">set</span><span class="pun">!</span><span class="pln"> x </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x </span><span class="lit">'</span><span class="opn">(</span><span class="lit">2</span><span class="clo">)))))</span></pre></div>
+(define (p2 x)
+  (define (p e) e x)
+  (p (set! x (cons x '(2)))))</code></pre>
 
-<p>What are the values of <code>(p1 1)</code> and <code>(p2 1)</code> with the original
-<code>eval-sequence</code>?  What would the values be with Cy’s proposed change to
-<code>eval-sequence</code>?
-</p>
-</li><li> Cy also points out that changing <code>eval-sequence</code> as he proposes does not
-affect the behavior of the example in part a.  Explain why this is true.
+            <p>
+              Quais são os valores de <code>(p1 1)</code> e
+              <code>(p2 1)</code> com o <code>eval-sequence</code> original?
+              Quais seriam os valores com a mudança proposta por Cy para
+              <code>eval-sequence</code>?
+            </p>
+          </li>
+          <li>
+            Cy também aponta que mudar <code>eval-sequence</code> como ele
+            propõe não afeta o comportamento do exemplo na parte a. Explique por
+            que isso é verdade.
+          </li>
+          <li>
+            Como você acha que as sequências devem ser tratadas no avaliador
+            preguiçoso? Você gosta da abordagem de Cy, da abordagem no texto ou
+            de alguma outra abordagem?
+          </li>
+        </ol>
+      </blockquote>
 
-</li><li> How do you think sequences ought to be treated in the lazy evaluator?  Do you
-like Cy’s approach, the approach in the text, or some other approach?
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e31"></a>Exercício 4.31:</strong> A
+          abordagem tomada nesta seção é um tanto desagradável, porque faz uma
+          mudança incompatível com o Scheme. Seria mais agradável implementar a
+          avaliação preguiçosa como uma
+          <a id="index-upward_002dcompatible-extension"></a>
+          <em>extensão compatível</em>, ou seja, de modo que programas comuns do
+          Scheme funcionem como antes. Podemos fazer isso estendendo a sintaxe
+          de declarações de procedimentos para permitir que o usuário controle
+          se os argumentos devem ser atrasados. Enquanto estamos nisso, também
+          podemos dar ao usuário a escolha entre atrasar com ou sem memorização.
+          Por exemplo, a definição
+        </p>
+        <pre><code class="language-scheme">(define (f a (b lazy) c (d lazy-memo))
+  …)</code></pre>
 
-</li></ol>
-</blockquote>
+        <p>
+          definiria <code>f</code> como um procedimento de quatro argumentos,
+          onde o primeiro e o terceiro argumentos são avaliados quando o
+          procedimento é chamado, o segundo argumento é atrasado, e o quarto
+          argumento é atrasado e memorizado. Assim, definições comuns de
+          procedimentos produzirão o mesmo comportamento que o Scheme comum,
+          enquanto adicionar a declaração <code>lazy-memo</code> a cada
+          parâmetro de cada procedimento composto produzirá o comportamento do
+          avaliador preguiçoso definido nesta seção. Projete e implemente as
+          mudanças necessárias para produzir tal extensão ao Scheme. Você terá
+          que implementar novos procedimentos de sintaxe para lidar com a nova
+          sintaxe para <code>define</code>. Você também deve arranjar para que
+          <code>eval</code> ou <code>apply</code> determinem quando os
+          argumentos devem ser atrasados, e forçar ou atrasar argumentos
+          conforme apropriado, e você deve arranjar para que o forçamento
+          memorize ou não, conforme apropriado.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e31"></a>Exercise 4.31:</strong> The approach taken in this
-section is somewhat unpleasant, because it makes an incompatible change to
-Scheme.  It might be nicer to implement lazy evaluation as an
-<a id="index-upward_002dcompatible-extension"></a>
-<em>upward-compatible extension</em>, that is, so that ordinary Scheme
-programs will work as before.  We can do this by extending the syntax of
-procedure declarations to let the user control whether or not arguments are to
-be delayed.  While we’re at it, we may as well also give the user the choice
-between delaying with and without memoization.  For example, the definition
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">f a </span><span class="opn">(</span><span class="pln">b lazy</span><span class="clo">)</span><span class="pln"> c </span><span class="opn">(</span><span class="pln">d lazy-memo</span><span class="clo">))</span><span class="pln">
-  </span><span class="roman"><span class="pun">…</span></span><span class="clo">)</span></pre></div>
+      <a id="g_t4_002e2_002e3"></a>
+      <a id="Streams-as-Lazy-Lists"></a>
+      <h4 class="subsection">
+        <span class="secnum">4.2.3</span
+        ><span class="sectitle">Fluxos como Listas Preguiçosas</span>
+      </h4>
 
-<p>would define <code>f</code> to be a procedure of four arguments, where the first and
-third arguments are evaluated when the procedure is called, the second argument
-is delayed, and the fourth argument is both delayed and memoized.  Thus,
-ordinary procedure definitions will produce the same behavior as ordinary
-Scheme, while adding the <code>lazy-memo</code> declaration to each parameter of
-every compound procedure will produce the behavior of the lazy evaluator
-defined in this section. Design and implement the changes required to produce
-such an extension to Scheme.  You will have to implement new syntax procedures
-to handle the new syntax for <code>define</code>.  You must also arrange for
-<code>eval</code> or <code>apply</code> to determine when arguments are to be delayed, and
-to force or delay arguments accordingly, and you must arrange for forcing to
-memoize or not, as appropriate.
-</p></blockquote>
+      <p>
+        Em <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a>, mostramos como
+        implementar fluxos como listas atrasadas. Introduzimos formas especiais
+        <code>delay</code> e <code>cons-stream</code>, que permitiram construir
+        uma “promessa” para calcular o <code>cdr</code> de um fluxo, sem
+        realmente cumprir essa promessa até mais tarde. Poderíamos usar essa
+        técnica geral de introduzir formas especiais sempre que precisamos de
+        mais controle sobre o processo de avaliação, mas isso é incômodo. Por um
+        lado, uma forma especial não é um objeto de primeira classe como um
+        procedimento, então não podemos usá-la junto com procedimentos de ordem
+        superior.<a class="footnote_link" id="DOCF243" href="#FOOT243"
+          ><sup>243</sup></a
+        >
+        Além disso, fomos forçados a criar fluxos como um novo tipo de objeto de
+        dados semelhante, mas não idêntico a listas, e isso nos obrigou a
+        reimplementar muitas operações comuns de listas (<code>map</code>,
+        <code>append</code>, e assim por diante) para uso com fluxos.
+      </p>
+      <p>
+        Com avaliação preguiçosa, fluxos e listas podem ser idênticos, então não
+        há necessidade de formas especiais ou de operações separadas de listas e
+        fluxos. Tudo o que precisamos fazer é arranjar as coisas para que
+        <code>cons</code> seja não estrito. Uma maneira de conseguir isso é
+        estender o avaliador preguiçoso para permitir primitivas não estritas, e
+        implementar <code>cons</code> como uma delas. Uma maneira mais fácil é
+        lembrar (<a href="2_002e1.html#g_t2_002e1_002e3">2.1.3</a>) que não há
+        necessidade fundamental de implementar <code>cons</code> como uma
+        primitiva. Em vez disso, podemos representar pares como procedimentos:<a
+          class="footnote_link"
+          id="DOCF244"
+          href="#FOOT244"
+          ><sup>244</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (cons x y) (lambda (m) (m x y)))
+(define (car z) (z (lambda (p q) p)))
+(define (cdr z) (z (lambda (p q) q)))</code></pre>
 
-<a id="g_t4_002e2_002e3"></a>
-<a id="Streams-as-Lazy-Lists"></a>
-<h4 class="subsection"><span class="secnum">4.2.3</span><span class="sectitle">Streams as Lazy Lists</span></h4>
+      <p>
+        Em termos dessas operações básicas, as definições padrão das operações
+        de listas funcionarão com listas infinitas (fluxos) assim como com
+        listas finitas, e as operações de fluxos podem ser implementadas como
+        operações de listas. Aqui estão alguns exemplos:
+      </p>
+      <pre><code class="language-scheme">(define (list-ref items n)
+  (if (= n 0)
+      (car items)
+      (list-ref (cdr items) (- n 1))))
 
-<p>In <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a>, we showed how to implement streams as delayed lists.
-We introduced special forms <code>delay</code> and <code>cons-stream</code>, which allowed
-us to construct a “promise” to compute the <code>cdr</code> of a stream, without
-actually fulfilling that promise until later.  We could use this general
-technique of introducing special forms whenever we need more control over the
-evaluation process, but this is awkward.  For one thing, a special form is not
-a first-class object like a procedure, so we cannot use it together with
-higher-order procedures.<a class="footnote_link" id="DOCF243" href="#FOOT243"><sup>243</sup></a>  Additionally, we were
-forced to create streams as a new kind of data object similar but not identical
-to lists, and this required us to reimplement many ordinary list operations
-(<code>map</code>, <code>append</code>, and so on) for use with streams.
-</p>
-<p>With lazy evaluation, streams and lists can be identical, so there is no need
-for special forms or for separate list and stream operations.  All we need to
-do is to arrange matters so that <code>cons</code> is non-strict.  One way to
-accomplish this is to extend the lazy evaluator to allow for non-strict
-primitives, and to implement <code>cons</code> as one of these.  An easier way is to
-recall (<a href="2_002e1.html#g_t2_002e1_002e3">2.1.3</a>) that there is no fundamental need to implement
-<code>cons</code> as a primitive at all.  Instead, we can represent pairs as
-procedures:<a class="footnote_link" id="DOCF244" href="#FOOT244"><sup>244</sup></a>
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> x y</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">m</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">m x y</span><span class="clo">)))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p q</span><span class="clo">)</span><span class="pln"> p</span><span class="clo">)))</span><span class="pln">
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> z</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">z </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">p q</span><span class="clo">)</span><span class="pln"> q</span><span class="clo">)))</span></pre></div>
+(define (map proc items)
+  (if (null? items)
+      '()
+      (cons (proc (car items))
+            (map proc (cdr items)))))
 
-<p>In terms of these basic operations, the standard definitions of the list
-operations will work with infinite lists (streams) as well as finite ones, and
-the stream operations can be implemented as list operations.  Here are some
-examples:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-ref items n</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pun">=</span><span class="pln"> n </span><span class="lit">0</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> items</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="pln">list-ref </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> items</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))</span><span class="pln">
+(define (scale-list items factor)
+  (map (lambda (x) (* x factor))
+       items))
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">map proc items</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">if</span><span class="pln"> </span><span class="opn">(</span><span class="pln">null? items</span><span class="clo">)</span><span class="pln">
-      </span><span class="lit">'</span><span class="opn">(</span><span class="clo">)</span><span class="pln">
-      </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pln">proc </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> items</span><span class="clo">))</span><span class="pln">
-            </span><span class="opn">(</span><span class="pln">map proc </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> items</span><span class="clo">)))))</span><span class="pln">
+(define (add-lists list1 list2)
+  (cond ((null? list1) list2)
+        ((null? list2) list1)
+        (else (cons (+ (car list1) 
+                       (car list2))
+                    (add-lists
+                     (cdr list1) 
+                     (cdr list2))))))
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">scale-list items factor</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="pln">map </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x factor</span><span class="clo">))</span><span class="pln">
-       items</span><span class="clo">))</span><span class="pln">
+(define ones (cons 1 ones))
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-lists list1 list2</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">cond</span><span class="pln"> </span><span class="opn">((</span><span class="pln">null? list1</span><span class="clo">)</span><span class="pln"> list2</span><span class="clo">)</span><span class="pln">
-        </span><span class="opn">((</span><span class="pln">null? list2</span><span class="clo">)</span><span class="pln"> list1</span><span class="clo">)</span><span class="pln">
-        </span><span class="opn">(</span><span class="kwd">else</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> list1</span><span class="clo">)</span><span class="pln"> 
-                       </span><span class="opn">(</span><span class="kwd">car</span><span class="pln"> list2</span><span class="clo">))</span><span class="pln">
-                    </span><span class="opn">(</span><span class="pln">add-lists
-                     </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> list1</span><span class="clo">)</span><span class="pln"> 
-                     </span><span class="opn">(</span><span class="kwd">cdr</span><span class="pln"> list2</span><span class="clo">))))))</span><span class="pln">
+(define integers 
+  (cons 1 (add-lists ones integers)))
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> ones </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> ones</span><span class="clo">))</span><span class="pln">
+;;; L-Eval input:
+(list-ref integers 17)
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> integers 
-  </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-lists ones integers</span><span class="clo">)))</span><span class="pln">
+;;; L-Eval value:
+18</code></pre>
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
-</span><span class="opn">(</span><span class="pln">list-ref integers </span><span class="lit">17</span><span class="clo">)</span><span class="pln">
+      <p>
+        Observe que essas listas preguiçosas são ainda mais preguiçosas que os
+        fluxos de <a href="Chapter-3.html#Chapter-3">Capítulo 3</a>: O
+        <code>car</code> da lista, assim como o <code>cdr</code>, é atrasado.<a
+          class="footnote_link"
+          id="DOCF245"
+          href="#FOOT245"
+          ><sup>245</sup></a
+        >
+        De fato, até mesmo acessar o <code>car</code> ou <code>cdr</code> de um
+        par preguiçoso não precisa forçar o valor de um elemento da lista. O
+        valor será forçado apenas quando for realmente necessário—por exemplo,
+        para uso como argumento de uma primitiva, ou para ser impresso como uma
+        resposta.
+      </p>
+      <p>
+        Pares preguiçosos também ajudam com o problema que surgiu com fluxos em
+        <a href="3_002e5.html#g_t3_002e5_002e4">3.5.4</a>, onde descobrimos que
+        formular modelos de fluxos de sistemas com loops pode exigir que
+        espalhemos nossos programas com operações explícitas de
+        <code>delay</code>, além das fornecidas por <code>cons-stream</code>.
+        Com avaliação preguiçosa, todos os argumentos para procedimentos são
+        atrasados uniformemente. Por exemplo, podemos implementar procedimentos
+        para integrar listas e resolver equações diferenciais como originalmente
+        pretendíamos em <a href="3_002e5.html#g_t3_002e5_002e4">3.5.4</a>:
+      </p>
+      <pre><code class="language-scheme">(define (integral integrand initial-value dt)
+  (define int
+    (cons initial-value
+          (add-lists (scale-list integrand dt) 
+                     int)))
+  int)
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-</span><i><span class="lit">18</span></i>
-</pre></div>
+(define (solve f y0 dt)
+  (define y (integral dy y0 dt))
+  (define dy (map f y))
+  y)
 
-<p>Note that these lazy lists are even lazier than the streams of <a href="Chapter-3.html#Chapter-3">Chapter 3</a>:
-The <code>car</code> of the list, as well as the <code>cdr</code>, is
-delayed.<a class="footnote_link" id="DOCF245" href="#FOOT245"><sup>245</sup></a>  In fact, even accessing the <code>car</code> or
-<code>cdr</code> of a lazy pair need not force the value of a list element.  The
-value will be forced only when it is really needed—e.g., for use as the
-argument of a primitive, or to be printed as an answer.
-</p>
-<p>Lazy pairs also help with the problem that arose with streams in 
-<a href="3_002e5.html#g_t3_002e5_002e4">3.5.4</a>, where we found that formulating stream models of systems with
-loops may require us to sprinkle our programs with explicit <code>delay</code>
-operations, beyond the ones supplied by <code>cons-stream</code>.  With lazy
-evaluation, all arguments to procedures are delayed uniformly.  For instance,
-we can implement procedures to integrate lists and solve differential equations
-as we originally intended in <a href="3_002e5.html#g_t3_002e5_002e4">3.5.4</a>:
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">integral integrand initial-value dt</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> int
-    </span><span class="opn">(</span><span class="kwd">cons</span><span class="pln"> initial-value
-          </span><span class="opn">(</span><span class="pln">add-lists </span><span class="opn">(</span><span class="pln">scale-list integrand dt</span><span class="clo">)</span><span class="pln"> 
-                     int</span><span class="clo">)))</span><span class="pln">
-  int</span><span class="clo">)</span><span class="pln">
+;;; L-Eval input:
+(list-ref (solve (lambda (x) x) 1 0.001) 1000)
 
-</span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">solve f y0 dt</span><span class="clo">)</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> y </span><span class="opn">(</span><span class="pln">integral dy y0 dt</span><span class="clo">))</span><span class="pln">
-  </span><span class="opn">(</span><span class="kwd">define</span><span class="pln"> dy </span><span class="opn">(</span><span class="pln">map f y</span><span class="clo">))</span><span class="pln">
-  y</span><span class="clo">)</span><span class="pln">
+;;; L-Eval value:
+2.716924</code></pre>
 
-</span><i><span class="com">;;; L-Eval input:</span></i><span class="pln">
-</span><span class="opn">(</span><span class="pln">list-ref </span><span class="opn">(</span><span class="pln">solve </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> x</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1</span><span class="pln"> </span><span class="lit">0.001</span><span class="clo">)</span><span class="pln"> </span><span class="lit">1000</span><span class="clo">)</span><span class="pln">
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e32"></a>Exercício 4.32:</strong> Dê
+          alguns exemplos que ilustram a diferença entre os fluxos de
+          <a href="Chapter-3.html#Chapter-3">Capítulo 3</a> e as listas
+          preguiçosas “mais preguiçosas” descritas nesta seção. Como você pode
+          tirar vantagem dessa preguiça extra?
+        </p>
+      </blockquote>
 
-</span><i><span class="com">;;; L-Eval value:</span></i><span class="pln">
-</span><i><span class="lit">2.716924</span></i>
-</pre></div>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e33"></a>Exercício 4.33:</strong> Ben
+          Bitdiddle testa a implementação de listas preguiçosas dada acima
+          avaliando a expressão
+        </p>
+        <pre><code class="language-scheme">(car '(a b c))</code></pre>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e32"></a>Exercise 4.32:</strong> Give some examples that
-illustrate the difference between the streams of <a href="Chapter-3.html#Chapter-3">Chapter 3</a> and the
-“lazier” lazy lists described in this section.  How can you take advantage of
-this extra laziness?
-</p></blockquote>
+        <p>
+          Para sua surpresa, isso produz um erro. Depois de pensar um pouco, ele
+          percebe que as “listas” obtidas ao ler expressões entre aspas são
+          diferentes das listas manipuladas pelas novas definições de
+          <code>cons</code>, <code>car</code>, e <code>cdr</code>. Modifique o
+          tratamento de expressões entre aspas pelo avaliador para que listas
+          entre aspas digitadas no loop de driver produzam listas preguiçosas
+          verdadeiras.
+        </p>
+      </blockquote>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e33"></a>Exercise 4.33:</strong> Ben Bitdiddle tests the lazy list
-implementation given above by evaluating the expression
-</p>
-<div class="lisp">
-<pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">car</span><span class="pln"> </span><span class="lit">'</span><span class="opn">(</span><span class="pln">a b c</span><span class="clo">))</span></pre></div>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-4_002e34"></a>Exercício 4.34:</strong>
+          Modifique o loop de driver para o avaliador para que pares e listas
+          preguiçosas sejam impressos de alguma maneira razoável. (O que você
+          vai fazer sobre listas infinitas?) Você também pode precisar modificar
+          a representação de pares preguiçosos para que o avaliador possa
+          identificá-los a fim de imprimi-los.
+        </p>
+      </blockquote>
 
-<p>To his surprise, this produces an error.  After some thought, he realizes that
-the “lists” obtained by reading in quoted expressions are different from the
-lists manipulated by the new definitions of <code>cons</code>, <code>car</code>, and
-<code>cdr</code>.  Modify the evaluator’s treatment of quoted expressions so that
-quoted lists typed at the driver loop will produce true lazy lists.
-</p></blockquote>
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
 
-<blockquote>
-<p><strong><a id="Exercise-4_002e34"></a>Exercise 4.34:</strong> Modify the driver loop for the
-evaluator so that lazy pairs and lists will print in some reasonable way.
-(What are you going to do about infinite lists?)  You may also need to modify
-the representation of lazy pairs so that the evaluator can identify them in
-order to print them.
-</p></blockquote>
-
-<div class="footnote">
-<h4 class="footnotes-heading">Footnotes</h4>
-
-<div id="FOOT235"><p><a class="footnote_backlink" href="#DOCF235"><sup>235</sup></a>
-Snarf: “To
-grab, especially a large document or file for the purpose of using it either
-with or without the owner’s permission.”  Snarf down: “To snarf, sometimes
-with the connotation of absorbing, processing, or understanding.”  (These
-definitions were snarfed from <a href="References.html#Steele-et-al_002e-1983">Steele et al. 1983</a>.  See also <a href="References.html#Raymond-1993">Raymond 1993</a>.)</p>
-</div>
-<div id="FOOT236"><p><a class="footnote_backlink" href="#DOCF236"><sup>236</sup></a>
-The difference 
-between the “lazy” terminology and the
-“normal-order” terminology is somewhat fuzzy.  Generally, “lazy” refers to
-the mechanisms of particular evaluators, while “normal-order” refers to the
-semantics of languages, independent of any particular evaluation strategy.  But
-this is not a hard-and-fast distinction, and the two terminologies are often
-used interchangeably.</p>
-</div>
-<div id="FOOT237"><p><a class="footnote_backlink" href="#DOCF237"><sup>237</sup></a>
-The “strict”
-versus “non-strict” terminology means essentially the same thing as
-“applicative-order” versus “normal-order,” except that it refers to
-individual procedures and arguments rather than to the language as a whole.  At
-a conference on programming languages you might hear someone say, “The
-normal-order language Hassle has certain strict primitives.  Other procedures
-take their arguments by lazy evaluation.”</p>
-</div>
-<div id="FOOT238"><p><a class="footnote_backlink" href="#DOCF238"><sup>238</sup></a>
-The word <a id="index-thunk"></a>
-<em>thunk</em> was invented by an
-informal working group that was discussing the implementation of call-by-name
-in Algol 60.  They observed that most of the analysis of (“thinking about”)
-the expression could be done at compile time; thus, at run time, the expression
-would already have been “thunk” about (<a href="References.html#Ingerman-et-al_002e-1960">Ingerman et al. 1960</a>).</p>
-</div>
-<div id="FOOT239"><p><a class="footnote_backlink" href="#DOCF239"><sup>239</sup></a>
-This is analogous to the use of <code>force</code> on the
-delayed objects that were introduced in <a href="Chapter-3.html#Chapter-3">Chapter 3</a> to represent streams.
-The critical difference between what we are doing here and what we did in
-<a href="Chapter-3.html#Chapter-3">Chapter 3</a> is that we are building delaying and forcing into the
-evaluator, and thus making this uniform and automatic throughout the language.</p>
-</div>
-<div id="FOOT240"><p><a class="footnote_backlink" href="#DOCF240"><sup>240</sup></a>
-Lazy evaluation
-combined with memoization is sometimes referred to as <a id="index-call_002dby_002dneed-1"></a>
-<em>call-by-need</em>
-argument passing, in contrast to <a id="index-call_002dby_002dname-1"></a>
-<em>call-by-name</em> argument passing.
-(Call-by-name, introduced in Algol 60, is similar to non-memoized lazy
-evaluation.)  As language designers, we can build our evaluator to memoize, not
-to memoize, or leave this an option for programmers (<a href="#Exercise-4_002e31">Exercise 4.31</a>).  As
-you might expect from <a href="Chapter-3.html#Chapter-3">Chapter 3</a>, these choices raise issues that become
-both subtle and confusing in the presence of assignments.  (See <a href="#Exercise-4_002e27">Exercise 4.27</a> 
-and <a href="#Exercise-4_002e29">Exercise 4.29</a>.)  An excellent article by <a href="References.html#Clinger-_00281982_0029">Clinger (1982)</a>
-attempts to clarify the multiple dimensions of confusion that arise here.</p>
-</div>
-<div id="FOOT241"><p><a class="footnote_backlink" href="#DOCF241"><sup>241</sup></a>
-Notice that we also erase the <code>env</code> from the thunk
-once the expression’s value has been computed.  This makes no difference in the
-values returned by the interpreter.  It does help save space, however, because
-removing the reference from the thunk to the <code>env</code> once it is no longer
-needed allows this structure to be <a id="index-garbage_002dcollected"></a>
-<em>garbage-collected</em> and its space
-recycled, as we will discuss in <a href="5_002e3.html#g_t5_002e3">5.3</a>.
-</p>
-<p>Similarly, we could have allowed unneeded environments in the memoized delayed
-objects of <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a> to be garbage-collected, by having
-<code>memo-proc</code> do something like <code>(set! proc '())</code> to discard the
-procedure <code>proc</code> (which includes the environment in which the <code>delay</code>
-was evaluated) after storing its value.</p>
-</div>
-<div id="FOOT242"><p><a class="footnote_backlink" href="#DOCF242"><sup>242</sup></a>
-This exercise demonstrates that the interaction between
-lazy evaluation and side effects can be very confusing.  This is just what you
-might expect from the discussion in <a href="Chapter-3.html#Chapter-3">Chapter 3</a>.</p>
-</div>
-<div id="FOOT243"><p><a class="footnote_backlink" href="#DOCF243"><sup>243</sup></a>
-This is precisely the issue with the
-<code>unless</code> procedure, as in <a href="#Exercise-4_002e26">Exercise 4.26</a>.</p>
-</div>
-<div id="FOOT244"><p><a class="footnote_backlink" href="#DOCF244"><sup>244</sup></a>
-This is the procedural representation described in
-<a href="2_002e1.html#Exercise-2_002e4">Exercise 2.4</a>.  Essentially any procedural representation (e.g., a
-message-passing implementation) would do as well.  Notice that we can install
-these definitions in the lazy evaluator simply by typing them at the driver
-loop.  If we had originally included <code>cons</code>, <code>car</code>, and <code>cdr</code> as
-primitives in the global environment, they will be redefined.  (Also see
-<a href="#Exercise-4_002e33">Exercise 4.33</a> and <a href="#Exercise-4_002e34">Exercise 4.34</a>.)</p>
-</div>
-<div id="FOOT245"><p><a class="footnote_backlink" href="#DOCF245"><sup>245</sup></a>
-This permits us to create delayed versions of more general
-kinds of list structures, not just sequences.  <a href="References.html#Hughes-1990">Hughes 1990</a> discusses some
-applications of “lazy trees.”</p>
-</div>
-</div>
-<nav class="header">
-<p>
-Next: <a href="4_002e3.html#g_t4_002e3" accesskey="n" rel="next">4.3</a>, Prev: <a href="4_002e1.html#g_t4_002e1" accesskey="p" rel="prev">4.1</a>, Up: <a href="#g_t4_002e2" accesskey="u" rel="prev">4.2</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
-</nav>
-
-
-</section><span class="bottom jump" title="Jump to bottom"><a href="#pagebottom" accesskey="b">⇣</a></span><a id="pagebottom"></a>
-</body>
+        <div id="FOOT235">
+          <p>
+            <a class="footnote_backlink" href="#DOCF235"><sup>235</sup></a>
+            Snarf: “Pegar, especialmente um documento ou arquivo grande com o
+            propósito de usá-lo com ou sem a permissão do proprietário.” Snarf
+            down: “Pegar, às vezes com a conotação de absorver, processar ou
+            entender.” (Essas definições foram snarfadas de
+            <a href="References.html#Steele-et-al_002e-1983"
+              >Steele et al. 1983</a
+            >. Veja também
+            <a href="References.html#Raymond-1993">Raymond 1993</a>.)
+          </p>
+        </div>
+        <div id="FOOT236">
+          <p>
+            <a class="footnote_backlink" href="#DOCF236"><sup>236</sup></a> A
+            diferença entre a terminologia “preguiçosa” e a terminologia “ordem
+            normal” é um tanto vaga. Geralmente, “preguiçosa” refere-se a
+            mecanismos de avaliadores específicos, enquanto “ordem normal”
+            refere-se à semântica de linguagens, independentemente de qualquer
+            estratégia de avaliação específica. Mas isso não é uma distinção
+            rígida, e as duas terminologias são frequentemente usadas de forma
+            intercambiável.
+          </p>
+        </div>
+        <div id="FOOT237">
+          <p>
+            <a class="footnote_backlink" href="#DOCF237"><sup>237</sup></a> A
+            terminologia “estrita” versus “não estrita” significa essencialmente
+            a mesma coisa que “ordem aplicativa” versus “ordem normal”, exceto
+            que se refere a procedimentos e argumentos individuais em vez de se
+            referir à linguagem como um todo. Em uma conferência sobre
+            linguagens de programação, você pode ouvir alguém dizer: “A
+            linguagem de ordem normal Hassle tem certas primitivas estritas.
+            Outros procedimentos tomam seus argumentos por avaliação
+            preguiçosa.”
+          </p>
+        </div>
+        <div id="FOOT238">
+          <p>
+            <a class="footnote_backlink" href="#DOCF238"><sup>238</sup></a> A
+            palavra <a id="index-thunk"></a> <em>thunk</em> foi inventada por um
+            grupo de trabalho informal que estava discutindo a implementação de
+            chamada por nome em Algol 60. Eles observaram que a maior parte da
+            análise de (“pensar sobre”) a expressão poderia ser feita em tempo
+            de compilação; assim, em tempo de execução, a expressão já teria
+            sido “pensada” (<a href="References.html#Ingerman-et-al_002e-1960"
+              >Ingerman et al. 1960</a
+            >).
+          </p>
+        </div>
+        <div id="FOOT239">
+          <p>
+            <a class="footnote_backlink" href="#DOCF239"><sup>239</sup></a> Isso
+            é análogo ao uso de <code>force</code> nos objetos atrasados que
+            foram introduzidos em
+            <a href="Chapter-3.html#Chapter-3">Capítulo 3</a> para representar
+            fluxos. A diferença crítica entre o que estamos fazendo aqui e o que
+            fizemos em <a href="Chapter-3.html#Chapter-3">Capítulo 3</a> é que
+            estamos construindo atraso e forçamento no avaliador, e assim
+            tornando isso uniforme e automático em toda a linguagem.
+          </p>
+        </div>
+        <div id="FOOT240">
+          <p>
+            <a class="footnote_backlink" href="#DOCF240"><sup>240</sup></a>
+            Avaliação preguiçosa combinada com memorização é às vezes referida
+            como <a id="index-call_002dby_002dneed-1"></a>
+            <em>chamada por necessidade</em>, em contraste com
+            <a id="index-call_002dby_002dname-1"></a> <em>chamada por nome</em>.
+            (Chamada por nome, introduzida em Algol 60, é semelhante à avaliação
+            preguiçosa não memorizada.) Como designers de linguagens, podemos
+            construir nosso avaliador para memorizar, não memorizar, ou deixar
+            isso como uma opção para programadores (<a href="#Exercise-4_002e31"
+              >Exercício 4.31</a
+            >). Como você pode esperar de
+            <a href="Chapter-3.html#Chapter-3">Capítulo 3</a>, essas escolhas
+            levantam questões que se tornam tanto sutis quanto confusas na
+            presença de atribuições. (Veja
+            <a href="#Exercise-4_002e27">Exercício 4.27</a> e
+            <a href="#Exercise-4_002e29">Exercício 4.29</a>.) Um excelente
+            artigo de
+            <a href="References.html#Clinger-_00281982_0029">Clinger (1982)</a>
+            tenta esclarecer as múltiplas dimensões de confusão que surgem aqui.
+          </p>
+        </div>
+        <div id="FOOT241">
+          <p>
+            <a class="footnote_backlink" href="#DOCF241"><sup>241</sup></a>
+            Observe que também apagamos o <code>env</code> do thunk uma vez que
+            o valor da expressão foi calculado. Isso não faz diferença nos
+            valores retornados pelo interpretador. Isso ajuda a economizar
+            espaço, no entanto, porque remover a referência do thunk para o
+            <code>env</code> uma vez que ele não é mais necessário permite que
+            essa estrutura seja <a id="index-garbage_002dcollected"></a>
+            <em>coletada como lixo</em> e seu espaço reciclado, como
+            discutiremos em <a href="5_002e3.html#g_t5_002e3">5.3</a>.
+          </p>
+          <p>
+            Da mesma forma, poderíamos ter permitido que ambientes
+            desnecessários nos objetos atrasados memorizados de
+            <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a> fossem coletados
+            como lixo, fazendo <code>memo-proc</code> fazer algo como
+            <code>(set! proc '())</code> para descartar o procedimento
+            <code>proc</code> (que inclui o ambiente em que o
+            <code>delay</code> foi avaliado) após armazenar seu valor.
+          </p>
+        </div>
+        <div id="FOOT242">
+          <p>
+            <a class="footnote_backlink" href="#DOCF242"><sup>242</sup></a> Este
+            exercício demonstra que a interação entre avaliação preguiçosa e
+            efeitos colaterais pode ser muito confusa. Isso é exatamente o que
+            você pode esperar da discussão em
+            <a href="Chapter-3.html#Chapter-3">Capítulo 3</a>.
+          </p>
+        </div>
+        <div id="FOOT243">
+          <p>
+            <a class="footnote_backlink" href="#DOCF243"><sup>243</sup></a> Esse
+            é exatamente o problema com o procedimento <code>unless</code>, como
+            em <a href="#Exercise-4_002e26">Exercício 4.26</a>.
+          </p>
+        </div>
+        <div id="FOOT244">
+          <p>
+            <a class="footnote_backlink" href="#DOCF244"><sup>244</sup></a>
+            Essa é a representação procedural descrita em
+            <a href="2_002e1.html#Exercise-2_002e4">Exercício 2.4</a>.
+            Essencialmente, qualquer representação procedural (por exemplo, uma
+            implementação de passagem de mensagens) funcionaria tão bem. Observe
+            que podemos instalar essas definições no avaliador preguiçoso
+            simplesmente digitando-as no loop de driver. Se tivéssemos
+            originalmente incluído <code>cons</code>, <code>car</code>, e
+            <code>cdr</code> como primitivas no ambiente global, elas serão
+            redefinidas. (Veja também
+            <a href="#Exercise-4_002e33">Exercício 4.33</a> e
+            <a href="#Exercise-4_002e34">Exercício 4.34</a>.)
+          </p>
+        </div>
+        <div id="FOOT245">
+          <p>
+            <a class="footnote_backlink" href="#DOCF245"><sup>245</sup></a> Isso
+            nos permite criar versões atrasadas de tipos mais gerais de
+            estruturas de listas, não apenas sequências.
+            <a href="References.html#Hughes-1990">Hughes 1990</a> discute
+            algumas aplicações de “árvores preguiçosas.”
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="4_002e3.html#g_t4_002e3" accesskey="n" rel="next">4.3</a>,
+          Anterior:
+          <a href="4_002e1.html#g_t4_002e1" accesskey="p" rel="prev">4.1</a>,
+          Acima: <a href="#g_t4_002e2" accesskey="u" rel="prev">4.2</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+    </section>
+  </body>
 </html>
