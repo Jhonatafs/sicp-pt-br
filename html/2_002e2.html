@@ -12,7 +12,7 @@
       content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
     />
     <title>
-      Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 2.2
     </title>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="css/highlight.css" />
@@ -619,8 +619,8 @@
         estabelecer uma barreira de abstração que isola a implementação de
         procedimentos que transformam listas dos detalhes de como os elementos
         da lista são extraídos e combinados. Como as barreiras mostradas na
-        <a href="2_002e1.html#Figure-2_002e1">Figura 2.1</a>, essa abstração
-        nos dá a flexibilidade de mudar os detalhes de baixo nível de como as
+        <a href="2_002e1.html#Figure-2_002e1">Figura 2.1</a>, essa abstração nos
+        dá a flexibilidade de mudar os detalhes de baixo nível de como as
         sequências são implementadas, enquanto preserva o quadro conceitual de
         operações que transformam sequências em sequências. A seção
         <a href="#g_t2_002e2_002e3">2.2.3</a> expande esse uso de sequências
@@ -1151,9 +1151,7 @@
           <mi>k</mi>
         </math>
         é menor ou igual a um dado inteiro
-        <math xmlns="http://www.w3.org/1998/Math/MathML">
-          <mi>n</mi> </math
-        >:
+        <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>n</mi> </math>:
       </p>
       <pre><code class="language-scheme">(define (even-fibs n)
       (define (next k)
@@ -1181,9 +1179,7 @@
       <ul>
         <li>
           enumera os inteiros de 0 a
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>n</mi> </math
-          >;
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>n</mi> </math>;
         </li>
         <li>calcula o número de Fibonacci para cada inteiro;</li>
         <li>filtra-os, selecionando os pares; e</li>
@@ -2886,9 +2882,8 @@
             <mi>x</mi>
           </math>
           e uma coordenada
-          <math xmlns="http://www.w3.org/1998/Math/MathML">
-            <mi>y</mi> </math
-          >. Implemente uma abstração de dados para vetores fornecendo um
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>y</mi> </math>.
+          Implemente uma abstração de dados para vetores fornecendo um
           construtor <code>make-vect</code> e seletores correspondentes
           <code>xcor-vect</code> e <code>ycor-vect</code>. Em termos de seus
           seletores e construtor, implemente procedimentos
@@ -3490,10 +3485,9 @@
             Lisp, tratam <code>nil</code> como um símbolo especial. Os autores
             deste livro, que suportaram muitas brigas de padronização de
             linguagens, gostariam de evitar toda a questão. Uma vez que
-            introduzimos a citação em
-            <a href="2_002e3.html#g_t2_002e3">2.3</a>, denotaremos a lista
-            vazia como <code>'()</code> e dispensaremos a variável
-            <code>nil</code> inteiramente.
+            introduzimos a citação em <a href="2_002e3.html#g_t2_002e3">2.3</a>,
+            denotaremos a lista vazia como <code>'()</code> e dispensaremos a
+            variável <code>nil</code> inteiramente.
           </p>
         </div>
 
@@ -3579,10 +3573,10 @@
         <div id="FOOT82">
           <p>
             <a class="footnote_backlink" href="#DOCF82"><sup>82</sup></a> De
-            acordo com <a href="References.html#Knuth-1981">Knuth 1981</a>,
-            esta regra foi formulada por W. G. Horner no início do século XIX,
-            mas o método foi realmente usado por Newton mais de cem anos antes.
-            A regra de Horner avalia o polinômio usando menos adições e
+            acordo com <a href="References.html#Knuth-1981">Knuth 1981</a>, esta
+            regra foi formulada por W. G. Horner no início do século XIX, mas o
+            método foi realmente usado por Newton mais de cem anos antes. A
+            regra de Horner avalia o polinômio usando menos adições e
             multiplicações do que o método direto de primeiro calcular
             <math xmlns="http://www.w3.org/1998/Math/MathML">
               <mrow class="MJX-TeXAtom-ORD">
@@ -3683,11 +3677,9 @@
               </mrow>
             </math>
             é o conjunto de todos os elementos de
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <mi>S</mi> </math
+            <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>S</mi> </math
             >, excluindo
-            <math xmlns="http://www.w3.org/1998/Math/MathML">
-              <mi>x</mi> </math
+            <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>x</mi> </math
             >.
           </p>
         </div>
@@ -3851,11 +3843,11 @@
             para ele sob o mapa de coordenadas do quadro e o sombreia de acordo.
             Ao permitir diferentes tipos de pintores, estamos capitalizando a
             ideia de dados abstratos discutida em
-            <a href="2_002e1.html#g_t2_002e1_002e3">2.1.3</a>, onde
-            argumentamos que uma representação de número racional poderia ser
-            qualquer coisa que satisfaça uma condição apropriada. Aqui estamos
-            usando o fato de que um pintor pode ser implementado de qualquer
-            maneira, desde que desenhe algo no quadro designado.
+            <a href="2_002e1.html#g_t2_002e1_002e3">2.1.3</a>, onde argumentamos
+            que uma representação de número racional poderia ser qualquer coisa
+            que satisfaça uma condição apropriada. Aqui estamos usando o fato de
+            que um pintor pode ser implementado de qualquer maneira, desde que
+            desenhe algo no quadro designado.
             <a href="2_002e1.html#g_t2_002e1_002e3">2.1.3</a> também mostrou
             como pares poderiam ser implementados como procedimentos. Pintores
             são nosso segundo exemplo de uma representação procedural para
@@ -3886,8 +3878,8 @@
         <div id="FOOT97">
           <p>
             <a class="footnote_backlink" href="#DOCF97"><sup>97</sup></a> A
-            seção <a href="3_002e3.html#g_t3_002e3_002e4">3.3.4</a> descreve
-            uma dessas linguagens.
+            seção <a href="3_002e3.html#g_t3_002e3_002e4">3.3.4</a> descreve uma
+            dessas linguagens.
           </p>
         </div>
       </div>

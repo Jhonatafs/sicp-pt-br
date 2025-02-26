@@ -10,12 +10,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="Generator" content="texi2any" />
 <meta charset="utf-8" />
-<link href="index.xhtml#Top" rel="start" title="Top" />
-<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
-<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
-<link href="Chapter-4.xhtml#Chapter-4" rel="prev" title="Chapter 4" />
-<link href="4_002e4.xhtml#g_t4_002e4" rel="next" title="4.4" />
-<link href="4_002e2.xhtml#g_t4_002e2_002e3" rel="prev" title="4.2.3" />
+<link href="index.html#Top" rel="start" title="Top" />
+<link href="Term-Index.html#Term-Index" rel="index" title="Term Index" />
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-4.html#Chapter-4" rel="prev" title="Chapter 4" />
+<link href="4_002e4.html#g_t4_002e4" rel="next" title="4.4" />
+<link href="4_002e2.html#g_t4_002e2_002e3" rel="prev" title="4.2.3" />
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/prettify.css" rel="stylesheet" type="text/css" />
@@ -29,7 +29,7 @@
 <section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t4_002e3"></a>
 <nav class="header">
 <p>
-Next: <a href="4_002e4.xhtml#g_t4_002e4" accesskey="n" rel="next">4.4</a>, Prev: <a href="4_002e2.xhtml#g_t4_002e2" accesskey="p" rel="prev">4.2</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="4_002e4.html#g_t4_002e4" accesskey="n" rel="next">4.4</a>, Prev: <a href="4_002e2.html#g_t4_002e2" accesskey="p" rel="prev">4.2</a>, Up: <a href="Chapter-4.html#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 <a id="Variations-on-a-Scheme-_002d_002d_002d-Nondeterministic-Computing"></a>
 <h3 class="section"><span class="secnum">4.3</span><span class="sectitle">Variations on a Scheme — Nondeterministic Computing</span></h3>
@@ -39,17 +39,17 @@ paradigm called <a id="index-nondeterministic-computing-1"></a>
 <em>nondeterministic computing</em> by building into the
 evaluator a facility to support automatic search.  This is a much more profound
 change to the language than the introduction of lazy evaluation in 
-<a href="4_002e2.xhtml#g_t4_002e2">4.2</a>.
+<a href="4_002e2.html#g_t4_002e2">4.2</a>.
 </p>
 <p>Nondeterministic computing, like stream processing, is useful for “generate
 and test” applications.  Consider the task of starting with two lists of
 positive integers and finding a pair of integers—one from the first list and
 one from the second list—whose sum is prime.  We saw how to handle this with
-finite sequence operations in <a href="2_002e2.xhtml#g_t2_002e2_002e3">2.2.3</a> and with infinite streams in
-<a href="3_002e5.xhtml#g_t3_002e5_002e3">3.5.3</a>.  Our approach was to generate the sequence of all possible
+finite sequence operations in <a href="2_002e2.html#g_t2_002e2_002e3">2.2.3</a> and with infinite streams in
+<a href="3_002e5.html#g_t3_002e5_002e3">3.5.3</a>.  Our approach was to generate the sequence of all possible
 pairs and filter these to select the pairs whose sum is prime.  Whether we
-actually generate the entire sequence of pairs first as in <a href="Chapter-2.xhtml#Chapter-2">Chapter 2</a>, or
-interleave the generating and filtering as in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>, is immaterial to
+actually generate the entire sequence of pairs first as in <a href="Chapter-2.html#Chapter-2">Chapter 2</a>, or
+interleave the generating and filtering as in <a href="Chapter-3.html#Chapter-3">Chapter 3</a>, is immaterial to
 the essential image of how the computation is organized.
 </p>
 <p>The nondeterministic approach evokes a different image.  Imagine simply that we
@@ -188,7 +188,7 @@ potentially returns any integer greater than or equal to some given <math xmlns=
   </span><span class="opn">(</span><span class="pln">amb n </span><span class="opn">(</span><span class="pln">an-integer-starting-from </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))))</span></pre></div>
 
 <p>This is like the stream procedure <code>integers-starting-from</code> described in
-<a href="3_002e5.xhtml#g_t3_002e5_002e2">3.5.2</a>, but with an important difference: The stream procedure
+<a href="3_002e5.html#g_t3_002e5_002e2">3.5.2</a>, but with an important difference: The stream procedure
 returns an object that represents the sequence of all integers beginning with
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
@@ -329,7 +329,7 @@ triples of integers <math xmlns="http://www.w3.org/1998/Math/MathML">
 </blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-4_002e36"></a>Exercise 4.36:</strong> <a href="3_002e5.xhtml#Exercise-3_002e69">Exercise 3.69</a> discussed how
+<p><strong><a id="Exercise-4_002e36"></a>Exercise 4.36:</strong> <a href="3_002e5.html#Exercise-3_002e69">Exercise 3.69</a> discussed how
 to generate the stream of <em>all</em> Pythagorean triples, with no upper bound
 on the size of the integers to be searched.  Explain why simply replacing
 <code>an-integer-between</code> by <code>an-integer-starting-from</code> in the procedure
@@ -370,7 +370,7 @@ abstraction.
 <a id="Logic-Puzzles"></a>
 <h5 class="subsubheading">Logic Puzzles</h5>
 
-<p>The following puzzle (taken from <a href="References.xhtml#Dinesman-1968">Dinesman 1968</a>) is typical of a large class of
+<p>The following puzzle (taken from <a href="References.html#Dinesman-1968">Dinesman 1968</a>) is typical of a large class of
 simple logic puzzles:
 </p>
 <blockquote>
@@ -455,7 +455,7 @@ to solve the multiple dwelling puzzle.
 
 <blockquote>
 <p><strong><a id="Exercise-4_002e42"></a>Exercise 4.42:</strong> Solve the following “Liars”
-puzzle (from <a href="References.xhtml#Phillips-1934">Phillips 1934</a>):
+puzzle (from <a href="References.html#Phillips-1934">Phillips 1934</a>):
 </p>
 <p>Five schoolgirls sat for an examination.  Their parents—so they
 thought—showed an undue degree of interest in the result.  They therefore
@@ -499,7 +499,7 @@ last name is Moore.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-4_002e44"></a>Exercise 4.44:</strong> <a href="2_002e2.xhtml#Exercise-2_002e42">Exercise 2.42</a> described the
+<p><strong><a id="Exercise-4_002e44"></a>Exercise 4.44:</strong> <a href="2_002e2.html#Exercise-2_002e42">Exercise 2.42</a> described the
 “eight-queens puzzle” of placing queens on a chessboard so that no two attack
 each other.  Write a nondeterministic program to solve this puzzle.
 </p></blockquote>
@@ -741,7 +741,7 @@ explain the differences in shades of meaning among them.
 
 <blockquote>
 <p><strong><a id="Exercise-4_002e46"></a>Exercise 4.46:</strong> The evaluators in 
-<a href="4_002e1.xhtml#g_t4_002e1">4.1</a> and <a href="4_002e2.xhtml#g_t4_002e2">4.2</a> do not determine what order operands are evaluated in.
+<a href="4_002e1.html#g_t4_002e1">4.1</a> and <a href="4_002e2.html#g_t4_002e2">4.2</a> do not determine what order operands are evaluated in.
 We will see that the <code>amb</code> evaluator evaluates them from left to right.
 Explain why our parsing program wouldn’t work if the operands were evaluated in
 some other order.
@@ -793,7 +793,7 @@ which case evaluation must backtrack to a previous choice point.  The
 interpretation of nondeterministic Scheme is complicated by this extra case.
 </p>
 <p>We will construct the <code>amb</code> evaluator for nondeterministic Scheme by
-modifying the analyzing evaluator of <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>.<a class="footnote_link" id="DOCF259" href="#FOOT259"><sup>259</sup></a>  As in the analyzing
+modifying the analyzing evaluator of <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>.<a class="footnote_link" id="DOCF259" href="#FOOT259"><sup>259</sup></a>  As in the analyzing
 evaluator, evaluation of an expression is accomplished by calling an execution
 procedure produced by analysis of that expression.  The difference between the
 interpretation of ordinary Scheme and the interpretation of nondeterministic
@@ -888,7 +888,7 @@ to propagate the failure back to the previous choice point or to the top level.
 
 <p>The syntax- and data-representation procedures for the <code>amb</code> evaluator,
 and also the basic <code>analyze</code> procedure, are identical to those in the
-evaluator of <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>, except for the fact that we need additional
+evaluator of <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>, except for the fact that we need additional
 syntax procedures to recognize the <code>amb</code> special form:<a class="footnote_link" id="DOCF260" href="#FOOT260"><sup>260</sup></a>
 </p>
 <div class="lisp">
@@ -902,7 +902,7 @@ this special form and generate an appropriate execution procedure:
 <pre class="lisp prettyprinted" style=""><span class="opn">((</span><span class="pln">amb? exp</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pln">analyze-amb exp</span><span class="clo">))</span></pre></div>
 
 <p>The top-level procedure <code>ambeval</code> (similar to the version of <code>eval</code>
-given in <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>) analyzes the given expression and applies the
+given in <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>) analyzes the given expression and applies the
 resulting execution procedure to the given environment, together with two given
 continuations:
 </p>
@@ -939,7 +939,7 @@ loop and support the <code>try-again</code> request.
 of passing the continuations around as the execution procedures call each
 other.  In going through the following code, you should compare each of the
 execution procedures with the corresponding procedure for the ordinary
-evaluator given in <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>.
+evaluator given in <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>.
 </p>
 <a id="Simple-expressions"></a>
 <h5 class="subsubheading">Simple expressions</h5>
@@ -1403,15 +1403,15 @@ procedure <code>prime?</code> that tests whether numbers are prime.  Even with
 <code>prime?</code> defined, the <code>prime-sum-pair</code> procedure may look
 suspiciously like the unhelpful “pseudo-Lisp” attempt to define the
 square-root function, which we described at the beginning of 
-<a href="1_002e1.xhtml#g_t1_002e1_002e7">1.1.7</a>.  In fact, a square-root procedure along those lines can actually
+<a href="1_002e1.html#g_t1_002e1_002e7">1.1.7</a>.  In fact, a square-root procedure along those lines can actually
 be formulated as a nondeterministic program.  By incorporating a search
 mechanism into the evaluator, we are eroding the distinction between purely
 declarative descriptions and imperative specifications of how to compute
-answers.  We’ll go even farther in this direction in <a href="4_002e4.xhtml#g_t4_002e4">4.4</a>.</p>
+answers.  We’ll go even farther in this direction in <a href="4_002e4.html#g_t4_002e4">4.4</a>.</p>
 </div>
 <div id="FOOT247"><p><a class="footnote_backlink" href="#DOCF247"><sup>247</sup></a>
 The idea of <code>amb</code> for nondeterministic
-programming was first described in 1961 by John McCarthy (see <a href="References.xhtml#McCarthy-1963">McCarthy 1963</a>).</p>
+programming was first described in 1961 by John McCarthy (see <a href="References.html#McCarthy-1963">McCarthy 1963</a>).</p>
 </div>
 <div id="FOOT248"><p><a class="footnote_backlink" href="#DOCF248"><sup>248</sup></a>
 In
@@ -1437,24 +1437,24 @@ electronics.</p>
 <a id="Footnote-250"></a>Automagically: “Automatically, but
 in a way which, for some reason (typically because it is too complicated, or
 too ugly, or perhaps even too trivial), the speaker doesn’t feel like
-explaining.”  (<a href="References.xhtml#Steele-et-al_002e-1983">Steele et al. 1983</a>, <a href="References.xhtml#Raymond-1993">Raymond 1993</a>)</p>
+explaining.”  (<a href="References.html#Steele-et-al_002e-1983">Steele et al. 1983</a>, <a href="References.html#Raymond-1993">Raymond 1993</a>)</p>
 </div>
 <div id="FOOT251"><p><a class="footnote_backlink" href="#DOCF251"><sup>251</sup></a>
 The integration of 
 automatic search strategies into programming languages has had a long and
 checkered history.  The first suggestions that nondeterministic algorithms
 might be elegantly encoded in a programming language with search and automatic
-backtracking came from Robert <a href="References.xhtml#Floyd-_00281967_0029">Floyd (1967)</a>.  Carl <a href="References.xhtml#Hewitt-_00281969_0029">Hewitt (1969)</a> invented a
+backtracking came from Robert <a href="References.html#Floyd-_00281967_0029">Floyd (1967)</a>.  Carl <a href="References.html#Hewitt-_00281969_0029">Hewitt (1969)</a> invented a
 programming language called Planner that explicitly supported automatic
 chronological backtracking, providing for a built-in depth-first search
-strategy.  <a href="References.xhtml#Sussman-et-al_002e-_00281971_0029">Sussman et al. (1971)</a> implemented a subset of this
+strategy.  <a href="References.html#Sussman-et-al_002e-_00281971_0029">Sussman et al. (1971)</a> implemented a subset of this
 language, called MicroPlanner, which was used to support work in problem
 solving and robot planning.  Similar ideas, arising from logic and theorem
 proving, led to the genesis in Edinburgh and Marseille of the elegant language
-Prolog (which we will discuss in <a href="4_002e4.xhtml#g_t4_002e4">4.4</a>).  After sufficient
-frustration with automatic search, <a href="References.xhtml#McDermott-and-Sussman-_00281972_0029">McDermott and Sussman (1972)</a> developed a
+Prolog (which we will discuss in <a href="4_002e4.html#g_t4_002e4">4.4</a>).  After sufficient
+frustration with automatic search, <a href="References.html#McDermott-and-Sussman-_00281972_0029">McDermott and Sussman (1972)</a> developed a
 language called Conniver, which included mechanisms for placing the search
-strategy under programmer control.  This proved unwieldy, however, and <a href="References.xhtml#Sussman-and-Stallman-1975">Sussman and Stallman 1975</a> 
+strategy under programmer control.  This proved unwieldy, however, and <a href="References.html#Sussman-and-Stallman-1975">Sussman and Stallman 1975</a> 
 found a more tractable approach while investigating methods
 of symbolic analysis for electrical circuits.  They developed a
 non-chronological backtracking scheme that was based on tracing out the logical
@@ -1462,17 +1462,17 @@ dependencies connecting facts, a technique that has come to be known as
 <a id="index-dependency_002ddirected-backtracking"></a>
 <em>dependency-directed backtracking</em>.  Although their method was complex,
 it produced reasonably efficient programs because it did little redundant
-search.  <a href="References.xhtml#Doyle-_00281979_0029">Doyle (1979)</a> and <a href="References.xhtml#McAllester-_00281978_003b-1980_0029">McAllester (1978; 1980)</a> generalized and clarified the
+search.  <a href="References.html#Doyle-_00281979_0029">Doyle (1979)</a> and <a href="References.html#McAllester-_00281978_003b-1980_0029">McAllester (1978; 1980)</a> generalized and clarified the
 methods of Stallman and Sussman, developing a new paradigm for formulating
 search that is now called <a id="index-truth-maintenance"></a>
 <em>truth maintenance</em>.  Modern problem-solving
 systems all use some form of truth-maintenance system as a substrate.  See
-<a href="References.xhtml#Forbus-and-deKleer-1993">Forbus and deKleer 1993</a> for a discussion of elegant ways to build
+<a href="References.html#Forbus-and-deKleer-1993">Forbus and deKleer 1993</a> for a discussion of elegant ways to build
 truth-maintenance systems and applications using truth maintenance.  
-<a href="References.xhtml#Zabih-et-al_002e-1987">Zabih et al. 1987</a> describes a nondeterministic extension to Scheme
+<a href="References.html#Zabih-et-al_002e-1987">Zabih et al. 1987</a> describes a nondeterministic extension to Scheme
 that is based on <code>amb</code>; it is similar to the interpreter described in this
 section, but more sophisticated, because it uses dependency-directed
-backtracking rather than chronological backtracking.  <a href="References.xhtml#Winston-1992">Winston 1992</a> gives an
+backtracking rather than chronological backtracking.  <a href="References.html#Winston-1992">Winston 1992</a> gives an
 introduction to both kinds of backtracking.</p>
 </div>
 <div id="FOOT252"><p><a class="footnote_backlink" href="#DOCF252"><sup>252</sup></a>
@@ -1514,7 +1514,7 @@ is only a toy as far as real language understanding is concerned.  Real
 natural-language understanding by computer requires an elaborate mixture of
 syntactic analysis and interpretation of meaning.  On the other hand, even toy
 parsers can be useful in supporting flexible command languages for programs
-such as information-retrieval systems.  <a href="References.xhtml#Winston-1992">Winston 1992</a> discusses computational
+such as information-retrieval systems.  <a href="References.html#Winston-1992">Winston 1992</a> discusses computational
 approaches to real language understanding and also the applications of simple
 grammars to command languages.</p>
 </div>
@@ -1528,26 +1528,26 @@ for a way to deal with this.</p>
 </div>
 <div id="FOOT259"><p><a class="footnote_backlink" href="#DOCF259"><sup>259</sup></a>
 We chose to
-implement the lazy evaluator in <a href="4_002e2.xhtml#g_t4_002e2">4.2</a> as a modification of the
-ordinary metacircular evaluator of <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>.  In contrast, we will
+implement the lazy evaluator in <a href="4_002e2.html#g_t4_002e2">4.2</a> as a modification of the
+ordinary metacircular evaluator of <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>.  In contrast, we will
 base the <code>amb</code> evaluator on the analyzing evaluator of 
-<a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>, because the execution procedures in that evaluator provide a
+<a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>, because the execution procedures in that evaluator provide a
 convenient framework for implementing backtracking.</p>
 </div>
 <div id="FOOT260"><p><a class="footnote_backlink" href="#DOCF260"><sup>260</sup></a>
 We assume
-that the evaluator supports <code>let</code> (see <a href="4_002e1.xhtml#Exercise-4_002e22">Exercise 4.22</a>), which we have
+that the evaluator supports <code>let</code> (see <a href="4_002e1.html#Exercise-4_002e22">Exercise 4.22</a>), which we have
 used in our nondeterministic programs.</p>
 </div>
 <div id="FOOT261"><p><a class="footnote_backlink" href="#DOCF261"><sup>261</sup></a>
 We
 didn’t worry about undoing definitions, since we can assume that internal
-definitions are scanned out (<a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a>).</p>
+definitions are scanned out (<a href="4_002e1.html#g_t4_002e1_002e6">4.1.6</a>).</p>
 </div>
 </div>
 <nav class="header">
 <p>
-Next: <a href="4_002e4.xhtml#g_t4_002e4" accesskey="n" rel="next">4.4</a>, Prev: <a href="4_002e2.xhtml#g_t4_002e2" accesskey="p" rel="prev">4.2</a>, Up: <a href="#g_t4_002e3" accesskey="u" rel="prev">4.3</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="4_002e4.html#g_t4_002e4" accesskey="n" rel="next">4.4</a>, Prev: <a href="4_002e2.html#g_t4_002e2" accesskey="p" rel="prev">4.2</a>, Up: <a href="#g_t4_002e3" accesskey="u" rel="prev">4.3</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 
 

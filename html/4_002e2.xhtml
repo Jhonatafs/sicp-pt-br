@@ -10,12 +10,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="Generator" content="texi2any" />
 <meta charset="utf-8" />
-<link href="index.xhtml#Top" rel="start" title="Top" />
-<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
-<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
-<link href="Chapter-4.xhtml#Chapter-4" rel="prev" title="Chapter 4" />
-<link href="4_002e3.xhtml#g_t4_002e3" rel="next" title="4.3" />
-<link href="4_002e1.xhtml#g_t4_002e1_002e7" rel="prev" title="4.1.7" />
+<link href="index.html#Top" rel="start" title="Top" />
+<link href="Term-Index.html#Term-Index" rel="index" title="Term Index" />
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-4.html#Chapter-4" rel="prev" title="Chapter 4" />
+<link href="4_002e3.html#g_t4_002e3" rel="next" title="4.3" />
+<link href="4_002e1.html#g_t4_002e1_002e7" rel="prev" title="4.1.7" />
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/prettify.css" rel="stylesheet" type="text/css" />
@@ -29,7 +29,7 @@
 <section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t4_002e2"></a>
 <nav class="header">
 <p>
-Next: <a href="4_002e3.xhtml#g_t4_002e3" accesskey="n" rel="next">4.3</a>, Prev: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="p" rel="prev">4.1</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="4_002e3.html#g_t4_002e3" accesskey="n" rel="next">4.3</a>, Prev: <a href="4_002e1.html#g_t4_002e1" accesskey="p" rel="prev">4.1</a>, Up: <a href="Chapter-4.html#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 <a id="Variations-on-a-Scheme-_002d_002d_002d-Lazy-Evaluation"></a>
 <h3 class="section"><span class="secnum">4.2</span><span class="sectitle">Variations on a Scheme — Lazy Evaluation</span></h3>
@@ -56,7 +56,7 @@ expressive power.
 <a id="Normal-Order-and-Applicative-Order"></a>
 <h4 class="subsection"><span class="secnum">4.2.1</span><span class="sectitle">Normal Order and Applicative Order</span></h4>
 
-<p>In <a href="1_002e1.xhtml#g_t1_002e1">1.1</a>, where we began our discussion of models of evaluation, we
+<p>In <a href="1_002e1.html#g_t1_002e1">1.1</a>, where we began our discussion of models of evaluation, we
 noted that Scheme is an <a id="index-applicative_002dorder"></a>
 <em>applicative-order</em> language, namely, that all
 the arguments to Scheme procedures are evaluated when the procedure is applied.
@@ -97,7 +97,7 @@ because the argument <code>(/ 1 0)</code> would never be evaluated.
 
 <p>This won’t work in an applicative-order language because both the usual value
 and the exceptional value will be evaluated before <code>unless</code> is called
-(compare <a href="1_002e1.xhtml#Exercise-1_002e6">Exercise 1.6</a>).  An advantage of lazy evaluation is that some
+(compare <a href="1_002e1.html#Exercise-1_002e6">Exercise 1.6</a>).  An advantage of lazy evaluation is that some
 procedures, such as <code>unless</code>, can do useful computation even if evaluation
 of some of their arguments would produce errors or would not terminate.
 </p>
@@ -120,7 +120,7 @@ operating on the resulting data structures, even if the values of the elements
 are not known.  It makes perfect sense, for instance, to compute the length of
 a list without knowing the values of the individual elements in the list.  We
 will exploit this idea in <a href="#g_t4_002e2_002e3">4.2.3</a> to implement the streams of
-<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> as lists formed of non-strict <code>cons</code> pairs.
+<a href="Chapter-3.html#Chapter-3">Chapter 3</a> as lists formed of non-strict <code>cons</code> pairs.
 </p>
 <blockquote>
 <p><strong><a id="Exercise-4_002e25"></a>Exercise 4.25:</strong> Suppose that (in ordinary
@@ -157,7 +157,7 @@ than as a special form.
 <p>In this section we will implement a normal-order language that is the same as
 Scheme except that compound procedures are non-strict in each argument.
 Primitive procedures will still be strict.  It is not difficult to modify the
-evaluator of <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a> so that the language it interprets behaves
+evaluator of <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a> so that the language it interprets behaves
 this way.  Almost all the required changes center around procedure application.
 </p>
 <p>The basic idea is that, when applying a procedure, the interpreter must
@@ -179,7 +179,7 @@ is the value of a predicate of a conditional; and when it is the value of an
 operator that is about to be applied as a procedure.  One design choice we have
 available is whether or not to <a id="index-memoize"></a>
 <em>memoize</em> thunks, as we did with delayed
-objects in <a href="3_002e5.xhtml#g_t3_002e5_002e1">3.5.1</a>.  With memoization, the first time a thunk is
+objects in <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a>.  With memoization, the first time a thunk is
 forced, it stores the value that is computed.  Subsequent forcings simply
 return the stored value without repeating the computation.  We’ll make our
 interpreter memoize, because this is more efficient for many applications.
@@ -188,7 +188,7 @@ There are tricky considerations here, however.<a class="footnote_link" id="DOCF2
 <a id="Modifying-the-evaluator"></a>
 <h5 class="subsubheading">Modifying the evaluator</h5>
 
-<p>The main difference between the lazy evaluator and the one in <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>
+<p>The main difference between the lazy evaluator and the one in <a href="4_002e1.html#g_t4_002e1">4.1</a>
 is in the handling of procedure applications in <code>eval</code> and <code>apply</code>.
 </p>
 <p>The <code>application?</code> clause of <code>eval</code> becomes
@@ -200,7 +200,7 @@ is in the handling of procedure applications in <code>eval</code> and <code>appl
         env</span><span class="clo">))</span></pre></div>
 
 <p>This is almost the same as the <code>application?</code> clause of <code>eval</code> in
-<a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>.  For lazy evaluation, however, we call <code>apply</code> with
+<a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>.  For lazy evaluation, however, we call <code>apply</code> with
 the operand expressions, rather than the arguments produced by evaluating them.
 Since we will need the environment to construct thunks if the arguments are to
 be delayed, we must pass this as well.  We still evaluate the operator, because
@@ -217,7 +217,7 @@ its type (primitive versus compound) and apply it.
 will be forced.
 </p>
 <p>Our new version of <code>apply</code> is also almost the same as the version in
-<a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>.  The difference is that <code>eval</code> has passed in
+<a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>.  The difference is that <code>eval</code> has passed in
 unevaluated operand expressions: For primitive procedures (which are strict),
 we evaluate all the arguments before applying the primitive; for compound
 procedures (which are non-strict) we delay all the arguments before applying
@@ -245,7 +245,7 @@ the procedure.
                      procedure</span><span class="clo">))))</span></pre></div>
 
 <p>The procedures that process the arguments are just like <code>list-of-values</code>
-from <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>, except that <code>list-of-delayed-args</code> delays the
+from <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>, except that <code>list-of-delayed-args</code> delays the
 arguments instead of evaluating them, and <code>list-of-arg-values</code> uses
 <code>actual-value</code> instead of <code>eval</code>:
 </p>
@@ -281,7 +281,7 @@ of the predicate expression before testing whether it is true or false:
       </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-consequent exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)</span><span class="pln">
       </span><span class="opn">(</span><span class="pln">eval </span><span class="opn">(</span><span class="pln">if-alternative exp</span><span class="clo">)</span><span class="pln"> env</span><span class="clo">)))</span></pre></div>
 
-<p>Finally, we must change the <code>driver-loop</code> procedure (<a href="4_002e1.xhtml#g_t4_002e1_002e4">4.1.4</a>)
+<p>Finally, we must change the <code>driver-loop</code> procedure (<a href="4_002e1.html#g_t4_002e1_002e4">4.1.4</a>)
 to use <code>actual-value</code> instead of <code>eval</code>, so that if a delayed value
 is propagated back to the read-eval-print loop, it will be forced before being
 printed.  We also change the prompts to indicate that this is the lazy
@@ -457,7 +457,7 @@ is there only for its effect, such as assigning to a variable or printing),
 there can be no subsequent use of this value (e.g., as an argument to a
 primitive procedure) that will cause it to be forced.  Cy thus thinks that when
 evaluating sequences, we must force all expressions in the sequence except the
-final one.  He proposes to modify <code>eval-sequence</code> from <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>
+final one.  He proposes to modify <code>eval-sequence</code> from <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>
 to use <code>actual-value</code> rather than <code>eval</code>:
 </p>
 <div class="lisp">
@@ -472,7 +472,7 @@ to use <code>actual-value</code> rather than <code>eval</code>:
 
 <ol>
 <li> Ben Bitdiddle thinks Cy is wrong.  He shows Cy the <code>for-each</code> procedure
-described in <a href="2_002e2.xhtml#Exercise-2_002e23">Exercise 2.23</a>, which gives an important example of a
+described in <a href="2_002e2.html#Exercise-2_002e23">Exercise 2.23</a>, which gives an important example of a
 sequence with side effects:
 
 <div class="lisp">
@@ -560,7 +560,7 @@ memoize or not, as appropriate.
 <a id="Streams-as-Lazy-Lists"></a>
 <h4 class="subsection"><span class="secnum">4.2.3</span><span class="sectitle">Streams as Lazy Lists</span></h4>
 
-<p>In <a href="3_002e5.xhtml#g_t3_002e5_002e1">3.5.1</a>, we showed how to implement streams as delayed lists.
+<p>In <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a>, we showed how to implement streams as delayed lists.
 We introduced special forms <code>delay</code> and <code>cons-stream</code>, which allowed
 us to construct a “promise” to compute the <code>cdr</code> of a stream, without
 actually fulfilling that promise until later.  We could use this general
@@ -577,7 +577,7 @@ for special forms or for separate list and stream operations.  All we need to
 do is to arrange matters so that <code>cons</code> is non-strict.  One way to
 accomplish this is to extend the lazy evaluator to allow for non-strict
 primitives, and to implement <code>cons</code> as one of these.  An easier way is to
-recall (<a href="2_002e1.xhtml#g_t2_002e1_002e3">2.1.3</a>) that there is no fundamental need to implement
+recall (<a href="2_002e1.html#g_t2_002e1_002e3">2.1.3</a>) that there is no fundamental need to implement
 <code>cons</code> as a primitive at all.  Instead, we can represent pairs as
 procedures:<a class="footnote_link" id="DOCF244" href="#FOOT244"><sup>244</sup></a>
 </p>
@@ -628,7 +628,7 @@ examples:
 </span><i><span class="lit">18</span></i>
 </pre></div>
 
-<p>Note that these lazy lists are even lazier than the streams of <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>:
+<p>Note that these lazy lists are even lazier than the streams of <a href="Chapter-3.html#Chapter-3">Chapter 3</a>:
 The <code>car</code> of the list, as well as the <code>cdr</code>, is
 delayed.<a class="footnote_link" id="DOCF245" href="#FOOT245"><sup>245</sup></a>  In fact, even accessing the <code>car</code> or
 <code>cdr</code> of a lazy pair need not force the value of a list element.  The
@@ -636,12 +636,12 @@ value will be forced only when it is really needed—e.g., for use as the
 argument of a primitive, or to be printed as an answer.
 </p>
 <p>Lazy pairs also help with the problem that arose with streams in 
-<a href="3_002e5.xhtml#g_t3_002e5_002e4">3.5.4</a>, where we found that formulating stream models of systems with
+<a href="3_002e5.html#g_t3_002e5_002e4">3.5.4</a>, where we found that formulating stream models of systems with
 loops may require us to sprinkle our programs with explicit <code>delay</code>
 operations, beyond the ones supplied by <code>cons-stream</code>.  With lazy
 evaluation, all arguments to procedures are delayed uniformly.  For instance,
 we can implement procedures to integrate lists and solve differential equations
-as we originally intended in <a href="3_002e5.xhtml#g_t3_002e5_002e4">3.5.4</a>:
+as we originally intended in <a href="3_002e5.html#g_t3_002e5_002e4">3.5.4</a>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">integral integrand initial-value dt</span><span class="clo">)</span><span class="pln">
@@ -665,7 +665,7 @@ as we originally intended in <a href="3_002e5.xhtml#g_t3_002e5_002e4">3.5.4</a>:
 
 <blockquote>
 <p><strong><a id="Exercise-4_002e32"></a>Exercise 4.32:</strong> Give some examples that
-illustrate the difference between the streams of <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> and the
+illustrate the difference between the streams of <a href="Chapter-3.html#Chapter-3">Chapter 3</a> and the
 “lazier” lazy lists described in this section.  How can you take advantage of
 this extra laziness?
 </p></blockquote>
@@ -700,7 +700,7 @@ Snarf: “To
 grab, especially a large document or file for the purpose of using it either
 with or without the owner’s permission.”  Snarf down: “To snarf, sometimes
 with the connotation of absorbing, processing, or understanding.”  (These
-definitions were snarfed from <a href="References.xhtml#Steele-et-al_002e-1983">Steele et al. 1983</a>.  See also <a href="References.xhtml#Raymond-1993">Raymond 1993</a>.)</p>
+definitions were snarfed from <a href="References.html#Steele-et-al_002e-1983">Steele et al. 1983</a>.  See also <a href="References.html#Raymond-1993">Raymond 1993</a>.)</p>
 </div>
 <div id="FOOT236"><p><a class="footnote_backlink" href="#DOCF236"><sup>236</sup></a>
 The difference 
@@ -726,13 +726,13 @@ The word <a id="index-thunk"></a>
 informal working group that was discussing the implementation of call-by-name
 in Algol 60.  They observed that most of the analysis of (“thinking about”)
 the expression could be done at compile time; thus, at run time, the expression
-would already have been “thunk” about (<a href="References.xhtml#Ingerman-et-al_002e-1960">Ingerman et al. 1960</a>).</p>
+would already have been “thunk” about (<a href="References.html#Ingerman-et-al_002e-1960">Ingerman et al. 1960</a>).</p>
 </div>
 <div id="FOOT239"><p><a class="footnote_backlink" href="#DOCF239"><sup>239</sup></a>
 This is analogous to the use of <code>force</code> on the
-delayed objects that were introduced in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> to represent streams.
+delayed objects that were introduced in <a href="Chapter-3.html#Chapter-3">Chapter 3</a> to represent streams.
 The critical difference between what we are doing here and what we did in
-<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a> is that we are building delaying and forcing into the
+<a href="Chapter-3.html#Chapter-3">Chapter 3</a> is that we are building delaying and forcing into the
 evaluator, and thus making this uniform and automatic throughout the language.</p>
 </div>
 <div id="FOOT240"><p><a class="footnote_backlink" href="#DOCF240"><sup>240</sup></a>
@@ -744,9 +744,9 @@ argument passing, in contrast to <a id="index-call_002dby_002dname-1"></a>
 (Call-by-name, introduced in Algol 60, is similar to non-memoized lazy
 evaluation.)  As language designers, we can build our evaluator to memoize, not
 to memoize, or leave this an option for programmers (<a href="#Exercise-4_002e31">Exercise 4.31</a>).  As
-you might expect from <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>, these choices raise issues that become
+you might expect from <a href="Chapter-3.html#Chapter-3">Chapter 3</a>, these choices raise issues that become
 both subtle and confusing in the presence of assignments.  (See <a href="#Exercise-4_002e27">Exercise 4.27</a> 
-and <a href="#Exercise-4_002e29">Exercise 4.29</a>.)  An excellent article by <a href="References.xhtml#Clinger-_00281982_0029">Clinger (1982)</a>
+and <a href="#Exercise-4_002e29">Exercise 4.29</a>.)  An excellent article by <a href="References.html#Clinger-_00281982_0029">Clinger (1982)</a>
 attempts to clarify the multiple dimensions of confusion that arise here.</p>
 </div>
 <div id="FOOT241"><p><a class="footnote_backlink" href="#DOCF241"><sup>241</sup></a>
@@ -756,10 +756,10 @@ values returned by the interpreter.  It does help save space, however, because
 removing the reference from the thunk to the <code>env</code> once it is no longer
 needed allows this structure to be <a id="index-garbage_002dcollected"></a>
 <em>garbage-collected</em> and its space
-recycled, as we will discuss in <a href="5_002e3.xhtml#g_t5_002e3">5.3</a>.
+recycled, as we will discuss in <a href="5_002e3.html#g_t5_002e3">5.3</a>.
 </p>
 <p>Similarly, we could have allowed unneeded environments in the memoized delayed
-objects of <a href="3_002e5.xhtml#g_t3_002e5_002e1">3.5.1</a> to be garbage-collected, by having
+objects of <a href="3_002e5.html#g_t3_002e5_002e1">3.5.1</a> to be garbage-collected, by having
 <code>memo-proc</code> do something like <code>(set! proc '())</code> to discard the
 procedure <code>proc</code> (which includes the environment in which the <code>delay</code>
 was evaluated) after storing its value.</p>
@@ -767,7 +767,7 @@ was evaluated) after storing its value.</p>
 <div id="FOOT242"><p><a class="footnote_backlink" href="#DOCF242"><sup>242</sup></a>
 This exercise demonstrates that the interaction between
 lazy evaluation and side effects can be very confusing.  This is just what you
-might expect from the discussion in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>.</p>
+might expect from the discussion in <a href="Chapter-3.html#Chapter-3">Chapter 3</a>.</p>
 </div>
 <div id="FOOT243"><p><a class="footnote_backlink" href="#DOCF243"><sup>243</sup></a>
 This is precisely the issue with the
@@ -775,7 +775,7 @@ This is precisely the issue with the
 </div>
 <div id="FOOT244"><p><a class="footnote_backlink" href="#DOCF244"><sup>244</sup></a>
 This is the procedural representation described in
-<a href="2_002e1.xhtml#Exercise-2_002e4">Exercise 2.4</a>.  Essentially any procedural representation (e.g., a
+<a href="2_002e1.html#Exercise-2_002e4">Exercise 2.4</a>.  Essentially any procedural representation (e.g., a
 message-passing implementation) would do as well.  Notice that we can install
 these definitions in the lazy evaluator simply by typing them at the driver
 loop.  If we had originally included <code>cons</code>, <code>car</code>, and <code>cdr</code> as
@@ -784,13 +784,13 @@ primitives in the global environment, they will be redefined.  (Also see
 </div>
 <div id="FOOT245"><p><a class="footnote_backlink" href="#DOCF245"><sup>245</sup></a>
 This permits us to create delayed versions of more general
-kinds of list structures, not just sequences.  <a href="References.xhtml#Hughes-1990">Hughes 1990</a> discusses some
+kinds of list structures, not just sequences.  <a href="References.html#Hughes-1990">Hughes 1990</a> discusses some
 applications of “lazy trees.”</p>
 </div>
 </div>
 <nav class="header">
 <p>
-Next: <a href="4_002e3.xhtml#g_t4_002e3" accesskey="n" rel="next">4.3</a>, Prev: <a href="4_002e1.xhtml#g_t4_002e1" accesskey="p" rel="prev">4.1</a>, Up: <a href="#g_t4_002e2" accesskey="u" rel="prev">4.2</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="4_002e3.html#g_t4_002e3" accesskey="n" rel="next">4.3</a>, Prev: <a href="4_002e1.html#g_t4_002e1" accesskey="p" rel="prev">4.1</a>, Up: <a href="#g_t4_002e2" accesskey="u" rel="prev">4.2</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 
 

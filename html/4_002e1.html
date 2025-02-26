@@ -2,9 +2,28 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 1.2"
+    />
     <title>
       Estrutura e Interpretação de Programas de Computador, 2ª edição: 4.1
     </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
   </head>
   <body>
     <section>
@@ -16,16 +35,16 @@
       <nav class="header">
         <p>
           Próximo:
-          <a href="4_002e2.xhtml#g_t4_002e2" accesskey="n" rel="next">4.2</a>,
+          <a href="4_002e2.html#g_t4_002e2" accesskey="n" rel="next">4.2</a>,
           Anterior:
-          <a href="Chapter-4.xhtml#Chapter-4" accesskey="p" rel="prev"
+          <a href="Chapter-4.html#Chapter-4" accesskey="p" rel="prev"
             >Capítulo 4</a
           >, Acima:
-          <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev"
+          <a href="Chapter-4.html#Chapter-4" accesskey="u" rel="prev"
             >Capítulo 4</a
           >
           [<a
-            href="index.xhtml#SEC_Contents"
+            href="index.html#SEC_Contents"
             title="Índice"
             accesskey="c"
             rel="contents"
@@ -56,7 +75,7 @@
       <p>
         O avaliador metacircular é essencialmente uma formulação em Scheme do
         modelo de avaliação de ambiente descrito em
-        <a href="3_002e2.xhtml#g_t3_002e2">3.2</a>. Lembre-se de que o modelo
+        <a href="3_002e2.html#g_t3_002e2">3.2</a>. Lembre-se de que o modelo
         tem duas partes básicas:
       </p>
       <ol>
@@ -431,7 +450,7 @@
 
       <p>
         O avaliador é reminiscente do programa de diferenciação simbólica
-        discutido em <a href="2_002e3.xhtml#g_t2_002e3_002e2">2.3.2</a>. Ambos
+        discutido em <a href="2_002e3.html#g_t2_002e3_002e2">2.3.2</a>. Ambos
         os programas operam em expressões simbólicas. Em ambos os programas, o
         resultado de operar em uma expressão composta é determinado operando
         recursivamente nas partes da expressão e combinando os resultados de uma
@@ -740,7 +759,7 @@
           <strong><a id="Exercise-4_002e3"></a>Exercício 4.3:</strong> Reescreva
           <code>eval</code> para que o despacho seja feito de forma dirigida por
           dados. Compare isso com o procedimento de diferenciação dirigido por
-          dados de <a href="2_002e4.xhtml#Exercise-2_002e73">Exercício 2.73</a>.
+          dados de <a href="2_002e4.html#Exercise-2_002e73">Exercício 2.73</a>.
           (Você pode usar o <code>car</code> de uma expressão composta como o
           tipo da expressão, como é apropriado para a sintaxe implementada nesta
           seção.)
@@ -751,7 +770,7 @@
         <p>
           <strong><a id="Exercise-4_002e4"></a>Exercício 4.4:</strong> Lembre-se
           das definições das formas especiais <code>and</code> e
-          <code>or</code> do <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>:
+          <code>or</code> do <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>:
         </p>
         <ul>
           <li>
@@ -874,7 +893,7 @@
           Assim, pode-se executar repetidamente o <code>⟨</code><var>body</var
           ><code>⟩</code> invocando o procedimento nomeado <code>⟨</code
           ><var>var</var><code>⟩</code>. Por exemplo, o procedimento iterativo
-          de Fibonacci (<a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>) pode
+          de Fibonacci (<a href="1_002e2.html#g_t1_002e2_002e2">1.2.2</a>) pode
           ser reescrito usando named <code>let</code> da seguinte forma:
         </p>
         <pre><code class="language-scheme">(define (fib n)
@@ -997,7 +1016,7 @@
 
       <p>
         O avaliador precisa de operações para manipular ambientes. Como
-        explicado em <a href="3_002e2.xhtml#g_t3_002e2">3.2</a>, um ambiente é
+        explicado em <a href="3_002e2.html#g_t3_002e2">3.2</a>, um ambiente é
         uma sequência de quadros, onde cada quadro é uma tabela de ligações que
         associam variáveis a seus valores correspondentes. Usamos as seguintes
         operações para manipular ambientes:
@@ -1620,12 +1639,12 @@ ok
       <div id="FOOT213">
         <p>
           <a class="footnote_backlink" href="#DOCF213"><sup>213</sup></a> Como
-          mencionado em <a href="2_002e3.xhtml#g_t2_002e3_002e1">2.3.1</a>, o
+          mencionado em <a href="2_002e3.html#g_t2_002e3_002e1">2.3.1</a>, o
           avaliador vê uma expressão entre aspas como uma lista começando com
           <code>quote</code>, mesmo que a expressão seja digitada com a marca de
           aspas. Por exemplo, a expressão <code>'a</code> seria vista pelo
           avaliador como <code>(quote a)</code>. Veja
-          <a href="2_002e3.xhtml#Exercise-2_002e55">Exercício 2.55</a>.
+          <a href="2_002e3.html#Exercise-2_002e55">Exercício 2.55</a>.
         </p>
       </div>
       <div id="FOOT214">
@@ -1645,7 +1664,7 @@ ok
           lista de operandos — não são destinados a uma abstração de dados. Eles
           são introduzidos como nomes mnemônicos para as operações básicas de
           lista, a fim de facilitar a compreensão do avaliador de controle
-          explícito em <a href="5_002e4.xhtml#g_t5_002e4">5.4</a>.
+          explícito em <a href="5_002e4.html#g_t5_002e4">5.4</a>.
         </p>
       </div>
       <div id="FOOT216">
@@ -1668,10 +1687,10 @@ ok
           problemas sutis de conflito de nomes. Houve muita pesquisa sobre
           mecanismos para definição de macros que não causam essas dificuldades.
           Veja, por exemplo,
-          <a href="References.xhtml#Kohlbecker-1986">Kohlbecker 1986</a>,
-          <a href="References.xhtml#Clinger-and-Rees-1991"
+          <a href="References.html#Kohlbecker-1986">Kohlbecker 1986</a>,
+          <a href="References.html#Clinger-and-Rees-1991"
             >Clinger e Rees 1991</a
-          >, e <a href="References.xhtml#Hanson-1991">Hanson 1991</a>.
+          >, e <a href="References.html#Hanson-1991">Hanson 1991</a>.
         </p>
       </div>
       <div id="FOOT218">
@@ -1694,7 +1713,7 @@ ok
           <a id="index-deep-binding"></a> <em>deep binding</em>.) Uma maneira de
           evitar essa ineficiência é usar uma estratégia chamada
           <a id="index-lexical-addressing"></a> <em>lexical addressing</em>, que
-          será discutida em <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a>.
+          será discutida em <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a>.
         </p>
       </div>
       <div id="FOOT220">
@@ -1779,7 +1798,7 @@ ok
           também fez contribuições fundamentais para a ciência da computação
           prática. Por exemplo, ele inventou a ideia de estruturar programas
           usando sub-rotinas de propósito geral. Veja
-          <a href="References.xhtml#Hodges-1983">Hodges 1983</a> para uma
+          <a href="References.html#Hodges-1983">Hodges 1983</a> para uma
           biografia de Turing.
         </p>
       </div>
@@ -1794,7 +1813,7 @@ ok
           <em>Teoria da recursão</em>, um ramo da lógica matemática, está
           preocupado com os limites lógicos da computação. O belo livro de
           Douglas Hofstadter, <cite>Gödel, Escher, Bach</cite>, explora algumas
-          dessas ideias (<a href="References.xhtml#Hofstadter-1979"
+          dessas ideias (<a href="References.html#Hofstadter-1979"
             >Hofstadter 1979</a
           >).
         </p>
@@ -1844,15 +1863,15 @@ ok
           <a class="footnote_backlink" href="#DOCF228"><sup>228</sup></a> O
           desejo de que os programas não dependam desse mecanismo de avaliação é
           a razão para a observação “a administração não é responsável” em
-          <a href="1_002e1.xhtml#Footnote-28">Nota de rodapé 28</a> de
-          <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>. Ao insistir que as
+          <a href="1_002e1.html#Footnote-28">Nota de rodapé 28</a> de
+          <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>. Ao insistir que as
           definições internas venham primeiro e não se usem mutuamente enquanto
           as definições estão sendo avaliadas, o padrão <abbr>IEEE</abbr> para
           Scheme deixa aos implementadores alguma escolha no mecanismo usado
           para avaliar essas definições. A escolha de uma regra de avaliação em
           vez de outra aqui pode parecer uma questão pequena, afetando apenas a
           interpretação de programas “mal formados”. No entanto, veremos em
-          <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a> que mudar para um
+          <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a> que mudar para um
           modelo de escopo simultâneo para definições internas evita algumas
           dificuldades desagradáveis que surgiriam de outra forma na
           implementação de um compilador.
@@ -1892,9 +1911,9 @@ ok
           </math>
           <a id="index-operator-1"></a> <em>operador</em>, que pode ser usado
           para dar uma implementação de recursão “pura λ-cálculo”. (Veja
-          <a href="References.xhtml#Stoy-1977">Stoy 1977</a> para detalhes sobre
+          <a href="References.html#Stoy-1977">Stoy 1977</a> para detalhes sobre
           o λ-cálculo, e
-          <a href="References.xhtml#Gabriel-1988">Gabriel 1988</a> para uma
+          <a href="References.html#Gabriel-1988">Gabriel 1988</a> para uma
           exposição do operador
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mi>Y</mi>
@@ -1906,14 +1925,14 @@ ok
         <p>
           <a class="footnote_backlink" href="#DOCF232"><sup>232</sup></a> Esta
           técnica é uma parte integral do processo de compilação, que
-          discutiremos em <a href="Chapter-5.xhtml#Chapter-5">Capítulo 5</a>.
+          discutiremos em <a href="Chapter-5.html#Chapter-5">Capítulo 5</a>.
           Jonathan Rees escreveu um interpretador Scheme assim por volta de 1982
-          para o projeto T (<a href="References.xhtml#Rees-and-Adams-1982"
+          para o projeto T (<a href="References.html#Rees-and-Adams-1982"
             >Rees e Adams 1982</a
           >). Marc
-          <a href="References.xhtml#Feeley-_00281986_0029">Feeley (1986)</a>
+          <a href="References.html#Feeley-_00281986_0029">Feeley (1986)</a>
           (veja também
-          <a href="References.xhtml#Feeley-and-Lapalme-1987"
+          <a href="References.html#Feeley-and-Lapalme-1987"
             >Feeley e Lapalme 1987</a
           >) inventou independentemente essa técnica em sua tese de mestrado.
         </p>
@@ -1923,7 +1942,7 @@ ok
           <a class="footnote_backlink" href="#DOCF233"><sup>233</sup></a> Há, no
           entanto, uma parte importante da busca de variáveis que
           <em>pode</em> ser feita como parte da análise sintática. Como
-          mostraremos em <a href="5_002e5.xhtml#g_t5_002e5_002e6">5.5.6</a>,
+          mostraremos em <a href="5_002e5.html#g_t5_002e5_002e6">5.5.6</a>,
           pode-se determinar a posição na estrutura do ambiente onde o valor da
           variável será encontrado, eliminando a necessidade de escanear o
           ambiente para a entrada que corresponde à variável.
@@ -1939,12 +1958,12 @@ ok
       <nav class="header">
         <p>
           Próximo:
-          <a href="4_002e2.xhtml#g_t4_002e2" accesskey="n" rel="next">4.2</a>,
+          <a href="4_002e2.html#g_t4_002e2" accesskey="n" rel="next">4.2</a>,
           Anterior:
-          <a href="Chapter-4.xhtml#Chapter-4" accesskey="p" rel="prev"
+          <a href="Chapter-4.html#Chapter-4" accesskey="p" rel="prev"
             >Capítulo 4</a
           >, Acima: <a href="#g_t4_002e1" accesskey="u" rel="prev">4.1</a> [<a
-            href="index.xhtml#SEC_Contents"
+            href="index.html#SEC_Contents"
             title="Índice"
             accesskey="c"
             rel="contents"

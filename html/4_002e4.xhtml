@@ -10,12 +10,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="Generator" content="texi2any" />
 <meta charset="utf-8" />
-<link href="index.xhtml#Top" rel="start" title="Top" />
-<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
-<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
-<link href="Chapter-4.xhtml#Chapter-4" rel="prev" title="Chapter 4" />
-<link href="Chapter-5.xhtml#Chapter-5" rel="next" title="Chapter 5" />
-<link href="4_002e3.xhtml#g_t4_002e3_002e3" rel="prev" title="4.3.3" />
+<link href="index.html#Top" rel="start" title="Top" />
+<link href="Term-Index.html#Term-Index" rel="index" title="Term Index" />
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-4.html#Chapter-4" rel="prev" title="Chapter 4" />
+<link href="Chapter-5.html#Chapter-5" rel="next" title="Chapter 5" />
+<link href="4_002e3.html#g_t4_002e3_002e3" rel="prev" title="4.3.3" />
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/prettify.css" rel="stylesheet" type="text/css" />
@@ -29,12 +29,12 @@
 <section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t4_002e4"></a>
 <nav class="header">
 <p>
-Next: <a href="Chapter-5.xhtml#Chapter-5" accesskey="n" rel="next">Chapter 5</a>, Prev: <a href="4_002e3.xhtml#g_t4_002e3" accesskey="p" rel="prev">4.3</a>, Up: <a href="Chapter-4.xhtml#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="Chapter-5.html#Chapter-5" accesskey="n" rel="next">Chapter 5</a>, Prev: <a href="4_002e3.html#g_t4_002e3" accesskey="p" rel="prev">4.3</a>, Up: <a href="Chapter-4.html#Chapter-4" accesskey="u" rel="prev">Chapter 4</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 <a id="Logic-Programming"></a>
 <h3 class="section"><span class="secnum">4.4</span><span class="sectitle">Logic Programming</span></h3>
 
-<p>In <a href="Chapter-1.xhtml#Chapter-1">Chapter 1</a> we stressed that computer science deals with imperative (how
+<p>In <a href="Chapter-1.html#Chapter-1">Chapter 1</a> we stressed that computer science deals with imperative (how
 to) knowledge, whereas mathematics deals with declarative (what is) knowledge.
 Indeed, programming languages require that the programmer express knowledge in
 a form that indicates the step-by-step methods for solving particular problems.
@@ -50,7 +50,7 @@ the value of a function may also be interpreted as a means of computing that
 value.  Because of this, most programming languages are strongly biased toward
 unidirectional computations (computations with well-defined inputs and
 outputs).  There are, however, radically different programming languages that
-relax this bias.  We saw one such example in <a href="3_002e3.xhtml#g_t3_002e3_002e5">3.3.5</a>, where the
+relax this bias.  We saw one such example in <a href="3_002e3.html#g_t3_002e3_002e5">3.3.5</a>, where the
 objects of computation were arithmetic constraints.  In a constraint system the
 direction and the order of computation are not so well specified; in carrying
 out a computation the system must therefore provide more detailed “how to”
@@ -61,7 +61,7 @@ networks that implement the same set of constraints, and the user must choose
 from the set of mathematically equivalent networks a suitable network to
 specify a particular computation.
 </p>
-<p>The nondeterministic program evaluator of <a href="4_002e3.xhtml#g_t4_002e3">4.3</a> also moves away
+<p>The nondeterministic program evaluator of <a href="4_002e3.html#g_t4_002e3">4.3</a> also moves away
 from the view that programming is about constructing algorithms for computing
 unidirectional functions.  In a nondeterministic language, expressions can have
 more than one value, and, as a result, the computation is dealing with
@@ -76,7 +76,7 @@ used to solve a number of different problems that would have different “how
 to” components.  As an example, consider the <code>append</code> operation, which
 takes two lists as arguments and combines their elements to form a single list.
 In a procedural language such as Lisp, we could define <code>append</code> in terms
-of the basic list constructor <code>cons</code>, as we did in <a href="2_002e2.xhtml#g_t2_002e2_002e1">2.2.1</a>:
+of the basic list constructor <code>cons</code>, as we did in <a href="2_002e2.html#g_t2_002e2_002e1">2.2.1</a>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">append x y</span><span class="clo">)</span><span class="pln">
@@ -144,7 +144,7 @@ elements and means of abstraction that enable us to regard complex elements as
 single conceptual units.  An interpreter for a logic programming language is
 considerably more complex than an interpreter for a language like Lisp.
 Nevertheless, we will see that our query-language interpreter contains many of
-the same elements found in the interpreter of <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>.  In
+the same elements found in the interpreter of <a href="4_002e1.html#g_t4_002e1">4.1</a>.  In
 particular, there will be an “eval” part that classifies expressions
 according to type and an “apply” part that implements the language’s
 abstraction mechanism (procedures in the case of Lisp, and <a id="index-rules"></a>
@@ -153,7 +153,7 @@ the case of logic programming).  Also, a central role is played in the
 implementation by a frame data structure, which determines the correspondence
 between symbols and their associated values.  One additional interesting aspect
 of our query-language implementation is that we make substantial use of
-streams, which were introduced in <a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>.
+streams, which were introduced in <a href="Chapter-3.html#Chapter-3">Chapter 3</a>.
 </p>
 
 <a id="g_t4_002e4_002e1"></a>
@@ -908,7 +908,7 @@ cases, as we will see in <a href="#g_t4_002e4_002e3">4.4.3</a>.
 
 <blockquote>
 <p><strong><a id="Exercise-4_002e62"></a>Exercise 4.62:</strong> Define rules to implement the
-<code>last-pair</code> operation of <a href="2_002e2.xhtml#Exercise-2_002e17">Exercise 2.17</a>, which returns a list
+<code>last-pair</code> operation of <a href="2_002e2.html#Exercise-2_002e17">Exercise 2.17</a>, which returns a list
 containing the last element of a nonempty list.  Check your rules on queries
 such as <code>(last-pair (3) ?x)</code>, <code>(last-pair (1 2 3) ?x)</code> and
 <code>(last-pair (2 ?x) (3))</code>.  Do your rules work correctly on queries such as
@@ -976,7 +976,7 @@ from the operations of mathematical logic.
 <p>It should be apparent that the query evaluator must perform some kind of search
 in order to match queries against facts and rules in the data base.  One way to
 do this would be to implement the query system as a nondeterministic program,
-using the <code>amb</code> evaluator of <a href="4_002e3.xhtml#g_t4_002e3">4.3</a> (see <a href="#Exercise-4_002e78">Exercise 4.78</a>).
+using the <code>amb</code> evaluator of <a href="4_002e3.html#g_t4_002e3">4.3</a> (see <a href="#Exercise-4_002e78">Exercise 4.78</a>).
 Another possibility is to manage the search with the aid of streams.  Our
 implementation follows this second approach.
 </p>
@@ -990,7 +990,7 @@ simple and compound queries.  We next discuss unification, a generalization of
 pattern matching needed to implement rules.  Finally, we show how the entire
 query interpreter fits together through a procedure that classifies expressions
 in a manner analogous to the way <code>eval</code> classifies expressions for the
-interpreter described in <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>.
+interpreter described in <a href="4_002e1.html#g_t4_002e1">4.1</a>.
 </p>
 <a id="Pattern-matching"></a>
 <h5 class="subsubheading">Pattern matching</h5>
@@ -1626,7 +1626,7 @@ modify the system to include your loop detector.)
 
 <blockquote>
 <p><strong><a id="Exercise-4_002e68"></a>Exercise 4.68:</strong> Define rules to implement the
-<code>reverse</code> operation of <a href="2_002e2.xhtml#Exercise-2_002e18">Exercise 2.18</a>, which returns a list
+<code>reverse</code> operation of <a href="2_002e2.html#Exercise-2_002e18">Exercise 2.18</a>, which returns a list
 containing the same elements as a given list in reverse order.  (Hint: Use
 <code>append-to-form</code>.)  Can your rules answer both <code>(reverse (1 2 3) ?x)</code>
 and <code>(reverse ?x (1 2 3))</code>?
@@ -1747,7 +1747,7 @@ is given by a procedural argument to <code>instantiate</code>.
 basic evaluator of the query system.  It takes as inputs a query and a stream
 of frames, and it returns a stream of extended frames.  It identifies special
 forms by a data-directed dispatch using <code>get</code> and <code>put</code>, just as we
-did in implementing generic operations in <a href="Chapter-2.xhtml#Chapter-2">Chapter 2</a>.  Any query that is
+did in implementing generic operations in <a href="Chapter-2.html#Chapter-2">Chapter 2</a>.  Any query that is
 not identified as a special form is assumed to be a simple query, to be
 processed by <code>simple-query</code>.
 </p>
@@ -2014,7 +2014,7 @@ defined in <a href="#g_t4_002e4_002e4_002e8">4.4.4.8</a>.
 <p>If a pattern contains a dot followed by a pattern variable, the pattern
 variable matches the rest of the data list (rather than the next element of the
 data list), just as one would expect with the dotted-tail notation described in
-<a href="2_002e2.xhtml#Exercise-2_002e20">Exercise 2.20</a>.  Although the pattern matcher we have just implemented
+<a href="2_002e2.html#Exercise-2_002e20">Exercise 2.20</a>.  Although the pattern matcher we have just implemented
 doesn’t look for dots, it does behave as we want.  This is because the Lisp
 <code>read</code> primitive, which is used by <code>query-driver-loop</code> to read the
 query and represent it as a list structure, treats dots in a special way.
@@ -2371,7 +2371,7 @@ pattern starts with a constant symbol.
 <code>let</code> bindings in the procedures <code>add-assertion!</code> and
 <code>add-rule!</code>?  What would be wrong with the following implementation of
 <code>add-assertion!</code>?  Hint: Recall the definition of the infinite stream of
-ones in <a href="3_002e5.xhtml#g_t3_002e5_002e2">3.5.2</a>: <code>(define ones (cons-stream 1 ones))</code>.
+ones in <a href="3_002e5.html#g_t3_002e5_002e2">3.5.2</a>: <code>(define ones (cons-stream 1 ones))</code>.
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">add-assertion! assertion</span><span class="clo">)</span><span class="pln">
@@ -2387,12 +2387,12 @@ ones in <a href="3_002e5.xhtml#g_t3_002e5_002e2">3.5.2</a>: <code>(define ones (
 <h5 class="subsubsection"><span class="secnum">4.4.4.6</span><span class="sectitle">Stream Operations</span></h5>
 
 <p>The query system uses a few stream operations that were not presented in
-<a href="Chapter-3.xhtml#Chapter-3">Chapter 3</a>.
+<a href="Chapter-3.html#Chapter-3">Chapter 3</a>.
 </p>
 <p><code>Stream-append-delayed</code> and <code>interleave-delayed</code> are just like
-<code>stream-append</code> and <code>interleave</code> (<a href="3_002e5.xhtml#g_t3_002e5_002e3">3.5.3</a>), except that
+<code>stream-append</code> and <code>interleave</code> (<a href="3_002e5.html#g_t3_002e5_002e3">3.5.3</a>), except that
 they take a delayed argument (like the <code>integral</code> procedure in 
-<a href="3_002e5.xhtml#g_t3_002e5_002e4">3.5.4</a>).  This postpones looping in some cases (see <a href="#Exercise-4_002e71">Exercise 4.71</a>).
+<a href="3_002e5.html#g_t3_002e5_002e4">3.5.4</a>).  This postpones looping in some cases (see <a href="#Exercise-4_002e71">Exercise 4.71</a>).
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">stream-append-delayed s1 delayed-s2</span><span class="clo">)</span><span class="pln">
@@ -2415,7 +2415,7 @@ they take a delayed argument (like the <code>integral</code> procedure in
 <p><code>Stream-flatmap</code>, which is used throughout the query evaluator to map a
 procedure over a stream of frames and combine the resulting streams of frames,
 is the stream analog of the <code>flatmap</code> procedure introduced for ordinary
-lists in <a href="2_002e2.xhtml#g_t2_002e2_002e3">2.2.3</a>.  Unlike ordinary <code>flatmap</code>, however, we
+lists in <a href="2_002e2.html#g_t2_002e2_002e3">2.2.3</a>.  Unlike ordinary <code>flatmap</code>, however, we
 accumulate the streams with an interleaving process, rather than simply
 appending them (see <a href="#Exercise-4_002e72">Exercise 4.72</a> and <a href="#Exercise-4_002e73">Exercise 4.73</a>).
 </p>
@@ -2445,7 +2445,7 @@ consisting of a single element:
 <p><code>Type</code> and <code>contents</code>, used by <code>qeval</code> (<a href="#g_t4_002e4_002e4_002e2">4.4.4.2</a>),
 specify that a special form is identified by the symbol in its <code>car</code>.
 They are the same as the <code>type-tag</code> and <code>contents</code> procedures in
-<a href="2_002e4.xhtml#g_t2_002e4_002e2">2.4.2</a>, except for the error message.
+<a href="2_002e4.html#g_t2_002e4_002e2">2.4.2</a>, except for the error message.
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">type exp</span><span class="clo">)</span><span class="pln">
@@ -2627,7 +2627,7 @@ undesirable behavior?
 <p><strong><a id="Exercise-4_002e72"></a>Exercise 4.72:</strong> Why do <code>disjoin</code> and
 <code>stream-flatmap</code> interleave the streams rather than simply append them?
 Give examples that illustrate why interleaving works better.  (Hint: Why did we
-use <code>interleave</code> in <a href="3_002e5.xhtml#g_t3_002e5_002e3">3.5.3</a>?)
+use <code>interleave</code> in <a href="3_002e5.html#g_t3_002e5_002e3">3.5.3</a>?)
 </p></blockquote>
 
 <blockquote>
@@ -2811,7 +2811,7 @@ number of intermediate frames generated.
 <blockquote>
 <p><strong><a id="Exercise-4_002e78"></a>Exercise 4.78:</strong> Redesign the query language as a
 nondeterministic program to be implemented using the evaluator of 
-<a href="4_002e3.xhtml#g_t4_002e3">4.3</a>, rather than as a stream process.  In this approach, each query will
+<a href="4_002e3.html#g_t4_002e3">4.3</a>, rather than as a stream process.  In this approach, each query will
 produce a single answer (rather than the stream of all answers) and the user
 can type <code>try-again</code> to see more answers.  You should find that much of
 the mechanism we built in this section is subsumed by nondeterministic search
@@ -2822,7 +2822,7 @@ you find examples that illustrate this difference?
 
 <blockquote>
 <p><strong><a id="Exercise-4_002e79"></a>Exercise 4.79:</strong> When we implemented the Lisp
-evaluator in <a href="4_002e1.xhtml#g_t4_002e1">4.1</a>, we saw how to use local environments to avoid
+evaluator in <a href="4_002e1.html#g_t4_002e1">4.1</a>, we saw how to use local environments to avoid
 name conflicts between the parameters of procedures.  For example, in
 evaluating
 </p>
@@ -2873,18 +2873,18 @@ breakthrough that made such a search plausible was the discovery in the early
 1960s of the <a id="index-unification-algorithm"></a>
 <em>unification algorithm</em> and the <a id="index-resolution-principle"></a>
 <em>resolution principle</em> 
-(<a href="References.xhtml#Robinson-1965">Robinson 1965</a>).  Resolution was used, for example, by 
-<a href="References.xhtml#Green-and-Raphael-_00281968_0029">Green and Raphael (1968)</a> (see also <a href="References.xhtml#Green-1969">Green 1969</a>) as the basis for a deductive
+(<a href="References.html#Robinson-1965">Robinson 1965</a>).  Resolution was used, for example, by 
+<a href="References.html#Green-and-Raphael-_00281968_0029">Green and Raphael (1968)</a> (see also <a href="References.html#Green-1969">Green 1969</a>) as the basis for a deductive
 question-answering system.  During most of this period, researchers
 concentrated on algorithms that are guaranteed to find a proof if one exists.
 Such algorithms were difficult to control and to direct toward a proof.  
-<a href="References.xhtml#Hewitt-_00281969_0029">Hewitt (1969)</a> recognized the possibility of merging the control structure of a
+<a href="References.html#Hewitt-_00281969_0029">Hewitt (1969)</a> recognized the possibility of merging the control structure of a
 programming language with the operations of a logic-manipulation system,
-leading to the work in automatic search mentioned in <a href="4_002e3.xhtml#g_t4_002e3_002e1">4.3.1</a>
-(<a href="4_002e3.xhtml#Footnote-250">Footnote 250</a>).  At the same time that this was being done,
+leading to the work in automatic search mentioned in <a href="4_002e3.html#g_t4_002e3_002e1">4.3.1</a>
+(<a href="4_002e3.html#Footnote-250">Footnote 250</a>).  At the same time that this was being done,
 Colmerauer, in Marseille, was developing rule-based systems for manipulating
-natural language (see <a href="References.xhtml#Colmerauer-et-al_002e-1973">Colmerauer et al. 1973</a>).  He invented a programming
-language called Prolog for representing those rules.  <a href="References.xhtml#Kowalski-_00281973_003b-1979_0029">Kowalski (1973; 1979)</a>, in
+natural language (see <a href="References.html#Colmerauer-et-al_002e-1973">Colmerauer et al. 1973</a>).  He invented a programming
+language called Prolog for representing those rules.  <a href="References.html#Kowalski-_00281973_003b-1979_0029">Kowalski (1973; 1979)</a>, in
 Edinburgh, recognized that execution of a Prolog program could be interpreted
 as proving theorems (using a proof technique called linear Horn-clause
 resolution).  The merging of the last two strands led to the logic-programming
@@ -2894,7 +2894,7 @@ the British can highlight the work at the University of Edinburgh.  According
 to people at <abbr>MIT</abbr>, logic programming was developed by these groups in
 an attempt to figure out what Hewitt was talking about in his brilliant but
 impenetrable Ph.D. thesis.  For a history of logic programming, see 
-<a href="References.xhtml#Robinson-1983">Robinson 1983</a>.</p>
+<a href="References.html#Robinson-1983">Robinson 1983</a>.</p>
 </div>
 <div id="FOOT263"><p><a class="footnote_backlink" href="#DOCF263"><sup>263</sup></a>
 To see the correspondence between the
@@ -2930,15 +2930,15 @@ such computers was to be measured in LIPS (Logical Inferences Per Second)
 rather than the usual FLOPS (FLoating-point Operations Per Second).  Although
 the project succeeded in developing hardware and software as originally
 planned, the international computer industry moved in a different direction.
-See <a href="References.xhtml#Feigenbaum-and-Shrobe-1993">Feigenbaum and Shrobe 1993</a> for an overview evaluation of the Japanese
+See <a href="References.html#Feigenbaum-and-Shrobe-1993">Feigenbaum and Shrobe 1993</a> for an overview evaluation of the Japanese
 project.  The logic programming community has also moved on to consider
 relational programming based on techniques other than simple pattern matching,
 such as the ability to deal with numerical constraints such as the ones
-illustrated in the constraint-propagation system of <a href="3_002e3.xhtml#g_t3_002e3_002e5">3.3.5</a>.</p>
+illustrated in the constraint-propagation system of <a href="3_002e3.html#g_t3_002e3_002e5">3.3.5</a>.</p>
 </div>
 <div id="FOOT266"><p><a class="footnote_backlink" href="#DOCF266"><sup>266</sup></a>
 This uses the dotted-tail notation
-introduced in <a href="2_002e2.xhtml#Exercise-2_002e20">Exercise 2.20</a>.</p>
+introduced in <a href="2_002e2.html#Exercise-2_002e20">Exercise 2.20</a>.</p>
 </div>
 <div id="FOOT267"><p><a class="footnote_backlink" href="#DOCF267"><sup>267</sup></a>
 Actually, this description of <code>not</code> is valid
@@ -3064,7 +3064,7 @@ enumerate all the proofs derivable from our assertions and our rules in a
 breadth-first rather than a depth-first order.  However, such a system makes it
 more difficult to take advantage of the order of deductions in our programs.
 One attempt to build sophisticated control into such a program is described in
-<a href="References.xhtml#deKleer-et-al_002e-1977">deKleer et al. 1977</a>.  Another technique, which does not lead to such serious
+<a href="References.html#deKleer-et-al_002e-1977">deKleer et al. 1977</a>.  Another technique, which does not lead to such serious
 control problems, is to put in special knowledge, such as detectors for
 particular kinds of loops (<a href="#Exercise-4_002e67">Exercise 4.67</a>).  However, there can be no
 general scheme for reliably preventing a system from going down infinite paths
@@ -3103,7 +3103,7 @@ used to instantiate the input query to produce <code>(not (baseball-fan
 <div id="FOOT283"><p><a class="footnote_backlink" href="#DOCF283"><sup>283</sup></a>
 A discussion
 and justification of this treatment of <code>not</code> can be found in the article
-by <a href="References.xhtml#Clark-_00281978_0029">Clark (1978)</a>.</p>
+by <a href="References.html#Clark-_00281978_0029">Clark (1978)</a>.</p>
 </div>
 <div id="FOOT284"><p><a class="footnote_backlink" href="#DOCF284"><sup>284</sup></a>
 In general, unifying <code>?y</code> with an
@@ -3339,7 +3339,7 @@ procedures with <code>string</code> in their names.  These are Scheme primitives
 </div>
 <nav class="header">
 <p>
-Next: <a href="Chapter-5.xhtml#Chapter-5" accesskey="n" rel="next">Chapter 5</a>, Prev: <a href="4_002e3.xhtml#g_t4_002e3" accesskey="p" rel="prev">4.3</a>, Up: <a href="#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="Chapter-5.html#Chapter-5" accesskey="n" rel="next">Chapter 5</a>, Prev: <a href="4_002e3.html#g_t4_002e3" accesskey="p" rel="prev">4.3</a>, Up: <a href="#g_t4_002e4_002e4" accesskey="u" rel="prev">4.4.4</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 
 

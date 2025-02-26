@@ -10,12 +10,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="Generator" content="texi2any" />
 <meta charset="utf-8" />
-<link href="index.xhtml#Top" rel="start" title="Top" />
-<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
-<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
-<link href="Chapter-5.xhtml#Chapter-5" rel="prev" title="Chapter 5" />
-<link href="References.xhtml#References" rel="next" title="References" />
-<link href="5_002e4.xhtml#g_t5_002e4_002e4" rel="prev" title="5.4.4" />
+<link href="index.html#Top" rel="start" title="Top" />
+<link href="Term-Index.html#Term-Index" rel="index" title="Term Index" />
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-5.html#Chapter-5" rel="prev" title="Chapter 5" />
+<link href="References.html#References" rel="next" title="References" />
+<link href="5_002e4.html#g_t5_002e4_002e4" rel="prev" title="5.4.4" />
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/prettify.css" rel="stylesheet" type="text/css" />
@@ -29,12 +29,12 @@
 <section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t5_002e5"></a>
 <nav class="header">
 <p>
-Next: <a href="References.xhtml#References" accesskey="n" rel="next">References</a>, Prev: <a href="5_002e4.xhtml#g_t5_002e4" accesskey="p" rel="prev">5.4</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="References.html#References" accesskey="n" rel="next">References</a>, Prev: <a href="5_002e4.html#g_t5_002e4" accesskey="p" rel="prev">5.4</a>, Up: <a href="Chapter-5.html#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 <a id="Compilation"></a>
 <h3 class="section"><span class="secnum">5.5</span><span class="sectitle">Compilation</span></h3>
 
-<p>The explicit-control evaluator of <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> is a register machine whose
+<p>The explicit-control evaluator of <a href="5_002e4.html#g_t5_002e4">5.4</a> is a register machine whose
 controller interprets Scheme programs.  In this section we will see how to run
 Scheme programs on a register machine whose controller is not a Scheme
 interpreter.
@@ -136,7 +136,7 @@ the argument list, and apply the procedure (in <code>proc</code>) to the argumen
 (in <code>argl</code>).
 </p>
 <p>This is the same kind of optimization we implemented in the analyzing evaluator
-of <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>.  But there are further opportunities to gain efficiency
+of <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>.  But there are further opportunities to gain efficiency
 in compiled code.  As the interpreter runs, it follows a process that must be
 applicable to any expression in the language.  In contrast, a given segment of
 compiled code is meant to execute some particular expression.  This can make a
@@ -187,7 +187,7 @@ simplified (but still interesting) context.
 <a id="Structure-of-the-Compiler"></a>
 <h4 class="subsection"><span class="secnum">5.5.1</span><span class="sectitle">Structure of the Compiler</span></h4>
 
-<p>In <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a> we modified our original metacircular interpreter to
+<p>In <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a> we modified our original metacircular interpreter to
 separate analysis from execution.  We analyzed each expression to produce an
 execution procedure that took an environment as argument and performed the
 required operations.  In our compiler, we will do essentially the same
@@ -195,11 +195,11 @@ analysis.  Instead of producing execution procedures, however, we will generate
 sequences of instructions to be run by our register machine.
 </p>
 <p>The procedure <code>compile</code> is the top-level dispatch in the compiler.  It
-corresponds to the <code>eval</code> procedure of <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>, the
-<code>analyze</code> procedure of <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>, and the <code>eval-dispatch</code>
-entry point of the explicit-control-evaluator in <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>.  The
+corresponds to the <code>eval</code> procedure of <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>, the
+<code>analyze</code> procedure of <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>, and the <code>eval-dispatch</code>
+entry point of the explicit-control-evaluator in <a href="5_002e4.html#g_t5_002e4_002e1">5.4.1</a>.  The
 compiler, like the interpreters, uses the expression-syntax procedures defined
-in <a href="4_002e1.xhtml#g_t4_002e1_002e2">4.1.2</a>.<a class="footnote_link" id="DOCF320" href="#FOOT320"><sup>320</sup></a>  <code>Compile</code> performs a
+in <a href="4_002e1.html#g_t4_002e1_002e2">4.1.2</a>.<a class="footnote_link" id="DOCF320" href="#FOOT320"><sup>320</sup></a>  <code>Compile</code> performs a
 case analysis on the syntactic type of the expression to be compiled.  For each
 type of expression, it dispatches to a specialized <a id="index-code-generator"></a>
 <em>code generator</em>:
@@ -752,7 +752,7 @@ compiler’s <code>preserving</code> mechanism:
 mechanism, the compiler will avoid saving and restoring <code>env</code> around the
 evaluation of the operator of a combination in the case where the operator is a
 symbol.  We could also build such optimizations into the evaluator.  Indeed,
-the explicit-control evaluator of <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> already performs a similar
+the explicit-control evaluator of <a href="5_002e4.html#g_t5_002e4">5.4</a> already performs a similar
 optimization, by treating combinations with no operands as a special case.
 </p>
 <ol>
@@ -992,7 +992,7 @@ special combiner <code>parallel-instruction-sequences</code> described in
 </p>
 <p>Note that <code>cond</code> is a derived expression, so all that the compiler needs
 to do handle it is to apply the <code>cond-&gt;if</code> transformer (from 
-<a href="4_002e1.xhtml#g_t4_002e1_002e2">4.1.2</a>) and compile the resulting <code>if</code> expression.
+<a href="4_002e1.html#g_t4_002e1_002e2">4.1.2</a>) and compile the resulting <code>if</code> expression.
 </p>
 <a id="Compiling-sequences"></a>
 <h5 class="subsubheading">Compiling sequences</h5>
@@ -1260,8 +1260,8 @@ sequences from the order supplied by <code>compile-application</code>.
 <p>After evaluating the elements of a combination, the compiled code must apply
 the procedure in <code>proc</code> to the arguments in <code>argl</code>.  The code
 performs essentially the same dispatch as the <code>apply</code> procedure in the
-metacircular evaluator of <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a> or the <code>apply-dispatch</code>
-entry point in the explicit-control evaluator of <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>.  It
+metacircular evaluator of <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a> or the <code>apply-dispatch</code>
+entry point in the explicit-control evaluator of <a href="5_002e4.html#g_t5_002e4_002e1">5.4.1</a>.  It
 checks whether the procedure to be applied is a primitive procedure or a
 compiled procedure.  For a primitive procedure, it uses
 <code>apply-primitive-procedure</code>; we will see shortly how it handles compiled
@@ -1573,7 +1573,7 @@ needed by <code>seq2</code> and the registers modified by <code>seq1</code>.)  T
 
 <p>This procedure uses some simple operations for manipulating sets represented as
 lists, similar to the (unordered) set representation described in 
-<a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a>:
+<a href="2_002e3.html#g_t2_002e3_002e3">2.3.3</a>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">list-union s1 s2</span><span class="clo">)</span><span class="pln">
@@ -2138,7 +2138,7 @@ compiler produce for operands of a combination?  Is it left-to-right,
 right-to-left, or some other order?  Where in the compiler is this order
 determined?  Modify the compiler so that it produces some other order of
 evaluation.  (See the discussion of order of evaluation for the
-explicit-control evaluator in <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>.)  How does changing the
+explicit-control evaluator in <a href="5_002e4.html#g_t5_002e4_002e1">5.4.1</a>.)  How does changing the
 order of operand evaluation affect the efficiency of the code that constructs
 the argument list?
 </p></blockquote>
@@ -2383,12 +2383,12 @@ this section.
 </p></blockquote>
 
 <blockquote>
-<p><strong><a id="Exercise-5_002e43"></a>Exercise 5.43:</strong> We argued in <a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a>
+<p><strong><a id="Exercise-5_002e43"></a>Exercise 5.43:</strong> We argued in <a href="4_002e1.html#g_t4_002e1_002e6">4.1.6</a>
 that internal definitions for block structure should not be considered “real”
 <code>define</code>s.  Rather, a procedure body should be interpreted as if the
 internal variables being defined were installed as ordinary <code>lambda</code>
 variables initialized to their correct values using <code>set!</code>.  
-<a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a> and <a href="4_002e1.xhtml#Exercise-4_002e16">Exercise 4.16</a> showed how to modify the metacircular
+<a href="4_002e1.html#g_t4_002e1_002e6">4.1.6</a> and <a href="4_002e1.html#Exercise-4_002e16">Exercise 4.16</a> showed how to modify the metacircular
 interpreter to accomplish this by scanning out internal definitions.  Modify
 the compiler to perform the same transformation before it compiles a procedure
 body.
@@ -2424,7 +2424,7 @@ procedures.  (The code will work correctly as long as the program does not
 
 <p>We have not yet explained how to load compiled code into the evaluator machine
 or how to run it.  We will assume that the explicit-control-evaluator machine
-has been defined as in <a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>, with the additional operations
+has been defined as in <a href="5_002e4.html#g_t5_002e4_002e4">5.4.4</a>, with the additional operations
 specified in <a href="#Footnote-323">Footnote 323</a>.  We will implement a procedure
 <code>compile-and-go</code> that compiles a Scheme expression, loads the resulting
 object code into the evaluator machine, and causes the machine to run the code
@@ -2453,7 +2453,7 @@ it:
 
 <p>To allow the evaluator to handle compiled procedures (for example, to evaluate
 the call to <code>factorial</code> above), we need to change the code at
-<code>apply-dispatch</code> (<a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>) so that it recognizes compiled
+<code>apply-dispatch</code> (<a href="5_002e4.html#g_t5_002e4_002e1">5.4.1</a>) so that it recognizes compiled
 procedures (as distinct from compound or primitive procedures) and transfers
 control directly to the entry point of the compiled code:<a class="footnote_link" id="DOCF333" href="#FOOT333"><sup>333</sup></a>
 </p>
@@ -2515,7 +2515,7 @@ procedure.  Because we want the compiled code to return to the location in
 target of <code>val</code> and a linkage of <code>return</code>.  In order to transform the
 object code produced by the compiler into executable instructions for the
 evaluator register machine, we use the procedure <code>assemble</code> from the
-register-machine simulator (<a href="5_002e2.xhtml#g_t5_002e2_002e2">5.2.2</a>).  We then initialize the
+register-machine simulator (<a href="5_002e2.html#g_t5_002e2_002e2">5.2.2</a>).  We then initialize the
 <code>val</code> register to point to the list of instructions, set the <code>flag</code>
 so that the evaluator will go to <code>external-entry</code>, and start the
 evaluator.
@@ -2536,7 +2536,7 @@ evaluator.
      eceval </span><span class="lit">'flag</span><span class="pln"> true</span><span class="clo">)</span><span class="pln">
     </span><span class="opn">(</span><span class="pln">start eceval</span><span class="clo">)))</span></pre></div>
 
-<p>If we have set up stack monitoring, as at the end of <a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>, we
+<p>If we have set up stack monitoring, as at the end of <a href="5_002e4.html#g_t5_002e4_002e4">5.4.4</a>, we
 can examine the stack usage of compiled code:
 </p>
 <div class="lisp">
@@ -2560,7 +2560,7 @@ can examine the stack usage of compiled code:
 
 <p>Compare this example with the evaluation of <code>(factorial 5)</code> using the
 interpreted version of the same procedure, shown at the end of 
-<a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>.  The interpreted version required 144 pushes and a maximum stack
+<a href="5_002e4.html#g_t5_002e4_002e4">5.4.4</a>.  The interpreted version required 144 pushes and a maximum stack
 depth of 28.  This illustrates the optimization that results from our
 compilation strategy.
 </p>
@@ -2582,7 +2582,7 @@ cut across the higher-level abstractions.<a class="footnote_link" id="DOCF337" h
 <p>The alternatives of interpretation and compilation also lead to different
 strategies for porting languages to new computers. Suppose that we wish to
 implement Lisp for a new machine.  One strategy is to begin with the
-explicit-control evaluator of <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> and translate its instructions
+explicit-control evaluator of <a href="5_002e4.html#g_t5_002e4">5.4</a> and translate its instructions
 to instructions for the new machine.  A different strategy is to begin with the
 compiler and change the code generators so that they generate code for the new
 machine.  The second strategy allows us to run any Lisp program on the new
@@ -2591,7 +2591,7 @@ system, and linking it with a compiled version of the run-time
 library.<a class="footnote_link" id="DOCF338" href="#FOOT338"><sup>338</sup></a> Better yet, we can
 compile the compiler itself, and run this on the new machine to compile other
 Lisp programs.<a class="footnote_link" id="DOCF339" href="#FOOT339"><sup>339</sup></a>  Or we can compile one of the interpreters of 
-<a href="4_002e1.xhtml#g_t4_002e1">4.1</a> to produce an interpreter that runs on the new machine.
+<a href="4_002e1.html#g_t4_002e1">4.1</a> to produce an interpreter that runs on the new machine.
 </p>
 <blockquote>
 <p><strong><a id="Exercise-5_002e45"></a>Exercise 5.45:</strong> By comparing the stack operations
@@ -2603,7 +2603,7 @@ stack use to the performance of a special-purpose machine for the same
 computation gives some indication of the quality of the compiler.
 </p>
 <ol>
-<li> <a href="5_002e4.xhtml#Exercise-5_002e27">Exercise 5.27</a> asked you to determine, as a function of <math xmlns="http://www.w3.org/1998/Math/MathML">
+<li> <a href="5_002e4.html#Exercise-5_002e27">Exercise 5.27</a> asked you to determine, as a function of <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mi>n</mi>
 </math>, the number
 of pushes and the maximum stack depth needed by the evaluator to compute <math xmlns="http://www.w3.org/1998/Math/MathML">
@@ -2612,9 +2612,9 @@ of pushes and the maximum stack depth needed by the evaluator to compute <math x
     <mo>!</mo>
   </mrow>
 </math>
-using the recursive factorial procedure given above.  <a href="5_002e2.xhtml#Exercise-5_002e14">Exercise 5.14</a> asked
+using the recursive factorial procedure given above.  <a href="5_002e2.html#Exercise-5_002e14">Exercise 5.14</a> asked
 you to do the same measurements for the special-purpose factorial machine shown
-in <a href="5_002e1.xhtml#Figure-5_002e11">Figure 5.11</a>. Now perform the same analysis using the compiled
+in <a href="5_002e1.html#Figure-5_002e11">Figure 5.11</a>. Now perform the same analysis using the compiled
 <code>factorial</code> procedure.
 
 <p>Take the ratio of the number of pushes in the compiled version to the number of
@@ -2657,8 +2657,8 @@ tree-recursive Fibonacci procedure
       </span><span class="opn">(</span><span class="pun">+</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">1</span><span class="clo">))</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib </span><span class="opn">(</span><span class="pun">-</span><span class="pln"> n </span><span class="lit">2</span><span class="clo">)))))</span></pre></div>
 
 <p>compared to the effectiveness of using the special-purpose Fibonacci machine of
-<a href="5_002e1.xhtml#Figure-5_002e12">Figure 5.12</a>.  (For measurement of the interpreted performance, see
-<a href="5_002e4.xhtml#Exercise-5_002e29">Exercise 5.29</a>.)  For Fibonacci, the time resource used is not linear in
+<a href="5_002e1.html#Figure-5_002e12">Figure 5.12</a>.  (For measurement of the interpreted performance, see
+<a href="5_002e4.html#Exercise-5_002e29">Exercise 5.29</a>.)  For Fibonacci, the time resource used is not linear in
 <math xmlns="http://www.w3.org/1998/Math/MathML">
   <mrow class="MJX-TeXAtom-ORD">
     <mi>n</mi>
@@ -2737,7 +2737,7 @@ setup, since we can arrange to call the procedures <code>compile</code> and
 
 <blockquote>
 <p><strong><a id="Exercise-5_002e50"></a>Exercise 5.50:</strong> Use the compiler to compile the
-metacircular evaluator of <a href="4_002e1.xhtml#g_t4_002e1">4.1</a> and run this program using the
+metacircular evaluator of <a href="4_002e1.html#g_t4_002e1">4.1</a> and run this program using the
 register-machine simulator.  (To compile more than one definition at a time,
 you can package the definitions in a <code>begin</code>.)  The resulting interpreter
 will run very slowly because of the multiple levels of interpretation, but
@@ -2747,7 +2747,7 @@ getting all the details to work is an instructive exercise.
 <blockquote>
 <p><strong><a id="Exercise-5_002e51"></a>Exercise 5.51:</strong> Develop a rudimentary
 implementation of Scheme in C (or some other low-level language of your choice)
-by translating the explicit-control evaluator of <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> into C.  In
+by translating the explicit-control evaluator of <a href="5_002e4.html#g_t5_002e4">5.4</a> into C.  In
 order to run this code you will need to also provide appropriate
 storage-allocation routines and other run-time support.
 </p></blockquote>
@@ -2756,7 +2756,7 @@ storage-allocation routines and other run-time support.
 <p><strong><a id="Exercise-5_002e52"></a>Exercise 5.52:</strong> As a counterpoint to 
 <a href="#Exercise-5_002e51">Exercise 5.51</a>, modify the compiler so that it compiles Scheme procedures
 into sequences of C instructions.  Compile the metacircular evaluator of
-<a href="4_002e1.xhtml#g_t4_002e1">4.1</a> to produce a Scheme interpreter written in C.
+<a href="4_002e1.html#g_t4_002e1">4.1</a> to produce a Scheme interpreter written in C.
 </p></blockquote>
 
 <div class="footnote">
@@ -2846,7 +2846,7 @@ generation of unique variable names in the query language, as follows:
 <a id="Footnote-323"></a>We need
 machine operations to implement a data structure for representing compiled
 procedures, analogous to the structure for compound procedures described in
-<a href="4_002e1.xhtml#g_t4_002e1_002e3">4.1.3</a>:
+<a href="4_002e1.html#g_t4_002e1_002e3">4.1.3</a>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">make-compiled-procedure entry env</span><span class="clo">)</span><span class="pln">
@@ -2876,11 +2876,11 @@ memory to be garbage-collected.  The reason for using the stack for variables
 and arguments is that it avoids the need for garbage collection in languages
 that would not otherwise require it, and is generally believed to be more
 efficient.  Sophisticated Lisp compilers can, in fact, use the stack for
-arguments without destroying tail recursion.  (See <a href="References.xhtml#Hanson-1990">Hanson 1990</a> for a
+arguments without destroying tail recursion.  (See <a href="References.html#Hanson-1990">Hanson 1990</a> for a
 description.)  There is also some debate about whether stack allocation is
 actually more efficient than garbage collection in the first place, but the
-details seem to hinge on fine points of computer architecture.  (See <a href="References.xhtml#Appel-1987">Appel 1987</a>
-and <a href="References.xhtml#Miller-and-Rozas-1994">Miller and Rozas 1994</a> for opposing views on this issue.)</p>
+details seem to hinge on fine points of computer architecture.  (See <a href="References.html#Appel-1987">Appel 1987</a>
+and <a href="References.html#Miller-and-Rozas-1994">Miller and Rozas 1994</a> for opposing views on this issue.)</p>
 </div>
 <div id="FOOT326"><p><a class="footnote_backlink" href="#DOCF326"><sup>326</sup></a>
 The
@@ -2950,7 +2950,7 @@ use
 <div id="FOOT335"><p><a class="footnote_backlink" href="#DOCF335"><sup>335</sup></a>
 Since a compiled procedure is an
 object that the system may try to print, we also modify the system print
-operation <code>user-print</code> (from <a href="4_002e1.xhtml#g_t4_002e1_002e4">4.1.4</a>) so that it will not
+operation <code>user-print</code> (from <a href="4_002e1.html#g_t4_002e1_002e4">4.1.4</a>) so that it will not
 attempt to print the components of a compiled procedure:
 </p>
 <div class="lisp">
@@ -2991,7 +2991,7 @@ applications where speed is not a constraint.  Their programs lead fast and
 dangerous lives.  For example, the notorious “Worm” that paralyzed the
 Internet in 1988 exploited the <abbr>UNIX</abbr>(tm) operating system’s failure to
 check whether the input buffer has overflowed in the finger daemon. (See
-<a href="References.xhtml#Spafford-1989">Spafford 1989</a>.)</p>
+<a href="References.html#Spafford-1989">Spafford 1989</a>.)</p>
 </div>
 <div id="FOOT338"><p><a class="footnote_backlink" href="#DOCF338"><sup>338</sup></a>
 Of course, with either the interpretation or the compilation
@@ -3014,7 +3014,7 @@ minuscule details.</p>
 </div>
 <nav class="header">
 <p>
-Next: <a href="References.xhtml#References" accesskey="n" rel="next">References</a>, Prev: <a href="5_002e4.xhtml#g_t5_002e4" accesskey="p" rel="prev">5.4</a>, Up: <a href="#g_t5_002e5" accesskey="u" rel="prev">5.5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="References.html#References" accesskey="n" rel="next">References</a>, Prev: <a href="5_002e4.html#g_t5_002e4" accesskey="p" rel="prev">5.4</a>, Up: <a href="#g_t5_002e5" accesskey="u" rel="prev">5.5</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 
 

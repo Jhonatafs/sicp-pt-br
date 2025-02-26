@@ -10,12 +10,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="Generator" content="texi2any" />
 <meta charset="utf-8" />
-<link href="index.xhtml#Top" rel="start" title="Top" />
-<link href="Term-Index.xhtml#Term-Index" rel="index" title="Term Index" />
-<link href="index.xhtml#SEC_Contents" rel="contents" title="Table of Contents" />
-<link href="Chapter-5.xhtml#Chapter-5" rel="prev" title="Chapter 5" />
-<link href="5_002e2.xhtml#g_t5_002e2" rel="next" title="5.2" />
-<link href="Chapter-5.xhtml#Chapter-5" rel="prev" title="Chapter 5" />
+<link href="index.html#Top" rel="start" title="Top" />
+<link href="Term-Index.html#Term-Index" rel="index" title="Term Index" />
+<link href="index.html#SEC_Contents" rel="contents" title="Table of Contents" />
+<link href="Chapter-5.html#Chapter-5" rel="prev" title="Chapter 5" />
+<link href="5_002e2.html#g_t5_002e2" rel="next" title="5.2" />
+<link href="Chapter-5.html#Chapter-5" rel="prev" title="Chapter 5" />
 
 <link href="css/style.css" rel="stylesheet" type="text/css" />
 <link href="css/prettify.css" rel="stylesheet" type="text/css" />
@@ -29,7 +29,7 @@
 <section><span class="top jump" title="Jump to top"><a href="#pagetop" accesskey="t">⇡</a></span><a id="pagetop"></a><a id="g_t5_002e1"></a>
 <nav class="header">
 <p>
-Next: <a href="5_002e2.xhtml#g_t5_002e2" accesskey="n" rel="next">5.2</a>, Prev: <a href="Chapter-5.xhtml#Chapter-5" accesskey="p" rel="prev">Chapter 5</a>, Up: <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="5_002e2.html#g_t5_002e2" accesskey="n" rel="next">5.2</a>, Prev: <a href="Chapter-5.html#Chapter-5" accesskey="p" rel="prev">Chapter 5</a>, Up: <a href="Chapter-5.html#Chapter-5" accesskey="u" rel="prev">Chapter 5</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 <a id="Designing-Register-Machines"></a>
 <h3 class="section"><span class="secnum">5.1</span><span class="sectitle">Designing Register Machines</span></h3>
@@ -40,7 +40,7 @@ Next: <a href="5_002e2.xhtml#g_t5_002e2" accesskey="n" rel="next">5.2</a>, Prev:
 <em>controller</em> that sequences these
 operations.  To illustrate the design of a simple register machine, let us
 examine Euclid’s Algorithm, which is used to compute the greatest common
-divisor (<abbr>GCD</abbr>) of two integers.  As we saw in <a href="1_002e2.xhtml#g_t1_002e2_002e5">1.2.5</a>,
+divisor (<abbr>GCD</abbr>) of two integers.  As we saw in <a href="1_002e2.html#g_t1_002e2_002e5">1.2.5</a>,
 Euclid’s Algorithm can be carried out by an iterative process, as specified by
 the following procedure:
 </p>
@@ -352,7 +352,7 @@ sequence by the instruction
 machine.  Instead of having the machine stop after printing the answer, we have
 made it start over, so that it repeatedly reads a pair of numbers, computes
 their <abbr>GCD</abbr>, and prints the result.  This structure is like the driver
-loops we used in the interpreters of <a href="Chapter-4.xhtml#Chapter-4">Chapter 4</a>.
+loops we used in the interpreters of <a href="Chapter-4.html#Chapter-4">Chapter 4</a>.
 </p>
 <figure class="float">
 <a id="Figure-5_002e4"></a>
@@ -368,7 +368,7 @@ loops we used in the interpreters of <a href="Chapter-4.xhtml#Chapter-4">Chapter
 <h4 class="subsection"><span class="secnum">5.1.2</span><span class="sectitle">Abstraction in Machine Design</span></h4>
 
 <p>We will often define a machine to include “primitive” operations that are
-actually very complex.  For example, in <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> and <a href="5_002e5.xhtml#g_t5_002e5">5.5</a> we
+actually very complex.  For example, in <a href="5_002e4.html#g_t5_002e4">5.4</a> and <a href="5_002e5.html#g_t5_002e5">5.5</a> we
 will treat Scheme’s environment manipulations as primitive.  Such abstraction
 is valuable because it allows us to ignore the details of parts of a machine so
 that we can concentrate on other aspects of the design.  The fact that we have
@@ -435,7 +435,7 @@ instructions that contains a loop, as shown in <a href="#Figure-5_002e6">Figure 
 
 <blockquote>
 <p><strong><a id="Exercise-5_002e3"></a>Exercise 5.3:</strong> Design a machine to compute square
-roots using Newton’s method, as described in <a href="1_002e1.xhtml#Sec_002e1_002e1_002e7">1.1.7</a>:
+roots using Newton’s method, as described in <a href="1_002e1.html#Sec_002e1_002e1_002e7">1.1.7</a>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">sqrt x</span><span class="clo">)</span><span class="pln">
@@ -650,7 +650,7 @@ the contents of the registers (the values of the state variables).
 </p>
 <p>Implementing recursive processes, however, requires an additional mechanism.
 Consider the following recursive method for computing factorials, which we
-first examined in <a href="1_002e2.xhtml#g_t1_002e2_002e1">1.2.1</a>:
+first examined in <a href="1_002e2.html#g_t1_002e2_002e1">1.2.1</a>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">factorial n</span><span class="clo">)</span><span class="pln">
@@ -869,7 +869,7 @@ modified during solution of the subproblem (see <a href="#Exercise-5_002e4">Exer
 <h5 class="subsubheading">A double recursion</h5>
 
 <p>Let us examine a more complex recursive process, the tree-recursive computation
-of the Fibonacci numbers, which we introduced in <a href="1_002e2.xhtml#g_t1_002e2_002e2">1.2.2</a>:
+of the Fibonacci numbers, which we introduced in <a href="1_002e2.html#g_t1_002e2_002e2">1.2.2</a>:
 </p>
 <div class="lisp">
 <pre class="lisp prettyprinted" style=""><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">fib n</span><span class="clo">)</span><span class="pln">
@@ -1090,13 +1090,13 @@ from the new one.</p>
 </div>
 <div id="FOOT288"><p><a class="footnote_backlink" href="#DOCF288"><sup>288</sup></a>
 In
-<a href="5_002e3.xhtml#g_t5_002e3">5.3</a> we will see how to implement a stack in terms of more
+<a href="5_002e3.html#g_t5_002e3">5.3</a> we will see how to implement a stack in terms of more
 primitive operations.</p>
 </div>
 </div>
 <nav class="header">
 <p>
-Next: <a href="5_002e2.xhtml#g_t5_002e2" accesskey="n" rel="next">5.2</a>, Prev: <a href="Chapter-5.xhtml#Chapter-5" accesskey="p" rel="prev">Chapter 5</a>, Up: <a href="#g_t5_002e1" accesskey="u" rel="prev">5.1</a>   [<a href="index.xhtml#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
+Next: <a href="5_002e2.html#g_t5_002e2" accesskey="n" rel="next">5.2</a>, Prev: <a href="Chapter-5.html#Chapter-5" accesskey="p" rel="prev">Chapter 5</a>, Up: <a href="#g_t5_002e1" accesskey="u" rel="prev">5.1</a>   [<a href="index.html#SEC_Contents" title="Table of contents" accesskey="c" rel="contents">Contents</a>]</p>
 </nav>
 
 
