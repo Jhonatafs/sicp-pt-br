@@ -1065,7 +1065,7 @@
         (else
          (let ((s1car (stream-car s1))
                (s2car (stream-car s2)))
-           (cond ((< s1car s2car)
+           (cond ((&lt; s1car s2car)
                   (cons-stream 
                    s1car 
                    (merge (stream-cdr s1) 

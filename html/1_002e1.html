@@ -915,7 +915,7 @@ circumference
 (define (abs x)
 (cond ((> x 0) x)
       ((= x 0) 0)
-      ((< x 0) (- x))))
+      ((&lt; x 0) (- x))))
       </code></pre>
 
       <p>A forma geral de uma expressão condicional é:</p>
@@ -1179,7 +1179,7 @@ circumference
         pode ser expressa como:
       </p>
       <pre><code class="language-scheme">
-(and (> x 5) (< x 10))
+(and (> x 5) (&lt; x 10))
       </code></pre>
 
       <p>
@@ -1194,7 +1194,7 @@ circumference
       <p>ou alternativamente como:</p>
       <pre><code class="language-scheme">
 (define (>= x y) 
-(not (< x y)))
+(not (&lt; x y)))
       </code></pre>
 
       <blockquote>
@@ -1214,7 +1214,7 @@ circumference
 (define b (+ a 1))
 (+ a b (* a b))
 (= a b)
-(if (and (> b a) (< b (* a b)))
+(if (and (> b a) (&lt; b (* a b)))
     b
     a)
 (cond ((= a 4) 6)
@@ -1222,7 +1222,7 @@ circumference
       (else 25))
 (+ 2 (if (> b a) b a))
 (* (cond ((> a b) a)
-         ((< a b) b)
+         ((&lt; a b) b)
          (else -1))
    (+ a 1))
         </code></pre>

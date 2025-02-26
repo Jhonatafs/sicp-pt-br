@@ -475,7 +475,7 @@
         <pre><code class="language-scheme">(define (cc amount coin-values)
       (cond ((= amount 0) 
              1)
-            ((or (< amount 0) 
+            ((or (&lt; amount 0) 
                  (no-more? coin-values)) 
              0)
             (else

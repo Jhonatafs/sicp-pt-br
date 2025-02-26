@@ -1103,7 +1103,7 @@
       <pre><code class="language-scheme">(define (element-of-set? x set)
   (cond ((null? set) false)
         ((= x (car set)) true)
-        ((< x (car set)) false)
+        ((&lt; x (car set)) false)
         (else (element-of-set? x (cdr set)))))</code></pre>
 
       <p>
@@ -1174,10 +1174,10 @@
                (cons x1 (intersection-set 
                          (cdr set1)
                          (cdr set2))))
-              ((< x1 x2) (intersection-set 
+              ((&lt; x1 x2) (intersection-set 
                           (cdr set1) 
                           set2))
-              ((< x2 x1) (intersection-set 
+              ((&lt; x2 x1) (intersection-set 
                           set1 
                           (cdr set2)))))))</code></pre>
 
@@ -1391,7 +1391,7 @@
       <pre><code class="language-scheme">(define (element-of-set? x set)
   (cond ((null? set) false)
         ((= x (entry set)) true)
-        ((< x (entry set))
+        ((&lt; x (entry set))
          (element-of-set? 
           x 
           (left-branch set)))
@@ -1426,7 +1426,7 @@
       <pre><code class="language-scheme">(define (adjoin-set x set)
   (cond ((null? set) (make-tree x '() '()))
         ((= x (entry set)) set)
-        ((< x (entry set))
+        ((&lt; x (entry set))
          (make-tree 
           (entry set)
           (adjoin-set x (left-branch set))
@@ -2069,7 +2069,7 @@ união
       </p>
       <pre><code class="language-scheme">(define (adjoin-set x set)
   (cond ((null? set) (list x))
-        ((< (weight x) (weight (car set))) 
+        ((&lt; (weight x) (weight (car set))) 
          (cons x set))
         (else 
          (cons (car set)
