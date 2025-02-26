@@ -1,0 +1,1571 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.4"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.4"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.4
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t5_002e4"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="5_002e5.html#g_t5_002e5" accesskey="n" rel="next">5.5</a>,
+          Anterior:
+          <a href="5_002e3.html#g_t5_002e3" accesskey="p" rel="prev">5.3</a>,
+          Acima:
+          <a href="Chapter-5.html#Chapter-5" accesskey="u" rel="prev"
+            >Capítulo 5</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+      <a id="The-Explicit_002dControl-Evaluator"></a>
+      <h3 class="section">
+        <span class="secnum">5.4</span
+        ><span class="sectitle">O Avaliador de Controle Explícito</span>
+      </h3>
+
+      <p>
+        Em <a href="5_002e1.html#g_t5_002e1">5.1</a>, vimos como transformar
+        programas simples em Scheme em descrições de máquinas de registradores.
+        Agora realizaremos essa transformação em um programa mais complexo, o
+        avaliador metacircular de
+        <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>–<a
+          href="4_002e1.html#g_t4_002e1_002e4"
+          >4.1.4</a
+        >, que mostra como o comportamento de um interpretador Scheme pode ser
+        descrito em termos dos procedimentos <code>eval</code> e
+        <code>apply</code>. O <a id="index-explicit_002dcontrol-evaluator"></a>
+        <em>avaliador de controle explícito</em> que desenvolvemos nesta seção
+        mostra como os mecanismos subjacentes de chamada de procedimentos e
+        passagem de argumentos usados no processo de avaliação podem ser
+        descritos em termos de operações em registradores e pilhas. Além disso,
+        o avaliador de controle explícito pode servir como uma implementação de
+        um interpretador Scheme, escrito em uma linguagem muito semelhante à
+        linguagem de máquina nativa de computadores convencionais. O avaliador
+        pode ser executado pelo simulador de máquina de registradores de
+        <a href="5_002e2.html#g_t5_002e2">5.2</a>. Alternativamente, ele pode
+        ser usado como ponto de partida para construir uma implementação em
+        linguagem de máquina de um avaliador Scheme, ou até mesmo uma máquina de
+        propósito específico para avaliar expressões Scheme.
+        <a href="#Figure-5_002e16">Figura 5.16</a> mostra uma implementação em
+        hardware: um chip de silício que age como um avaliador para Scheme. Os
+        designers do chip começaram com as especificações de caminho de dados e
+        controlador para uma máquina de registradores semelhante ao avaliador
+        descrito nesta seção e usaram programas de automação de design para
+        construir o layout do circuito integrado.<a
+          class="footnote_link"
+          id="DOCF304"
+          href="#FOOT304"
+          ><sup>304</sup></a
+        >
+      </p>
+
+      <figure class="float">
+        <a id="Figure-5_002e16"></a>
+        <object
+          style="width: 52.41ex; height: 42.31ex"
+          data="fig/chap5/chip.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 5.16:</strong> Uma implementação em chip de silício
+            de um avaliador para Scheme.
+          </p>
+        </figcaption>
+      </figure>
+
+      <a id="Registers-and-operations"></a>
+      <h5 class="subsubheading">Registradores e operações</h5>
+
+      <p>
+        No projeto do avaliador de controle explícito, devemos especificar as
+        operações a serem usadas em nossa máquina de registradores. Descrevemos
+        o avaliador metacircular em termos de sintaxe abstrata, usando
+        procedimentos como <code>quoted?</code> e <code>make-procedure</code>.
+        Na implementação da máquina de registradores, poderíamos expandir esses
+        procedimentos em sequências de operações elementares de memória de
+        estrutura de lista e implementar essas operações em nossa máquina de
+        registradores. No entanto, isso tornaria nosso avaliador muito longo,
+        obscurecendo a estrutura básica com detalhes. Para esclarecer a
+        apresentação, incluiremos como operações primitivas da máquina de
+        registradores os procedimentos de sintaxe dados em
+        <a href="4_002e1.html#g_t4_002e1_002e2">4.1.2</a> e os procedimentos
+        para representar ambientes e outros dados de tempo de execução dados nas
+        seções <a href="4_002e1.html#g_t4_002e1_002e3">4.1.3</a> e
+        <a href="4_002e1.html#g_t4_002e1_002e4">4.1.4</a>. Para especificar
+        completamente um avaliador que possa ser programado em uma linguagem de
+        máquina de baixo nível ou implementado em hardware, substituiríamos
+        essas operações por operações mais elementares, usando a implementação
+        de estrutura de lista que descrevemos em
+        <a href="5_002e3.html#g_t5_002e3">5.3</a>.
+      </p>
+
+      <p>
+        Nossa máquina de registradores do avaliador Scheme inclui uma pilha e
+        sete registradores: <code>exp</code>, <code>env</code>,
+        <code>val</code>, <code>continue</code>, <code>proc</code>,
+        <code>argl</code> e <code>unev</code>. <code>Exp</code> é usado para
+        manter a expressão a ser avaliada, e <code>env</code> contém o ambiente
+        no qual a avaliação deve ser realizada. No final de uma avaliação,
+        <code>val</code> contém o valor obtido ao avaliar a expressão no
+        ambiente designado. O registrador <code>continue</code> é usado para
+        implementar recursão, como explicado em
+        <a href="5_002e1.html#g_t5_002e1_002e4">5.1.4</a>. (O avaliador precisa
+        chamar a si mesmo recursivamente, pois avaliar uma expressão requer
+        avaliar suas subexpressões.) Os registradores <code>proc</code>,
+        <code>argl</code> e <code>unev</code> são usados na avaliação de
+        combinações.
+      </p>
+
+      <p>
+        Não forneceremos um diagrama de caminho de dados para mostrar como os
+        registradores e operações do avaliador estão conectados, nem daremos a
+        lista completa de operações da máquina. Esses são implícitos no
+        controlador do avaliador, que será apresentado em detalhes.
+      </p>
+
+      <a id="g_t5_002e4_002e1"></a>
+      <a id="The-Core-of-the-Explicit_002dControl-Evaluator"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.4.1</span
+        ><span class="sectitle"
+          >O Núcleo do Avaliador de Controle Explícito</span
+        >
+      </h4>
+
+      <p>
+        O elemento central no avaliador é a sequência de instruções que começa
+        em <code>eval-dispatch</code>. Isso corresponde ao procedimento
+        <code>eval</code> do avaliador metacircular descrito em
+        <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>. Quando o controlador
+        começa em <code>eval-dispatch</code>, ele avalia a expressão
+        especificada por <code>exp</code> no ambiente especificado por
+        <code>env</code>. Quando a avaliação é concluída, o controlador irá para
+        o ponto de entrada armazenado em <code>continue</code>, e o registrador
+        <code>val</code> conterá o valor da expressão. Assim como no
+        <code>eval</code> metacircular, a estrutura de
+        <code>eval-dispatch</code> é uma análise de caso no tipo sintático da
+        expressão a ser avaliada.<a
+          class="footnote_link"
+          id="DOCF305"
+          href="#FOOT305"
+          ><sup>305</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">eval-dispatch
+  (test (op self-evaluating?) (reg exp))
+  (branch (label ev-self-eval))
+  (test (op variable?) (reg exp))
+  (branch (label ev-variable))
+  (test (op quoted?) (reg exp))
+  (branch (label ev-quoted))
+  (test (op assignment?) (reg exp))
+  (branch (label ev-assignment))
+  (test (op definition?) (reg exp))
+  (branch (label ev-definition))
+  (test (op if?) (reg exp))
+  (branch (label ev-if))
+  (test (op lambda?) (reg exp))
+  (branch (label ev-lambda))
+  (test (op begin?) (reg exp))
+  (branch (label ev-begin))
+  (test (op application?) (reg exp))
+  (branch (label ev-application))
+  (goto (label unknown-expression-type))</code></pre>
+
+      <a id="Evaluating-simple-expressions"></a>
+      <h5 class="subsubheading">Avaliando expressões simples</h5>
+
+      <p>
+        Números e strings (que são autoavaliados), variáveis, citações e
+        expressões <code>lambda</code> não têm subexpressões a serem avaliadas.
+        Para essas, o avaliador simplesmente coloca o valor correto no
+        registrador <code>val</code> e continua a execução no ponto de entrada
+        especificado por <code>continue</code>. A avaliação de expressões
+        simples é realizada pelo seguinte código do controlador:
+      </p>
+
+      <pre><code class="language-scheme">ev-self-eval
+  (assign val (reg exp))
+  (goto (reg continue))
+ev-variable
+  (assign val
+          (op lookup-variable-value)
+          (reg exp)
+          (reg env))
+  (goto (reg continue))
+ev-quoted
+  (assign val
+          (op text-of-quotation)
+          (reg exp))
+  (goto (reg continue))
+ev-lambda
+  (assign unev
+          (op lambda-parameters)
+          (reg exp))
+  (assign exp 
+          (op lambda-body)
+          (reg exp))
+  (assign val 
+          (op make-procedure)
+          (reg unev)
+          (reg exp)
+          (reg env))
+  (goto (reg continue))</code></pre>
+
+      <p>
+        Observe como <code>ev-lambda</code> usa os registradores
+        <code>unev</code> e <code>exp</code> para manter os parâmetros e o corpo
+        da expressão lambda, para que possam ser passados para a operação
+        <code>make-procedure</code>, junto com o ambiente em <code>env</code>.
+      </p>
+
+      <a id="Evaluating-procedure-applications"></a>
+      <h5 class="subsubheading">Avaliando aplicações de procedimentos</h5>
+
+      <p>
+        Uma aplicação de procedimento é especificada por uma combinação contendo
+        um operador e operandos. O operador é uma subexpressão cujo valor é um
+        procedimento, e os operandos são subexpressões cujos valores são os
+        argumentos aos quais o procedimento deve ser aplicado. O
+        <code>eval</code> metacircular lida com aplicações chamando a si mesmo
+        recursivamente para avaliar cada elemento da combinação e, em seguida,
+        passando os resultados para <code>apply</code>, que realiza a aplicação
+        real do procedimento. O avaliador de controle explícito faz a mesma
+        coisa; essas chamadas recursivas são implementadas por instruções
+        <code>goto</code>, juntamente com o uso da pilha para salvar
+        registradores que serão restaurados após o retorno da chamada recursiva.
+        Antes de cada chamada, teremos o cuidado de identificar quais
+        registradores devem ser salvos (porque seus valores serão necessários
+        posteriormente).<a class="footnote_link" id="DOCF306" href="#FOOT306"
+          ><sup>306</sup></a
+        >
+      </p>
+
+      <p>
+        Começamos a avaliação de uma aplicação avaliando o operador para
+        produzir um procedimento, que será aplicado posteriormente aos operandos
+        avaliados. Para avaliar o operador, movemos ele para o registrador
+        <code>exp</code> e vamos para <code>eval-dispatch</code>. O ambiente no
+        registrador <code>env</code> já é o correto para avaliar o operador. No
+        entanto, salvamos <code>env</code> porque precisaremos dele mais tarde
+        para avaliar os operandos. Também extraímos os operandos em
+        <code>unev</code> e salvamos isso na pilha. Configuramos
+        <code>continue</code> para que <code>eval-dispatch</code> retome em
+        <code>ev-appl-did-operator</code> após o operador ter sido avaliado.
+        Primeiro, no entanto, salvamos o valor antigo de <code>continue</code>,
+        que diz ao controlador onde continuar após a aplicação.
+      </p>
+
+      <pre><code class="language-scheme">ev-application
+  (save continue)
+  (save env)
+  (assign unev (op operands) (reg exp))
+  (save unev)
+  (assign exp (op operator) (reg exp))
+  (assign continue (label ev-appl-did-operator))
+  (goto (label eval-dispatch))</code></pre>
+
+      <p>
+        Ao retornar da avaliação da subexpressão do operador, prosseguimos para
+        avaliar os operandos da combinação e acumular os argumentos resultantes
+        em uma lista, mantida em <code>argl</code>. Primeiro, restauramos os
+        operandos não avaliados e o ambiente. Inicializamos
+        <code>argl</code> como uma lista vazia. Em seguida, atribuímos ao
+        registrador <code>proc</code> o procedimento que foi produzido pela
+        avaliação do operador. Se não houver operandos, vamos diretamente para
+        <code>apply-dispatch</code>. Caso contrário, salvamos
+        <code>proc</code> na pilha e iniciamos o loop de avaliação de
+        argumentos:<a class="footnote_link" id="DOCF307" href="#FOOT307"
+          ><sup>307</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">ev-appl-did-operator
+  (restore unev)             ; os operandos
+  (restore env)
+  (assign argl (op empty-arglist))
+  (assign proc (reg val))    ; o operador
+  (test (op no-operands?) (reg unev))
+  (branch (label apply-dispatch))
+  (save proc)</code></pre>
+
+      <p>
+        Cada ciclo do loop de avaliação de argumentos avalia um operando da
+        lista em <code>unev</code> e acumula o resultado em <code>argl</code>.
+        Para avaliar um operando, colocamos ele no registrador
+        <code>exp</code> e vamos para <code>eval-dispatch</code>, após
+        configurar <code>continue</code> para que a execução retome com a fase
+        de acumulação de argumentos. Mas primeiro salvamos os argumentos
+        acumulados até agora (mantidos em <code>argl</code>), o ambiente
+        (mantido em <code>env</code>) e os operandos restantes a serem avaliados
+        (mantidos em <code>unev</code>). Um caso especial é feito para a
+        avaliação do último operando, que é tratado em
+        <code>ev-appl-last-arg</code>.
+      </p>
+
+      <pre><code class="language-scheme">ev-appl-operand-loop
+  (save argl)
+  (assign exp
+          (op first-operand)
+          (reg unev))
+  (test (op last-operand?) (reg unev))
+  (branch (label ev-appl-last-arg))
+  (save env)
+  (save unev)
+  (assign continue 
+          (label ev-appl-accumulate-arg))
+  (goto (label eval-dispatch))</code></pre>
+
+      <p>
+        Quando um operando foi avaliado, o valor é acumulado na lista mantida em
+        <code>argl</code>. O operando é então removido da lista de operandos não
+        avaliados em <code>unev</code>, e a avaliação de argumentos continua.
+      </p>
+
+      <pre><code class="language-scheme">ev-appl-accumulate-arg
+  (restore unev)
+  (restore env)
+  (restore argl)
+  (assign argl 
+          (op adjoin-arg)
+          (reg val)
+          (reg argl))
+  (assign unev
+          (op rest-operands)
+          (reg unev))
+  (goto (label ev-appl-operand-loop))</code></pre>
+
+      <p>
+        A avaliação do último argumento é tratada de forma diferente. Não há
+        necessidade de salvar o ambiente ou a lista de operandos não avaliados
+        antes de ir para <code>eval-dispatch</code>, pois eles não serão
+        necessários após o último operando ser avaliado. Assim, retornamos da
+        avaliação para um ponto de entrada especial
+        <code>ev-appl-accum-last-arg</code>, que restaura a lista de argumentos,
+        acumula o novo argumento, restaura o procedimento salvo e vai para
+        realizar a aplicação.<a
+          class="footnote_link"
+          id="DOCF308"
+          href="#FOOT308"
+          ><sup>308</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">ev-appl-last-arg
+  (assign continue 
+          (label ev-appl-accum-last-arg))
+  (goto (label eval-dispatch))
+ev-appl-accum-last-arg
+  (restore argl)
+  (assign argl 
+          (op adjoin-arg)
+          (reg val)
+          (reg argl))
+  (restore proc)
+  (goto (label apply-dispatch))</code></pre>
+
+      <p>
+        Os detalhes do loop de avaliação de argumentos determinam a ordem em que
+        o interpretador avalia os operandos de uma combinação (por exemplo, da
+        esquerda para a direita ou da direita para a esquerda—veja
+        <a href="3_002e1.html#Exercise-3_002e8">Exercício 3.8</a>). Essa ordem
+        não é determinada pelo avaliador metacircular, que herda sua estrutura
+        de controle do Scheme subjacente no qual é implementado.<a
+          class="footnote_link"
+          id="DOCF309"
+          href="#FOOT309"
+          ><sup>309</sup></a
+        >
+        Como o seletor <code>first-operand</code> (usado em
+        <code>ev-appl-operand-loop</code> para extrair operandos sucessivos de
+        <code>unev</code>) é implementado como <code>car</code> e o seletor
+        <code>rest-operands</code> é implementado como <code>cdr</code>, o
+        avaliador de controle explícito avaliará os operandos de uma combinação
+        na ordem da esquerda para a direita.
+      </p>
+
+      <a id="Procedure-application"></a>
+      <h5 class="subsubheading">Aplicação de procedimentos</h5>
+
+      <p>
+        O ponto de entrada <code>apply-dispatch</code> corresponde ao
+        procedimento <code>apply</code> do avaliador metacircular. Quando
+        chegamos a <code>apply-dispatch</code>, o registrador
+        <code>proc</code> contém o procedimento a ser aplicado e
+        <code>argl</code> contém a lista de argumentos avaliados aos quais ele
+        deve ser aplicado. O valor salvo de <code>continue</code> (originalmente
+        passado para <code>eval-dispatch</code> e salvo em
+        <code>ev-application</code>), que diz onde retornar com o resultado da
+        aplicação do procedimento, está na pilha. Quando a aplicação é
+        concluída, o controlador transfere para o ponto de entrada especificado
+        pelo <code>continue</code> salvo, com o resultado da aplicação em
+        <code>val</code>. Assim como no <code>apply</code> metacircular, há dois
+        casos a considerar. Ou o procedimento a ser aplicado é primitivo ou é um
+        procedimento composto.
+      </p>
+
+      <pre><code class="language-scheme">apply-dispatch
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-apply))
+  (test (op compound-procedure?) (reg proc))
+  (branch (label compound-apply))
+  (goto (label unknown-procedure-type))</code></pre>
+
+      <p>
+        Assumimos que cada primitiva é implementada de forma a obter seus
+        argumentos de <code>argl</code> e colocar seu resultado em
+        <code>val</code>. Para especificar como a máquina lida com as
+        primitivas, teríamos que fornecer uma sequência de instruções do
+        controlador para implementar cada primitiva e organizar para que
+        <code>primitive-apply</code> despache para as instruções da primitiva
+        identificada pelo conteúdo de <code>proc</code>. Como estamos
+        interessados na estrutura do processo de avaliação, em vez dos detalhes
+        das primitivas, usaremos uma operação
+        <code>apply-primitive-procedure</code> que aplica o procedimento em
+        <code>proc</code> aos argumentos em <code>argl</code>. Para o propósito
+        de simular o avaliador com o simulador de
+        <a href="5_002e2.html#g_t5_002e2">5.2</a>, usamos o procedimento
+        <code>apply-primitive-procedure</code>, que chama o sistema Scheme
+        subjacente para realizar a aplicação, assim como fizemos para o
+        avaliador metacircular em
+        <a href="4_002e1.html#g_t4_002e1_002e4">4.1.4</a>. Após calcular o valor
+        da aplicação primitiva, restauramos <code>continue</code> e vamos para o
+        ponto de entrada designado.
+      </p>
+
+      <pre><code class="language-scheme">primitive-apply
+  (assign val (op apply-primitive-procedure)
+              (reg proc)
+              (reg argl))
+  (restore continue)
+  (goto (reg continue))</code></pre>
+
+      <p>
+        Para aplicar um procedimento composto, procedemos exatamente como no
+        avaliador metacircular. Construímos um quadro que vincula os parâmetros
+        do procedimento aos argumentos, usamos esse quadro para estender o
+        ambiente carregado pelo procedimento e avaliamos nesse ambiente
+        estendido a sequência de expressões que forma o corpo do procedimento.
+        <code>Ev-sequence</code>, descrito abaixo em
+        <a href="#g_t5_002e4_002e2">5.4.2</a>, lida com a avaliação da
+        sequência.
+      </p>
+
+      <pre><code class="language-scheme">compound-apply
+  (assign unev 
+          (op procedure-parameters)
+          (reg proc))
+  (assign env
+          (op procedure-environment)
+          (reg proc))
+  (assign env
+          (op extend-environment)
+          (reg unev)
+          (reg argl)
+          (reg env))
+  (assign unev
+          (op procedure-body)
+          (reg proc))
+  (goto (label ev-sequence))</code></pre>
+
+      <p>
+        <code>Compound-apply</code> é o único lugar no interpretador onde o
+        registrador <code>env</code> recebe um novo valor. Assim como no
+        avaliador metacircular, o novo ambiente é construído a partir do
+        ambiente carregado pelo procedimento, juntamente com a lista de
+        argumentos e a lista correspondente de variáveis a serem vinculadas.
+      </p>
+
+      <a id="g_t5_002e4_002e2"></a>
+      <a id="Sequence-Evaluation-and-Tail-Recursion"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.4.2</span
+        ><span class="sectitle"
+          >Avaliação de Sequência e Recursão em Cauda</span
+        >
+      </h4>
+
+      <p>
+        A parte do avaliador de controle explícito em <code>ev-sequence</code> é
+        análoga ao procedimento <code>eval-sequence</code> do avaliador
+        metacircular. Ele lida com sequências de expressões em corpos de
+        procedimentos ou em expressões <code>begin</code> explícitas.
+      </p>
+
+      <p>
+        Expressões <code>begin</code> explícitas são avaliadas colocando a
+        sequência de expressões a serem avaliadas em <code>unev</code>, salvando
+        <code>continue</code> na pilha e pulando para <code>ev-sequence</code>.
+      </p>
+
+      <pre><code class="language-scheme">ev-begin
+  (assign unev
+          (op begin-actions)
+          (reg exp))
+  (save continue)
+  (goto (label ev-sequence))</code></pre>
+
+      <p>
+        As sequências implícitas em corpos de procedimentos são tratadas pulando
+        para <code>ev-sequence</code> a partir de <code>compound-apply</code>,
+        momento em que <code>continue</code> já está na pilha, tendo sido salvo
+        em <code>ev-application</code>.
+      </p>
+
+      <p>
+        As entradas em <code>ev-sequence</code> e
+        <code>ev-sequence-continue</code> formam um loop que avalia
+        sucessivamente cada expressão em uma sequência. A lista de expressões
+        não avaliadas é mantida em <code>unev</code>. Antes de avaliar cada
+        expressão, verificamos se há mais expressões a serem avaliadas na
+        sequência. Se houver, salvamos o restante das expressões não avaliadas
+        (mantidas em <code>unev</code>) e o ambiente no qual elas devem ser
+        avaliadas (mantido em <code>env</code>) e chamamos
+        <code>eval-dispatch</code> para avaliar a expressão. Os dois
+        registradores salvos são restaurados ao retornar dessa avaliação, em
+        <code>ev-sequence-continue</code>.
+      </p>
+
+      <p>
+        A expressão final na sequência é tratada de forma diferente, no ponto de
+        entrada <code>ev-sequence-last-exp</code>. Como não há mais expressões a
+        serem avaliadas após esta, não precisamos salvar <code>unev</code> ou
+        <code>env</code> antes de ir para <code>eval-dispatch</code>. O valor de
+        toda a sequência é o valor da última expressão, então após a avaliação
+        da última expressão, não há mais nada a fazer, exceto continuar no ponto
+        de entrada atualmente mantido na pilha (que foi salvo por
+        <code>ev-application</code> ou <code>ev-begin</code>). Em vez de
+        configurar <code>continue</code> para arranjar que
+        <code>eval-dispatch</code> retorne aqui e então restaurar
+        <code>continue</code> da pilha e continuar nesse ponto de entrada,
+        restauramos <code>continue</code> da pilha antes de ir para
+        <code>eval-dispatch</code>, para que <code>eval-dispatch</code> continue
+        nesse ponto de entrada após avaliar a expressão.
+      </p>
+
+      <pre><code class="language-scheme">ev-sequence
+  (assign exp (op first-exp) (reg unev))
+  (test (op last-exp?) (reg unev))
+  (branch (label ev-sequence-last-exp))
+  (save unev)
+  (save env)
+  (assign continue
+          (label ev-sequence-continue))
+  (goto (label eval-dispatch))
+ev-sequence-continue
+  (restore env)
+  (restore unev)
+  (assign unev
+          (op rest-exps)
+          (reg unev))
+  (goto (label ev-sequence))
+ev-sequence-last-exp
+  (restore continue)
+  (goto (label eval-dispatch))</code></pre>
+
+      <a id="Tail-recursion"></a>
+      <h5 class="subsubheading">Recursão em cauda</h5>
+
+      <p>
+        Em <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>, dissemos que o
+        processo descrito por um procedimento como
+      </p>
+
+      <pre><code class="language-scheme">(define (sqrt-iter guess x)
+  (if (good-enough? guess x)
+      guess
+      (sqrt-iter (improve guess x) x))</code></pre>
+
+      <p>
+        é um processo iterativo. Embora o procedimento seja sintaticamente
+        recursivo (definido em termos de si mesmo), não é logicamente necessário
+        que um avaliador salve informações ao passar de uma chamada para
+        <code>sqrt-iter</code> para a próxima.<a
+          class="footnote_link"
+          id="DOCF310"
+          href="#FOOT310"
+          ><sup>310</sup></a
+        >
+        Um avaliador que pode executar um procedimento como
+        <code>sqrt-iter</code> sem exigir armazenamento crescente à medida que o
+        procedimento continua a chamar a si mesmo é chamado de
+        <a id="index-tail_002drecursive-1"></a>
+        <em>avaliador de recursão em cauda</em>. A implementação metacircular do
+        avaliador em <a href="Chapter-4.html#Chapter-4">Capítulo 4</a> não
+        especifica se o avaliador é de recursão em cauda, porque esse avaliador
+        herda seu mecanismo para salvar estado do Scheme subjacente. Com o
+        avaliador de controle explícito, no entanto, podemos rastrear o processo
+        de avaliação para ver quando as chamadas de procedimento causam um
+        acúmulo líquido de informações na pilha.
+      </p>
+
+      <p>
+        Nosso avaliador é de recursão em cauda, porque, para avaliar a expressão
+        final de uma sequência, transferimos diretamente para
+        <code>eval-dispatch</code> sem salvar nenhuma informação na pilha.
+        Portanto, avaliar a expressão final em uma sequência—mesmo que seja uma
+        chamada de procedimento (como em <code>sqrt-iter</code>, onde a
+        expressão <code>if</code>, que é a última expressão no corpo do
+        procedimento, reduz-se a uma chamada para <code>sqrt-iter</code>)—não
+        causará nenhum acúmulo de informações na pilha.<a
+          class="footnote_link"
+          id="DOCF311"
+          href="#FOOT311"
+          ><sup>311</sup></a
+        >
+      </p>
+
+      <p>
+        Se não pensássemos em aproveitar o fato de que não era necessário salvar
+        informações nesse caso, poderíamos ter implementado
+        <code>eval-sequence</code> tratando todas as expressões em uma sequência
+        da mesma forma—salvando os registradores, avaliando a expressão,
+        retornando para restaurar os registradores e repetindo isso até que
+        todas as expressões tenham sido avaliadas:<a
+          class="footnote_link"
+          id="DOCF312"
+          href="#FOOT312"
+          ><sup>312</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">ev-sequence
+  (test (op no-more-exps?) (reg unev))
+  (branch (label ev-sequence-end))
+  (assign exp (op first-exp) (reg unev))
+  (save unev)
+  (save env)
+  (assign continue
+          (label ev-sequence-continue))
+  (goto (label eval-dispatch))
+ev-sequence-continue
+  (restore env)
+  (restore unev)
+  (assign unev (op rest-exps) (reg unev))
+  (goto (label ev-sequence))
+ev-sequence-end
+  (restore continue)
+  (goto (reg continue))</code></pre>
+
+      <p>
+        Isso pode parecer uma pequena mudança em relação ao nosso código
+        anterior para avaliação de uma sequência: a única diferença é que
+        passamos pelo ciclo de salvar-restaurar para a última expressão em uma
+        sequência, assim como para as outras. O interpretador ainda dará o mesmo
+        valor para qualquer expressão. Mas essa mudança é fatal para a
+        implementação de recursão em cauda, porque agora devemos retornar após
+        avaliar a expressão final em uma sequência para desfazer os salvamentos
+        (inúteis) de registradores. Esses salvamentos extras se acumularão
+        durante uma aninhamento de chamadas de procedimentos. Consequentemente,
+        processos como <code>sqrt-iter</code> exigirão espaço proporcional ao
+        número de iterações, em vez de exigir espaço constante. Essa diferença
+        pode ser significativa. Por exemplo, com recursão em cauda, um loop
+        infinito pode ser expresso usando apenas o mecanismo de chamada de
+        procedimento:
+      </p>
+
+      <pre><code class="language-scheme">(define (count n)
+  (newline)
+  (display n)
+  (count (+ n 1)))</code></pre>
+
+      <p>
+        Sem recursão em cauda, tal procedimento eventualmente ficaria sem espaço
+        na pilha, e expressar uma verdadeira iteração exigiria algum mecanismo
+        de controle diferente de chamada de procedimento.
+      </p>
+
+      <a id="g_t5_002e4_002e3"></a>
+      <a id="Conditionals_002c-Assignments_002c-and-Definitions"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.4.3</span
+        ><span class="sectitle">Condicionais, Atribuições e Definições</span>
+      </h4>
+
+      <p>
+        Assim como no avaliador metacircular, formas especiais são tratadas
+        avaliando seletivamente fragmentos da expressão. Para uma expressão
+        <code>if</code>, devemos avaliar o predicado e decidir, com base no
+        valor do predicado, se avaliamos o consequente ou a alternativa.
+      </p>
+
+      <p>
+        Antes de avaliar o predicado, salvamos a expressão <code>if</code> em si
+        para que possamos extrair posteriormente o consequente ou a alternativa.
+        Também salvamos o ambiente, que precisaremos mais tarde para avaliar o
+        consequente ou a alternativa, e salvamos <code>continue</code>, que
+        precisaremos mais tarde para retornar à avaliação da expressão que está
+        esperando o valor do <code>if</code>.
+      </p>
+
+      <pre><code class="language-scheme">ev-if
+  (save exp)   ; salvar a expressão para depois
+  (save env)
+  (save continue)
+  (assign continue (label ev-if-decide))
+  (assign exp (op if-predicate) (reg exp))
+  ; avaliar o predicado:
+  (goto (label eval-dispatch))</code></pre>
+
+      <p>
+        Quando retornamos da avaliação do predicado, testamos se ele era
+        verdadeiro ou falso e, dependendo do resultado, colocamos o consequente
+        ou a alternativa em <code>exp</code> antes de ir para
+        <code>eval-dispatch</code>. Observe que restaurar <code>env</code> e
+        <code>continue</code> aqui configura <code>eval-dispatch</code> para ter
+        o ambiente correto e continuar no lugar certo para receber o valor da
+        expressão <code>if</code>.
+      </p>
+
+      <pre><code class="language-scheme">ev-if-decide
+  (restore continue)
+  (restore env)
+  (restore exp)
+  (test (op true?) (reg val))
+  (branch (label ev-if-consequent))
+ev-if-alternative
+  (assign exp (op if-alternative) (reg exp))
+  (goto (label eval-dispatch))
+ev-if-consequent
+  (assign exp (op if-consequent) (reg exp))
+  (goto (label eval-dispatch))</code></pre>
+
+      <a id="Assignments-and-definitions-1"></a>
+      <h5 class="subsubheading">Atribuições e definições</h5>
+
+      <p>
+        Atribuições são tratadas por <code>ev-assignment</code>, que é alcançado
+        a partir de <code>eval-dispatch</code> com a expressão de atribuição em
+        <code>exp</code>. O código em <code>ev-assignment</code> primeiro avalia
+        a parte do valor da expressão e, em seguida, instala o novo valor no
+        ambiente. <code>Set-variable-value!</code> é assumido como uma operação
+        de máquina disponível.
+      </p>
+
+      <pre><code class="language-scheme">ev-assignment
+  (assign unev 
+          (op assignment-variable)
+          (reg exp))
+  (save unev)   ; salvar a variável para depois
+  (assign exp
+          (op assignment-value)
+          (reg exp))
+  (save env)
+  (save continue)
+  (assign continue (label ev-assignment-1))
+  ; avaliar o valor da atribuição:
+  (goto (label eval-dispatch))  
+ev-assignment-1
+  (restore continue)
+  (restore env)
+  (restore unev)
+  (perform (op set-variable-value!)
+           (reg unev)
+           (reg val)
+           (reg env))
+  (assign val (const ok))
+  (goto (reg continue))</code></pre>
+
+      <p>Definições são tratadas de forma semelhante:</p>
+
+      <pre><code class="language-scheme">ev-definition
+  (assign unev 
+          (op definition-variable)
+          (reg exp))
+  (save unev)   ; salvar a variável para depois
+  (assign exp 
+          (op definition-value)
+          (reg exp))
+  (save env)
+  (save continue)
+  (assign continue (label ev-definition-1))
+  ; avaliar o valor da definição:
+  (goto (label eval-dispatch))  
+ev-definition-1
+  (restore continue)
+  (restore env)
+  (restore unev)
+  (perform (op define-variable!)
+           (reg unev)
+           (reg val)
+           (reg env))
+  (assign val (const ok))
+  (goto (reg continue))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e23"></a>Exercício 5.23:</strong> Estenda
+          o avaliador para lidar com expressões derivadas como
+          <code>cond</code>, <code>let</code> e assim por diante (<a
+            href="4_002e1.html#g_t4_002e1_002e2"
+            >4.1.2</a
+          >). Você pode “trapacear” e assumir que os transformadores de sintaxe
+          como <code>cond-&gt;if</code> estão disponíveis como operações de
+          máquina.<a class="footnote_link" id="DOCF313" href="#FOOT313"
+            ><sup>313</sup></a
+          >
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e24"></a>Exercício 5.24:</strong>
+          Implemente <code>cond</code> como uma nova forma especial básica sem
+          reduzi-la a <code>if</code>. Você terá que construir um loop que testa
+          os predicados de cláusulas <code>cond</code> sucessivas até encontrar
+          uma que seja verdadeira e, em seguida, usar
+          <code>ev-sequence</code> para avaliar as ações da cláusula.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e25"></a>Exercício 5.25:</strong>
+          Modifique o avaliador para que ele use avaliação em ordem normal,
+          baseada no avaliador preguiçoso de
+          <a href="4_002e2.html#g_t4_002e2">4.2</a>.
+        </p>
+      </blockquote>
+
+      <a id="g_t5_002e4_002e4"></a>
+      <a id="Running-the-Evaluator"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.4.4</span
+        ><span class="sectitle">Executando o Avaliador</span>
+      </h4>
+
+      <p>
+        Com a implementação do avaliador de controle explícito, chegamos ao
+        final de um desenvolvimento, iniciado em
+        <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>, no qual exploramos
+        modelos sucessivamente mais precisos do processo de avaliação. Começamos
+        com o modelo de substituição relativamente informal, depois estendemos
+        isso em <a href="Chapter-3.html#Chapter-3">Capítulo 3</a> para o modelo
+        de ambiente, que nos permitiu lidar com estado e mudança. No avaliador
+        metacircular de <a href="Chapter-4.html#Chapter-4">Capítulo 4</a>,
+        usamos o próprio Scheme como uma linguagem para tornar mais explícita a
+        estrutura de ambiente construída durante a avaliação de uma expressão.
+        Agora, com máquinas de registradores, demos uma olhada mais de perto nos
+        mecanismos do avaliador para gerenciamento de armazenamento, passagem de
+        argumentos e controle. Em cada novo nível de descrição, tivemos que
+        levantar questões e resolver ambiguidades que não eram aparentes no
+        tratamento anterior, menos preciso, da avaliação. Para entender o
+        comportamento do avaliador de controle explícito, podemos simulá-lo e
+        monitorar seu desempenho.
+      </p>
+
+      <p>
+        Instalaremos um loop de driver em nossa máquina do avaliador. Isso
+        desempenha o papel do procedimento <code>driver-loop</code> de
+        <a href="4_002e1.html#g_t4_002e1_002e4">4.1.4</a>. O avaliador imprimirá
+        repetidamente um prompt, lerá uma expressão, avaliará a expressão indo
+        para <code>eval-dispatch</code> e imprimirá o resultado. As seguintes
+        instruções formam o início da sequência do controlador do avaliador de
+        controle explícito:<a class="footnote_link" id="DOCF314" href="#FOOT314"
+          ><sup>314</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">read-eval-print-loop
+  (perform (op initialize-stack))
+  (perform (op prompt-for-input)
+           (const ";;; EC-Eval input:"))
+  (assign exp (op read))
+  (assign env (op get-global-environment))
+  (assign continue (label print-result))
+  (goto (label eval-dispatch))
+print-result
+  (perform (op announce-output)
+           (const ";;; EC-Eval value:"))
+  (perform (op user-print) (reg val))
+  (goto (label read-eval-print-loop))</code></pre>
+
+      <p>
+        Quando encontramos um erro em um procedimento (como o erro “tipo de
+        procedimento desconhecido” indicado em <code>apply-dispatch</code>),
+        imprimimos uma mensagem de erro e retornamos ao loop do driver.<a
+          class="footnote_link"
+          id="DOCF315"
+          href="#FOOT315"
+          ><sup>315</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">unknown-expression-type
+  (assign val (const unknown-expression-type-error))
+  (goto (label signal-error))
+unknown-procedure-type
+  ; limpar a pilha (de apply-dispatch):
+  (restore continue)    
+  (assign val (const unknown-procedure-type-error))
+  (goto (label signal-error))
+signal-error
+  (perform (op user-print) (reg val))
+  (goto (label read-eval-print-loop))</code></pre>
+
+      <p>
+        Para os propósitos da simulação, inicializamos a pilha cada vez que
+        passamos pelo loop do driver, pois ela pode não estar vazia após um erro
+        (como uma variável indefinida) interromper uma avaliação.<a
+          class="footnote_link"
+          id="DOCF316"
+          href="#FOOT316"
+          ><sup>316</sup></a
+        >
+      </p>
+
+      <p>
+        Se combinarmos todos os fragmentos de código apresentados em
+        <a href="#g_t5_002e4_002e1">5.4.1</a>–<a href="#g_t5_002e4_002e4"
+          >5.4.4</a
+        >, podemos criar um modelo de máquina do avaliador que pode ser
+        executado usando o simulador de máquina de registradores de
+        <a href="5_002e2.html#g_t5_002e2">5.2</a>.
+      </p>
+
+      <pre><code class="language-scheme">(define eceval
+  (make-machine
+   '(exp env val proc argl continue unev)
+   eceval-operations
+   '(read-eval-print-loop
+     ⟨entire machine controller 
+      as given above⟩)))</code></pre>
+
+      <p>
+        Devemos definir procedimentos Scheme para simular as operações usadas
+        como primitivas pelo avaliador. Esses são os mesmos procedimentos que
+        usamos para o avaliador metacircular em
+        <a href="4_002e1.html#g_t4_002e1">4.1</a>, juntamente com os poucos
+        adicionais definidos em notas de rodapé ao longo de
+        <a href="#g_t5_002e4">5.4</a>.
+      </p>
+
+      <pre><code class="language-scheme">(define eceval-operations
+  (list (list 'self-evaluating? 
+              self-evaluating)
+        ⟨complete list of operations 
+         for eceval machine⟩))</code></pre>
+
+      <p>
+        Finalmente, podemos inicializar o ambiente global e executar o
+        avaliador:
+      </p>
+
+      <pre><code class="language-scheme">(define the-global-environment
+  (setup-environment))
+
+(start eceval)
+
+;;; EC-Eval input:
+(define (append x y)
+  (if (null? x)
+      y
+      (cons (car x) (append (cdr x) y))))
+
+;;; EC-Eval value:
+ok
+
+;;; EC-Eval input:
+(append '(a b c) '(d e f))
+
+;;; EC-Eval value:
+(a b c d e f)</code></pre>
+
+      <p>
+        Claro, avaliar expressões dessa maneira levará muito mais tempo do que
+        se as tivéssemos digitado diretamente no Scheme, devido aos múltiplos
+        níveis de simulação envolvidos. Nossas expressões são avaliadas pela
+        máquina do avaliador de controle explícito, que está sendo simulada por
+        um programa Scheme, que por sua vez está sendo avaliado pelo
+        interpretador Scheme.
+      </p>
+
+      <a id="Monitoring-the-performance-of-the-evaluator"></a>
+      <h5 class="subsubheading">Monitorando o desempenho do avaliador</h5>
+
+      <p>
+        A simulação pode ser uma ferramenta poderosa para orientar a
+        implementação de avaliadores. As simulações facilitam não apenas
+        explorar variações do design da máquina de registradores, mas também
+        monitorar o desempenho do avaliador simulado. Por exemplo, um fator
+        importante no desempenho é a eficiência com que o avaliador usa a pilha.
+        Podemos observar o número de operações de pilha necessárias para avaliar
+        várias expressões definindo a máquina do avaliador com a versão do
+        simulador que coleta estatísticas sobre o uso da pilha (<a
+          href="5_002e2.html#g_t5_002e2_002e4"
+          >5.2.4</a
+        >), e adicionando uma instrução no ponto de entrada
+        <code>print-result</code> do avaliador para imprimir as estatísticas:
+      </p>
+
+      <pre><code class="language-scheme">print-result
+  ; instrução adicionada:
+  (perform (op print-stack-statistics))
+  (perform (op announce-output)
+           (const ";;; EC-Eval value:"))
+  … ; mesmo que antes</code></pre>
+
+      <p>As interações com o avaliador agora se parecem com isso:</p>
+
+      <pre><code class="language-scheme">;;; EC-Eval input:
+(define (factorial n)
+  (if (= n 1) 1 (* (factorial (- n 1)) n))
+(total-pushes = 3, maximum-depth = 3)
+
+;;; EC-Eval value:
+ok
+
+;;; EC-Eval input:
+(factorial 5)
+(total-pushes = 144, maximum-depth = 28)
+
+;;; EC-Eval value:
+120</code></pre>
+
+      <p>
+        Observe que o loop do driver do avaliador reinicializa a pilha no início
+        de cada interação, de modo que as estatísticas impressas se referirão
+        apenas às operações de pilha usadas para avaliar a expressão anterior.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e26"></a>Exercício 5.26:</strong> Use a
+          pilha monitorada para explorar a propriedade de recursão em cauda do
+          avaliador (<a href="#g_t5_002e4_002e2">5.4.2</a>). Inicie o avaliador
+          e defina o procedimento iterativo <code>factorial</code> de
+          <a href="1_002e2.html#g_t1_002e2_002e1">1.2.1</a>:
+        </p>
+        <pre><code class="language-scheme">(define (factorial n)
+  (define (iter product counter)
+    (if (> counter n)
+        product
+        (iter (* counter product)
+              (+ counter 1))))
+  (iter 1 1))</code></pre>
+        <p>
+          Execute o procedimento com alguns valores pequenos de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+          >. Registre a profundidade máxima da pilha e o número de empilhamentos
+          necessários para calcular
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"><mi>n</mi><mo>!</mo></mrow></math
+          >
+          para cada um desses valores.
+        </p>
+        <ol>
+          <li>
+            Você descobrirá que a profundidade máxima necessária para avaliar
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"><mi>n</mi><mo>!</mo></mrow></math
+            >
+            é independente de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+            >. Qual é essa profundidade?
+          </li>
+          <li>
+            Determine a partir de seus dados uma fórmula em termos de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+            para o número total de operações de empilhamento usadas na avaliação
+            de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"><mi>n</mi><mo>!</mo></mrow></math
+            >
+            para qualquer
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>n</mi><mo>≥</mo><mn>1</mn></mrow
+              ></math
+            >. Observe que o número de operações usadas é uma função linear de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+            e, portanto, é determinado por duas constantes.
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e27"></a>Exercício 5.27:</strong> Para
+          comparação com o <a href="#Exercise-5_002e26">Exercício 5.26</a>,
+          explore o comportamento do seguinte procedimento para calcular
+          fatoriais recursivamente:
+        </p>
+        <pre><code class="language-scheme">(define (factorial n)
+  (if (= n 1)
+      1
+      (* (factorial (- n 1)) n)))</code></pre>
+        <p>
+          Ao executar esse procedimento com a pilha monitorada, determine, como
+          uma função de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+          >, a profundidade máxima da pilha e o número total de empilhamentos
+          usados na avaliação de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"><mi>n</mi><mo>!</mo></mrow></math
+          >
+          para
+          <math xmlns="http://www.w3.org/1998/Math/MathML"
+            ><mrow class="MJX-TeXAtom-ORD"
+              ><mi>n</mi><mo>≥</mo><mn>1</mn></mrow
+            ></math
+          >. (Novamente, essas funções serão lineares.) Resuma seus experimentos
+          preenchendo a seguinte tabela com as expressões apropriadas em termos
+          de <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+          >:
+        </p>
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mtable
+            columnalign="left left left"
+            rowspacing="4pt"
+            columnspacing="1em"
+            rowlines="none solid none solid none"
+            columnlines="solid solid"
+          >
+            <mtr>
+              <mtd />
+              <mtd><mtext>Máximo</mtext></mtd>
+              <mtd><mtext>Número de</mtext></mtd>
+            </mtr>
+            <mtr>
+              <mtd />
+              <mtd><mtext>profundidade</mtext></mtd>
+              <mtd><mtext>empilhamentos</mtext></mtd>
+            </mtr>
+            <mtr>
+              <mtd><mtext>Recursivo</mtext></mtd>
+              <mtd />
+              <mtd />
+            </mtr>
+            <mtr>
+              <mtd><mtext>factorial</mtext></mtd>
+              <mtd />
+              <mtd />
+            </mtr>
+            <mtr>
+              <mtd><mtext>Iterativo</mtext></mtd>
+              <mtd />
+              <mtd />
+            </mtr>
+            <mtr>
+              <mtd><mtext>factorial</mtext></mtd>
+              <mtd />
+              <mtd />
+            </mtr>
+          </mtable>
+        </math>
+        <p>
+          A profundidade máxima é uma medida da quantidade de espaço usado pelo
+          avaliador ao realizar a computação, e o número de empilhamentos
+          correlaciona-se bem com o tempo necessário.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e28"></a>Exercício 5.28:</strong>
+          Modifique a definição do avaliador alterando
+          <code>eval-sequence</code> como descrito em
+          <a href="#g_t5_002e4_002e2">5.4.2</a> para que o avaliador não seja
+          mais de recursão em cauda. Refaça seus experimentos de
+          <a href="#Exercise-5_002e26">Exercício 5.26</a> e
+          <a href="#Exercise-5_002e27">Exercício 5.27</a> para demonstrar que
+          ambas as versões do procedimento <code>factorial</code> agora exigem
+          espaço que cresce linearmente com sua entrada.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e29"></a>Exercício 5.29:</strong>
+          Monitore as operações de pilha na computação recursiva em árvore de
+          Fibonacci:
+        </p>
+        <pre><code class="language-scheme">(define (fib n)
+  (if (< n 2)
+      n
+      (+ (fib (- n 1)) (fib (- n 2)))))</code></pre>
+        <ol>
+          <li>
+            Dê uma fórmula em termos de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math>
+            para a profundidade máxima da pilha necessária para calcular
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mtext>Fib</mtext><mo stretchy="false">(</mo><mi>n</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >
+            para
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>n</mi><mo>≥</mo><mn>2</mn></mrow
+              ></math
+            >. Dica: Em <a href="1_002e2.html#g_t1_002e2_002e2">1.2.2</a>,
+            argumentamos que o espaço usado por esse processo cresce linearmente
+            com
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+            >.
+          </li>
+          <li>
+            Dê uma fórmula para o número total de empilhamentos usados para
+            calcular
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mtext>Fib</mtext><mo stretchy="false">(</mo><mi>n</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >
+            para
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>n</mi><mo>≥</mo><mn>2</mn></mrow
+              ></math
+            >. Você deve descobrir que o número de empilhamentos (que se
+            correlaciona bem com o tempo usado) cresce exponencialmente com
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+            >. Dica: Seja
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>S</mi><mo stretchy="false">(</mo><mi>n</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >
+            o número de empilhamentos usados na computação de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mtext>Fib</mtext><mo stretchy="false">(</mo><mi>n</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >. Você deve ser capaz de argumentar que há uma fórmula que expressa
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>S</mi><mo stretchy="false">(</mo><mi>n</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >
+            em termos de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>S</mi><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo
+                ><mn>1</mn><mo stretchy="false">)</mo></mrow
+              ></math
+            >,
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>S</mi><mo stretchy="false">(</mo><mi>n</mi><mo>−</mo
+                ><mn>2</mn><mo stretchy="false">)</mo></mrow
+              ></math
+            >
+            e alguma constante fixa “overhead”
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math>
+            que é independente de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>n</mi></math
+            >. Dê a fórmula e diga o que
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>k</mi></math>
+            é. Em seguida, mostre que
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>S</mi><mo stretchy="false">(</mo><mi>n</mi
+                ><mo stretchy="false">)</mo></mrow
+              ></math
+            >
+            pode ser expresso como
+            <math xmlns="http://www.w3.org/1998/Math/MathML"
+              ><mrow class="MJX-TeXAtom-ORD"
+                ><mi>a</mi><mo>⋅</mo><mtext>Fib</mtext
+                ><mo stretchy="false">(</mo><mi>n</mi><mo>+</mo><mn>1</mn
+                ><mo stretchy="false">)</mo><mo>+</mo><mi>b</mi></mrow
+              ></math
+            >
+            e dê os valores de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>a</mi></math> e
+            <math xmlns="http://www.w3.org/1998/Math/MathML"><mi>b</mi></math
+            >.
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e30"></a>Exercício 5.30:</strong> Nosso
+          avaliador atualmente captura e sinaliza apenas dois tipos de
+          erros—tipos de expressão desconhecidos e tipos de procedimento
+          desconhecidos. Outros erros nos tirarão do loop de
+          leitura-avaliação-impressão do avaliador. Quando executamos o
+          avaliador usando o simulador de máquina de registradores, esses erros
+          são capturados pelo sistema Scheme subjacente. Isso é análogo ao
+          computador travar quando um programa de usuário comete um erro.<a
+            class="footnote_link"
+            id="DOCF317"
+            href="#FOOT317"
+            ><sup>317</sup></a
+          >
+          É um grande projeto fazer um sistema de erros real funcionar, mas vale
+          a pena entender o que está envolvido aqui.
+        </p>
+        <ol>
+          <li>
+            Erros que ocorrem no processo de avaliação, como uma tentativa de
+            acessar uma variável não vinculada, poderiam ser capturados
+            alterando a operação de pesquisa para fazê-la retornar um código de
+            condição distinto, que não pode ser um valor possível de qualquer
+            variável de usuário. O avaliador pode testar esse código de condição
+            e então fazer o necessário para ir para <code>signal-error</code>.
+            Encontre todos os lugares no avaliador onde tal mudança é necessária
+            e corrija-os. Isso é muito trabalho.
+          </li>
+          <li>
+            Muito pior é o problema de lidar com erros que são sinalizados pela
+            aplicação de procedimentos primitivos, como uma tentativa de dividir
+            por zero ou uma tentativa de extrair o <code>car</code> de um
+            símbolo. Em um sistema de alta qualidade escrito profissionalmente,
+            cada aplicação primitiva é verificada quanto à segurança como parte
+            da primitiva. Por exemplo, cada chamada para
+            <code>car</code> poderia primeiro verificar que o argumento é um
+            par. Se o argumento não for um par, a aplicação retornaria um código
+            de condição distinto para o avaliador, que então relataria a falha.
+            Poderíamos arranjar isso em nosso simulador de máquina de
+            registradores fazendo cada procedimento primitivo verificar a
+            aplicabilidade e retornar um código de condição apropriado em caso
+            de falha. Então o código <code>primitive-apply</code> no avaliador
+            pode verificar o código de condição e ir para
+            <code>signal-error</code> se necessário. Construa essa estrutura e
+            faça-a funcionar. Este é um projeto importante.
+          </li>
+        </ol>
+      </blockquote>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+
+        <div id="FOOT304">
+          <p>
+            <a class="footnote_backlink" href="#DOCF304"><sup>304</sup></a> Veja
+            <a href="References.html#Batali-et-al_002e-1982"
+              >Batali et al. 1982</a
+            >
+            para mais informações sobre o chip e o método pelo qual ele foi
+            projetado.
+          </p>
+        </div>
+        <div id="FOOT305">
+          <p>
+            <a class="footnote_backlink" href="#DOCF305"><sup>305</sup></a> Em
+            nosso controlador, o despacho é escrito como uma sequência de
+            instruções <code>test</code> e <code>branch</code>.
+            Alternativamente, poderia ter sido escrito em um estilo dirigido por
+            dados (e em um sistema real provavelmente teria sido) para evitar a
+            necessidade de realizar testes sequenciais e facilitar a definição
+            de novos tipos de expressão. Uma máquina projetada para executar
+            Lisp provavelmente incluiria uma instrução
+            <code>dispatch-on-type</code> que executaria eficientemente tais
+            despachos dirigidos por dados.
+          </p>
+        </div>
+        <div id="FOOT306">
+          <p>
+            <a class="footnote_backlink" href="#DOCF306"><sup>306</sup></a> Este
+            é um ponto importante, mas sutil, na tradução de algoritmos de uma
+            linguagem procedural, como Lisp, para uma linguagem de máquina de
+            registradores. Como alternativa a salvar apenas o que é necessário,
+            poderíamos salvar todos os registradores (exceto <code>val</code>)
+            antes de cada chamada recursiva. Isso é chamado de disciplina de
+            <a id="index-framed_002dstack"></a> <em>pilha emoldurada</em>. Isso
+            funcionaria, mas poderia salvar mais registradores do que o
+            necessário; isso poderia ser uma consideração importante em um
+            sistema onde as operações de pilha são caras. Salvar registradores
+            cujos conteúdos não serão necessários mais tarde também pode segurar
+            dados inúteis que poderiam ser coletados como lixo, liberando espaço
+            para reutilização.
+          </p>
+        </div>
+        <div id="FOOT307">
+          <p>
+            <a class="footnote_backlink" href="#DOCF307"><sup>307</sup></a>
+            Adicionamos aos procedimentos de estrutura de dados do avaliador em
+            <a href="4_002e1.html#g_t4_002e1_002e3">4.1.3</a> os seguintes dois
+            procedimentos para manipular listas de argumentos:
+          </p>
+          <pre><code class="language-scheme">(define (empty-arglist) '())
+(define (adjoin-arg arg arglist)
+  (append arglist (list arg)))</code></pre>
+          <p>
+            Também usamos um procedimento de sintaxe adicional para testar o
+            último operando em uma combinação:
+          </p>
+          <pre><code class="language-scheme">(define (last-operand? ops) (null? (cdr ops)))</code></pre>
+        </div>
+        <div id="FOOT308">
+          <p>
+            <a class="footnote_backlink" href="#DOCF308"><sup>308</sup></a> A
+            otimização de tratar o último operando de forma especial é conhecida
+            como <a id="index-evlis-tail-recursion"></a>
+            <em>recursão em cauda evlis</em> (veja
+            <a href="References.html#Wand-1980">Wand 1980</a>). Poderíamos ser
+            um pouco mais eficientes no loop de avaliação de argumentos se
+            fizéssemos a avaliação do primeiro operando um caso especial também.
+            Isso nos permitiria adiar a inicialização de <code>argl</code> até
+            após a avaliação do primeiro operando, para evitar salvar
+            <code>argl</code> nesse caso. O compilador em
+            <a href="5_002e5.html#g_t5_002e5">5.5</a> realiza essa otimização.
+            (Compare o procedimento <code>construct-arglist</code> de
+            <a href="5_002e5.html#g_t5_002e5_002e3">5.5.3</a>.)
+          </p>
+        </div>
+        <div id="FOOT309">
+          <p>
+            <a class="footnote_backlink" href="#DOCF309"><sup>309</sup></a> A
+            ordem de avaliação de operandos no avaliador metacircular é
+            determinada pela ordem de avaliação dos argumentos para
+            <code>cons</code> no procedimento <code>list-of-values</code> de
+            <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a> (veja
+            <a href="4_002e1.html#Exercise-4_002e1">Exercício 4.1</a>).
+          </p>
+        </div>
+        <div id="FOOT310">
+          <p>
+            <a class="footnote_backlink" href="#DOCF310"><sup>310</sup></a>
+            Vimos em <a href="5_002e1.html#g_t5_002e1">5.1</a> como implementar
+            tal processo com uma máquina de registradores que não tinha pilha; o
+            estado do processo era armazenado em um conjunto fixo de
+            registradores.
+          </p>
+        </div>
+        <div id="FOOT311">
+          <p>
+            <a class="footnote_backlink" href="#DOCF311"><sup>311</sup></a> Esta
+            implementação de recursão em cauda em <code>ev-sequence</code> é uma
+            variedade de uma técnica de otimização bem conhecida usada por
+            muitos compiladores. Ao compilar um procedimento que termina com uma
+            chamada de procedimento, pode-se substituir a chamada por um salto
+            para o ponto de entrada do procedimento chamado. Construir essa
+            estratégia no interpretador, como fizemos nesta seção, fornece a
+            otimização uniformemente em toda a linguagem.
+          </p>
+        </div>
+        <div id="FOOT312">
+          <p>
+            <a class="footnote_backlink" href="#DOCF312"><sup>312</sup></a>
+            Podemos definir <code>no-more-exps?</code> da seguinte forma:
+          </p>
+          <pre><code class="language-scheme">(define (no-more-exps? seq) (null? seq))</code></pre>
+        </div>
+        <div id="FOOT313">
+          <p>
+            <a class="footnote_backlink" href="#DOCF313"><sup>313</sup></a> Isso
+            não é realmente trapaça. Em uma implementação real construída do
+            zero, usaríamos nosso avaliador de controle explícito para
+            interpretar um programa Scheme que realiza transformações de nível
+            de fonte como <code>cond-&gt;if</code> em uma fase de sintaxe que é
+            executada antes da execução.
+          </p>
+        </div>
+        <div id="FOOT314">
+          <p>
+            <a class="footnote_backlink" href="#DOCF314"><sup>314</sup></a>
+            Assumimos aqui que <code>read</code> e as várias operações de
+            impressão estão disponíveis como operações primitivas de máquina, o
+            que é útil para nossa simulação, mas completamente irrealista na
+            prática. Essas são, na verdade, operações extremamente complexas. Na
+            prática, elas seriam implementadas usando operações de entrada/saída
+            de baixo nível, como a transferência de caracteres individuais para
+            e de um dispositivo.
+          </p>
+          <p>
+            Para suportar a operação <code>get-global-environment</code>,
+            definimos
+          </p>
+          <pre><code class="language-scheme">(define the-global-environment
+  (setup-environment))
+
+(define (get-global-environment)
+  the-global-environment)</code></pre>
+        </div>
+        <div id="FOOT315">
+          <p>
+            <a class="footnote_backlink" href="#DOCF315"><sup>315</sup></a> Há
+            outros erros que gostaríamos que o interpretador lidasse, mas esses
+            não são tão simples. Veja
+            <a href="#Exercise-5_002e30">Exercício 5.30</a>.
+          </p>
+        </div>
+        <div id="FOOT316">
+          <p>
+            <a class="footnote_backlink" href="#DOCF316"><sup>316</sup></a>
+            Poderíamos realizar a inicialização da pilha apenas após erros, mas
+            fazê-lo no loop do driver será conveniente para monitorar o
+            desempenho do avaliador, conforme descrito abaixo.
+          </p>
+        </div>
+        <div id="FOOT317">
+          <p>
+            <a class="footnote_backlink" href="#DOCF317"><sup>317</sup></a>
+            Infelizmente, esse é o estado normal dos sistemas de linguagem
+            baseados em compiladores convencionais, como C. No
+            <abbr>UNIX</abbr>(tm), o sistema “despeja o núcleo”, e no
+            <abbr>DOS</abbr>/Windows(tm), ele fica catatônico. O Macintosh(tm)
+            exibe uma imagem de uma bomba explodindo e oferece a você a
+            oportunidade de reiniciar o computador—se você tiver sorte.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="5_002e5.html#g_t5_002e5" accesskey="n" rel="next">5.5</a>,
+          Anterior:
+          <a href="5_002e3.html#g_t5_002e3" accesskey="p" rel="prev">5.3</a>,
+          Acima: <a href="#g_t5_002e4" accesskey="u" rel="prev">5.4</a> [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Ir para o final"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    >
+    <a id="pagebottom"></a>
+  </body>
+</html>

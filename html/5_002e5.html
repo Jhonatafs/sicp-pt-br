@@ -1,0 +1,3603 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.5"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.5"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.5
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Pular para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      ><a id="pagetop"></a><a id="g_t5_002e5"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="References.xhtml#References" accesskey="n" rel="next"
+            >Referências</a
+          >, Anterior:
+          <a href="5_002e4.xhtml#g_t5_002e4" accesskey="p" rel="prev">5.4</a>,
+          Acima:
+          <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev"
+            >Capítulo 5</a
+          >
+          [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Conteúdo</a
+          >]
+        </p>
+      </nav>
+      <a id="Compilation"></a>
+      <h3 class="section">
+        <span class="secnum">5.5</span><span class="sectitle">Compilação</span>
+      </h3>
+
+      <p>
+        O avaliador de controle explícito de
+        <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> é uma máquina de registros
+        cujo controlador interpreta programas em Scheme. Nesta seção, veremos
+        como executar programas em Scheme em uma máquina de registros cujo
+        controlador não é um interpretador de Scheme.
+      </p>
+      <p>
+        A máquina do avaliador de controle explícito é universal—ela pode
+        realizar qualquer processo computacional que pode ser descrito em
+        Scheme. O controlador do avaliador orquestra o uso de seus caminhos de
+        dados para realizar a computação desejada. Assim, os caminhos de dados
+        do avaliador são universais: Eles são suficientes para realizar qualquer
+        computação que desejarmos, dado um controlador apropriado.<a
+          class="footnote_link"
+          id="DOCF318"
+          href="#FOOT318"
+          ><sup>318</sup></a
+        >
+      </p>
+      <p>
+        Computadores comerciais de propósito geral são máquinas de registros
+        organizadas em torno de uma coleção de registros e operações que
+        constituem um conjunto universal de caminhos de dados eficiente e
+        conveniente. O controlador para uma máquina de propósito geral é um
+        interpretador para uma linguagem de máquina de registros como a que
+        temos usado. Essa linguagem é chamada de
+        <a id="index-native-language"></a> <em>linguagem nativa</em> da máquina,
+        ou simplesmente <a id="index-machine-language"></a>
+        <em>linguagem de máquina</em>. Programas escritos em linguagem de
+        máquina são sequências de instruções que usam os caminhos de dados da
+        máquina. Por exemplo, a sequência de instruções do avaliador de controle
+        explícito pode ser pensada como um programa em linguagem de máquina para
+        um computador de propósito geral, em vez de como o controlador para uma
+        máquina de interpretação especializada.
+      </p>
+      <p>
+        Existem duas estratégias comuns para preencher a lacuna entre linguagens
+        de alto nível e linguagens de máquina de registros. O avaliador de
+        controle explícito ilustra a estratégia de interpretação. Um
+        interpretador escrito na linguagem nativa de uma máquina configura a
+        máquina para executar programas escritos em uma linguagem (chamada de
+        <a id="index-source-language"></a> <em>linguagem fonte</em>) que pode
+        diferir da linguagem nativa da máquina que realiza a avaliação. Os
+        procedimentos primitivos da linguagem fonte são implementados como uma
+        biblioteca de sub-rotinas escritas na linguagem nativa da máquina dada.
+        Um programa a ser interpretado (chamado de
+        <a id="index-source-program"></a> <em>programa fonte</em>) é
+        representado como uma estrutura de dados. O interpretador percorre essa
+        estrutura de dados, analisando o programa fonte. Ao fazer isso, ele
+        simula o comportamento pretendido do programa fonte chamando sub-rotinas
+        primitivas apropriadas da biblioteca.
+      </p>
+      <p>
+        Nesta seção, exploraremos a estratégia alternativa de
+        <a id="index-compilation"></a> <em>compilação</em>. Um compilador para
+        uma determinada linguagem fonte e máquina traduz um programa fonte em um
+        programa equivalente (chamado de <a id="index-object-program"></a>
+        <em>programa objeto</em>) escrito na linguagem nativa da máquina. O
+        compilador que implementaremos nesta seção traduz programas escritos em
+        Scheme em sequências de instruções a serem executadas usando os caminhos
+        de dados da máquina do avaliador de controle explícito.<a
+          class="footnote_link"
+          id="DOCF319"
+          href="#FOOT319"
+          ><sup>319</sup></a
+        >
+      </p>
+      <p>
+        Comparada com a interpretação, a compilação pode proporcionar um grande
+        aumento na eficiência da execução de programas, como explicaremos abaixo
+        na visão geral do compilador. Por outro lado, um interpretador fornece
+        um ambiente mais poderoso para o desenvolvimento e depuração interativa
+        de programas, porque o programa fonte sendo executado está disponível em
+        tempo de execução para ser examinado e modificado. Além disso, como toda
+        a biblioteca de primitivas está presente, novos programas podem ser
+        construídos e adicionados ao sistema durante a depuração.
+      </p>
+      <p>
+        Diante das vantagens complementares da compilação e interpretação, os
+        ambientes modernos de desenvolvimento de programas adotam uma estratégia
+        mista. Interpretadores Lisp são geralmente organizados de forma que
+        procedimentos interpretados e compilados possam se chamar mutuamente.
+        Isso permite que um programador compile as partes de um programa que são
+        consideradas depuradas, obtendo assim a vantagem de eficiência da
+        compilação, enquanto mantém o modo interpretativo de execução para as
+        partes do programa que estão em fluxo durante o desenvolvimento e
+        depuração interativa. Em <a href="#g_t5_002e5_002e7">5.5.7</a>, após
+        implementarmos o compilador, mostraremos como interfacá-lo com nosso
+        interpretador para produzir um sistema integrado de desenvolvimento
+        interpretador-compilador.
+      </p>
+      <a id="An-overview-of-the-compiler"></a>
+      <h5 class="subsubheading">Uma visão geral do compilador</h5>
+
+      <p>
+        Nosso compilador é muito parecido com nosso interpretador, tanto em sua
+        estrutura quanto na função que desempenha. Consequentemente, os
+        mecanismos usados pelo compilador para analisar expressões serão
+        semelhantes aos usados pelo interpretador. Além disso, para facilitar a
+        interface entre código compilado e interpretado, projetaremos o
+        compilador para gerar código que obedece às mesmas convenções de uso de
+        registros que o interpretador: O ambiente será mantido no registro
+        <code>env</code>, listas de argumentos serão acumuladas em
+        <code>argl</code>, um procedimento a ser aplicado estará em
+        <code>proc</code>, procedimentos retornarão suas respostas em
+        <code>val</code>, e o local para o qual um procedimento deve retornar
+        será mantido em <code>continue</code>. Em geral, o compilador traduz um
+        programa fonte em um programa objeto que realiza essencialmente as
+        mesmas operações de registros que o interpretador faria ao avaliar o
+        mesmo programa fonte.
+      </p>
+      <p>
+        Essa descrição sugere uma estratégia para implementar um compilador
+        rudimentar: Percorremos a expressão da mesma forma que o interpretador
+        faz. Quando encontramos uma instrução de registro que o interpretador
+        realizaria ao avaliar a expressão, não executamos a instrução, mas a
+        acumulamos em uma sequência. A sequência resultante de instruções será o
+        código objeto. Observe a vantagem de eficiência da compilação sobre a
+        interpretação. Cada vez que o interpretador avalia uma expressão—por
+        exemplo, <code>(f 84 96)</code>—ele realiza o trabalho de classificar a
+        expressão (descobrindo que se trata de uma aplicação de procedimento) e
+        testar o fim da lista de operandos (descobrindo que há dois operandos).
+        Com um compilador, a expressão é analisada apenas uma vez, quando a
+        sequência de instruções é gerada em tempo de compilação. O código objeto
+        produzido pelo compilador contém apenas as instruções que avaliam o
+        operador e os dois operandos, montam a lista de argumentos e aplicam o
+        procedimento (em <code>proc</code>) aos argumentos (em
+        <code>argl</code>).
+      </p>
+      <p>
+        Esse é o mesmo tipo de otimização que implementamos no avaliador
+        analisador de <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>. Mas há
+        mais oportunidades para ganhar eficiência no código compilado. Conforme
+        o interpretador é executado, ele segue um processo que deve ser
+        aplicável a qualquer expressão na linguagem. Em contraste, um
+        determinado segmento de código compilado é destinado a executar alguma
+        expressão específica. Isso pode fazer uma grande diferença, por exemplo,
+        no uso da pilha para salvar registros. Quando o interpretador avalia uma
+        expressão, ele deve estar preparado para qualquer contingência. Antes de
+        avaliar uma subexpressão, o interpretador salva todos os registros que
+        serão necessários posteriormente, porque a subexpressão pode exigir uma
+        avaliação arbitrária. Um compilador, por outro lado, pode explorar a
+        estrutura da expressão específica que está processando para gerar código
+        que evita operações desnecessárias na pilha.
+      </p>
+      <p>
+        Como exemplo, considere a combinação <code>(f 84 96)</code>. Antes que o
+        interpretador avalie o operador da combinação, ele se prepara para essa
+        avaliação salvando os registros contendo os operandos e o ambiente,
+        cujos valores serão necessários posteriormente. O interpretador então
+        avalia o operador para obter o resultado em <code>val</code>, restaura
+        os registros salvos e finalmente move o resultado de
+        <code>val</code> para <code>proc</code>. No entanto, na expressão
+        específica com a qual estamos lidando, o operador é o símbolo
+        <code>f</code>, cuja avaliação é realizada pela operação da máquina
+        <code>lookup-variable-value</code>, que não altera nenhum registro. O
+        compilador que implementaremos nesta seção aproveitará esse fato e
+        gerará código que avalia o operador usando a instrução
+      </p>
+      <pre><code class="language-scheme">(assign proc 
+        (op lookup-variable-value)
+        (const f)
+        (reg env))</code></pre>
+
+      <p>
+        Esse código não apenas evita os salvamentos e restaurações
+        desnecessários, mas também atribui o valor da pesquisa diretamente a
+        <code>proc</code>, enquanto o interpretador obteria o resultado em
+        <code>val</code> e então moveria isso para <code>proc</code>.
+      </p>
+      <p>
+        Um compilador também pode otimizar o acesso ao ambiente. Tendo analisado
+        o código, o compilador pode, em muitos casos, saber em qual quadro uma
+        variável específica estará localizada e acessar esse quadro diretamente,
+        em vez de realizar a busca <code>lookup-variable-value</code>.
+        Discutiremos como implementar tal acesso a variáveis em
+        <a href="#g_t5_002e5_002e6">5.5.6</a>. Até lá, no entanto, nos
+        concentraremos no tipo de otimizações de registros e pilha descritas
+        acima. Há muitas outras otimizações que podem ser realizadas por um
+        compilador, como codificar operações primitivas "em linha" em vez de
+        usar um mecanismo geral de <code>apply</code> (veja
+        <a href="#Exercise-5_002e38">Exercício 5.38</a>); mas não enfatizaremos
+        isso aqui. Nosso principal objetivo nesta seção é ilustrar o processo de
+        compilação em um contexto simplificado (mas ainda interessante).
+      </p>
+
+      <a id="g_t5_002e5_002e1"></a>
+      <a id="Structure-of-the-Compiler"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.5.1</span
+        ><span class="sectitle">Estrutura do Compilador</span>
+      </h4>
+
+      <p>
+        Em <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>, modificamos nosso
+        interpretador metacircular original para separar a análise da execução.
+        Analisamos cada expressão para produzir um procedimento de execução que
+        tomava um ambiente como argumento e realizava as operações necessárias.
+        Em nosso compilador, faremos essencialmente a mesma análise. Em vez de
+        produzir procedimentos de execução, no entanto, geraremos sequências de
+        instruções a serem executadas por nossa máquina de registros.
+      </p>
+      <p>
+        O procedimento <code>compile</code> é o despacho de alto nível no
+        compilador. Ele corresponde ao procedimento <code>eval</code> de
+        <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>, ao procedimento
+        <code>analyze</code> de
+        <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a> e ao ponto de entrada
+        <code>eval-dispatch</code> do avaliador de controle explícito em
+        <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>. O compilador, como
+        os interpretadores, usa os procedimentos de sintaxe de expressão
+        definidos em <a href="4_002e1.xhtml#g_t4_002e1_002e2">4.1.2</a>.<a
+          class="footnote_link"
+          id="DOCF320"
+          href="#FOOT320"
+          ><sup>320</sup></a
+        >
+        <code>Compile</code> realiza uma análise de caso no tipo sintático da
+        expressão a ser compilada. Para cada tipo de expressão, ele despacha
+        para um <a id="index-code-generator"></a>
+        <em>gerador de código</em> especializado:
+      </p>
+      <pre><code class="language-scheme">(define (compile exp target linkage)
+  (cond ((self-evaluating? exp)
+         (compile-self-evaluating 
+          exp target linkage))
+        ((quoted? exp) 
+         (compile-quoted exp target linkage))
+        ((variable? exp)
+         (compile-variable 
+          exp target linkage))
+        ((assignment? exp)
+         (compile-assignment
+          exp target linkage))
+        ((definition? exp)
+         (compile-definition
+          exp target linkage))
+        ((if? exp)
+         (compile-if exp target linkage))
+        ((lambda? exp)
+         (compile-lambda exp target linkage))
+        ((begin? exp)
+         (compile-sequence 
+          (begin-actions exp) target linkage))
+        ((cond? exp) 
+         (compile 
+          (cond-&gt;if exp) target linkage))
+        ((application? exp)
+         (compile-application 
+          exp target linkage))
+        (else
+         (error "Unknown expression type: 
+                 COMPILE" 
+                exp))))</code></pre>
+
+      <a id="Targets-and-linkages"></a>
+      <h5 class="subsubheading">Destinos e ligações</h5>
+
+      <p>
+        <code>Compile</code> e os geradores de código que ele chama recebem dois
+        argumentos além da expressão a ser compilada. Há um
+        <a id="index-target"></a> <em>destino</em>, que especifica o registro no
+        qual o código compilado deve retornar o valor da expressão. Há também um
+        <a id="index-linkage-descriptor"></a> <em>descritor de ligação</em>, que
+        descreve como o código resultante da compilação da expressão deve
+        prosseguir quando terminar sua execução. O descritor de ligação pode
+        exigir que o código faça uma das três coisas a seguir:
+      </p>
+      <ul>
+        <li>
+          continuar na próxima instrução na sequência (isso é especificado pelo
+          descritor de ligação <code>next</code>),
+        </li>
+        <li>
+          retornar do procedimento que está sendo compilado (isso é especificado
+          pelo descritor de ligação <code>return</code>), ou
+        </li>
+        <li>
+          pular para um ponto de entrada nomeado (isso é especificado usando o
+          rótulo designado como descritor de ligação).
+        </li>
+      </ul>
+
+      <p>
+        Por exemplo, compilar a expressão <code>5</code> (que é autoavaliada)
+        com um destino no registro <code>val</code> e uma ligação
+        <code>next</code> deve produzir a instrução
+      </p>
+      <pre><code class="language-scheme">(assign val (const 5))</code></pre>
+
+      <p>
+        Compilar a mesma expressão com uma ligação <code>return</code> deve
+        produzir as instruções
+      </p>
+      <pre><code class="language-scheme">(assign val (const 5))
+(goto (reg continue))</code></pre>
+
+      <p>
+        No primeiro caso, a execução continuará com a próxima instrução na
+        sequência. No segundo caso, retornaremos de uma chamada de procedimento.
+        Em ambos os casos, o valor da expressão será colocado no registro de
+        destino <code>val</code>.
+      </p>
+      <a id="Instruction-sequences-and-stack-usage"></a>
+      <h5 class="subsubheading">Sequências de instruções e uso da pilha</h5>
+
+      <p>
+        Cada gerador de código retorna uma
+        <a id="index-instruction-sequence"></a>
+        <em>sequência de instruções</em> contendo o código objeto que ele gerou
+        para a expressão. A geração de código para uma expressão composta é
+        realizada combinando a saída de geradores de código mais simples para
+        expressões componentes, assim como a avaliação de uma expressão composta
+        é realizada avaliando as expressões componentes.
+      </p>
+      <p>
+        O método mais simples para combinar sequências de instruções é um
+        procedimento chamado <code>append-instruction-sequences</code>. Ele
+        recebe como argumentos qualquer número de sequências de instruções que
+        devem ser executadas sequencialmente; ele as concatena e retorna a
+        sequência combinada. Ou seja, se
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mspace width="0.1em" />
+            <mi>s</mi>
+            <mi>e</mi>
+            <msub>
+              <mi>q</mi>
+              <mn>1</mn>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mspace width="0.1em" />
+            <mi>s</mi>
+            <mi>e</mi>
+            <msub>
+              <mi>q</mi>
+              <mn>2</mn>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        são sequências de instruções, então avaliar
+      </p>
+      <pre><code class="language-scheme">(append-instruction-sequences ⟨seq₁⟩ ⟨seq₂⟩)</code></pre>
+
+      <p>produz a sequência</p>
+      <pre><code class="language-scheme">⟨seq₁⟩
+⟨seq₂⟩</code></pre>
+
+      <p>
+        Sempre que os registros precisarem ser salvos, os geradores de código do
+        compilador usam <code>preserving</code>, que é um método mais sutil para
+        combinar sequências de instruções. <code>Preserving</code> recebe três
+        argumentos: um conjunto de registros e duas sequências de instruções que
+        devem ser executadas sequencialmente. Ele concatena as sequências de
+        forma que o conteúdo de cada registro no conjunto seja preservado sobre
+        a execução da primeira sequência, se isso for necessário para a execução
+        da segunda sequência. Ou seja, se a primeira sequência modificar o
+        registro e a segunda sequência realmente precisar do conteúdo original
+        do registro, então <code>preserving</code> envolve um
+        <code>save</code> e um <code>restore</code> do registro em torno da
+        primeira sequência antes de concatenar as sequências. Caso contrário,
+        <code>preserving</code> simplesmente retorna as sequências de instruções
+        concatenadas. Assim, por exemplo,
+        <code>(preserving (list ⟨reg₁⟩ ⟨reg₂⟩) ⟨seg₁⟩ ⟨seg₂⟩)</code>
+        produz uma das seguintes quatro sequências de instruções, dependendo de
+        como
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mspace width="0.1em" />
+            <mi>s</mi>
+            <mi>e</mi>
+            <msub>
+              <mi>q</mi>
+              <mn>1</mn>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mspace width="0.1em" />
+            <mi>s</mi>
+            <mi>e</mi>
+            <msub>
+              <mi>q</mi>
+              <mn>2</mn>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        usam
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mspace width="0.1em" />
+            <mi>r</mi>
+            <mi>e</mi>
+            <msub>
+              <mi>g</mi>
+              <mn>1</mn>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow>
+        </math>
+        e
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mrow class="MJX-TeXAtom-ORD">
+            <mo stretchy="false">⟨</mo>
+            <mspace width="0.1em" />
+            <mi>r</mi>
+            <mi>e</mi>
+            <msub>
+              <mi>g</mi>
+              <mn>2</mn>
+            </msub>
+            <mo stretchy="false">⟩</mo>
+          </mrow> </math
+        >:
+        <math xmlns="http://www.w3.org/1998/Math/MathML" display="block">
+          <mtable
+            columnalign="left left left left"
+            rowspacing="4pt"
+            columnspacing="1em"
+            columnlines="solid solid solid"
+          >
+            <mtr>
+              <mtd>
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>q</mi>
+                    <mn>1</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+              </mtd>
+              <mtd>
+                <mtext>(save</mtext>
+              </mtd>
+              <mtd>
+                <mtext>(save</mtext>
+              </mtd>
+              <mtd>
+                <mtext>(save</mtext>
+                <mspace width="1ex" />
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>r</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>g</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+                <mtext>)</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd>
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>q</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+              </mtd>
+              <mtd>
+                <mspace width="1ex" />
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>r</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>g</mi>
+                    <mn>1</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+                <mtext>)</mtext>
+              </mtd>
+              <mtd>
+                <mspace width="1ex" />
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>r</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>g</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+                <mtext>)</mtext>
+              </mtd>
+              <mtd>
+                <mtext>(save</mtext>
+                <mspace width="1ex" />
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>r</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>g</mi>
+                    <mn>1</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+                <mtext>)</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd />
+              <mtd>
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>q</mi>
+                    <mn>1</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+              </mtd>
+              <mtd>
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>q</mi>
+                    <mn>1</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+              </mtd>
+              <mtd>
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>q</mi>
+                    <mn>1</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd />
+              <mtd>
+                <mtext>(restore</mtext>
+              </mtd>
+              <mtd>
+                <mtext>(restore</mtext>
+              </mtd>
+              <mtd>
+                <mtext>(restore</mtext>
+                <mspace width="1ex" />
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>r</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>g</mi>
+                    <mn>1</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+                <mtext>)</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd />
+              <mtd>
+                <mspace width="1ex" />
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>r</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>g</mi>
+                    <mn>1</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+                <mtext>)</mtext>
+              </mtd>
+              <mtd>
+                <mspace width="1ex" />
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>r</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>g</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+                <mtext>)</mtext>
+              </mtd>
+              <mtd>
+                <mtext>(restore</mtext>
+                <mspace width="1ex" />
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>r</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>g</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+                <mtext>)</mtext>
+              </mtd>
+            </mtr>
+            <mtr>
+              <mtd />
+              <mtd>
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>q</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+              </mtd>
+              <mtd>
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>q</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+              </mtd>
+              <mtd>
+                <mo stretchy="false">⟨</mo>
+                <mspace width="0.1em" />
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>s</mi>
+                  <mi>e</mi>
+                  <msub>
+                    <mi>q</mi>
+                    <mn>2</mn>
+                  </msub>
+                </mrow>
+                <mo stretchy="false">⟩</mo>
+              </mtd>
+            </mtr>
+          </mtable>
+        </math>
+      </p>
+      <p>
+        Ao usar <code>preserving</code> para combinar sequências de instruções,
+        o compilador evita operações desnecessárias na pilha. Isso também isola
+        os detalhes de se gerar ou não instruções <code>save</code> e
+        <code>restore</code> dentro do procedimento <code>preserving</code>,
+        separando-os das preocupações que surgem ao escrever cada um dos
+        geradores de código individuais. Na verdade, nenhuma instrução
+        <code>save</code> ou <code>restore</code> é explicitamente produzida
+        pelos geradores de código.
+      </p>
+      <p>
+        Em princípio, poderíamos representar uma sequência de instruções
+        simplesmente como uma lista de instruções.
+        <code>Append-instruction-sequences</code> poderia então combinar
+        sequências de instruções realizando um <code>append</code> de lista
+        comum. No entanto, <code>preserving</code> seria então uma operação
+        complexa, porque teria que analisar cada sequência de instruções para
+        determinar como a sequência usa seus registros.
+        <code>Preserving</code> seria ineficiente e complexo, porque teria que
+        analisar cada um de seus argumentos de sequência de instruções, mesmo
+        que essas sequências pudessem ter sido construídas por chamadas a
+        <code>preserving</code>, caso em que suas partes já teriam sido
+        analisadas. Para evitar essa análise repetitiva, associaremos a cada
+        sequência de instruções algumas informações sobre seu uso de registros.
+        Quando construímos uma sequência de instruções básica, forneceremos
+        essas informações explicitamente, e os procedimentos que combinam
+        sequências de instruções derivarão informações de uso de registros para
+        a sequência combinada a partir das informações associadas às sequências
+        componentes.
+      </p>
+      <p>Uma sequência de instruções conterá três partes de informação:</p>
+      <ul>
+        <li>
+          o conjunto de registros que devem ser inicializados antes que as
+          instruções na sequência sejam executadas (esses registros são ditos
+          <a id="index-needed"></a> <em>necessários</em> pela sequência),
+        </li>
+        <li>
+          o conjunto de registros cujos valores são modificados pelas instruções
+          na sequência, e
+        </li>
+        <li>
+          as instruções reais (também chamadas de <a id="index-statements"></a>
+          <em>declarações</em>) na sequência.
+        </li>
+      </ul>
+
+      <p>
+        Representaremos uma sequência de instruções como uma lista de suas três
+        partes. O construtor para sequências de instruções é, portanto,
+      </p>
+      <pre><code class="language-scheme">(define (make-instruction-sequence 
+         needs modifies statements)
+  (list needs modifies statements))</code></pre>
+
+      <p>
+        Por exemplo, a sequência de duas instruções que procura o valor da
+        variável <code>x</code> no ambiente atual, atribui o resultado a
+        <code>val</code> e então retorna, requer que os registros
+        <code>env</code> e <code>continue</code> tenham sido inicializados e
+        modifica o registro <code>val</code>. Essa sequência seria, portanto,
+        construída como
+      </p>
+      <pre><code class="language-scheme">(make-instruction-sequence
+ '(env continue)
+ '(val)
+ '((assign val
+           (op lookup-variable-value)
+           (const x)
+           (reg env))
+   (goto (reg continue))))</code></pre>
+
+      <p>
+        Às vezes, precisamos construir uma sequência de instruções sem
+        declarações:
+      </p>
+      <pre><code class="language-scheme">(define (empty-instruction-sequence)
+  (make-instruction-sequence '() '() '()))</code></pre>
+
+      <p>
+        Os procedimentos para combinar sequências de instruções são mostrados em
+        <a href="#g_t5_002e5_002e4">5.5.4</a>.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e31"></a>Exercício 5.31:</strong> Na
+          avaliação de uma aplicação de procedimento, o avaliador de controle
+          explícito sempre salva e restaura o registro <code>env</code> em torno
+          da avaliação do operador, salva e restaura <code>env</code> em torno
+          da avaliação de cada operando (exceto o último), salva e restaura
+          <code>argl</code> em torno da avaliação de cada operando e salva e
+          restaura <code>proc</code> em torno da avaliação da sequência de
+          operandos. Para cada uma das seguintes combinações, diga quais dessas
+          operações de <code>save</code> e <code>restore</code> são supérfluas
+          e, portanto, poderiam ser eliminadas pelo mecanismo
+          <code>preserving</code> do compilador:
+        </p>
+        <pre><code class="language-scheme">(f 'x 'y)
+((f) 'x 'y)
+(f (g 'x) y)
+(f (g 'x) 'y)</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e32"></a>Exercício 5.32:</strong> Usando
+          o mecanismo <code>preserving</code>, o compilador evitará salvar e
+          restaurar <code>env</code> em torno da avaliação do operador de uma
+          combinação no caso em que o operador é um símbolo. Poderíamos também
+          construir tais otimizações no avaliador. De fato, o avaliador de
+          controle explícito de <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> já
+          realiza uma otimização semelhante, tratando combinações sem operandos
+          como um caso especial.
+        </p>
+        <ol>
+          <li>
+            Estenda o avaliador de controle explícito para reconhecer como uma
+            classe separada de expressões combinações cujo operador é um símbolo
+            e para tirar vantagem desse fato na avaliação de tais expressões.
+          </li>
+          <li>
+            Alyssa P. Hacker sugere que, ao estender o avaliador para reconhecer
+            mais e mais casos especiais, poderíamos incorporar todas as
+            otimizações do compilador e que isso eliminaria a vantagem da
+            compilação. O que você acha dessa ideia?
+          </li>
+        </ol>
+      </blockquote>
+
+      <a id="g_t5_002e5_002e2"></a>
+      <a id="Compiling-Expressions"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.5.2</span
+        ><span class="sectitle">Compilando Expressões</span>
+      </h4>
+
+      <p>
+        Nesta seção e na próxima, implementamos os geradores de código para os
+        quais o procedimento <code>compile</code> despacha.
+      </p>
+      <a id="Compiling-linkage-code"></a>
+      <h5 class="subsubheading">Compilando código de ligação</h5>
+
+      <p>
+        Em geral, a saída de cada gerador de código terminará com
+        instruções—geradas pelo procedimento <code>compile-linkage</code>—que
+        implementam a ligação necessária. Se a ligação for <code>return</code>,
+        então devemos gerar a instrução <code>(goto (reg continue))</code>. Isso
+        precisa do registro <code>continue</code> e não modifica nenhum
+        registro. Se a ligação for <code>next</code>, então não precisamos
+        incluir nenhuma instrução adicional. Caso contrário, a ligação é um
+        rótulo, e geramos um <code>goto</code> para esse rótulo, uma instrução
+        que não precisa ou modifica nenhum registro.<a
+          class="footnote_link"
+          id="DOCF321"
+          href="#FOOT321"
+          ><sup>321</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (compile-linkage linkage)
+  (cond ((eq? linkage 'return)
+         (make-instruction-sequence 
+          '(continue)
+          '()
+          '((goto (reg continue)))))
+        ((eq? linkage 'next)
+         (empty-instruction-sequence))
+        (else
+         (make-instruction-sequence '() '()
+          `((goto (label ,linkage))))))</code></pre>
+
+      <p>
+        O código de ligação é anexado a uma sequência de instruções preservando
+        o registro <code>continue</code>, já que uma ligação
+        <code>return</code> exigirá o registro <code>continue</code>: Se a
+        sequência de instruções dada modificar <code>continue</code> e o código
+        de ligação precisar dele, <code>continue</code> será salvo e restaurado.
+      </p>
+      <pre><code class="language-scheme">(define (end-with-linkage 
+         linkage instruction-sequence)
+  (preserving '(continue)
+   instruction-sequence
+   (compile-linkage linkage)))</code></pre>
+
+      <a id="Compiling-simple-expressions"></a>
+      <h5 class="subsubheading">Compilando expressões simples</h5>
+
+      <p>
+        Os geradores de código para expressões autoavaliadas, citações e
+        variáveis constroem sequências de instruções que atribuem o valor
+        necessário ao registro de destino e então prosseguem conforme
+        especificado pelo descritor de ligação.
+      </p>
+      <pre><code class="language-scheme">(define (compile-self-evaluating 
+         exp target linkage)
+  (end-with-linkage
+   linkage (make-instruction-sequence 
+            '()
+            (list target)
+            `((assign ,target (const ,exp))))))
+
+(define (compile-quoted exp target linkage)
+  (end-with-linkage
+   linkage
+   (make-instruction-sequence
+    '()
+    (list target)
+    `((assign 
+       ,target
+       (const ,(text-of-quotation exp))))))
+
+(define (compile-variable
+         exp target linkage)
+  (end-with-linkage 
+   linkage
+   (make-instruction-sequence 
+    '(env)
+    (list target)
+    `((assign ,target
+              (op lookup-variable-value)
+              (const ,exp)
+              (reg env)))))</code></pre>
+
+      <p>
+        Todas essas instruções de atribuição modificam o registro de destino, e
+        a que procura uma variável precisa do registro <code>env</code>.
+      </p>
+      <p>
+        Atribuições e definições são tratadas de forma semelhante ao que são no
+        interpretador. Geramos recursivamente código que calcula o valor a ser
+        atribuído à variável e anexamos a ele uma sequência de duas instruções
+        que realmente define ou define a variável e atribui o valor da expressão
+        inteira (o símbolo <code>ok</code>) ao registro de destino. A compilação
+        recursiva tem destino <code>val</code> e ligação <code>next</code> para
+        que o código coloque seu resultado em <code>val</code> e continue com o
+        código que é anexado após ele. A anexação é feita preservando
+        <code>env</code>, já que o ambiente é necessário para definir ou definir
+        a variável e o código para o valor da variável pode ser a compilação de
+        uma expressão complexa que pode modificar os registros de forma
+        arbitrária.
+      </p>
+      <pre><code class="language-scheme">(define (compile-assignment 
+         exp target linkage)
+  (let ((var (assignment-variable exp))
+        (get-value-code
+         (compile (assignment-value exp) 
+                  'val'
+                  'next')))
+    (end-with-linkage 
+     linkage
+     (preserving 
+      '(env)
+      get-value-code
+      (make-instruction-sequence
+       '(env val)
+       (list target)
+       `((perform (op set-variable-value!)
+                  (const ,var)
+                  (reg val)
+                  (reg env))
+         (assign ,target (const ok)))))))
+
+(define (compile-definition 
+         exp target linkage)
+  (let ((var (definition-variable exp))
+        (get-value-code
+         (compile (definition-value exp)
+                  'val'
+                  'next')))
+    (end-with-linkage
+     linkage
+     (preserving 
+      '(env)
+      get-value-code
+      (make-instruction-sequence
+       '(env val)
+       (list target)
+       `((perform (op define-variable!)
+                  (const ,var)
+                  (reg val)
+                  (reg env))
+         (assign ,target (const ok)))))))</code></pre>
+
+      <p>
+        A sequência de duas instruções anexada requer <code>env</code> e
+        <code>val</code> e modifica o destino. Observe que, embora preservemos
+        <code>env</code> para essa sequência, não preservamos <code>val</code>,
+        porque o <code>get-value-code</code> é projetado para colocar
+        explicitamente seu resultado em <code>val</code> para uso por essa
+        sequência. (Na verdade, se preservássemos <code>val</code>, teríamos um
+        bug, porque isso faria com que o conteúdo anterior de
+        <code>val</code> fosse restaurado logo após a execução do
+        <code>get-value-code</code>.)
+      </p>
+      <a id="Compiling-conditional-expressions"></a>
+      <h5 class="subsubheading">Compilando expressões condicionais</h5>
+
+      <p>
+        O código para uma expressão <code>if</code> compilada com um destino e
+        uma ligação dados tem a forma
+      </p>
+      <pre><code class="language-scheme">⟨compilation of predicate, 
+ target val, linkage next⟩
+ (test (op false?) (reg val))
+ (branch (label false-branch))
+true-branch
+ ⟨compilation of consequent with given 
+  target and given linkage or after-if⟩
+false-branch
+ ⟨compilation of alternative 
+  with given target and linkage⟩
+after-if</code></pre>
+
+      <p>
+        Para gerar esse código, compilamos o predicado, o consequente e a
+        alternativa, e combinamos o código resultante com instruções para testar
+        o resultado do predicado e com rótulos recém-gerados para marcar os
+        ramos verdadeiro e falso e o fim do condicional.<a
+          class="footnote_link"
+          id="DOCF322"
+          href="#FOOT322"
+          ><sup>322</sup></a
+        >
+        Nesse arranjo de código, devemos pular o ramo verdadeiro se o teste for
+        falso. A única complicação leve é em como a ligação para o ramo
+        verdadeiro deve ser tratada. Se a ligação para o condicional for
+        <code>return</code> ou um rótulo, então os ramos verdadeiro e falso
+        usarão essa mesma ligação. Se a ligação for <code>next</code>, o ramo
+        verdadeiro termina com um salto ao redor do código para o ramo falso
+        para o rótulo no fim do condicional.
+      </p>
+      <pre><code class="language-scheme">(define (compile-if exp target linkage)
+  (let ((t-branch (make-label 'true-branch))
+        (f-branch (make-label 'false-branch))
+        (after-if (make-label 'after-if)))
+    (let ((consequent-linkage
+           (if (eq? linkage 'next) 
+               after-if
+               linkage)))
+      (let ((p-code 
+             (compile (if-predicate exp)
+                      'val'
+                      'next'))
+            (c-code
+             (compile (if-consequent exp) 
+                      target 
+                      consequent-linkage))
+            (a-code
+             (compile (if-alternative exp)
+                      target
+                      linkage)))
+        (preserving 
+         '(env continue)
+         p-code
+         (append-instruction-sequences
+          (make-instruction-sequence 
+           '(val) 
+           '()
+           `((test (op false?) (reg val))
+             (branch (label ,f-branch))))
+          (parallel-instruction-sequences
+           (append-instruction-sequences 
+            t-branch c-code)
+           (append-instruction-sequences
+            f-branch a-code))
+          after-if))))))</code></pre>
+
+      <p>
+        <code>Env</code> é preservado em torno do código do predicado porque ele
+        pode ser necessário pelos ramos verdadeiro e falso, e
+        <code>continue</code> é preservado porque pode ser necessário pelo
+        código de ligação nesses ramos. O código para os ramos verdadeiro e
+        falso (que não são executados sequencialmente) é anexado usando um
+        combinador especial <code>parallel-instruction-sequences</code> descrito
+        em <a href="#g_t5_002e5_002e4">5.5.4</a>.
+      </p>
+      <p>
+        Observe que <code>cond</code> é uma expressão derivada, então tudo que o
+        compilador precisa fazer para lidar com ela é aplicar o transformador
+        <code>cond-&gt;if</code> (de
+        <a href="4_002e1.xhtml#g_t4_002e1_002e2">4.1.2</a>) e compilar a
+        expressão <code>if</code> resultante.
+      </p>
+      <a id="Compiling-sequences"></a>
+      <h5 class="subsubheading">Compilando sequências</h5>
+
+      <p>
+        A compilação de sequências (de corpos de procedimentos ou expressões
+        <code>begin</code> explícitas) é paralela à sua avaliação. Cada
+        expressão da sequência é compilada—a última expressão com a ligação
+        especificada para a sequência, e as outras expressões com ligação
+        <code>next</code> (para executar o resto da sequência). As sequências de
+        instruções para as expressões individuais são anexadas para formar uma
+        única sequência de instruções, de forma que <code>env</code> (necessário
+        para o resto da sequência) e <code>continue</code> (possivelmente
+        necessário para a ligação no fim da sequência) sejam preservados.
+      </p>
+      <pre><code class="language-scheme">(define (compile-sequence seq target linkage)
+  (if (last-exp? seq)
+      (compile (first-exp seq) target linkage)
+      (preserving '(env continue)
+       (compile (first-exp seq) target 'next')
+       (compile-sequence (rest-exps seq)
+                         target
+                         linkage))))</code></pre>
+
+      <a id="Compiling-lambda-expressions"></a>
+      <h5 class="subsubheading">Compilando expressões <code>lambda</code></h5>
+
+      <p>
+        Expressões <code>lambda</code> constroem procedimentos. O código objeto
+        para uma expressão <code>lambda</code> deve ter a forma
+      </p>
+      <pre><code class="language-scheme">⟨construct procedure object 
+ and assign it to target register⟩
+⟨linkage⟩</code></pre>
+
+      <p>
+        Quando compilamos a expressão <code>lambda</code>, também geramos o
+        código para o corpo do procedimento. Embora o corpo não seja executado
+        no momento da construção do procedimento, é conveniente inseri-lo no
+        código objeto logo após o código para o <code>lambda</code>. Se a
+        ligação para a expressão <code>lambda</code> for um rótulo ou
+        <code>return</code>, isso é bom. Mas se a ligação for <code>next</code>,
+        precisaremos pular o código para o corpo do procedimento usando uma
+        ligação que salta para um rótulo que é inserido após o corpo. O código
+        objeto tem, portanto, a forma
+      </p>
+      <pre><code class="language-scheme">⟨construct procedure object 
+ and assign it to target register⟩
+ ⟨code for given linkage⟩ or 
+  (goto (label after-lambda))
+ ⟨compilation of procedure body⟩
+after-lambda</code></pre>
+
+      <p>
+        <code>Compile-lambda</code> gera o código para construir o objeto de
+        procedimento seguido pelo código para o corpo do procedimento. O objeto
+        de procedimento será construído em tempo de execução combinando o
+        ambiente atual (o ambiente no ponto de definição) com o ponto de entrada
+        para o corpo do procedimento compilado (um rótulo recém-gerado).<a
+          class="footnote_link"
+          id="DOCF323"
+          href="#FOOT323"
+          ><sup>323</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (compile-lambda exp target linkage)
+  (let ((proc-entry 
+         (make-label 'entry))
+        (after-lambda 
+         (make-label 'after-lambda)))
+    (let ((lambda-linkage
+           (if (eq? linkage 'next)
+               after-lambda
+               linkage)))
+      (append-instruction-sequences
+       (tack-on-instruction-sequence
+        (end-with-linkage 
+         lambda-linkage
+         (make-instruction-sequence 
+          '(env)
+          (list target)
+          `((assign 
+             ,target
+             (op make-compiled-procedure)
+             (label ,proc-entry)
+             (reg env)))))
+        (compile-lambda-body exp proc-entry))
+       after-lambda))))</code></pre>
+
+      <p>
+        <code>Compile-lambda</code> usa o combinador especial
+        <code>tack-on-instruction-sequence</code> em vez de
+        <code>append-instruction-sequences</code> (<a href="#g_t5_002e5_002e4"
+          >5.5.4</a
+        >) para anexar o corpo do procedimento ao código da expressão
+        <code>lambda</code>, porque o corpo não faz parte da sequência de
+        instruções que será executada quando a sequência combinada for inserida;
+        em vez disso, ele está na sequência apenas porque esse foi um local
+        conveniente para colocá-lo.
+      </p>
+      <p>
+        <code>Compile-lambda-body</code> constrói o código para o corpo do
+        procedimento. Esse código começa com um rótulo para o ponto de entrada.
+        Em seguida, vêm instruções que farão com que o ambiente de avaliação em
+        tempo de execução mude para o ambiente correto para avaliar o corpo do
+        procedimento—ou seja, o ambiente de definição do procedimento, estendido
+        para incluir as ligações dos parâmetros formais aos argumentos com os
+        quais o procedimento é chamado. Depois disso, vem o código para a
+        sequência de expressões que compõem o corpo do procedimento. A sequência
+        é compilada com ligação <code>return</code> e destino
+        <code>val</code> para que termine retornando do procedimento com o
+        resultado do procedimento em <code>val</code>.
+      </p>
+      <pre><code class="language-scheme">(define (compile-lambda-body exp proc-entry)
+  (let ((formals (lambda-parameters exp)))
+    (append-instruction-sequences
+     (make-instruction-sequence 
+      '(env proc argl)
+      '(env)
+      `(,proc-entry
+        (assign env 
+                (op compiled-procedure-env)
+                (reg proc))
+        (assign env
+                (op extend-environment)
+                (const ,formals)
+                (reg argl)
+                (reg env))))
+     (compile-sequence (lambda-body exp)
+                       'val'
+                       'return'))))</code></pre>
+
+      <a id="g_t5_002e5_002e3"></a>
+      <a id="Compiling-Combinations"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.5.3</span
+        ><span class="sectitle">Compilando Combinações</span>
+      </h4>
+
+      <p>
+        A essência do processo de compilação é a compilação de aplicações de
+        procedimentos. O código para uma combinação compilada com um destino e
+        uma ligação dados tem a forma
+      </p>
+      <pre><code class="language-scheme">⟨compilation of operator, 
+ target proc, linkage next⟩
+⟨evaluate operands and construct 
+ argument list in argl⟩
+⟨compilation of procedure call 
+ with given target and linkage⟩</code></pre>
+
+      <p>
+        Os registros <code>env</code>, <code>proc</code> e
+        <code>argl</code> podem precisar ser salvos e restaurados durante a
+        avaliação do operador e dos operandos. Observe que este é o único lugar
+        no compilador onde um destino diferente de <code>val</code> é
+        especificado.
+      </p>
+      <p>
+        O código necessário é gerado por <code>compile-application</code>. Isso
+        compila recursivamente o operador, para produzir código que coloca o
+        procedimento a ser aplicado em <code>proc</code>, e compila os
+        operandos, para produzir código que avalia os operandos individuais da
+        aplicação. As sequências de instruções para os operandos são combinadas
+        (por <code>construct-arglist</code>) com código que constrói a lista de
+        argumentos em <code>argl</code>, e o código resultante da lista de
+        argumentos é combinado com o código do procedimento e o código que
+        realiza a chamada do procedimento (produzido por
+        <code>compile-procedure-call</code>). Ao anexar as sequências de código,
+        o registro <code>env</code> deve ser preservado em torno da avaliação do
+        operador (já que a avaliação do operador pode modificar
+        <code>env</code>, que será necessário para avaliar os operandos), e o
+        registro <code>proc</code> deve ser preservado em torno da construção da
+        lista de argumentos (já que a avaliação dos operandos pode modificar
+        <code>proc</code>, que será necessário para a aplicação real do
+        procedimento). <code>Continue</code> também deve ser preservado durante
+        todo o processo, já que é necessário para a ligação na chamada do
+        procedimento.
+      </p>
+      <pre><code class="language-scheme">(define (compile-application 
+         exp target linkage)
+  (let ((proc-code 
+         (compile (operator exp) 'proc' 'next'))
+        (operand-codes
+         (map (lambda (operand)
+                (compile operand 'val' 'next'))
+              (operands exp))))
+    (preserving 
+     '(env continue)
+     proc-code
+     (preserving 
+      '(proc continue)
+      (construct-arglist operand-codes)
+      (compile-procedure-call 
+       target
+       linkage)))))</code></pre>
+
+      <p>
+        O código para construir a lista de argumentos avaliará cada operando em
+        <code>val</code> e então <code>cons</code> esse valor na lista de
+        argumentos sendo acumulada em <code>argl</code>. Como
+        <code>cons</code> os argumentos em <code>argl</code> em sequência,
+        devemos começar com o último argumento e terminar com o primeiro, para
+        que os argumentos apareçam em ordem do primeiro ao último na lista
+        resultante. Em vez de desperdiçar uma instrução inicializando
+        <code>argl</code> para a lista vazia para configurar essa sequência de
+        avaliações, fazemos com que a primeira sequência de código construa o
+        <code>argl</code> inicial. A forma geral da construção da lista de
+        argumentos é, portanto, a seguinte:
+      </p>
+      <pre><code class="language-scheme">⟨compilation of last operand, targeted to val⟩
+(assign argl (op list) (reg val))
+⟨compilation of next operand, targeted to val⟩
+(assign argl (op cons) (reg val) (reg argl))
+…
+⟨compilation of first operand, targeted to val⟩
+(assign argl (op cons) (reg val) (reg argl))</code></pre>
+
+      <p>
+        <code>Argl</code> deve ser preservado em torno de cada avaliação de
+        operando, exceto a primeira (para que os argumentos acumulados até então
+        não sejam perdidos), e <code>env</code> deve ser preservado em torno de
+        cada avaliação de operando, exceto a última (para uso por avaliações
+        subsequentes de operandos).
+      </p>
+      <p>
+        Compilar esse código de argumentos é um pouco complicado, devido ao
+        tratamento especial do primeiro operando a ser avaliado e à necessidade
+        de preservar <code>argl</code> e <code>env</code> em lugares diferentes.
+        O procedimento <code>construct-arglist</code> recebe como argumentos o
+        código que avalia os operandos individuais. Se não houver operandos, ele
+        simplesmente emite a instrução
+      </p>
+      <pre><code class="language-scheme">(assign argl (const ()))</code></pre>
+
+      <p>
+        Caso contrário, <code>construct-arglist</code> cria código que
+        inicializa <code>argl</code> com o último argumento e anexa código que
+        avalia o resto dos argumentos e os adiciona a <code>argl</code> em
+        sucessão. Para processar os argumentos do último ao primeiro, devemos
+        inverter a lista de sequências de código de operandos da ordem fornecida
+        por <code>compile-application</code>.
+      </p>
+      <pre><code class="language-scheme">(define (construct-arglist operand-codes)
+  (let ((operand-codes 
+         (reverse operand-codes)))
+    (if (null? operand-codes)
+        (make-instruction-sequence 
+         '() 
+         '(argl)
+         '((assign argl (const ()))))
+        (let ((code-to-get-last-arg
+               (append-instruction-sequences
+                (car operand-codes)
+                (make-instruction-sequence 
+                 '(val)
+                 '(argl)
+                 '((assign argl
+                           (op list)
+                           (reg val))))))
+          (if (null? (cdr operand-codes))
+              code-to-get-last-arg
+              (preserving 
+               '(env)
+               code-to-get-last-arg
+               (code-to-get-rest-args
+                (cdr operand-codes)))))))
+
+(define (code-to-get-rest-args operand-codes)
+  (let ((code-for-next-arg
+         (preserving 
+          '(argl)
+          (car operand-codes)
+          (make-instruction-sequence 
+           '(val argl)
+           '(argl)
+           '((assign argl
+                     (op cons)
+                     (reg val)
+                     (reg argl))))))
+    (if (null? (cdr operand-codes))
+        code-for-next-arg
+        (preserving 
+         '(env)
+         code-for-next-arg
+         (code-to-get-rest-args 
+          (cdr operand-codes))))))</code></pre>
+
+      <a id="Applying-procedures"></a>
+      <h5 class="subsubheading">Aplicando procedimentos</h5>
+
+      <p>
+        Após avaliar os elementos de uma combinação, o código compilado deve
+        aplicar o procedimento em <code>proc</code> aos argumentos em
+        <code>argl</code>. O código realiza essencialmente a mesma despacho que
+        o procedimento <code>apply</code> no avaliador metacircular de
+        <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a> ou o ponto de entrada
+        <code>apply-dispatch</code> no avaliador de controle explícito de
+        <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>. Ele verifica se o
+        procedimento a ser aplicado é um procedimento primitivo ou um
+        procedimento compilado. Para um procedimento primitivo, ele usa
+        <code>apply-primitive-procedure</code>; veremos em breve como ele lida
+        com procedimentos compilados. O código de aplicação de procedimento tem
+        a seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(test (op primitive-procedure?) (reg proc))
+ (branch (label primitive-branch))
+compiled-branch
+ ⟨código para aplicar o procedimento compilado
+  com o alvo dado e a ligação apropriada⟩
+primitive-branch
+ (assign ⟨alvo⟩
+         (op apply-primitive-procedure)
+         (reg proc)
+         (reg argl))
+ ⟨ligação⟩
+after-call</code></pre>
+
+      <p>
+        Observe que o ramo compilado deve pular ao redor do ramo primitivo.
+        Portanto, se a ligação para a chamada de procedimento original fosse
+        <code>next</code>, o ramo composto deve usar uma ligação que salte para
+        um rótulo inserido após o ramo primitivo. (Isso é semelhante à ligação
+        usada para o ramo verdadeiro em <code>compile-if</code>.)
+      </p>
+      <pre><code class="language-scheme">(define (compile-procedure-call
+         target linkage)
+  (let ((primitive-branch 
+         (make-label 'primitive-branch))
+        (compiled-branch 
+         (make-label 'compiled-branch))
+        (after-call
+         (make-label 'after-call)))
+    (let ((compiled-linkage
+           (if (eq? linkage 'next)
+               after-call
+               linkage)))
+      (append-instruction-sequences
+       (make-instruction-sequence 
+        '(proc)
+        '()
+        `((test 
+           (op primitive-procedure?)
+           (reg proc))
+          (branch 
+           (label ,primitive-branch))))
+       (parallel-instruction-sequences
+        (append-instruction-sequences
+         compiled-branch
+         (compile-proc-appl 
+          target
+          compiled-linkage))
+        (append-instruction-sequences
+         primitive-branch
+         (end-with-linkage
+          linkage
+          (make-instruction-sequence
+           '(proc argl)
+           (list target)
+           `((assign 
+              ,target
+              (op apply-primitive-procedure)
+              (reg proc)
+              (reg argl)))))))
+       after-call))))</code></pre>
+
+      <p>
+        Os ramos primitivo e composto, como os ramos verdadeiro e falso em
+        <code>compile-if</code>, são anexados usando
+        <code>parallel-instruction-sequences</code> em vez do
+        <code>append-instruction-sequences</code> comum, porque eles não serão
+        executados sequencialmente.
+      </p>
+      <a id="Applying-compiled-procedures"></a>
+      <h5 class="subsubheading">Aplicando procedimentos compilados</h5>
+
+      <p>
+        O código que lida com a aplicação de procedimentos é a parte mais sutil
+        do compilador, mesmo que as sequências de instruções que ele gera sejam
+        muito curtas. Um procedimento compilado (como construído por
+        <code>compile-lambda</code>) tem um ponto de entrada, que é um rótulo
+        que designa onde o código para o procedimento começa. O código neste
+        ponto de entrada calcula um resultado em <code>val</code> e retorna
+        executando a instrução <code>(goto (reg continue))</code>. Assim, nós
+        poderíamos esperar que o código para uma aplicação de procedimento
+        compilado (a ser gerado por <code>compile-proc-appl</code>) com um alvo
+        e ligação dados se pareça com isso se a ligação for um rótulo
+      </p>
+      <pre><code class="language-scheme">(assign continue 
+        (label proc-return))
+ (assign val
+         (op compiled-procedure-entry)
+         (reg proc))
+ (goto (reg val))
+proc-return
+ (assign ⟨alvo⟩ 
+         (reg val))   ; incluído se o alvo não for <code>val</code>
+ (goto (label ⟨ligação⟩))   ; código de ligação</code></pre>
+
+      <p>ou assim se a ligação for <code>return</code>.</p>
+      <pre><code class="language-scheme">(save continue))
+ (assign continue 
+         (label proc-return))
+ (assign val 
+         (op compiled-procedure-entry)
+         (reg proc))
+ (goto (reg val))
+proc-return
+ (assign ⟨alvo⟩
+         (reg val))   ; incluído se o alvo não for <code>val</code>
+ (restore continue))
+ (goto (reg continue))   ; código de ligação</code></pre>
+
+      <p>
+        Este código configura <code>continue</code> para que o procedimento
+        retorne a um rótulo <code>proc-return</code> e salta para o ponto de
+        entrada do procedimento. O código em <code>proc-return</code> transfere
+        o resultado do procedimento de <code>val</code> para o registrador de
+        destino (se necessário) e então salta para o local especificado pela
+        ligação. (A ligação é sempre <code>return</code> ou um rótulo, porque
+        <code>compile-procedure-call</code> substitui uma ligação
+        <code>next</code> para o ramo de procedimento composto por um rótulo
+        <code>after-call</code>.)
+      </p>
+      <p>
+        Na verdade, se o alvo não for <code>val</code>, esse é exatamente o
+        código que nosso compilador gerará.<a
+          class="footnote_link"
+          id="DOCF324"
+          href="#FOOT324"
+          ><sup>324</sup></a
+        >
+        Geralmente, no entanto, o alvo é <code>val</code> (a única vez que o
+        compilador especifica um registrador diferente é quando o alvo é a
+        avaliação de um operador para <code>proc</code>), então o resultado do
+        procedimento é colocado diretamente no registrador de destino e não há
+        necessidade de retornar a um local especial que o copie. Em vez disso,
+        simplificamos o código configurando <code>continue</code> para que o
+        procedimento "retorne" diretamente para o local especificado pela
+        ligação do chamador:
+      </p>
+      <pre><code class="language-scheme">⟨configurar <code>continue</code> para a ligação⟩
+(assign val 
+        (op compiled-procedure-entry)
+        (reg proc))
+(goto (reg val))</code></pre>
+
+      <p>
+        Se a ligação for um rótulo, configuramos <code>continue</code> para que
+        o procedimento retorne para esse rótulo. (Ou seja, o
+        <code>(goto (reg continue))</code> com o qual o procedimento termina se
+        torna equivalente ao <code>(goto (label ⟨ligação⟩))</code> em
+        <code>proc-return</code> acima.)
+      </p>
+      <pre><code class="language-scheme">(assign continue 
+        (label ⟨ligação⟩))
+(assign val
+        (op compiled-procedure-entry)
+        (reg proc))
+(goto (reg val))</code></pre>
+
+      <p>
+        Se a ligação for <code>return</code>, não precisamos configurar
+        <code>continue</code>: Ele já contém o local desejado. (Ou seja, o
+        <code>(goto (reg continue))</code> com o qual o procedimento termina vai
+        diretamente para o local onde o <code>(goto (reg continue))</code> em
+        <code>proc-return</code> teria ido.)
+      </p>
+      <pre><code class="language-scheme">(assign val
+        (op compiled-procedure-entry)
+        (reg proc))
+(goto (reg val))</code></pre>
+
+      <p>
+        Com esta implementação da ligação <code>return</code>, o compilador gera
+        código recursivo em cauda. Chamar um procedimento como o passo final em
+        um corpo de procedimento faz uma transferência direta, sem salvar
+        qualquer informação na pilha.
+      </p>
+      <p>
+        Suponha que, em vez disso, tivéssemos tratado o caso de uma chamada de
+        procedimento com uma ligação de <code>return</code> e um alvo de
+        <code>val</code> como mostrado acima para um alvo não <code>val</code>.
+        Isso destruiria a recursão em cauda. Nosso sistema ainda daria o mesmo
+        valor para qualquer expressão. Mas cada vez que chamássemos um
+        procedimento, salvaríamos <code>continue</code> e retornaríamos após a
+        chamada para desfazer o (inútil) salvamento. Esses salvamentos extras se
+        acumulariam durante um aninhamento de chamadas de procedimento.<a
+          class="footnote_link"
+          id="DOCF325"
+          href="#FOOT325"
+          ><sup>325</sup></a
+        >
+      </p>
+      <p>
+        <code>Compile-proc-appl</code> gera o código de aplicação de
+        procedimento acima considerando quatro casos, dependendo se o alvo para
+        a chamada é <code>val</code> e se a ligação é <code>return</code>.
+        Observe que as sequências de instruções são declaradas para modificar
+        todos os registradores, já que executar o corpo do procedimento pode
+        alterar os registradores de maneiras arbitrárias.<a
+          class="footnote_link"
+          id="DOCF326"
+          href="#FOOT326"
+          ><sup>326</sup></a
+        >
+        Também note que a sequência de código para o caso com alvo
+        <code>val</code> e ligação <code>return</code> é declarada para precisar
+        de <code>continue</code>: Mesmo que <code>continue</code> não seja
+        explicitamente usado na sequência de duas instruções, devemos ter
+        certeza de que <code>continue</code> terá o valor correto quando
+        entrarmos no procedimento compilado.
+      </p>
+      <pre><code class="language-scheme">(define (compile-proc-appl target linkage)
+  (cond ((and (eq? target 'val)
+              (not (eq? linkage 'return)))
+         (make-instruction-sequence 
+          '(proc)
+          all-regs
+          `((assign continue (label ,linkage))
+            (assign 
+             val 
+             (op compiled-procedure-entry)
+             (reg proc))
+            (goto (reg val)))))
+        ((and (not (eq? target 'val))
+              (not (eq? linkage 'return)))
+         (let ((proc-return 
+                (make-label 'proc-return)))
+           (make-instruction-sequence 
+            '(proc)
+            all-regs
+            `((assign continue 
+                      (label ,proc-return))
+              (assign 
+               val 
+               (op compiled-procedure-entry)
+               (reg proc))
+              (goto (reg val))
+              ,proc-return
+              (assign ,target (reg val))
+              (goto (label ,linkage))))))
+        ((and (eq? target 'val)
+              (eq? linkage 'return))
+         (make-instruction-sequence 
+          '(proc continue) 
+          all-regs
+          '((assign 
+             val 
+             (op compiled-procedure-entry)
+             (reg proc))
+            (goto (reg val)))))
+        ((and (not (eq? target 'val))
+              (eq? linkage 'return))
+         (error "return linkage, 
+                 target not val: COMPILE"
+                target))))</code></pre>
+
+      <a id="g_t5_002e5_002e4"></a>
+      <a id="Combining-Instruction-Sequences"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.5.4</span
+        ><span class="sectitle">Combinando Sequências de Instruções</span>
+      </h4>
+
+      <p>
+        Esta seção descreve os detalhes sobre como as sequências de instruções
+        são representadas e combinadas. Lembre-se de
+        <a href="#g_t5_002e5_002e1">5.5.1</a> que uma sequência de instruções é
+        representada como uma lista dos registradores necessários, os
+        registradores modificados e as instruções reais. Também consideraremos
+        um rótulo (símbolo) como um caso degenerado de uma sequência de
+        instruções, que não precisa ou modifica nenhum registrador. Então, para
+        determinar os registradores necessários e modificados por sequências de
+        instruções, usamos os seletores
+      </p>
+      <pre><code class="language-scheme">(define (registers-needed s)
+  (if (symbol? s) '() (car s)))
+(define (registers-modified s)
+  (if (symbol? s) '() (cadr s)))
+(define (statements s)
+  (if (symbol? s) (list s) (caddr s)))</code></pre>
+
+      <p>
+        e para determinar se uma determinada sequência precisa ou modifica um
+        determinado registrador, usamos os predicados
+      </p>
+      <pre><code class="language-scheme">(define (needs-register? seq reg)
+  (memq reg (registers-needed seq)))
+(define (modifies-register? seq reg)
+  (memq reg (registers-modified seq)))</code></pre>
+
+      <p>
+        Em termos desses predicados e seletores, podemos implementar os vários
+        combinadores de sequências de instruções usados ao longo do compilador.
+      </p>
+      <p>
+        O combinador básico é <code>append-instruction-sequences</code>. Ele
+        recebe como argumentos um número arbitrário de sequências de instruções
+        que devem ser executadas sequencialmente e retorna uma sequência de
+        instruções cujas instruções são as instruções de todas as sequências
+        anexadas juntas. O ponto sutil é determinar os registradores que são
+        necessários e modificados pela sequência resultante. Ele modifica
+        aqueles registradores que são modificados por qualquer uma das
+        sequências; ele precisa daqueles registradores que devem ser
+        inicializados antes que a primeira sequência possa ser executada (os
+        registradores necessários para a primeira sequência), juntamente com
+        aqueles registradores necessários para qualquer uma das outras
+        sequências que não são inicializados (modificados) por sequências
+        anteriores.
+      </p>
+      <p>
+        As sequências são anexadas duas de cada vez por
+        <code>append-2-sequences</code>. Este recebe duas sequências de
+        instruções <code>seq1</code> e <code>seq2</code> e retorna a sequência
+        de instruções cujas instruções são as instruções de
+        <code>seq1</code> seguidas pelas instruções de <code>seq2</code>, cujos
+        registradores modificados são aqueles registradores que são modificados
+        por <code>seq1</code> ou <code>seq2</code>, e cujos registradores
+        necessários são os registradores necessários para
+        <code>seq1</code> juntamente com aqueles registradores necessários para
+        <code>seq2</code> que não são modificados por <code>seq1</code>. (Em
+        termos de operações de conjuntos, o novo conjunto de registradores
+        necessários é a união do conjunto de registradores necessários para
+        <code>seq1</code> com a diferença de conjuntos dos registradores
+        necessários para <code>seq2</code> e os registradores modificados por
+        <code>seq1</code>.) Assim, <code>append-instruction-sequences</code> é
+        implementado da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define (append-instruction-sequences . seqs)
+  (define (append-2-sequences seq1 seq2)
+    (make-instruction-sequence
+     (list-union 
+      (registers-needed seq1))
+      (list-difference 
+       (registers-needed seq2))
+       (registers-modified seq1))))
+     (list-union
+      (registers-modified seq1))
+      (registers-modified seq2)))
+     (append (statements seq1))
+             (statements seq2)))))
+  (define (append-seq-list seqs)
+    (if (null? seqs))
+        (empty-instruction-sequence)
+        (append-2-sequences 
+         (car seqs))
+         (append-seq-list (cdr seqs)))))
+  (append-seq-list seqs))</code></pre>
+
+      <p>
+        Este procedimento usa algumas operações simples para manipular conjuntos
+        representados como listas, semelhantes à representação de conjuntos (não
+        ordenados) descrita em
+        <a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a>:
+      </p>
+      <pre><code class="language-scheme">(define (list-union s1 s2)
+  (cond ((null? s1)) s2)
+        ((memq (car s1)) s2)
+         (list-union (cdr s1)) s2))
+        (else
+         (cons (car s1))
+               (list-union (cdr s1)) s2)))))
+
+(define (list-difference s1 s2)
+  (cond ((null? s1)) '())
+        ((memq (car s1)) s2)
+         (list-difference (cdr s1)) s2))
+        (else 
+         (cons (car s1))
+               (list-difference (cdr s1))
+                                s2)))))</code></pre>
+
+      <p>
+        <code>Preserving</code>, o segundo principal combinador de sequências de
+        instruções, recebe uma lista de registradores <code>regs</code> e duas
+        sequências de instruções <code>seq1</code> e <code>seq2</code> que devem
+        ser executadas sequencialmente. Ele retorna uma sequência de instruções
+        cujas instruções são as instruções de <code>seq1</code> seguidas pelas
+        instruções de <code>seq2</code>, com as instruções <code>save</code> e
+        <code>restore</code> apropriadas ao redor de <code>seq1</code> para
+        proteger os registradores em <code>regs</code> que são modificados por
+        <code>seq1</code> mas necessários para <code>seq2</code>. Para realizar
+        isso, <code>preserving</code> primeiro cria uma sequência que tem os
+        <code>save</code>s necessários seguidos pelas instruções de
+        <code>seq1</code> seguidos pelos <code>restore</code>s necessários. Esta
+        sequência precisa dos registradores sendo salvos e restaurados em adição
+        aos registradores necessários para <code>seq1</code>, e modifica os
+        registradores modificados por <code>seq1</code> exceto pelos que estão
+        sendo salvos e restaurados. Esta sequência aumentada e
+        <code>seq2</code> são então anexadas da maneira usual. O seguinte
+        procedimento implementa essa estratégia recursivamente, percorrendo a
+        lista de registradores a serem preservados:<a
+          class="footnote_link"
+          id="DOCF327"
+          href="#FOOT327"
+          ><sup>327</sup></a
+        >
+      </p>
+      <pre><code class="language-scheme">(define (preserving regs seq1 seq2)
+  (if (null? regs))
+      (append-instruction-sequences seq1 seq2)
+      (let ((first-reg (car regs)))
+        (if (and 
+             (needs-register? seq2 first-reg)
+             (modifies-register? seq1 
+                                 first-reg))
+            (preserving 
+             (cdr regs)
+             (make-instruction-sequence
+              (list-union 
+               (list first-reg))
+               (registers-needed seq1)))
+              (list-difference
+               (registers-modified seq1))
+               (list first-reg)))
+              (append `((save ,first-reg))
+                      (statements seq1))
+                      `((restore ,first-reg)))))
+             seq2)
+            (preserving 
+             (cdr regs)
+             seq1
+             seq2)))))</code></pre>
+
+      <p>
+        Outro combinador de sequências,
+        <code>tack-on-instruction-sequence</code>, é usado por
+        <code>compile-lambda</code> para anexar um corpo de procedimento a outra
+        sequência. Porque o corpo do procedimento não está "em linha" para ser
+        executado como parte da sequência combinada, seu uso de registradores
+        não tem impacto no uso de registradores da sequência em que está
+        embutido. Assim, ignoramos os conjuntos de registradores necessários e
+        modificados pelo corpo do procedimento quando o anexamos à outra
+        sequência.
+      </p>
+      <pre><code class="language-scheme">(define (tack-on-instruction-sequence 
+         seq body-seq)
+  (make-instruction-sequence
+   (registers-needed seq))
+   (registers-modified seq))
+   (append (statements seq))
+           (statements body-seq))))</code></pre>
+
+      <p>
+        <code>Compile-if</code> e <code>compile-procedure-call</code> usam um
+        combinador especial chamado
+        <code>parallel-instruction-sequences</code> para anexar os dois ramos
+        alternativos que seguem um teste. Os dois ramos nunca serão executados
+        sequencialmente; para qualquer avaliação particular do teste, um ramo ou
+        o outro será executado. Por causa disso, os registradores necessários
+        para o segundo ramo ainda são necessários para a sequência combinada,
+        mesmo que esses sejam modificados por o primeiro ramo.
+      </p>
+      <pre><code class="language-scheme">(define (parallel-instruction-sequences 
+         seq1 seq2)
+  (make-instruction-sequence
+   (list-union (registers-needed seq1))
+               (registers-needed seq2)))
+   (list-union (registers-modified seq1))
+               (registers-modified seq2)))
+   (append (statements seq1))
+           (statements seq2))))</code></pre>
+
+      <a id="g_t5_002e5_002e5"></a>
+      <a id="An-Example-of-Compiled-Code"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.5.5</span
+        ><span class="sectitle">Um Exemplo de Código Compilado</span>
+      </h4>
+
+      <p>
+        Agora que vimos todos os elementos do compilador, vamos examinar um
+        exemplo de código compilado para ver como as coisas se encaixam. Vamos
+        compilar a definição de um procedimento recursivo
+        <code>factorial</code> chamando <code>compile</code>:
+      </p>
+      <pre><code class="language-scheme">(compile
+ '(define (factorial n)
+    (if (= n 1)
+        1
+        (* (factorial (- n 1)) n)))
+ 'val
+ 'next)</code></pre>
+
+      <p>
+        Especificamos que o valor da expressão <code>define</code> deve ser
+        colocado no registrador <code>val</code>. Não nos importamos com o que o
+        código compilado faz após executar o <code>define</code>, então nossa
+        escolha de <code>next</code> como o descritor de ligação é arbitrária.
+      </p>
+      <p>
+        <code>Compile</code> determina que a expressão é uma definição, então
+        ele chama <code>compile-definition</code> para compilar o código para
+        calcular o valor a ser atribuído (destinado a <code>val</code>), seguido
+        pelo código para instalar a definição, seguido pelo código para colocar
+        o valor do <code>define</code> (que é o símbolo <code>ok</code>) no
+        registrador de destino, seguido finalmente pelo código de ligação.
+        <code>Env</code> é preservado ao redor do cálculo do valor, porque ele é
+        necessário para instalar a definição. Como a ligação é
+        <code>next</code>, não há código de ligação neste caso. O esqueleto do
+        código compilado é assim
+      </p>
+      <pre><code class="language-scheme">⟨salvar <code>env</code> se modificado pelo código para calcular o valor⟩
+  ⟨compilação do valor da definição, 
+   alvo <code>val</code>, ligação <code>next</code>⟩
+  ⟨restaurar <code>env</code> se salvo acima⟩
+  (perform (op define-variable!)
+           (const factorial)
+           (reg val)
+           (reg env))
+  (assign val (const ok))</code></pre>
+
+      <p>
+        A expressão que deve ser compilada para produzir o valor para a variável
+        <code>factorial</code> é uma expressão <code>lambda</code> cujo valor é
+        o procedimento que calcula fatoriais. <code>Compile</code> lida com isso
+        chamando <code>compile-lambda</code>, que compila o corpo do
+        procedimento, rotula-o como um novo ponto de entrada e gera a instrução
+        que combinará o corpo do procedimento no novo ponto de entrada com o
+        ambiente de execução e atribuirá o resultado a <code>val</code>. A
+        sequência então salta ao redor do código do procedimento compilado, que
+        é inserido neste ponto. O código do procedimento começa estendendo o
+        ambiente de definição do procedimento por um quadro que vincula o
+        parâmetro formal <code>n</code> ao argumento do procedimento. Então vem
+        o corpo do procedimento. Como este código para o valor da variável não
+        modifica o registrador <code>env</code>, o <code>save</code> e
+        <code>restore</code> opcionais mostrados acima não são gerados. (O
+        código do procedimento em <code>entry2</code> não é executado neste
+        ponto, então seu uso de <code>env</code> é irrelevante.) Portanto, o
+        esqueleto para o código compilado se torna
+      </p>
+      <pre><code class="language-scheme">  (assign val (op make-compiled-procedure)
+              (label entry2)
+              (reg env))
+  (goto (label after-lambda1))
+entry2
+  (assign env (op compiled-procedure-env)
+              (reg proc))
+  (assign env (op extend-environment)
+              (const (n))
+              (reg argl)
+              (reg env))
+  ⟨compilação do corpo do procedimento⟩
+after-lambda1
+  (perform (op define-variable!)
+           (const factorial)
+           (reg val)
+           (reg env))
+  (assign val (const ok))</code></pre>
+
+      <p>
+        O corpo de um procedimento é sempre compilado (por
+        <code>compile-lambda-body</code>) como uma sequência com alvo
+        <code>val</code> e ligação <code>return</code>. A sequência neste caso
+        consiste em uma única expressão <code>if</code>:
+      </p>
+      <pre><code class="language-scheme">(if (= n 1)
+    1
+    (* (factorial (- n 1)) n))</code></pre>
+
+      <p>
+        <code>Compile-if</code> gera código que primeiro calcula o predicado
+        (destinado a <code>val</code>), então verifica o resultado e salta ao
+        redor do ramo verdadeiro se o predicado for falso. <code>Env</code> e
+        <code>continue</code> são preservados ao redor do código do predicado,
+        já que eles podem ser necessários para o restante da expressão
+        <code>if</code>. Como a expressão <code>if</code> é a expressão final (e
+        única) na sequência que compõe o corpo do procedimento, seu alvo é
+        <code>val</code> e sua ligação é <code>return</code>, então os ramos
+        verdadeiro e falso são compilados com alvo <code>val</code> e ligação
+        <code>return</code>. (Ou seja, o valor do condicional, que é o valor
+        calculado por qualquer um de seus ramos, é o valor do procedimento.)
+      </p>
+      <pre><code class="language-scheme">⟨salvar <code>continue</code>, <code>env</code> se modificado pelo 
+ predicado e necessário pelos ramos⟩
+  ⟨compilação do predicado, 
+   alvo <code>val</code>, ligação <code>next</code>⟩
+  ⟨restaurar <code>continue</code>, <code>env</code> se salvo acima⟩
+  (test (op false?) (reg val))
+  (branch (label false-branch4))
+true-branch5
+  ⟨compilação do ramo verdadeiro, 
+   alvo <code>val</code>, ligação <code>return</code>⟩
+false-branch4
+  ⟨compilação do ramo falso, 
+   alvo <code>val</code>, ligação <code>return</code>⟩
+after-if3</code></pre>
+
+      <p>
+        O predicado <code>(= n 1)</code> é uma chamada de procedimento. Isso
+        procura o operador (o símbolo <code>=</code>) e coloca esse valor em
+        <code>proc</code>. Ele então monta os argumentos <code>1</code> e o
+        valor de <code>n</code> em <code>argl</code>. Então ele testa se
+        <code>proc</code> contém um procedimento primitivo ou composto, e
+        despacha para um ramo primitivo ou composto de acordo. Ambos os ramos
+        retomam no rótulo <code>after-call</code>. Os requisitos para preservar
+        registradores ao redor da avaliação do operador e operandos não resultam
+        em nenhum salvamento de registradores, porque neste caso essas
+        avaliações não modificam os registradores em questão.
+      </p>
+      <pre><code class="language-scheme">  (assign proc (op lookup-variable-value)
+               (const =) 
+               (reg env))
+  (assign val (const 1))
+  (assign argl (op list) (reg val))
+  (assign val (op lookup-variable-value)
+              (const n)
+              (reg env))
+  (assign argl (op cons) (reg val) (reg argl))
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-branch17))
+compiled-branch16
+  (assign continue (label after-call15))
+  (assign val (op compiled-procedure-entry)
+              (reg proc))
+  (goto (reg val))
+primitive-branch17
+  (assign val (op apply-primitive-procedure)
+              (reg proc)
+              (reg argl))
+after-call15</code></pre>
+
+      <p>
+        O ramo verdadeiro, que é a constante 1, compila (com alvo
+        <code>val</code> e ligação <code>return</code>) para
+      </p>
+      <pre><code class="language-scheme">(assign val (const 1))
+(goto (reg continue))</code></pre>
+
+      <p>
+        O código para o ramo falso é outra chamada de procedimento, onde o
+        procedimento é o valor do símbolo <code>*</code>, e os argumentos são
+        <code>n</code> e o resultado de outra chamada de procedimento (uma
+        chamada para <code>factorial</code>). Cada uma dessas chamadas configura
+        <code>proc</code> e <code>argl</code> e seus próprios ramos primitivos e
+        compostos. <a href="#Figure-5_002e17">Figura 5.17</a> mostra a
+        compilação completa da definição do procedimento <code>factorial</code>.
+        Observe que o possível <code>save</code> e <code>restore</code> de
+        <code>continue</code> e <code>env</code> ao redor do predicado, mostrado
+        acima, são de fato gerados, porque esses registradores são modificados
+        pela chamada de procedimento no predicado e necessários para a chamada
+        de procedimento e a ligação <code>return</code> nos ramos.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Figure-5_002e17"></a>Figura 5.17:</strong>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mo stretchy="false">↓</mo>
+          </math>
+          Compilação da definição do procedimento <code>factorial</code>.
+        </p>
+        <pre><code class="language-scheme">;; constrói o procedimento e salta sobre o código
+;; para o corpo do procedimento
+  (assign val
+          (op make-compiled-procedure) 
+          (label entry2) 
+          (reg env))
+  (goto (label after-lambda1))
+entry2     ; chamadas para <code>factorial</code> entrarão aqui
+  (assign env 
+          (op compiled-procedure-env)
+          (reg proc))
+  (assign env
+          (op extend-environment) 
+          (const (n)) 
+          (reg argl) 
+          (reg env))
+;; começa o corpo real do procedimento
+  (save continue)
+  (save env)
+;; computa <code>(= n 1)</code>
+  (assign proc 
+          (op lookup-variable-value) 
+          (const =) 
+          (reg env))
+  (assign val (const 1))
+  (assign argl (op list) (reg val))
+  (assign val 
+          (op lookup-variable-value) 
+          (const n) 
+          (reg env))
+  (assign argl (op cons) (reg val) (reg argl))
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-branch17))
+compiled-branch16
+  (assign continue (label after-call15))
+  (assign val
+          (op compiled-procedure-entry)
+          (reg proc))
+  (goto (reg val))
+primitive-branch17
+  (assign val 
+          (op apply-primitive-procedure) 
+          (reg proc) 
+          (reg argl))
+after-call15   ; <code>val</code> agora contém o resultado de <code>(= n 1)</code>
+  (restore env)
+  (restore continue)
+  (test (op false?) (reg val))
+  (branch (label false-branch4))
+true-branch5  ; retorna 1
+  (assign val (const 1))
+  (goto (reg continue))
+
+false-branch4
+;; computa e retorna <code>(* (factorial (- n 1)) n)</code>
+  (assign proc 
+          (op lookup-variable-value) 
+          (const *) 
+          (reg env))
+  (save continue)
+  (save proc)   ; salva o procedimento <code>*</code>
+  (assign val 
+          (op lookup-variable-value) 
+          (const n) 
+          (reg env))
+  (assign argl (op list) (reg val))
+  (save argl)   ; salva a lista parcial de argumentos para <code>*</code>
+;; computa <code>(factorial (- n 1))</code>, que é o outro argumento para <code>*</code>
+  (assign proc
+          (op lookup-variable-value) 
+          (const factorial) 
+          (reg env))
+  (save proc)  ; salva o procedimento <code>factorial</code>
+;; computa <code>(- n 1)</code>, que é o argumento para <code>factorial</code>
+  (assign proc 
+          (op lookup-variable-value)
+          (const -) 
+          (reg env))
+  (assign val (const 1))
+  (assign argl (op list) (reg val))
+  (assign val 
+          (op lookup-variable-value) 
+          (const n) 
+          (reg env))
+  (assign argl (op cons) (reg val) (reg argl))
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-branch8))
+compiled-branch7
+  (assign continue (label after-call6))
+  (assign val
+          (op compiled-procedure-entry)
+          (reg proc))
+  (goto (reg val))
+primitive-branch8
+  (assign val 
+          (op apply-primitive-procedure) 
+          (reg proc) 
+          (reg argl))
+
+after-call6   ; <code>val</code> agora contém o resultado de <code>(- n 1)</code>
+  (assign argl (op list) (reg val))
+  (restore proc) ; restaura <code>factorial</code>
+;; aplica <code>factorial</code>
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-branch11))
+compiled-branch10
+  (assign continue (label after-call9))
+  (assign val
+          (op compiled-procedure-entry)
+          (reg proc))
+  (goto (reg val))
+primitive-branch11
+  (assign val 
+          (op apply-primitive-procedure) 
+          (reg proc) 
+          (reg argl))
+after-call9      ; <code>val</code> agora contém o resultado
+                 ; de <code>(factorial (- n 1))</code>
+  (restore argl) ; restaura a lista parcial de argumentos para <code>*</code>
+  (assign argl (op cons) (reg val) (reg argl))
+  (restore proc) ; restaura <code>*</code>
+  (restore continue)
+;; aplica <code>*</code> e retorna seu valor
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-branch14))
+compiled-branch13
+;; note que um procedimento composto aqui
+;; é chamado recursivamente em cauda
+  (assign val
+          (op compiled-procedure-entry)
+          (reg proc))
+  (goto (reg val))
+primitive-branch14
+  (assign val 
+          (op apply-primitive-procedure) 
+          (reg proc) 
+          (reg argl))
+  (goto (reg continue))
+after-call12
+after-if3
+after-lambda1
+;; atribui o procedimento à variável <code>factorial</code>
+  (perform (op define-variable!) 
+           (const factorial) 
+           (reg val) 
+           (reg env))
+  (assign val (const ok))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e33"></a>Exercício 5.33:</strong>
+          Considere a seguinte definição de um procedimento fatorial, que é
+          ligeiramente diferente da dada acima:
+        </p>
+        <pre><code class="language-scheme">(define (factorial-alt n)
+  (if (= n 1)
+      1
+      (* n (factorial-alt (- n 1)))))</code></pre>
+
+        <p>
+          Compile este procedimento e compare o código resultante com o
+          produzido para <code>factorial</code>. Explique quaisquer diferenças
+          que você encontrar. Algum dos programas executa mais eficientemente
+          que o outro?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e34"></a>Exercício 5.34:</strong> Compile
+          o fatorial iterativo
+        </p>
+        <pre><code class="language-scheme">(define (factorial n)
+  (define (iter product counter)
+    (if (> counter n)
+        product
+        (iter (* counter product)
+              (+ counter 1))))
+  (iter 1 1))</code></pre>
+
+        <p>
+          Anote o código resultante, mostrando a diferença essencial entre o
+          código para as versões iterativa e recursiva de
+          <code>factorial</code> que faz um processo acumular espaço na pilha e
+          o outro rodar em espaço constante na pilha.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e35"></a>Exercício 5.35:</strong> Qual
+          expressão foi compilada para produzir o código mostrado em
+          <a href="#Figure-5_002e18">Figura 5.18</a>?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Figure-5_002e18"></a>Figura 5.18:</strong>
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mo stretchy="false">↓</mo>
+          </math>
+          Um exemplo de saída do compilador. Veja
+          <a href="#Exercise-5_002e35">Exercício 5.35</a>.
+        </p>
+        <pre><code class="language-scheme">(assign val (op make-compiled-procedure) 
+            (label entry16) 
+            (reg env))
+  (goto (label after-lambda15))
+entry16
+  (assign env (op compiled-procedure-env)
+              (reg proc))
+  (assign env (op extend-environment) 
+              (const (x)) 
+              (reg argl) 
+              (reg env))
+  (assign proc (op lookup-variable-value) 
+               (const +) 
+               (reg env))
+  (save continue) (save proc) (save env)
+  (assign proc (op lookup-variable-value) 
+               (const g) 
+               (reg env))
+  (save proc)
+  (assign proc (op lookup-variable-value) 
+               (const +) 
+               (reg env))
+  (assign val (const 2))
+  (assign argl (op list) (reg val))
+  (assign val (op lookup-variable-value)
+              (const x) 
+              (reg env))
+  (assign argl (op cons)
+               (reg val)
+               (reg argl))
+  (test (op primitive-procedure?)
+        (reg proc))
+  (branch (label primitive-branch19))
+compiled-branch18
+  (assign continue (label after-call17))
+  (assign val
+          (op compiled-procedure-entry)
+          (reg proc))
+  (goto (reg val))
+primitive-branch19
+  (assign val
+          (op apply-primitive-procedure)
+          (reg proc) 
+          (reg argl))
+after-call17
+  (assign argl (op list) (reg val))
+  (restore proc)
+  (test (op primitive-procedure?)
+        (reg proc))
+  (branch (label primitive-branch22))
+compiled-branch21
+  (assign continue (label after-call20))
+  (assign val
+          (op compiled-procedure-entry)
+          (reg proc))
+  (goto (reg val))
+primitive-branch22
+  (assign val 
+          (op apply-primitive-procedure) 
+          (reg proc) 
+          (reg argl))
+after-call20
+  (assign argl (op list) (reg val))
+  (restore env)
+  (assign val
+          (op lookup-variable-value) 
+          (const x) 
+          (reg env))
+  (assign argl
+          (op cons)
+          (reg val)
+          (reg argl))
+  (restore proc)
+  (restore continue)
+  (test (op primitive-procedure?)
+        (reg proc))
+  (branch (label primitive-branch25))
+compiled-branch24
+  (assign val (op compiled-procedure-entry)
+              (reg proc))
+  (goto (reg val))
+primitive-branch25
+  (assign val 
+          (op apply-primitive-procedure)
+          (reg proc) 
+          (reg argl))
+  (goto (reg continue))
+after-call23
+after-lambda15
+  (perform (op define-variable!) 
+           (const f) 
+           (reg val) 
+           (reg env))
+  (assign val (const ok))</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e36"></a>Exercício 5.36:</strong> Qual
+          ordem de avaliação nosso compilador produz para os operandos de uma
+          combinação? É da esquerda para a direita, da direita para a esquerda,
+          ou alguma outra ordem? Onde no compilador essa ordem é determinada?
+          Modifique o compilador para que ele produza alguma outra ordem de
+          avaliação. (Veja a discussão sobre ordem de avaliação para o avaliador
+          de controle explícito em
+          <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>.) Como mudar a
+          ordem de avaliação dos operandos afeta a eficiência do código que
+          constrói a lista de argumentos?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e37"></a>Exercício 5.37:</strong> Uma
+          maneira de entender o mecanismo <code>preserving</code> do compilador
+          para otimizar o uso da pilha é ver quais operações extras seriam
+          geradas se não usássemos essa ideia. Modifique
+          <code>preserving</code> para que ele sempre gere as operações
+          <code>save</code> e <code>restore</code>. Compile algumas expressões
+          simples e identifique as operações desnecessárias na pilha que são
+          geradas. Compare o código com o gerado com o mecanismo
+          <code>preserving</code> intacto.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e38"></a>Exercício 5.38:</strong> Nosso
+          compilador é inteligente sobre evitar operações desnecessárias na
+          pilha, mas não é nada inteligente quando se trata de compilar chamadas
+          para os procedimentos primitivos da linguagem em termos das operações
+          primitivas fornecidas pela máquina. Por exemplo, considere quanto
+          código é compilado para calcular <code>(+ a 1)</code>: O código
+          configura uma lista de argumentos em <code>argl</code>, coloca o
+          procedimento de adição primitiva (que ele encontra procurando o
+          símbolo <code>+</code> no ambiente) em <code>proc</code>, e testa se o
+          procedimento é primitivo ou composto. O compilador sempre gera código
+          para realizar o teste, bem como código para os ramos primitivo e
+          composto (apenas um dos quais será executado). Não mostramos a parte
+          do controlador que implementa primitivas, mas presumimos que essas
+          instruções fazem uso de operações aritméticas primitivas nos caminhos
+          de dados da máquina. Considere quanto menos código seria gerado se o
+          compilador pudesse
+          <a id="index-open_002dcode"></a>
+          <em>abrir o código</em> de primitivas—ou seja, se ele pudesse gerar
+          código para diretamente usar essas operações primitivas da máquina. A
+          expressão <code>(+ a 1)</code> poderia ser compilada em algo tão
+          simples quanto<a class="footnote_link" id="DOCF328" href="#FOOT328"
+            ><sup>328</sup></a
+          >
+        </p>
+        <pre><code class="language-scheme">(assign val (op lookup-variable-value) 
+            (const a) 
+            (reg env))
+(assign val (op +)
+            (reg val)
+            (const 1))</code></pre>
+
+        <p>
+          Neste exercício, estenderemos nosso compilador para suportar a
+          abertura de código de primitivas selecionadas. Código especializado
+          será gerado para chamadas a esses procedimentos primitivos em vez do
+          código geral de aplicação de procedimento. Para suportar isso,
+          aumentaremos nossa máquina com registradores de argumentos especiais
+          <code>arg1</code> e <code>arg2</code>. As operações aritméticas
+          primitivas da máquina receberão suas entradas de <code>arg1</code> e
+          <code>arg2</code>. Os resultados podem ser colocados em
+          <code>val</code>, <code>arg1</code> ou <code>arg2</code>.
+        </p>
+        <p>
+          O compilador deve ser capaz de reconhecer a aplicação de uma primitiva
+          de código aberto no programa fonte. Aumentaremos a despacho no
+          procedimento <code>compile</code> para reconhecer os nomes dessas
+          primitivas em adição às palavras reservadas (as formas especiais) que
+          ele atualmente reconhece.<a
+            class="footnote_link"
+            id="DOCF329"
+            href="#FOOT329"
+            ><sup>329</sup></a
+          >
+          Para cada forma especial, nosso compilador tem um gerador de código.
+          Neste exercício, construiremos uma família de geradores de código para
+          as primitivas de código aberto.
+        </p>
+        <ol>
+          <li>
+            As primitivas de código aberto, ao contrário das formas especiais,
+            precisam que seus operandos sejam avaliados. Escreva um gerador de
+            código <code>spread-arguments</code> para uso por todos os geradores
+            de código de código aberto. <code>Spread-arguments</code> deve
+            receber uma lista de operandos e compilar os operandos dados
+            destinados a registradores de argumentos sucessivos. Note que um
+            operando pode conter uma chamada para uma primitiva de código
+            aberto, então os registradores de argumentos terão que ser
+            preservados durante a avaliação do operando.
+          </li>
+          <li>
+            Para cada um dos procedimentos primitivos <code>=</code>,
+            <code>*</code>, <code>-</code>, e <code>+</code>, escreva um gerador
+            de código que receba uma combinação com esse operador, junto com um
+            alvo e um descritor de ligação, e produza código para espalhar os
+            argumentos nos registradores e então realizar a operação destinada
+            ao alvo dado com a ligação dada. Você só precisa lidar com
+            expressões com dois operandos. Faça <code>compile</code> despachar
+            para esses geradores de código.
+          </li>
+          <li>
+            Teste seu novo compilador no exemplo <code>factorial</code>. Compare
+            o código resultante com o resultado produzido sem código aberto.
+          </li>
+          <li>
+            Estenda seus geradores de código para <code>+</code> e
+            <code>*</code> para que eles possam lidar com expressões com um
+            número arbitrário de operandos. Uma expressão com mais de dois
+            operandos terá que ser compilada em uma sequência de operações, cada
+            uma com apenas duas entradas.
+          </li>
+        </ol>
+      </blockquote>
+
+      <a id="g_t5_002e5_002e6"></a>
+      <a id="Lexical-Addressing"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.5.6</span
+        ><span class="sectitle">Endereçamento Léxico</span>
+      </h4>
+
+      <p>
+        Uma das otimizações mais comuns realizadas por compiladores é a
+        otimização da busca de variáveis. Nosso compilador, como o implementamos
+        até agora, gera código que usa a operação
+        <code>lookup-variable-value</code> da máquina do avaliador. Essa
+        operação busca uma variável comparando-a com cada variável que está
+        atualmente vinculada, percorrendo os frames do ambiente de execução, um
+        por um. Essa busca pode ser custosa se os frames estiverem profundamente
+        aninhados ou se houver muitas variáveis. Por exemplo, considere o
+        problema de buscar o valor de <code>x</code> ao avaliar a expressão
+        <code>(* x y z)</code> em uma aplicação do procedimento retornado por:
+      </p>
+
+      <pre><code class="language-scheme">(let ((x 3) (y 4))
+  (lambda (a b c d e)
+    (let ((y (* a b x))
+          (z (+ c d x)))
+      (* x y z))))</code></pre>
+
+      <p>
+        Como uma expressão <code>let</code> é apenas açúcar sintático para uma
+        combinação <code>lambda</code>, essa expressão é equivalente a:
+      </p>
+
+      <pre><code class="language-scheme">((lambda (x y)
+   (lambda (a b c d e)
+     ((lambda (y z) (* x y z))
+      (* a b x)
+      (+ c d x)))
+ 3
+ 4)</code></pre>
+
+      <p>
+        Cada vez que <code>lookup-variable-value</code> busca por
+        <code>x</code>, ele deve determinar que o símbolo <code>x</code> não é
+        <code>eq?</code> a <code>y</code> ou <code>z</code> (no primeiro frame),
+        nem a <code>a</code>, <code>b</code>, <code>c</code>, <code>d</code> ou
+        <code>e</code> (no segundo frame). Assumiremos, por enquanto, que nossos
+        programas não usam <code>define</code>—que as variáveis são vinculadas
+        apenas com <code>lambda</code>. Como nossa linguagem tem escopo léxico,
+        o ambiente de execução para qualquer expressão terá uma estrutura que
+        reflete a estrutura léxica do programa em que a expressão aparece.<a
+          class="footnote_link"
+          id="DOCF330"
+          href="#FOOT330"
+          ><sup>330</sup></a
+        >
+        Assim, o compilador pode saber, ao analisar a expressão acima, que cada
+        vez que o procedimento é aplicado, a variável <code>x</code> em
+        <code>(* x y z)</code> será encontrada dois frames acima do frame atual
+        e será a primeira variável naquele frame.
+      </p>
+      <p>
+        Podemos explorar esse fato inventando um novo tipo de operação de busca
+        de variável, <code>lexical-address-lookup</code>, que recebe como
+        argumentos um ambiente e um
+        <a id="index-lexical-address"></a>
+        <em>endereço léxico</em> que consiste em dois números: um
+        <a id="index-frame-number"></a> <em>número do frame</em>, que especifica
+        quantos frames devem ser pulados, e um
+        <a id="index-displacement-number"></a>
+        <em>número de deslocamento</em>, que especifica quantas variáveis devem
+        ser puladas naquele frame. <code>Lexical-address-lookup</code> produzirá
+        o valor da variável armazenada naquele endereço léxico em relação ao
+        ambiente atual. Se adicionarmos a operação
+        <code>lexical-address-lookup</code> à nossa máquina, podemos fazer o
+        compilador gerar código que referencia variáveis usando essa operação,
+        em vez de <code>lookup-variable-value</code>. Da mesma forma, nosso
+        código compilado pode usar uma nova operação
+        <code>lexical-address-set!</code> em vez de
+        <code>set-variable-value!</code>.
+      </p>
+      <p>
+        Para gerar tal código, o compilador deve ser capaz de determinar o
+        endereço léxico de uma variável para a qual está prestes a compilar uma
+        referência. O endereço léxico de uma variável em um programa depende de
+        onde se está no código. Por exemplo, no seguinte programa, o endereço de
+        <code>x</code> na expressão <code>⟨</code><var>e1</var><code>⟩</code> é
+        (2, 0)—dois frames atrás e a primeira variável no frame. Nesse ponto,
+        <code>y</code> está no endereço (0, 0) e <code>c</code> está no endereço
+        (1, 2). Na expressão <code>⟨</code><var>e2</var><code>⟩</code>,
+        <code>x</code> está em (1, 0), <code>y</code> está em (1, 1) e
+        <code>c</code>
+        está em (0, 2).
+      </p>
+
+      <pre><code class="language-scheme">((lambda (x y)
+   (lambda (a b c d e)
+     ((lambda (y z) ⟨e1⟩)
+      ⟨e2⟩
+      (+ c d x))))
+ 3
+ 4)</code></pre>
+
+      <p>
+        Uma maneira de o compilador produzir código que usa endereçamento léxico
+        é manter uma estrutura de dados chamada
+        <a id="index-compile_002dtime-environment"></a>
+        <em>ambiente de tempo de compilação</em>. Essa estrutura mantém o
+        controle de quais variáveis estarão em quais posições em quais frames no
+        ambiente de execução quando uma operação de acesso a variável for
+        executada. O ambiente de tempo de compilação é uma lista de frames, cada
+        um contendo uma lista de variáveis. (É claro que não haverá valores
+        vinculados às variáveis, já que os valores não são computados em tempo
+        de compilação.) O ambiente de tempo de compilação torna-se um argumento
+        adicional para <code>compile</code> e é passado adiante para cada
+        gerador de código. A chamada de nível superior para
+        <code>compile</code> usa um ambiente de tempo de compilação vazio.
+        Quando o corpo de um <code>lambda</code> é compilado,
+        <code>compile-lambda-body</code> estende o ambiente de tempo de
+        compilação com um frame contendo os parâmetros do procedimento, de modo
+        que a sequência que compõe o corpo é compilada com esse ambiente
+        estendido. Em cada ponto da compilação, <code>compile-variable</code> e
+        <code>compile-assignment</code> usam o ambiente de tempo de compilação
+        para gerar os endereços léxicos apropriados.
+      </p>
+      <p>
+        <a href="#Exercise-5_002e39">Exercício 5.39</a> até
+        <a href="#Exercise-5_002e43">Exercício 5.43</a> descrevem como completar
+        esse esboço da estratégia de endereçamento léxico para incorporar a
+        busca léxica ao compilador.
+        <a href="#Exercise-5_002e44">Exercício 5.44</a> descreve outro uso para
+        o ambiente de tempo de compilação.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e39"></a>Exercício 5.39:</strong> Escreva
+          um procedimento <code>lexical-address-lookup</code> que implemente a
+          nova operação de busca. Ele deve receber dois argumentos—um endereço
+          léxico e um ambiente de execução—e retornar o valor da variável
+          armazenada no endereço léxico especificado.
+          <code>Lexical-address-lookup</code> deve sinalizar um erro se o valor
+          da variável for o símbolo <code>*unassigned*</code>.<a
+            class="footnote_link"
+            id="DOCF331"
+            href="#FOOT331"
+            ><sup>331</sup></a
+          >
+          Escreva também um procedimento <code>lexical-address-set!</code> que
+          implemente a operação que altera o valor da variável em um endereço
+          léxico especificado.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e40"></a>Exercício 5.40:</strong>
+          Modifique o compilador para manter o ambiente de tempo de compilação
+          conforme descrito acima. Ou seja, adicione um argumento de ambiente de
+          tempo de compilação para <code>compile</code> e os vários geradores de
+          código, e estenda-o em <code>compile-lambda-body</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e41"></a>Exercício 5.41:</strong> Escreva
+          um procedimento <code>find-variable</code> que receba como argumentos
+          uma variável e um ambiente de tempo de compilação e retorne o endereço
+          léxico da variável em relação a esse ambiente. Por exemplo, no
+          fragmento de programa mostrado acima, o ambiente de tempo de
+          compilação durante a compilação da expressão <code>⟨</code
+          ><var>e1</var><code>⟩</code> é <code>((y z) (a b c d e) (x y))</code>.
+          <code>Find-variable</code> deve produzir
+        </p>
+
+        <pre><code class="language-scheme">(find-variable 
+ 'c '((y z) (a b c d e) (x y)))
+(1 2)
+
+(find-variable 
+ 'x '((y z) (a b c d e) (x y)))
+(2 0)
+
+(find-variable 
+ 'w '((y z) (a b c d e) (x y)))
+not-found</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e42"></a>Exercício 5.42:</strong> Usando
+          <code>find-variable</code> do
+          <a href="#Exercise-5_002e41">Exercício 5.41</a>, reescreva
+          <code>compile-variable</code> e <code>compile-assignment</code> para
+          gerar instruções de endereçamento léxico. Nos casos em que
+          <code>find-variable</code> retornar <code>not-found</code> (ou seja,
+          quando a variável não estiver no ambiente de tempo de compilação),
+          você deve fazer com que os geradores de código usem as operações do
+          avaliador, como antes, para buscar a vinculação. (O único lugar onde
+          uma variável que não é encontrada em tempo de compilação pode estar é
+          no ambiente global, que faz parte do ambiente de execução, mas não faz
+          parte do ambiente de tempo de compilação.<a
+            class="footnote_link"
+            id="DOCF332"
+            href="#FOOT332"
+            ><sup>332</sup></a
+          >
+          Assim, se você quiser, pode fazer com que as operações do avaliador
+          busquem diretamente no ambiente global, que pode ser obtido com a
+          operação <code>(op get-global-environment)</code>, em vez de fazer com
+          que elas busquem em todo o ambiente de execução encontrado em
+          <code>env</code>.) Teste o compilador modificado em alguns casos
+          simples, como a combinação de <code>lambda</code> aninhada no início
+          desta seção.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e43"></a>Exercício 5.43:</strong>
+          Argumentamos em <a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a>
+          que as definições internas para estrutura de blocos não devem ser
+          consideradas "verdadeiras"
+          <code>define</code>s. Em vez disso, o corpo de um procedimento deve
+          ser interpretado como se as variáveis internas sendo definidas fossem
+          instaladas como variáveis comuns de <code>lambda</code> inicializadas
+          com seus valores corretos usando <code>set!</code>.
+          <a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a> e
+          <a href="4_002e1.xhtml#Exercise-4_002e16">Exercício 4.16</a> mostraram
+          como modificar o interpretador metacircular para realizar isso,
+          escaneando as definições internas. Modifique o compilador para
+          realizar a mesma transformação antes de compilar o corpo de um
+          procedimento.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e44"></a>Exercício 5.44:</strong> Nesta
+          seção, focamos no uso do ambiente de tempo de compilação para produzir
+          endereços léxicos. Mas existem outros usos para ambientes de tempo de
+          compilação. Por exemplo, em
+          <a href="#Exercise-5_002e38">Exercício 5.38</a>, aumentamos a
+          eficiência do código compilado ao abrir o código de procedimentos
+          primitivos. Nossa implementação tratou os nomes dos procedimentos de
+          código aberto como palavras reservadas. Se um programa redefinisse tal
+          nome, o mecanismo descrito em
+          <a href="#Exercise-5_002e38">Exercício 5.38</a> ainda abriria o código
+          como um primitivo, ignorando a nova vinculação. Por exemplo, considere
+          o procedimento
+        </p>
+
+        <pre><code class="language-scheme">(lambda (+ * a b x y)
+  (+ (* a x) (* b y)))</code></pre>
+
+        <p>
+          que calcula uma combinação linear de <code>x</code> e <code>y</code>.
+          Poderíamos chamá-lo com argumentos <code>+matrix</code>,
+          <code>*matrix</code> e quatro matrizes, mas o compilador de código
+          aberto ainda abriria o código de <code>+</code> e <code>*</code> em
+          <code>(+ (* a x) (* b y))</code> como os primitivos <code>+</code> e
+          <code>*</code>. Modifique o compilador de código aberto para consultar
+          o ambiente de tempo de compilação a fim de compilar o código correto
+          para expressões envolvendo os nomes de procedimentos primitivos. (O
+          código funcionará corretamente desde que o programa não
+          <code>define</code> ou <code>set!</code> esses nomes.)
+        </p>
+      </blockquote>
+
+      <a id="g_t5_002e5_002e7"></a>
+      <a id="Interfacing-Compiled-Code-to-the-Evaluator"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.5.7</span
+        ><span class="sectitle"
+          >Interconectando Código Compilado ao Avaliador</span
+        >
+      </h4>
+
+      <p>
+        Ainda não explicamos como carregar código compilado na máquina do
+        avaliador ou como executá-lo. Assumiremos que a máquina do avaliador de
+        controle explícito foi definida como em
+        <a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>, com as operações
+        adicionais especificadas em
+        <a href="#Footnote-323">Nota de rodapé 323</a>. Implementaremos um
+        procedimento <code>compile-and-go</code> que compila uma expressão
+        Scheme, carrega o código objeto resultante na máquina do avaliador e faz
+        com que a máquina execute o código no ambiente global do avaliador,
+        imprima o resultado e entre no loop de leitura-avaliação-impressão do
+        avaliador. Também modificaremos o avaliador para que expressões
+        interpretadas possam chamar procedimentos compilados, além de
+        interpretados. Podemos então colocar um procedimento compilado na
+        máquina e usar o avaliador para chamá-lo:
+      </p>
+
+      <pre><code class="language-scheme">(compile-and-go
+ '(define (factorial n)
+    (if (= n 1)
+        1
+        (* (factorial (- n 1)) n)))
+
+;;; EC-Eval value:
+ok
+
+;;; EC-Eval input:
+(factorial 5)
+
+;;; EC-Eval value:
+120</code></pre>
+
+      <p>
+        Para permitir que o avaliador lide com procedimentos compilados (por
+        exemplo, para avaliar a chamada a <code>factorial</code> acima),
+        precisamos mudar o código em <code>apply-dispatch</code> (<a
+          href="5_002e4.xhtml#g_t5_002e4_002e1"
+          >5.4.1</a
+        >) para que ele reconheça procedimentos compilados (distintos de
+        procedimentos compostos ou primitivos) e transfira o controle
+        diretamente para o ponto de entrada do código compilado:<a
+          class="footnote_link"
+          id="DOCF333"
+          href="#FOOT333"
+          ><sup>333</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">apply-dispatch
+  (test (op primitive-procedure?) (reg proc))
+  (branch (label primitive-apply))
+  (test (op compound-procedure?) (reg proc))
+  (branch (label compound-apply))
+  (test (op compiled-procedure?) (reg proc))
+  (branch (label compiled-apply))
+  (goto (label unknown-procedure-type))
+
+compiled-apply
+  (restore continue)
+  (assign val
+          (op compiled-procedure-entry)
+          (reg proc))
+  (goto (reg val))</code></pre>
+
+      <p>
+        Observe a restauração de <code>continue</code> em
+        <code>compiled-apply</code>. Lembre-se de que o avaliador foi organizado
+        de modo que, em <code>apply-dispatch</code>, a continuação estaria no
+        topo da pilha. O ponto de entrada do código compilado, por outro lado,
+        espera que a continuação esteja em <code>continue</code>, então
+        <code>continue</code> deve ser restaurado antes que o código compilado
+        seja executado.
+      </p>
+      <p>
+        Para nos permitir executar algum código compilado quando iniciarmos a
+        máquina do avaliador, adicionamos uma instrução <code>branch</code> no
+        início da máquina do avaliador, que faz com que a máquina vá para um
+        novo ponto de entrada se o registrador <code>flag</code> estiver
+        setado.<a class="footnote_link" id="DOCF334" href="#FOOT334"
+          ><sup>334</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">;; branches if flag is set:
+(branch (label external-entry)) 
+read-eval-print-loop
+  (perform (op initialize-stack))
+  …</code></pre>
+
+      <p>
+        <code>External-entry</code> assume que a máquina é iniciada com
+        <code>val</code>
+        contendo a localização de uma sequência de instruções que coloca um
+        resultado em
+        <code>val</code> e termina com <code>(goto (reg continue))</code>.
+        Começar nesse ponto de entrada salta para a localização designada por
+        <code>val</code>, mas primeiro atribui <code>continue</code> para que a
+        execução retorne a <code>print-result</code>, que imprime o valor em
+        <code>val</code> e então vai para o início do loop de
+        leitura-avaliação-impressão do avaliador.<a
+          class="footnote_link"
+          id="DOCF335"
+          href="#FOOT335"
+          ><sup>335</sup></a
+        >
+      </p>
+
+      <pre><code class="language-scheme">external-entry
+  (perform (op initialize-stack))
+  (assign env (op get-global-environment))
+  (assign continue (label print-result))
+  (goto (reg val))</code></pre>
+
+      <p>
+        Agora podemos usar o seguinte procedimento para compilar uma definição
+        de procedimento, executar o código compilado e executar o loop de
+        leitura-avaliação-impressão para que possamos testar o procedimento.
+        Como queremos que o código compilado retorne para a localização em
+        <code>continue</code> com seu resultado em <code>val</code>, compilamos
+        a expressão com um alvo de <code>val</code> e um linkage de
+        <code>return</code>. Para transformar o código objeto produzido pelo
+        compilador em instruções executáveis para a máquina de registradores do
+        avaliador, usamos o procedimento <code>assemble</code> do simulador de
+        máquina de registradores (<a href="5_002e2.xhtml#g_t5_002e2_002e2"
+          >5.2.2</a
+        >). Em seguida, inicializamos o registrador <code>val</code> para
+        apontar para a lista de instruções, setamos o <code>flag</code> para que
+        o avaliador vá para <code>external-entry</code> e iniciamos o avaliador.
+      </p>
+
+      <pre><code class="language-scheme">(define (compile-and-go expression)
+  (let ((instructions
+         (assemble 
+          (statements
+           (compile 
+            expression 'val 'return))
+          eceval)))
+    (set! the-global-environment
+          (setup-environment))
+    (set-register-contents! 
+     eceval 'val instructions)
+    (set-register-contents! 
+     eceval 'flag true)
+    (start eceval)))</code></pre>
+
+      <p>
+        Se tivermos configurado o monitoramento da pilha, como no final de
+        <a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>, podemos examinar o
+        uso da pilha pelo código compilado:
+      </p>
+
+      <pre><code class="language-scheme">(compile-and-go
+ '(define (factorial n)
+    (if (= n 1)
+        1
+        (* (factorial (- n 1)) n))))
+(total-pushes = 0, maximum-depth = 0)
+
+;;; EC-Eval value:
+ok
+
+;;; EC-Eval input:
+(factorial 5)
+(total-pushes = 31, maximum-depth = 14)
+
+;;; EC-Eval value:
+120</code></pre>
+
+      <p>
+        Compare este exemplo com a avaliação de
+        <code>(factorial 5)</code> usando a versão interpretada do mesmo
+        procedimento, mostrada no final de
+        <a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>. A versão
+        interpretada exigiu 144 pushes e uma profundidade máxima de pilha de 28.
+        Isso ilustra a otimização resultante de nossa estratégia de compilação.
+      </p>
+      <a id="Interpretation-and-compilation"></a>
+      <h5 class="subsubheading">Interpretação e Compilação</h5>
+
+      <p>
+        Com os programas nesta seção, podemos agora experimentar com as
+        estratégias alternativas de execução de interpretação e compilação.<a
+          class="footnote_link"
+          id="DOCF336"
+          href="#FOOT336"
+          ><sup>336</sup></a
+        >
+        Um interpretador eleva a máquina ao nível do programa do usuário; um
+        compilador reduz o programa do usuário ao nível da linguagem de máquina.
+        Podemos considerar a linguagem Scheme (ou qualquer linguagem de
+        programação) como uma família coerente de abstrações erguidas sobre a
+        linguagem de máquina. Interpretadores são bons para o desenvolvimento e
+        depuração interativa de programas porque os passos da execução do
+        programa são organizados em termos dessas abstrações, e são, portanto,
+        mais inteligíveis para o programador. O código compilado pode executar
+        mais rápido, porque os passos da execução do programa são organizados em
+        termos da linguagem de máquina, e o compilador é livre para fazer
+        otimizações que cortam através das abstrações de nível superior.<a
+          class="footnote_link"
+          id="DOCF337"
+          href="#FOOT337"
+          ><sup>337</sup></a
+        >
+      </p>
+      <p>
+        As alternativas de interpretação e compilação também levam a diferentes
+        estratégias para portar linguagens para novos computadores. Suponha que
+        desejamos implementar Lisp para uma nova máquina. Uma estratégia é
+        começar com o avaliador de controle explícito de
+        <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> e traduzir suas instruções
+        para instruções da nova máquina. Uma estratégia diferente é começar com
+        o compilador e mudar os geradores de código para que eles gerem código
+        para a nova máquina. A segunda estratégia nos permite executar qualquer
+        programa Lisp na nova máquina, primeiro compilando-o com o compilador
+        rodando em nosso sistema Lisp original e, em seguida, vinculando-o a uma
+        versão compilada da biblioteca de tempo de execução.<a
+          class="footnote_link"
+          id="DOCF338"
+          href="#FOOT338"
+          ><sup>338</sup></a
+        >
+        Melhor ainda, podemos compilar o próprio compilador e rodá-lo na nova
+        máquina para compilar outros programas Lisp.<a
+          class="footnote_link"
+          id="DOCF339"
+          href="#FOOT339"
+          ><sup>339</sup></a
+        >
+        Ou podemos compilar um dos interpretadores de
+        <a href="4_002e1.xhtml#g_t4_002e1">4.1</a> para produzir um
+        interpretador que roda na nova máquina.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e45"></a>Exercício 5.45:</strong>
+          Comparando as operações de pilha usadas pelo código compilado com as
+          operações de pilha usadas pelo avaliador para o mesmo cálculo, podemos
+          determinar até que ponto o compilador otimiza o uso da pilha, tanto em
+          velocidade (reduzindo o número total de operações de pilha) quanto em
+          espaço (reduzindo a profundidade máxima da pilha). Comparando esse uso
+          otimizado da pilha com o desempenho de uma máquina de propósito
+          especial para o mesmo cálculo, obtemos alguma indicação da qualidade
+          do compilador.
+        </p>
+        <ol>
+          <li>
+            <a href="5_002e4.xhtml#Exercise-5_002e27">Exercício 5.27</a> pediu
+            que você determinasse, como uma função de
+            <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>n</mi> </math
+            >, o número de pushes e a profundidade máxima da pilha necessária
+            pelo avaliador para calcular
+            <math xmlns="http://www.w3.org/1998/Math/MathML">
+              <mrow class="MJX-TeXAtom-ORD">
+                <mi>n</mi>
+                <mo>!</mo>
+              </mrow>
+            </math>
+            usando o procedimento fatorial recursivo dado acima.
+            <a href="5_002e2.xhtml#Exercise-5_002e14">Exercício 5.14</a> pediu
+            que você fizesse as mesmas medições para a máquina de fatorial de
+            propósito especial mostrada em
+            <a href="5_002e1.xhtml#Figure-5_002e11">Figura 5.11</a>. Agora,
+            realize a mesma análise usando o procedimento
+            <code>factorial</code> compilado.
+
+            <p>
+              Calcule a razão entre o número de pushes na versão compilada e o
+              número de pushes na versão interpretada, e faça o mesmo para a
+              profundidade máxima da pilha. Como o número de operações e a
+              profundidade da pilha usada para calcular
+              <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mrow class="MJX-TeXAtom-ORD">
+                  <mi>n</mi>
+                  <mo>!</mo>
+                </mrow>
+              </math>
+              são lineares em
+              <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mi>n</mi> </math
+              >, essas razões devem se aproximar de constantes à medida que
+              <math xmlns="http://www.w3.org/1998/Math/MathML">
+                <mi>n</mi>
+              </math>
+              se torna grande. Quais são essas constantes? Da mesma forma,
+              encontre as razões do uso da pilha na máquina de propósito
+              especial para o uso na versão interpretada.
+            </p>
+            <p>
+              Compare as razões para a máquina de propósito especial versus o
+              código interpretado com as razões para o código compilado versus o
+              código interpretado. Você deve descobrir que a máquina de
+              propósito especial se sai muito melhor que o código compilado, já
+              que o código do controlador feito à mão deve ser muito melhor que
+              o produzido por nosso compilador rudimentar de propósito geral.
+            </p>
+          </li>
+          <li>
+            Você pode sugerir melhorias para o compilador que o ajudariam a
+            gerar código que se aproximasse mais em desempenho da versão feita à
+            mão?
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e46"></a>Exercício 5.46:</strong> Realize
+          uma análise como a em
+          <a href="#Exercise-5_002e45">Exercício 5.45</a> para determinar a
+          eficácia de compilar o procedimento Fibonacci recursivo em árvore
+        </p>
+
+        <pre><code class="language-scheme">(define (fib n)
+  (if (< n 2)
+      n
+      (+ (fib (- n 1)) (fib (- n 2)))))</code></pre>
+
+        <p>
+          comparado à eficácia de usar a máquina de Fibonacci de propósito
+          especial de <a href="5_002e1.xhtml#Figure-5_002e12">Figura 5.12</a>.
+          (Para medição do desempenho interpretado, veja
+          <a href="5_002e4.xhtml#Exercise-5_002e29">Exercício 5.29</a>.) Para
+          Fibonacci, o recurso de tempo usado não é linear em
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>n</mi>
+              <mo>;</mo>
+            </mrow>
+          </math>
+          portanto, as razões das operações de pilha não se aproximarão de um
+          valor limite que seja independente de
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>n</mi> </math>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e47"></a>Exercício 5.47:</strong> Esta
+          seção descreveu como modificar o avaliador de controle explícito para
+          que o código interpretado possa chamar procedimentos compilados.
+          Mostre como modificar o compilador para que procedimentos compilados
+          possam chamar não apenas procedimentos primitivos e compilados, mas
+          também procedimentos interpretados. Isso requer modificar
+          <code>compile-procedure-call</code> para lidar com o caso de
+          procedimentos compostos (interpretados). Certifique-se de lidar com
+          todas as mesmas combinações de <code>target</code> e
+          <code>linkage</code> como em <code>compile-proc-appl</code>. Para
+          fazer a aplicação real do procedimento, o código precisa pular para o
+          ponto de entrada <code>compound-apply</code> do avaliador. Esse rótulo
+          não pode ser referenciado diretamente no código objeto (já que o
+          montador exige que todos os rótulos referenciados pelo código que está
+          montando sejam definidos lá), então adicionaremos um registrador
+          chamado <code>compapp</code> à máquina do avaliador para manter esse
+          ponto de entrada e adicionaremos uma instrução para inicializá-lo:
+        </p>
+
+        <pre><code class="language-scheme">  (assign compapp (label compound-apply))
+  ;; branches if flag is set:
+  (branch (label external-entry))
+read-eval-print-loop …</code></pre>
+
+        <p>
+          Para testar seu código, comece definindo um procedimento
+          <code>f</code> que chama um procedimento <code>g</code>. Use
+          <code>compile-and-go</code> para compilar a definição de
+          <code>f</code> e iniciar o avaliador. Agora, digitando no avaliador,
+          defina <code>g</code> e tente chamar <code>f</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e48"></a>Exercício 5.48:</strong> A
+          interface <code>compile-and-go</code>
+          implementada nesta seção é desajeitada, já que o compilador só pode
+          ser chamado uma vez (quando a máquina do avaliador é iniciada).
+          Aumente a interface compilador-interpretador fornecendo um primitivo
+          <code>compile-and-run</code> que pode ser chamado de dentro do
+          avaliador de controle explícito da seguinte forma:
+        </p>
+
+        <pre><code class="language-scheme">;;; EC-Eval input:
+(compile-and-run
+ '(define (factorial n)
+    (if (= n 1)
+        1
+        (* (factorial (- n 1)) n)))
+
+;;; EC-Eval value:
+ok
+
+;;; EC-Eval input:
+(factorial 5)
+
+;;; EC-Eval value:
+120</code></pre>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e49"></a>Exercício 5.49:</strong> Como
+          uma alternativa ao uso do loop de leitura-avaliação-impressão do
+          avaliador de controle explícito, projete uma máquina de registradores
+          que execute um loop de leitura-compilação-execução-impressão. Ou seja,
+          a máquina deve executar um loop que lê uma expressão, a compila, monta
+          e executa o código resultante e imprime o resultado. Isso é fácil de
+          rodar em nossa configuração simulada, já que podemos organizar para
+          chamar os procedimentos <code>compile</code> e
+          <code>assemble</code> como "operações de máquina de registradores."
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e50"></a>Exercício 5.50:</strong> Use o
+          compilador para compilar o avaliador metacircular de
+          <a href="4_002e1.xhtml#g_t4_002e1">4.1</a> e execute este programa
+          usando o simulador de máquina de registradores. (Para compilar mais de
+          uma definição de cada vez, você pode empacotar as definições em um
+          <code>begin</code>.) O interpretador resultante rodará muito
+          lentamente devido aos múltiplos níveis de interpretação, mas fazer
+          todos os detalhes funcionarem é um exercício instrutivo.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e51"></a>Exercício 5.51:</strong>
+          Desenvolva uma implementação rudimentar de Scheme em C (ou alguma
+          outra linguagem de baixo nível de sua escolha) traduzindo o avaliador
+          de controle explícito de
+          <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> para C. Para rodar esse
+          código, você também precisará fornecer rotinas apropriadas de alocação
+          de armazenamento e outros suportes de tempo de execução.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e52"></a>Exercício 5.52:</strong> Como um
+          contraponto a <a href="#Exercise-5_002e51">Exercício 5.51</a>,
+          modifique o compilador para que ele compile procedimentos Scheme em
+          sequências de instruções C. Compile o avaliador metacircular de
+          <a href="4_002e1.xhtml#g_t4_002e1">4.1</a> para produzir um
+          interpretador Scheme escrito em C.
+        </p>
+      </blockquote>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de Rodapé</h4>
+
+        <div id="FOOT318">
+          <p>
+            <a class="footnote_backlink" href="#DOCF318"><sup>318</sup></a> Esta
+            é uma afirmação teórica. Não estamos afirmando que os caminhos de
+            dados do avaliador sejam um conjunto particularmente conveniente ou
+            eficiente de caminhos de dados para um computador de propósito
+            geral. Por exemplo, eles não são muito bons para implementar
+            cálculos de ponto flutuante de alta performance ou cálculos que
+            manipulam intensivamente vetores de bits.
+          </p>
+        </div>
+        <div id="FOOT319">
+          <p>
+            <a class="footnote_backlink" href="#DOCF319"><sup>319</sup></a>
+            Na verdade, a máquina que executa código compilado pode ser mais
+            simples que a máquina do interpretador, porque não usaremos os
+            registradores
+            <code>exp</code> e <code>unev</code>. O interpretador usou esses
+            registradores para manter partes de expressões não avaliadas. Com o
+            compilador, no entanto, essas expressões são incorporadas ao código
+            compilado que a máquina de registradores executará. Pela mesma
+            razão, não precisamos das operações da máquina que lidam com a
+            sintaxe das expressões. Mas o código compilado usará algumas
+            operações adicionais da máquina (para representar objetos de
+            procedimentos compilados) que não apareceram na máquina do avaliador
+            de controle explícito.
+          </p>
+        </div>
+        <div id="FOOT320">
+          <p>
+            <a class="footnote_backlink" href="#DOCF320"><sup>320</sup></a>
+            Observe, no entanto, que nosso compilador é um programa Scheme, e os
+            procedimentos de sintaxe que ele usa para manipular expressões são
+            os procedimentos reais do Scheme usados com o avaliador
+            metacircular. Para o avaliador de controle explícito, em contraste,
+            assumimos que operações de sintaxe equivalentes estavam disponíveis
+            como operações para a máquina de registradores. (É claro que, quando
+            simulamos a máquina de registradores em Scheme, usamos os
+            procedimentos reais do Scheme em nossa simulação da máquina de
+            registradores.)
+          </p>
+        </div>
+        <div id="FOOT321">
+          <p>
+            <a class="footnote_backlink" href="#DOCF321"><sup>321</sup></a> Este
+            procedimento usa um recurso do Lisp chamado
+            <a id="index-backquote"></a> <em>backquote</em> (ou
+            <a id="index-quasiquote"></a> <em>quasiquote</em>) que é útil para
+            construir listas. Preceder uma lista com um símbolo de backquote é
+            muito parecido com citá-la, exceto que qualquer coisa na lista que
+            estiver marcado com uma vírgula é avaliado.
+          </p>
+          <p>
+            Por exemplo, se o valor de <code>linkage</code> for o símbolo
+            <code>branch25</code>, então a expressão
+          </p>
+
+          <pre><code class="language-scheme">`((goto (label ,linkage)))</code></pre>
+
+          <p>avalia para a lista</p>
+          <pre><code class="language-scheme">((goto (label branch25)))</code></pre>
+
+          <p>
+            Da mesma forma, se o valor de <code>x</code> for a lista
+            <code>(a b c)</code>, então
+          </p>
+
+          <pre><code class="language-scheme">`(1 2 ,(car x))</code></pre>
+
+          <p>avalia para a lista</p>
+          <pre><code class="language-scheme">(1 2 a)</code></pre>
+        </div>
+        <div id="FOOT322">
+          <p>
+            <a class="footnote_backlink" href="#DOCF322"><sup>322</sup></a> Não
+            podemos simplesmente usar os rótulos <code>true-branch</code>,
+            <code>false-branch</code> e <code>after-if</code> como mostrado
+            acima, porque pode haver mais de um <code>if</code> no programa. O
+            compilador usa o procedimento <code>make-label</code> para gerar
+            rótulos. <code>Make-label</code> recebe um símbolo como argumento e
+            retorna um novo símbolo que começa com o símbolo dado. Por exemplo,
+            chamadas sucessivas a <code>(make-label 'a)</code> retornariam
+            <code>a1</code>, <code>a2</code>, e assim por diante.
+            <code>Make-label</code> pode ser implementado de forma semelhante à
+            geração de nomes de variáveis únicos na linguagem de consulta, como
+            segue:
+          </p>
+
+          <pre><code class="language-scheme">(define label-counter 0)
+
+(define (new-label-number)
+  (set! label-counter (+ 1 label-counter))
+  label-counter)
+
+(define (make-label name)
+  (string-&gt;symbol
+   (string-append 
+    (symbol-&gt;string name)
+    (number-&gt;string (new-label-number)))))</code></pre>
+        </div>
+        <div id="FOOT323">
+          <p>
+            <a class="footnote_backlink" href="#DOCF323"><sup>323</sup></a>
+            <a id="Footnote-323"></a>Precisamos de operações da máquina para
+            implementar uma estrutura de dados para representar procedimentos
+            compilados, análoga à estrutura para procedimentos compostos
+            descrita em <a href="4_002e1.xhtml#g_t4_002e1_002e3">4.1.3</a>:
+          </p>
+
+          <pre><code class="language-scheme">(define (make-compiled-procedure entry env)
+  (list 'compiled-procedure entry env))
+(define (compiled-procedure? proc)
+  (tagged-list? proc 'compiled-procedure))
+(define (compiled-procedure-entry c-proc) 
+  (cadr c-proc))
+(define (compiled-procedure-env c-proc)
+  (caddr c-proc))</code></pre>
+        </div>
+        <div id="FOOT324">
+          <p>
+            <a class="footnote_backlink" href="#DOCF324"><sup>324</sup></a>
+            Na verdade, sinalizamos um erro quando o alvo não é
+            <code>val</code> e o linkage é <code>return</code>, já que o único
+            lugar onde solicitamos linkages <code>return</code> é na compilação
+            de procedimentos, e nossa convenção é que procedimentos retornam
+            seus valores em <code>val</code>.
+          </p>
+        </div>
+        <div id="FOOT325">
+          <p>
+            <a class="footnote_backlink" href="#DOCF325"><sup>325</sup></a>
+            Fazer um compilador gerar código recursivo em cauda pode parecer uma
+            ideia simples. Mas a maioria dos compiladores para linguagens
+            comuns, incluindo C e Pascal, não faz isso, e portanto essas
+            linguagens não podem representar processos iterativos em termos de
+            chamada de procedimento apenas. A dificuldade com recursão em cauda
+            nessas linguagens é que suas implementações usam a pilha para
+            armazenar argumentos de procedimento e variáveis locais, bem como
+            endereços de retorno. As implementações do Scheme descritas neste
+            livro armazenam argumentos e variáveis em memória para serem
+            coletados como lixo. A razão para usar a pilha para variáveis e
+            argumentos é que isso evita a necessidade de coleta de lixo em
+            linguagens que não a exigiriam de outra forma, e geralmente se
+            acredita ser mais eficiente. Compiladores Lisp sofisticados podem,
+            de fato, usar a pilha para argumentos sem destruir a recursão em
+            cauda. (Veja
+            <a href="References.xhtml#Hanson-1990">Hanson 1990</a> para uma
+            descrição.) Há também algum debate sobre se a alocação em pilha é
+            realmente mais eficiente que a coleta de lixo em primeiro lugar, mas
+            os detalhes parecem depender de pontos finos da arquitetura do
+            computador. (Veja
+            <a href="References.xhtml#Appel-1987">Appel 1987</a> e
+            <a href="References.xhtml#Miller-and-Rozas-1994"
+              >Miller e Rozas 1994</a
+            >
+            para visões opostas sobre essa questão.)
+          </p>
+        </div>
+        <div id="FOOT326">
+          <p>
+            <a class="footnote_backlink" href="#DOCF326"><sup>326</sup></a> A
+            variável <code>all-regs</code> é vinculada à lista de nomes de todos
+            os registradores:
+          </p>
+
+          <pre><code class="language-scheme">(define all-regs '(env proc val argl continue))</code></pre>
+        </div>
+        <div id="FOOT327">
+          <p>
+            <a class="footnote_backlink" href="#DOCF327"><sup>327</sup></a> Note
+            que <code>preserving</code> chama <code>append</code> com três
+            argumentos. Embora a definição de <code>append</code> mostrada neste
+            livro aceite apenas dois argumentos, o Scheme normalmente fornece um
+            procedimento <code>append</code> que aceita um número arbitrário de
+            argumentos.
+          </p>
+        </div>
+        <div id="FOOT328">
+          <p>
+            <a class="footnote_backlink" href="#DOCF328"><sup>328</sup></a>
+            Usamos o mesmo símbolo
+            <code>+</code> aqui para denotar tanto o procedimento da linguagem
+            fonte quanto a operação da máquina. Em geral, não haverá uma
+            correspondência um-para-um entre primitivas da linguagem fonte e
+            primitivas da máquina.
+          </p>
+        </div>
+        <div id="FOOT329">
+          <p>
+            <a class="footnote_backlink" href="#DOCF329"><sup>329</sup></a>
+            Tornar as primitivas em palavras reservadas é, em geral, uma má
+            ideia, já que um usuário não pode então redefinir esses nomes para
+            diferentes procedimentos. Além disso, se adicionarmos palavras
+            reservadas a um compilador que está em uso, programas existentes que
+            definem procedimentos com esses nomes pararão de funcionar. Veja
+            <a href="#Exercise-5_002e44">Exercício 5.44</a> para ideias sobre
+            como evitar esse problema.
+          </p>
+        </div>
+        <div id="FOOT330">
+          <p>
+            <a class="footnote_backlink" href="#DOCF330"><sup>330</sup></a> Isso
+            não é verdade se permitirmos definições internas, a menos que as
+            escaneemos. Veja <a href="#Exercise-5_002e43">Exercício 5.43</a>.
+          </p>
+        </div>
+        <div id="FOOT331">
+          <p>
+            <a class="footnote_backlink" href="#DOCF331"><sup>331</sup></a> Esta
+            é a modificação necessária para a busca de variáveis se
+            implementarmos o método de escaneamento para eliminar definições
+            internas (<a href="#Exercise-5_002e43">Exercício 5.43</a>).
+            Precisaremos eliminar essas definições para que o endereçamento
+            léxico funcione.
+          </p>
+        </div>
+        <div id="FOOT332">
+          <p>
+            <a class="footnote_backlink" href="#DOCF332"><sup>332</sup></a>
+            Endereços léxicos não podem ser usados para acessar variáveis no
+            ambiente global, porque esses nomes podem ser definidos e
+            redefinidos interativamente a qualquer momento. Com definições
+            internas escaneadas, como em
+            <a href="#Exercise-5_002e43">Exercício 5.43</a>, as únicas
+            definições que o compilador vê são aquelas no nível superior, que
+            atuam no ambiente global. A compilação de uma definição não faz com
+            que o nome definido seja inserido no ambiente de tempo de
+            compilação.
+          </p>
+        </div>
+        <div id="FOOT333">
+          <p>
+            <a class="footnote_backlink" href="#DOCF333"><sup>333</sup></a> É
+            claro que, procedimentos compilados, assim como procedimentos
+            interpretados, são compostos (não primitivos). Para compatibilidade
+            com a terminologia usada no avaliador de controle explícito, nesta
+            seção usaremos "composto" para significar interpretado (em oposição
+            a compilado).
+          </p>
+        </div>
+        <div id="FOOT334">
+          <p>
+            <a class="footnote_backlink" href="#DOCF334"><sup>334</sup></a>
+            Agora que a máquina do avaliador começa com um <code>branch</code>,
+            devemos sempre inicializar o registrador <code>flag</code> antes de
+            iniciar a máquina do avaliador. Para iniciar a máquina em seu loop
+            comum de leitura-avaliação-impressão, poderíamos usar
+          </p>
+
+          <pre><code class="language-scheme">(define (start-eceval)
+  (set! the-global-environment
+        (setup-environment))
+  (set-register-contents! eceval 'flag false)
+  (start eceval))</code></pre>
+        </div>
+        <div id="FOOT335">
+          <p>
+            <a class="footnote_backlink" href="#DOCF335"><sup>335</sup></a>
+            Como um procedimento compilado é um objeto que o sistema pode tentar
+            imprimir, também modificamos a operação de impressão do sistema
+            <code>user-print</code> (de
+            <a href="4_002e1.xhtml#g_t4_002e1_002e4">4.1.4</a>) para que ele não
+            tente imprimir os componentes de um procedimento compilado:
+          </p>
+
+          <pre><code class="language-scheme">(define (user-print object)
+  (cond ((compound-procedure? object)
+         (display 
+          (list 'compound-procedure
+                (procedure-parameters object)
+                (procedure-body object)
+                '&lt;procedure-env&gt;)))
+        ((compiled-procedure? object)
+         (display '&lt;compiled-procedure&gt;))
+        (else (display object))))</code></pre>
+        </div>
+        <div id="FOOT336">
+          <p>
+            <a class="footnote_backlink" href="#DOCF336"><sup>336</sup></a>
+            Podemos fazer ainda melhor estendendo o compilador para permitir que
+            código compilado chame procedimentos interpretados. Veja
+            <a href="#Exercise-5_002e47">Exercício 5.47</a>.
+          </p>
+        </div>
+        <div id="FOOT337">
+          <p>
+            <a class="footnote_backlink" href="#DOCF337"><sup>337</sup></a>
+            Independentemente da estratégia de execução, incorremos em uma
+            sobrecarga significativa se insistirmos que erros encontrados na
+            execução de um programa do usuário sejam detectados e sinalizados,
+            em vez de serem permitidos matar o sistema ou produzir respostas
+            erradas. Por exemplo, uma referência fora dos limites de um array
+            pode ser detectada verificando a validade da referência antes de
+            realizá-la. A sobrecarga de verificação, no entanto, pode ser muitas
+            vezes o custo da referência ao array em si, e um programador deve
+            ponderar velocidade contra segurança ao determinar se tal
+            verificação é desejável. Um bom compilador deve ser capaz de
+            produzir código com tais verificações, deve evitar verificações
+            redundantes e deve permitir que programadores controlem a extensão e
+            o tipo de verificação de erros no código compilado.
+          </p>
+          <p>
+            Compiladores para linguagens populares, como C e C++, colocam poucas
+            operações de verificação de erros no código em execução, para que as
+            coisas rodem o mais rápido possível. Como resultado, cabe aos
+            programadores fornecer explicitamente verificações de erros.
+            Infelizmente, as pessoas frequentemente negligenciam isso, mesmo em
+            aplicações críticas onde a velocidade não é uma restrição. Seus
+            programas levam vidas rápidas e perigosas. Por exemplo, o notório
+            "Worm" que paralisou a Internet em 1988 explorou a falha do sistema
+            operacional <abbr>UNIX</abbr>(tm) em verificar se o buffer de
+            entrada transbordou no daemon finger. (Veja
+            <a href="References.xhtml#Spafford-1989">Spafford 1989</a>.)
+          </p>
+        </div>
+        <div id="FOOT338">
+          <p>
+            <a class="footnote_backlink" href="#DOCF338"><sup>338</sup></a> É
+            claro que, com qualquer uma das estratégias de interpretação ou
+            compilação, também devemos implementar para a nova máquina alocação
+            de armazenamento, entrada e saída, e todas as várias operações que
+            tomamos como "primitivas" em nossa discussão do avaliador e do
+            compilador. Uma estratégia para minimizar o trabalho aqui é escrever
+            o maior número possível dessas operações em Lisp e então compilá-las
+            para a nova máquina. No final, tudo se reduz a um pequeno kernel
+            (como coleta de lixo e o mecanismo para aplicar primitivas reais da
+            máquina) que é codificado à mão para a nova máquina.
+          </p>
+        </div>
+        <div id="FOOT339">
+          <p>
+            <a class="footnote_backlink" href="#DOCF339"><sup>339</sup></a> Essa
+            estratégia leva a testes divertidos de correção do compilador, como
+            verificar se a compilação de um programa na nova máquina, usando o
+            compilador compilado, é idêntica à compilação do programa no sistema
+            Lisp original. Rastrear a fonte das diferenças é divertido, mas
+            muitas vezes frustrante, porque os resultados são extremamente
+            sensíveis a detalhes minúsculos.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="References.xhtml#References" accesskey="n" rel="next"
+            >Referências</a
+          >, Anterior:
+          <a href="5_002e4.xhtml#g_t5_002e4" accesskey="p" rel="prev">5.4</a>,
+          Acima: <a href="#g_t5_002e5" accesskey="u" rel="prev">5.5</a> [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Jump to bottom"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
+</html>

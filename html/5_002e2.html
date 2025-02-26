@@ -1,0 +1,1415 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.2"
+    />
+    <meta
+      name="keywords"
+      content="Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.2"
+    />
+    <title>
+      Estrutura e Interpretação de Programas de Computador, 2ª edição: 5.2
+    </title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="css/highlight.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/scheme.min.js"></script>
+    <script>
+      hljs.highlightAll();
+    </script>
+    <script src="js/jquery.min.js"></script>
+    <script src="js/footnotes.js"></script>
+    <script src="js/browsertest.js"></script>
+  </head>
+  <body>
+    <section>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      >
+      <a id="pagetop"></a>
+      <a id="g_t5_002e2"></a>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="5_002e3.html#g_t5_002e3" accesskey="n" rel="next">5.3</a>,
+          Anterior:
+          <a href="5_002e1.html#g_t5_002e1" accesskey="p" rel="prev">5.1</a>,
+          Acima:
+          <a href="Chapter-5.html#Chapter-5" accesskey="u" rel="prev"
+            >Capítulo 5</a
+          >
+          [<a
+            href="index.html#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="contents"
+            >Índice</a
+          >]
+        </p>
+      </nav>
+      <a id="A-Register_002dMachine-Simulator"></a>
+      <h3 class="section">
+        <span class="secnum">5.2</span
+        ><span class="sectitle">Um Simulador de Máquina de Registradores</span>
+      </h3>
+
+      <p>
+        Para obter uma boa compreensão do projeto de máquinas de registradores,
+        devemos testar as máquinas que projetamos para ver se elas funcionam
+        conforme o esperado. Uma maneira de testar um projeto é simular
+        manualmente a operação do controlador, como em
+        <a href="5_002e1.html#Exercise-5_002e5">Exercício 5.5</a>. No entanto,
+        isso é extremamente tedioso para todas, exceto as máquinas mais simples.
+        Nesta seção, construiremos um simulador para máquinas descritas na
+        linguagem de máquina de registradores. O simulador é um programa em
+        Scheme com quatro procedimentos de interface. O primeiro usa uma
+        descrição de uma máquina de registradores para construir um modelo da
+        máquina (uma estrutura de dados cujas partes correspondem às partes da
+        máquina a ser simulada), e os outros três nos permitem simular a máquina
+        manipulando o modelo:
+      </p>
+      <blockquote>
+        <pre><code class="language-scheme">(make-machine ⟨register-names⟩
+              ⟨operations⟩
+              ⟨controller⟩)</code></pre>
+        <p>
+          constrói e retorna um modelo da máquina com os registradores,
+          operações e controlador fornecidos.
+        </p>
+        <pre><code class="language-scheme">(set-register-contents! ⟨machine-model⟩ 
+                        ⟨register-name⟩ 
+                        ⟨value⟩)</code></pre>
+        <p>
+          armazena um valor em um registrador simulado na máquina fornecida.
+        </p>
+        <pre><code class="language-scheme">(get-register-contents ⟨machine-model⟩
+                       ⟨register-name⟩)</code></pre>
+        <p>
+          retorna o conteúdo de um registrador simulado na máquina fornecida.
+        </p>
+        <pre><code class="language-scheme">(start ⟨machine-model⟩)</code></pre>
+        <p>
+          simula a execução da máquina fornecida, começando do início da
+          sequência do controlador e parando quando chega ao final da sequência.
+        </p>
+      </blockquote>
+
+      <p>
+        Como exemplo de como esses procedimentos são usados, podemos definir
+        <code>gcd-machine</code> como um modelo da máquina GCD de
+        <a href="5_002e1.html#g_t5_002e1_002e1">5.1.1</a> da seguinte forma:
+      </p>
+      <pre><code class="language-scheme">(define gcd-machine
+  (make-machine
+   '(a b t)
+   (list (list 'rem remainder) (list '= =))
+   '(test-b
+       (test (op =) (reg b) (const 0))
+       (branch (label gcd-done))
+       (assign t (op rem) (reg a) (reg b))
+       (assign a (reg b))
+       (assign b (reg t))
+       (goto (label test-b))
+     gcd-done)))</code></pre>
+
+      <p>
+        O primeiro argumento para <code>make-machine</code> é uma lista de nomes
+        de registradores. O próximo argumento é uma tabela (uma lista de listas
+        de dois elementos) que associa cada nome de operação a um procedimento
+        Scheme que implementa a operação (ou seja, produz o mesmo valor de saída
+        dados os mesmos valores de entrada). O último argumento especifica o
+        controlador como uma lista de rótulos e instruções da máquina, como em
+        <a href="5_002e1.html#g_t5_002e1">5.1</a>.
+      </p>
+      <p>
+        Para calcular MDCs com esta máquina, definimos os registradores de
+        entrada, iniciamos a máquina e examinamos o resultado quando a simulação
+        termina:
+      </p>
+      <pre><code class="language-scheme">(set-register-contents! gcd-machine 'a 206)
+done
+
+(set-register-contents! gcd-machine 'b 40)
+done
+
+(start gcd-machine)
+done
+
+(get-register-contents gcd-machine 'a)
+2</code></pre>
+
+      <p>
+        Este cálculo será executado muito mais lentamente do que um procedimento
+        <code>gcd</code> escrito em Scheme, porque simularemos instruções de
+        máquina de baixo nível, como <code>assign</code>, por operações muito
+        mais complexas.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e7"></a>Exercício 5.7:</strong> Use o
+          simulador para testar as máquinas que você projetou no
+          <a href="5_002e1.html#Exercise-5_002e4">Exercício 5.4</a>.
+        </p>
+      </blockquote>
+
+      <a id="g_t5_002e2_002e1"></a>
+      <a id="The-Machine-Model"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.2.1</span
+        ><span class="sectitle">O Modelo da Máquina</span>
+      </h4>
+
+      <p>
+        O modelo de máquina gerado por <code>make-machine</code> é representado
+        como um procedimento com estado local usando as técnicas de passagem de
+        mensagens desenvolvidas no
+        <a href="Chapter-3.html#Chapter-3">Capítulo 3</a>. Para construir este
+        modelo, <code>make-machine</code> começa chamando o procedimento
+        <code>make-new-machine</code> para construir as partes do modelo de
+        máquina que são comuns a todas as máquinas de registradores. Este modelo
+        básico de máquina construído por <code>make-new-machine</code> é
+        essencialmente um contêiner para alguns registradores e uma pilha, junto
+        com um mecanismo de execução que processa as instruções do controlador
+        uma por uma.
+      </p>
+      <p>
+        <code>Make-machine</code> então estende este modelo básico (enviando
+        mensagens) para incluir os registradores, operações e controlador da
+        máquina específica que está sendo definida. Primeiro, ele aloca um
+        registrador na nova máquina para cada um dos nomes de registradores
+        fornecidos e instala as operações designadas na máquina. Em seguida, ele
+        usa um <a id="index-assembler"></a><em>montador</em> (descrito abaixo em
+        <a href="#g_t5_002e2_002e2">5.2.2</a>) para transformar a lista do
+        controlador em instruções para a nova máquina e instala essas instruções
+        como a sequência de instruções da máquina.
+        <code>Make-machine</code> retorna como seu valor o modelo de máquina
+        modificado.
+      </p>
+      <pre><code class="language-scheme">(define (make-machine register-names 
+                      ops 
+                      controller-text)
+  (let ((machine (make-new-machine)))
+    (for-each (lambda (register-name)
+                ((machine 'allocate-register) 
+                 register-name))
+              register-names)
+    ((machine 'install-operations) ops)
+    ((machine 'install-instruction-sequence)
+     (assemble controller-text machine))
+    machine))</code></pre>
+
+      <a id="Registers"></a>
+      <h5 class="subsubheading">Registradores</h5>
+
+      <p>
+        Representaremos um registrador como um procedimento com estado local,
+        como no <a href="Chapter-3.html#Chapter-3">Capítulo 3</a>. O
+        procedimento <code>make-register</code> cria um registrador que mantém
+        um valor que pode ser acessado ou alterado:
+      </p>
+      <pre><code class="language-scheme">(define (make-register name)
+  (let ((contents '*unassigned*))
+    (define (dispatch message)
+      (cond ((eq? message 'get) contents)
+            ((eq? message 'set)
+             (lambda (value) 
+               (set! contents value)))
+            (else
+             (error "Unknown request: 
+                     REGISTER"
+                    message))))
+    dispatch))</code></pre>
+
+      <p>Os seguintes procedimentos são usados para acessar registradores:</p>
+      <pre><code class="language-scheme">(define (get-contents register)
+  (register 'get))
+
+(define (set-contents! register value)
+  ((register 'set) value))</code></pre>
+
+      <a id="The-stack"></a>
+      <h5 class="subsubheading">A Pilha</h5>
+
+      <p>
+        Também podemos representar uma pilha como um procedimento com estado
+        local. O procedimento <code>make-stack</code> cria uma pilha cujo estado
+        local consiste em uma lista dos itens na pilha. Uma pilha aceita
+        solicitações para <code>push</code> (empilhar) um item na pilha, para
+        <code>pop</code> (desempilhar) o item superior da pilha e retorná-lo, e
+        para <code>initialize</code> (inicializar) a pilha como vazia.
+      </p>
+      <pre><code class="language-scheme">(define (make-stack)
+  (let ((s '()))
+    (define (push x)
+      (set! s (cons x s)))
+    (define (pop)
+      (if (null? s)
+          (error "Empty stack: POP")
+          (let ((top (car s)))
+            (set! s (cdr s))
+            top)))
+    (define (initialize)
+      (set! s '())
+      'done)
+    (define (dispatch message)
+      (cond ((eq? message 'push) push)
+            ((eq? message 'pop) (pop))
+            ((eq? message 'initialize) 
+             (initialize))
+            (else 
+             (error "Unknown request: STACK"
+                    message))))
+    dispatch))</code></pre>
+
+      <p>Os seguintes procedimentos são usados para acessar pilhas:</p>
+      <pre><code class="language-scheme">(define (pop stack) (stack 'pop))
+(define (push stack value)
+  ((stack 'push) value))</code></pre>
+
+      <a id="The-basic-machine"></a>
+      <h5 class="subsubheading">A Máquina Básica</h5>
+
+      <p>
+        O procedimento <code>make-new-machine</code>, mostrado na
+        <a href="#Figure-5_002e13">Figura 5.13</a>, constrói um objeto cujo
+        estado local consiste em uma pilha, uma sequência de instruções
+        inicialmente vazia, uma lista de operações que inicialmente contém uma
+        operação para inicializar a pilha, e uma
+        <a id="index-register-table"></a><em>tabela de registradores</em> que
+        inicialmente contém dois registradores, chamados <code>flag</code> e
+        <code>pc</code> (para "contador de programa"). O procedimento interno
+        <code>allocate-register</code> adiciona novas entradas à tabela de
+        registradores, e o procedimento interno
+        <code>lookup-register</code> procura registradores na tabela.
+      </p>
+      <p>
+        <strong><a id="Figure-5_002e13"></a>Figura 5.13:</strong>
+        <math xmlns="http://www.w3.org/1998/Math/MathML">
+          <mo stretchy="false">↓</mo>
+        </math>
+        O procedimento <code>make-new-machine</code>, que implementa o modelo
+        básico de máquina.
+      </p>
+      <pre><code class="language-scheme">(define (make-new-machine)
+  (let ((pc (make-register 'pc))
+        (flag (make-register 'flag))
+        (stack (make-stack))
+        (the-instruction-sequence '()))
+    (let ((the-ops
+           (list 
+            (list 'initialize-stack
+                  (lambda () 
+                    (stack 'initialize)))))
+          (register-table
+           (list (list 'pc pc) 
+                 (list 'flag flag))))
+      (define (allocate-register name)
+        (if (assoc name register-table)
+            (error 
+             "Multiply defined register: " 
+             name)
+            (set! register-table
+                  (cons 
+                   (list name 
+                         (make-register name))
+                   register-table)))
+        'register-allocated)
+      (define (lookup-register name)
+        (let ((val 
+               (assoc name register-table)))
+          (if val
+              (cadr val)
+              (error "Unknown register:" 
+                     name))))
+      (define (execute)
+        (let ((insts (get-contents pc)))
+          (if (null? insts)
+              'done
+              (begin
+                ((instruction-execution-proc 
+                  (car insts)))
+                (execute)))))
+      (define (dispatch message)
+        (cond ((eq? message 'start)
+               (set-contents! 
+                pc
+                the-instruction-sequence)
+               (execute))
+              ((eq? 
+                message 
+                'install-instruction-sequence)
+               (lambda (seq) 
+                 (set! 
+                  the-instruction-sequence 
+                  seq)))
+              ((eq? message 
+                    'allocate-register) 
+               allocate-register)
+              ((eq? message 'get-register) 
+               lookup-register)
+              ((eq? message 
+                    'install-operations)
+               (lambda (ops) 
+                 (set! the-ops 
+                       (append the-ops ops))))
+              ((eq? message 'stack) stack)
+              ((eq? message 'operations) 
+               the-ops)
+              (else 
+               (error "Unknown request: 
+                            MACHINE"
+                           message))))
+      dispatch)))</code></pre>
+
+      <p>
+        O registrador <code>flag</code> é usado para controlar o desvio na
+        máquina simulada. Instruções <code>test</code> definem o conteúdo de
+        <code>flag</code> como o resultado do teste (verdadeiro ou falso).
+        Instruções <code>branch</code> decidem se devem ou não desviar
+        examinando o conteúdo de <code>flag</code>.
+      </p>
+      <p>
+        O registrador <code>pc</code> determina a sequência de instruções à
+        medida que a máquina é executada. Essa sequência é implementada pelo
+        procedimento interno <code>execute</code>. No modelo de simulação, cada
+        instrução da máquina é uma estrutura de dados que inclui um procedimento
+        sem argumentos, chamado de
+        <a id="index-instruction-execution-procedure"></a
+        ><em>procedimento de execução de instrução</em>, de modo que chamar esse
+        procedimento simula a execução da instrução. À medida que a simulação é
+        executada, <code>pc</code> aponta para o lugar na sequência de
+        instruções que começa com a próxima instrução a ser executada.
+        <code>Execute</code> obtém essa instrução, executa-a chamando o
+        procedimento de execução de instrução e repete esse ciclo até que não
+        haja mais instruções para executar (ou seja, até que
+        <code>pc</code> aponte para o final da sequência de instruções).
+      </p>
+      <p>
+        Como parte de sua operação, cada procedimento de execução de instrução
+        modifica <code>pc</code> para indicar a próxima instrução a ser
+        executada. Instruções <code>branch</code> e <code>goto</code> alteram
+        <code>pc</code> para apontar para o novo destino. Todas as outras
+        instruções simplesmente avançam <code>pc</code>, fazendo-o apontar para
+        a próxima instrução na sequência. Observe que cada chamada para
+        <code>execute</code> chama <code>execute</code> novamente, mas isso não
+        produz um loop infinito porque a execução do procedimento de execução de
+        instrução altera o conteúdo de <code>pc</code>.
+      </p>
+      <p>
+        <code>Make-new-machine</code> retorna um procedimento
+        <code>dispatch</code> que implementa o acesso por passagem de mensagens
+        ao estado interno. Observe que iniciar a máquina é realizado definindo
+        <code>pc</code> para o início da sequência de instruções e chamando
+        <code>execute</code>.
+      </p>
+      <p>
+        Para conveniência, fornecemos uma interface procedural alternativa para
+        a operação <code>start</code> de uma máquina, bem como procedimentos
+        para definir e examinar o conteúdo dos registradores, conforme
+        especificado no início de <a href="#g_t5_002e2">5.2</a>:
+      </p>
+      <pre><code class="language-scheme">(define (start machine)
+  (machine 'start))
+
+(define (get-register-contents 
+         machine register-name)
+  (get-contents 
+   (get-register machine register-name)))
+
+(define (set-register-contents! 
+         machine register-name value)
+  (set-contents! 
+   (get-register machine register-name) 
+   value)
+  'done)</code></pre>
+
+      <p>
+        Esses procedimentos (e muitos procedimentos em
+        <a href="#g_t5_002e2_002e2">5.2.2</a> e
+        <a href="#g_t5_002e2_002e3">5.2.3</a>) usam o seguinte para procurar o
+        registrador com um determinado nome em uma determinada máquina:
+      </p>
+      <pre><code class="language-scheme">(define (get-register machine reg-name)
+  ((machine 'get-register) reg-name))</code></pre>
+
+      <a id="g_t5_002e2_002e2"></a>
+      <a id="The-Assembler"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.2.2</span
+        ><span class="sectitle">O Montador</span>
+      </h4>
+
+      <p>
+        O montador transforma a sequência de expressões do controlador de uma
+        máquina em uma lista correspondente de instruções da máquina, cada uma
+        com seu procedimento de execução. No geral, o montador é muito parecido
+        com os avaliadores que estudamos no
+        <a href="Chapter-4.html#Chapter-4">Capítulo 4</a>—há uma linguagem de
+        entrada (neste caso, a linguagem de máquina de registradores) e devemos
+        realizar uma ação apropriada para cada tipo de expressão na linguagem.
+      </p>
+      <p>
+        A técnica de produzir um procedimento de execução para cada instrução é
+        exatamente o que usamos em
+        <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a> para acelerar o
+        avaliador separando a análise da execução em tempo de execução. Como
+        vimos no <a href="Chapter-4.html#Chapter-4">Capítulo 4</a>, muita
+        análise útil de expressões Scheme poderia ser realizada sem conhecer os
+        valores reais das variáveis. Aqui, analogamente, muita análise útil de
+        expressões da linguagem de máquina de registradores pode ser realizada
+        sem conhecer o conteúdo real dos registradores da máquina. Por exemplo,
+        podemos substituir referências a registradores por ponteiros para os
+        objetos de registrador, e podemos substituir referências a rótulos por
+        ponteiros para o lugar na sequência de instruções que o rótulo designa.
+      </p>
+      <p>
+        Antes de gerar os procedimentos de execução de instruções, o montador
+        deve saber a que todos os rótulos se referem, então ele começa
+        escaneando o texto do controlador para separar os rótulos das
+        instruções. À medida que escaneia o texto, ele constrói tanto uma lista
+        de instruções quanto uma tabela que associa cada rótulo a um ponteiro
+        para essa lista. Em seguida, o montador aumenta a lista de instruções
+        inserindo o procedimento de execução para cada instrução.
+      </p>
+      <p>
+        O procedimento <code>assemble</code> é a entrada principal para o
+        montador. Ele recebe o texto do controlador e o modelo da máquina como
+        argumentos e retorna a sequência de instruções a ser armazenada no
+        modelo. <code>Assemble</code> chama <code>extract-labels</code> para
+        construir a lista inicial de instruções e a tabela de rótulos a partir
+        do texto do controlador fornecido. O segundo argumento para
+        <code>extract-labels</code> é um procedimento a ser chamado para
+        processar esses resultados: Este procedimento usa
+        <code>update-insts!</code> para gerar os procedimentos de execução de
+        instruções e inseri-los na lista de instruções, e retorna a lista
+        modificada.
+      </p>
+      <pre><code class="language-scheme">(define (assemble controller-text machine)
+  (extract-labels controller-text
+    (lambda (insts labels)
+      (update-insts! insts labels machine)
+      insts)))</code></pre>
+
+      <p>
+        <code>Extract-labels</code> recebe como argumentos uma lista
+        <code>text</code> (a sequência de expressões de instrução do
+        controlador) e um procedimento <code>receive</code>.
+        <code>Receive</code> será chamado com dois valores: (1) uma lista
+        <code>insts</code> de estruturas de dados de instrução, cada uma
+        contendo uma instrução de <code>text</code>; e (2) uma tabela chamada
+        <code>labels</code>, que associa cada rótulo de <code>text</code> à
+        posição na lista <code>insts</code> que o rótulo designa.
+      </p>
+      <pre><code class="language-scheme">(define (extract-labels text receive)
+  (if (null? text)
+      (receive '() '())
+      (extract-labels 
+       (cdr text)
+       (lambda (insts labels)
+         (let ((next-inst (car text)))
+           (if (symbol? next-inst)
+               (receive 
+                   insts
+                   (cons 
+                    (make-label-entry 
+                     next-inst
+                     insts)
+                    labels))
+               (receive 
+                   (cons (make-instruction 
+                          next-inst)
+                         insts)
+                   labels))))))</code></pre>
+
+      <p>
+        <code>Extract-labels</code> funciona escaneando sequencialmente os
+        elementos de <code>text</code> e acumulando <code>insts</code> e
+        <code>labels</code>. Se um elemento é um símbolo (e, portanto, um
+        rótulo), uma entrada apropriada é adicionada à tabela
+        <code>labels</code>. Caso contrário, o elemento é acumulado na lista
+        <code>insts</code>.<a class="footnote_link" id="DOCF289" href="#FOOT289"
+          ><sup>289</sup></a
+        >
+      </p>
+      <p>
+        <code>Update-insts!</code> modifica a lista de instruções, que
+        inicialmente contém apenas o texto das instruções, para incluir os
+        procedimentos de execução correspondentes:
+      </p>
+      <pre><code class="language-scheme">(define (update-insts! insts labels machine)
+  (let ((pc (get-register machine 'pc))
+        (flag (get-register machine 'flag))
+        (stack (machine 'stack))
+        (ops (machine 'operations)))
+    (for-each
+     (lambda (inst)
+       (set-instruction-execution-proc!
+        inst
+        (make-execution-procedure
+         (instruction-text inst) 
+         labels
+         machine
+         pc
+         flag
+         stack
+         ops)))
+     insts)))</code></pre>
+
+      <p>
+        A estrutura de dados de instrução da máquina simplesmente emparelha o
+        texto da instrução com o procedimento de execução correspondente. O
+        procedimento de execução ainda não está disponível quando
+        <code>extract-labels</code> constrói a instrução, e é inserido
+        posteriormente por <code>update-insts!</code>.
+      </p>
+      <pre><code class="language-scheme">(define (make-instruction text)
+  (cons text '()))
+(define (instruction-text inst) (car inst))
+(define (instruction-execution-proc inst)
+  (cdr inst))
+(define (set-instruction-execution-proc!
+         inst
+         proc)
+  (set-cdr! inst proc))</code></pre>
+
+      <p>
+        O texto da instrução não é usado pelo nosso simulador, mas é útil
+        mantê-lo por perto para depuração (veja
+        <a href="#Exercise-5_002e16">Exercício 5.16</a>).
+      </p>
+      <p>Elementos da tabela de rótulos são pares:</p>
+      <pre><code class="language-scheme">(define (make-label-entry label-name insts)
+  (cons label-name insts))</code></pre>
+
+      <p>As entradas serão procuradas na tabela com</p>
+      <pre><code class="language-scheme">(define (lookup-label labels label-name)
+  (let ((val (assoc label-name labels)))
+    (if val
+        (cdr val)
+        (error "Undefined label: ASSEMBLE" 
+               label-name))))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e8"></a>Exercício 5.8:</strong> O
+          seguinte código de máquina de registradores é ambíguo, porque o rótulo
+          <code>here</code> é definido mais de uma vez:
+        </p>
+        <pre><code class="language-scheme">start
+  (goto (label here))
+here
+  (assign a (const 3))
+  (goto (label there))
+here
+  (assign a (const 4))
+  (goto (label there))
+there</code></pre>
+        <p>
+          Com o simulador como está escrito, qual será o conteúdo do registrador
+          <code>a</code> quando o controle chegar a <code>there</code>?
+          Modifique o procedimento <code>extract-labels</code> para que o
+          montador sinalize um erro se o mesmo nome de rótulo for usado para
+          indicar dois locais diferentes.
+        </p>
+      </blockquote>
+
+      <a id="g_t5_002e2_002e3"></a>
+      <a id="Generating-Execution-Procedures-for-Instructions"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.2.3</span
+        ><span class="sectitle"
+          >Gerando Procedimentos de Execução para Instruções</span
+        >
+      </h4>
+
+      <p>
+        O montador chama <code>make-execution-procedure</code> para gerar o
+        procedimento de execução para uma instrução. Como o procedimento
+        <code>analyze</code> no avaliador de
+        <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>, ele despacha no tipo
+        de instrução para gerar o procedimento de execução apropriado.
+      </p>
+      <pre><code class="language-scheme">(define (make-execution-procedure 
+         inst labels machine pc flag stack ops)
+  (cond ((eq? (car inst) 'assign)
+         (make-assign 
+          inst machine labels ops pc))
+        ((eq? (car inst) 'test)
+         (make-test 
+          inst machine labels ops flag pc))
+        ((eq? (car inst) 'branch)
+         (make-branch 
+          inst machine labels flag pc))
+        ((eq? (car inst) 'goto)
+         (make-goto inst machine labels pc))
+        ((eq? (car inst) 'save)
+         (make-save inst machine stack pc))
+        ((eq? (car inst) 'restore)
+         (make-restore inst machine stack pc))
+        ((eq? (car inst) 'perform)
+         (make-perform
+          inst machine labels ops pc))
+        (else (error "Unknown instruction 
+                      type: ASSEMBLE"
+                     inst))))</code></pre>
+
+      <p>
+        Para cada tipo de instrução na linguagem de máquina de registradores, há
+        um gerador que constrói um procedimento de execução apropriado. Os
+        detalhes desses procedimentos determinam tanto a sintaxe quanto o
+        significado das instruções individuais na linguagem de máquina de
+        registradores. Usamos abstração de dados para isolar a sintaxe detalhada
+        das expressões de máquina de registradores do mecanismo geral de
+        execução, como fizemos para avaliadores em
+        <a href="4_002e1.html#g_t4_002e1_002e2">4.1.2</a>, usando procedimentos
+        de sintaxe para extrair e classificar as partes de uma instrução.
+      </p>
+      <a id="Assign-instructions"></a>
+      <h5 class="subsubheading"><code>Assign</code> Instruções</h5>
+
+      <p>
+        O procedimento <code>make-assign</code> lida com instruções
+        <code>assign</code>:
+      </p>
+      <pre><code class="language-scheme">(define (make-assign 
+         inst machine labels operations pc)
+  (let ((target 
+         (get-register 
+          machine 
+          (assign-reg-name inst)))
+        (value-exp (assign-value-exp inst)))
+    (let ((value-proc
+           (if (operation-exp? value-exp)
+               (make-operation-exp
+                value-exp 
+                machine
+                labels
+                operations)
+               (make-primitive-exp
+                (car value-exp)
+                machine
+                labels))))
+      (lambda ()   ; procedimento de execução
+                   ; para assign
+        (set-contents! target (value-proc))
+        (advance-pc pc)))))</code></pre>
+
+      <p>
+        <code>Make-assign</code> extrai o nome do registrador de destino (o
+        segundo elemento da instrução) e a expressão de valor (o resto da lista
+        que forma a instrução) da instrução <code>assign</code> usando os
+        seletores
+      </p>
+      <pre><code class="language-scheme">(define (assign-reg-name assign-instruction)
+  (cadr assign-instruction))
+(define (assign-value-exp assign-instruction)
+  (cddr assign-instruction))</code></pre>
+
+      <p>
+        O nome do registrador é procurado com <code>get-register</code> para
+        produzir o objeto de registrador de destino. A expressão de valor é
+        passada para <code>make-operation-exp</code> se o valor for o resultado
+        de uma operação, e para <code>make-primitive-exp</code> caso contrário.
+        Esses procedimentos (mostrados abaixo) analisam a expressão de valor e
+        produzem um procedimento de execução para o valor. Este é um
+        procedimento sem argumentos, chamado <code>value-proc</code>, que será
+        avaliado durante a simulação para produzir o valor real a ser atribuído
+        ao registrador. Observe que o trabalho de procurar o nome do registrador
+        e analisar a expressão de valor é realizado apenas uma vez, no momento
+        da montagem, não toda vez que a instrução é simulada. Essa economia de
+        trabalho é a razão pela qual usamos procedimentos de execução e
+        corresponde diretamente à economia de trabalho que obtivemos separando a
+        análise do programa da execução no avaliador de
+        <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>.
+      </p>
+      <p>
+        O resultado retornado por <code>make-assign</code> é o procedimento de
+        execução para a instrução <code>assign</code>. Quando este procedimento
+        é chamado (pelo procedimento <code>execute</code> do modelo da máquina),
+        ele define o conteúdo do registrador de destino como o resultado obtido
+        pela execução de <code>value-proc</code>. Em seguida, ele avança o
+        <code>pc</code> para a próxima instrução executando o procedimento
+      </p>
+      <pre><code class="language-scheme">(define (advance-pc pc)
+  (set-contents! pc (cdr (get-contents pc))))</code></pre>
+
+      <p>
+        <code>Advance-pc</code> é a terminação normal para todas as instruções,
+        exceto <code>branch</code> e <code>goto</code>.
+      </p>
+      <a id="Test_002c-branch_002c-and-goto-instructions"></a>
+      <h5 class="subsubheading">
+        <code>Test</code>, <code>branch</code>, e <code>goto</code> Instruções
+      </h5>
+
+      <p>
+        <code>Make-test</code> lida com instruções <code>test</code> de maneira
+        semelhante. Ele extrai a expressão que especifica a condição a ser
+        testada e gera um procedimento de execução para ela. No momento da
+        simulação, o procedimento para a condição é chamado, o resultado é
+        atribuído ao registrador <code>flag</code>, e o <code>pc</code> é
+        avançado:
+      </p>
+      <pre><code class="language-scheme">(define 
+  (make-test 
+   inst machine labels operations flag pc)
+  (let ((condition (test-condition inst)))
+    (if (operation-exp? condition)
+        (let ((condition-proc
+               (make-operation-exp
+                condition 
+                machine
+                labels
+                operations)))
+          (lambda () 
+            (set-contents! 
+             flag (condition-proc))
+            (advance-pc pc)))
+        (error "Bad TEST instruction: 
+                ASSEMBLE" inst))))
+
+(define (test-condition test-instruction)
+  (cdr test-instruction))</code></pre>
+
+      <p>
+        O procedimento de execução para uma instrução
+        <code>branch</code> verifica o conteúdo do registrador
+        <code>flag</code> e define o conteúdo do <code>pc</code> para o destino
+        do desvio (se o desvio for tomado) ou simplesmente avança o
+        <code>pc</code> (se o desvio não for tomado). Observe que o destino
+        indicado em uma instrução <code>branch</code> deve ser um rótulo, e o
+        procedimento <code>make-branch</code> impõe isso. Observe também que o
+        rótulo é procurado no momento da montagem, não cada vez que a instrução
+        <code>branch</code> é simulada.
+      </p>
+      <pre><code class="language-scheme">(define 
+  (make-branch 
+   inst machine labels flag pc)
+  (let ((dest (branch-dest inst)))
+    (if (label-exp? dest)
+        (let ((insts
+               (lookup-label 
+                labels 
+                (label-exp-label dest))))
+          (lambda ()
+            (if (get-contents flag)
+                (set-contents! pc insts)
+                (advance-pc pc))))
+        (error "Bad BRANCH instruction: 
+                ASSEMBLE"
+               inst))))
+
+(define (branch-dest branch-instruction)
+  (cadr branch-instruction))</code></pre>
+
+      <p>
+        Uma instrução <code>goto</code> é semelhante a um desvio, exceto que o
+        destino pode ser especificado como um rótulo ou como um registrador, e
+        não há condição para verificar—o <code>pc</code> é sempre definido para
+        o novo destino.
+      </p>
+      <pre><code class="language-scheme">(define (make-goto inst machine labels pc)
+  (let ((dest (goto-dest inst)))
+    (cond ((label-exp? dest)
+           (let ((insts
+                  (lookup-label 
+                   labels
+                   (label-exp-label dest))))
+             (lambda () 
+               (set-contents! pc insts))))
+          ((register-exp? dest)
+           (let ((reg
+                  (get-register 
+                   machine
+                   (register-exp-reg dest))))
+             (lambda ()
+               (set-contents! 
+                pc
+                (get-contents reg)))))
+          (else (error "Bad GOTO instruction: 
+                        ASSEMBLE"
+                       inst)))))
+
+(define (goto-dest goto-instruction)
+  (cadr goto-instruction))</code></pre>
+
+      <a id="Other-instructions"></a>
+      <h5 class="subsubheading">Outras Instruções</h5>
+
+      <p>
+        As instruções de pilha <code>save</code> e
+        <code>restore</code> simplesmente usam a pilha com o registrador
+        designado e avançam o <code>pc</code>:
+      </p>
+      <pre><code class="language-scheme">(define (make-save inst machine stack pc)
+  (let ((reg (get-register 
+              machine
+              (stack-inst-reg-name inst))))
+    (lambda ()
+      (push stack (get-contents reg))
+      (advance-pc pc))))
+
+(define (make-restore inst machine stack pc)
+  (let ((reg (get-register
+              machine
+              (stack-inst-reg-name inst))))
+    (lambda ()
+      (set-contents! reg (pop stack))
+      (advance-pc pc))))
+
+(define (stack-inst-reg-name 
+         stack-instruction)
+  (cadr stack-instruction))</code></pre>
+
+      <p>
+        O tipo final de instrução, tratado por <code>make-perform</code>, gera
+        um procedimento de execução para a ação a ser realizada. No momento da
+        simulação, o procedimento de ação é executado e o <code>pc</code> é
+        avançado.
+      </p>
+      <pre><code class="language-scheme">(define (make-perform 
+         inst machine labels operations pc)
+  (let ((action (perform-action inst)))
+    (if (operation-exp? action)
+        (let ((action-proc
+               (make-operation-exp
+                action
+                machine
+                labels
+                operations)))
+          (lambda ()
+            (action-proc)
+            (advance-pc pc)))
+        (error "Bad PERFORM instruction: 
+                ASSEMBLE"
+               inst))))
+
+(define (perform-action inst) (cdr inst))</code></pre>
+
+      <a id="Execution-procedures-for-subexpressions"></a>
+      <h5 class="subsubheading">
+        Procedimentos de Execução para Subexpressões
+      </h5>
+
+      <p>
+        O valor de uma expressão <code>reg</code>, <code>label</code> ou
+        <code>const</code> pode ser necessário para atribuição a um registrador
+        (<code>make-assign</code>) ou para entrada em uma operação
+        (<code>make-operation-exp</code>, abaixo). O seguinte procedimento gera
+        procedimentos de execução para produzir valores para essas expressões
+        durante a simulação:
+      </p>
+      <pre><code class="language-scheme">(define (make-primitive-exp exp machine labels)
+  (cond ((constant-exp? exp)
+         (let ((c (constant-exp-value exp)))
+           (lambda () c)))
+        ((label-exp? exp)
+         (let ((insts
+                (lookup-label 
+                 labels
+                 (label-exp-label exp))))
+           (lambda () insts)))
+        ((register-exp? exp)
+         (let ((r (get-register
+                   machine
+                   (register-exp-reg exp))))
+           (lambda () (get-contents r))))
+        (else (error "Unknown expression type: 
+                      ASSEMBLE"
+                     exp))))</code></pre>
+
+      <p>
+        A sintaxe das expressões <code>reg</code>, <code>label</code> e
+        <code>const</code> é determinada por
+      </p>
+      <pre><code class="language-scheme">(define (register-exp? exp)
+  (tagged-list? exp 'reg))
+(define (register-exp-reg exp)
+  (cadr exp))
+(define (constant-exp? exp)
+  (tagged-list? exp 'const))
+(define (constant-exp-value exp)
+  (cadr exp))
+(define (label-exp? exp)
+  (tagged-list? exp 'label))
+(define (label-exp-label exp) 
+  (cadr exp))</code></pre>
+
+      <p>
+        Instruções <code>assign</code>, <code>perform</code> e
+        <code>test</code> podem incluir a aplicação de uma operação de máquina
+        (especificada por uma expressão <code>op</code>) a alguns operandos
+        (especificados por expressões <code>reg</code> e <code>const</code>). O
+        seguinte procedimento produz um procedimento de execução para uma
+        "expressão de operação"—uma lista contendo a operação e as expressões de
+        operando da instrução:
+      </p>
+      <pre><code class="language-scheme">(define (make-operation-exp
+         exp machine labels operations)
+  (let ((op (lookup-prim 
+             (operation-exp-op exp)
+             operations))
+        (aprocs
+         (map (lambda (e)
+                (make-primitive-exp 
+                 e machine labels))
+              (operation-exp-operands exp))))
+    (lambda () (apply op (map (lambda (p) (p))
+                              aprocs)))))</code></pre>
+
+      <p>A sintaxe das expressões de operação é determinada por</p>
+      <pre><code class="language-scheme">(define (operation-exp? exp)
+  (and (pair? exp)
+       (tagged-list? (car exp) 'op)))
+(define (operation-exp-op operation-exp)
+  (cadr (car operation-exp)))
+(define (operation-exp-operands operation-exp)
+  (cdr operation-exp))</code></pre>
+
+      <p>
+        Observe que o tratamento das expressões de operação é muito semelhante
+        ao tratamento das aplicações de procedimentos pelo procedimento
+        <code>analyze-application</code> no avaliador de
+        <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a> em que geramos um
+        procedimento de execução para cada operando. No momento da simulação,
+        chamamos os procedimentos de operando e aplicamos o procedimento Scheme
+        que simula a operação aos valores resultantes. O procedimento de
+        simulação é encontrado procurando o nome da operação na tabela de
+        operações da máquina:
+      </p>
+      <pre><code class="language-scheme">(define (lookup-prim symbol operations)
+  (let ((val (assoc symbol operations)))
+    (if val
+        (cadr val)
+        (error "Unknown operation: ASSEMBLE"
+               symbol))))</code></pre>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e9"></a>Exercício 5.9:</strong> O
+          tratamento das operações de máquina acima permite que elas operem em
+          rótulos, bem como em constantes e no conteúdo de registradores.
+          Modifique os procedimentos de processamento de expressões para impor a
+          condição de que as operações só podem ser usadas com registradores e
+          constantes.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e10"></a>Exercício 5.10:</strong> Projete
+          uma nova sintaxe para instruções de máquina de registradores e
+          modifique o simulador para usar sua nova sintaxe. Você pode
+          implementar sua nova sintaxe sem alterar nenhuma parte do simulador,
+          exceto os procedimentos de sintaxe nesta seção?
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e11"></a>Exercício 5.11:</strong> Quando
+          introduzimos <code>save</code> e <code>restore</code> em
+          <a href="5_002e1.html#g_t5_002e1_002e4">5.1.4</a>, não especificamos o
+          que aconteceria se você tentasse restaurar um registrador que não foi
+          o último salvo, como na sequência
+        </p>
+        <pre><code class="language-scheme">(save y)
+(save x)
+(restore y)</code></pre>
+        <p>
+          Há várias possibilidades razoáveis para o significado de
+          <code>restore</code>:
+        </p>
+        <ol>
+          <li>
+            <code>(restore y)</code> coloca em <code>y</code> o último valor
+            salvo na pilha, independentemente de qual registrador esse valor
+            veio. Esta é a maneira como nosso simulador se comporta. Mostre como
+            tirar vantagem desse comportamento para eliminar uma instrução da
+            máquina de Fibonacci de
+            <a href="5_002e1.html#g_t5_002e1_002e4">5.1.4</a> (<a
+              href="5_002e1.html#Figure-5_002e12"
+              >Figura 5.12</a
+            >).
+          </li>
+          <li>
+            <code>(restore y)</code> coloca em <code>y</code> o último valor
+            salvo na pilha, mas apenas se esse valor foi salvo de
+            <code>y</code>; caso contrário, ele sinaliza um erro. Modifique o
+            simulador para se comportar dessa maneira. Você terá que alterar
+            <code>save</code> para colocar o nome do registrador na pilha junto
+            com o valor.
+          </li>
+          <li>
+            <code>(restore y)</code> coloca em <code>y</code> o último valor
+            salvo de <code>y</code>, independentemente de quais outros
+            registradores foram salvos após <code>y</code> e não restaurados.
+            Modifique o simulador para se comportar dessa maneira. Você terá que
+            associar uma pilha separada a cada registrador. Você deve fazer a
+            operação <code>initialize-stack</code> inicializar todas as pilhas
+            de registradores.
+          </li>
+        </ol>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e12"></a>Exercício 5.12:</strong> O
+          simulador pode ser usado para ajudar a determinar os caminhos de dados
+          necessários para implementar uma máquina com um determinado
+          controlador. Estenda o montador para armazenar as seguintes
+          informações no modelo da máquina:
+        </p>
+        <ul>
+          <li>
+            uma lista de todas as instruções, com duplicatas removidas,
+            ordenadas por tipo de instrução (<code>assign</code>,
+            <code>goto</code>, e assim por diante);
+          </li>
+          <li>
+            uma lista (sem duplicatas) dos registradores usados para manter
+            pontos de entrada (esses são os registradores referenciados por
+            instruções <code>goto</code>);
+          </li>
+          <li>
+            uma lista (sem duplicatas) dos registradores que são
+            <code>save</code>d ou <code>restore</code>d;
+          </li>
+          <li>
+            para cada registrador, uma lista (sem duplicatas) das fontes das
+            quais ele é atribuído (por exemplo, as fontes para o registrador
+            <code>val</code> na máquina fatorial de
+            <a href="5_002e1.html#Figure-5_002e11">Figura 5.11</a> são
+            <code>(const 1)</code> e <code>((op *) (reg n) (reg val))</code>).
+          </li>
+        </ul>
+        <p>
+          Estenda a interface de passagem de mensagens para a máquina para
+          fornecer acesso a essas novas informações. Para testar seu analisador,
+          defina a máquina de Fibonacci de
+          <a href="5_002e1.html#Figure-5_002e12">Figura 5.12</a> e examine as
+          listas que você construiu.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e13"></a>Exercício 5.13:</strong>
+          Modifique o simulador para que ele use a sequência do controlador para
+          determinar quais registradores a máquina tem, em vez de exigir uma
+          lista de registradores como argumento para <code>make-machine</code>.
+          Em vez de pré-alocar os registradores em <code>make-machine</code>,
+          você pode alocá-los um por um quando eles forem vistos pela primeira
+          vez durante a montagem das instruções.
+        </p>
+      </blockquote>
+
+      <a id="g_t5_002e2_002e4"></a>
+      <a id="Monitoring-Machine-Performance"></a>
+      <h4 class="subsection">
+        <span class="secnum">5.2.4</span
+        ><span class="sectitle">Monitorando o Desempenho da Máquina</span>
+      </h4>
+
+      <p>
+        A simulação é útil não apenas para verificar a correção de um projeto de
+        máquina proposto, mas também para medir o desempenho da máquina. Por
+        exemplo, podemos instalar em nosso programa de simulação um "medidor"
+        que mede o número de operações de pilha usadas em um cálculo. Para fazer
+        isso, modificamos nossa pilha simulada para acompanhar o número de vezes
+        que os registradores são salvos na pilha e a profundidade máxima
+        atingida pela pilha, e adicionamos uma mensagem à interface da pilha que
+        imprime as estatísticas, como mostrado abaixo. Também adicionamos uma
+        operação ao modelo básico de máquina para imprimir as estatísticas da
+        pilha, inicializando <code>the-ops</code> em
+        <code>make-new-machine</code> para
+      </p>
+      <pre><code class="language-scheme">(list (list 'initialize-stack
+            (lambda () 
+              (stack 'initialize)))
+      (list 'print-stack-statistics
+            (lambda () 
+              (stack 'print-statistics))))</code></pre>
+
+      <p>Aqui está a nova versão de <code>make-stack</code>:</p>
+      <pre><code class="language-scheme">(define (make-stack)
+  (let ((s '())
+        (number-pushes 0)
+        (max-depth 0)
+        (current-depth 0))
+    (define (push x)
+      (set! s (cons x s))
+      (set! number-pushes (+ 1 number-pushes))
+      (set! current-depth (+ 1 current-depth))
+      (set! max-depth 
+            (max current-depth max-depth)))
+    (define (pop)
+      (if (null? s)
+          (error "Empty stack: POP")
+          (let ((top (car s)))
+            (set! s (cdr s))
+            (set! current-depth
+                  (- current-depth 1))
+            top)))
+    (define (initialize)
+      (set! s '())
+      (set! number-pushes 0)
+      (set! max-depth 0)
+      (set! current-depth 0)
+      'done)
+
+    (define (print-statistics)
+      (newline)
+      (display (list 'total-pushes 
+                     '= 
+                     number-pushes
+                     'maximum-depth
+                     '=
+                     max-depth)))
+    (define (dispatch message)
+      (cond ((eq? message 'push) push)
+            ((eq? message 'pop) (pop))
+            ((eq? message 'initialize) 
+             (initialize))
+            ((eq? message 'print-statistics)
+             (print-statistics))
+            (else 
+             (error "Unknown request: STACK"
+                    message))))
+    dispatch))</code></pre>
+
+      <p>
+        <a href="#Exercise-5_002e15">Exercício 5.15</a> a
+        <a href="#Exercise-5_002e19">Exercício 5.19</a> descrevem outros
+        recursos úteis de monitoramento e depuração que podem ser adicionados ao
+        simulador de máquina de registradores.
+      </p>
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e14"></a>Exercício 5.14:</strong> Meça o
+          número de empilhamentos e a profundidade máxima da pilha necessária
+          para calcular
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>n</mi>
+              <mo>!</mo>
+            </mrow>
+          </math>
+          para vários pequenos valores de
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>n</mi>
+          </math>
+          usando a máquina fatorial mostrada na
+          <a href="5_002e1.html#Figure-5_002e11">Figura 5.11</a>. A partir de
+          seus dados, determine fórmulas em termos de
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>n</mi>
+          </math>
+          para o número total de operações de empilhamento e a profundidade
+          máxima da pilha usada no cálculo de
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>n</mi>
+              <mo>!</mo>
+            </mrow>
+          </math>
+          para qualquer
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mrow class="MJX-TeXAtom-ORD">
+              <mi>n</mi>
+              <mo>&gt;</mo>
+              <mn>1</mn>
+            </mrow> </math
+          >. Observe que cada uma dessas é uma função linear de
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <mi>n</mi>
+          </math>
+          e, portanto, é determinada por duas constantes. Para obter as
+          estatísticas impressas, você terá que aumentar a máquina fatorial com
+          instruções para inicializar a pilha e imprimir as estatísticas. Você
+          pode querer também modificar a máquina para que ela leia repetidamente
+          um valor para
+          <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>n</mi> </math>,
+          calcule o fatorial e imprima o resultado (como fizemos para a máquina
+          MDC na <a href="5_002e1.html#Figure-5_002e4">Figura 5.4</a>), para que
+          você não precise invocar repetidamente
+          <code>get-register-contents</code>,
+          <code>set-register-contents!</code> e <code>start</code>.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e15"></a>Exercício 5.15:</strong>
+          Adicione <a id="index-instruction-counting"></a
+          ><em>contagem de instruções</em> à simulação de máquina de
+          registradores. Ou seja, faça o modelo da máquina acompanhar o número
+          de instruções executadas. Estenda a interface do modelo da máquina
+          para aceitar uma nova mensagem que imprime o valor da contagem de
+          instruções e redefine a contagem para zero.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e16"></a>Exercício 5.16:</strong> Aumente
+          o simulador para fornecer <a id="index-instruction-tracing"></a
+          ><em>rastreamento de instruções</em>. Ou seja, antes de cada instrução
+          ser executada, o simulador deve imprimir o texto da instrução. Faça o
+          modelo da máquina aceitar mensagens <code>trace-on</code> e
+          <code>trace-off</code> para ligar e desligar o rastreamento.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e17"></a>Exercício 5.17:</strong> Estenda
+          o rastreamento de instruções de
+          <a href="#Exercise-5_002e16">Exercício 5.16</a> para que, antes de
+          imprimir uma instrução, o simulador imprima quaisquer rótulos que
+          precedam imediatamente essa instrução na sequência do controlador.
+          Tenha cuidado para fazer isso de uma maneira que não interfira na
+          contagem de instruções (<a href="#Exercise-5_002e15">Exercício 5.15</a
+          >). Você terá que fazer o simulador reter as informações de rótulo
+          necessárias.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e18"></a>Exercício 5.18:</strong>
+          Modifique o procedimento <code>make-register</code> de
+          <a href="#g_t5_002e2_002e1">5.2.1</a> para que os registradores possam
+          ser rastreados. Registradores devem aceitar mensagens que ligam e
+          desligam o rastreamento. Quando um registrador é rastreado, atribuir
+          um valor ao registrador deve imprimir o nome do registrador, o
+          conteúdo antigo do registrador e o novo conteúdo sendo atribuído.
+          Estenda a interface para o modelo da máquina para permitir que você
+          ligue e desligue o rastreamento para registradores designados da
+          máquina.
+        </p>
+      </blockquote>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-5_002e19"></a>Exercício 5.19:</strong> Alyssa
+          P. Hacker quer um recurso de <a id="index-breakpoint"></a
+          ><em>ponto de interrupção</em> no simulador para ajudá-la a depurar
+          seus projetos de máquinas. Você foi contratado para instalar esse
+          recurso para ela. Ela quer ser capaz de especificar um lugar na
+          sequência do controlador onde o simulador parará e permitirá que ela
+          examine o estado da máquina. Você deve implementar um procedimento
+        </p>
+        <pre><code class="language-scheme">(set-breakpoint ⟨machine⟩ ⟨label⟩ ⟨n⟩)</code></pre>
+        <p>
+          que define um ponto de interrupção logo antes da
+          <math xmlns="http://www.w3.org/1998/Math/MathML">
+            <msup>
+              <mi>n</mi>
+              <mrow class="MJX-TeXAtom-ORD">
+                <mtext>th</mtext>
+              </mrow>
+            </msup>
+          </math>
+          instrução após o rótulo fornecido. Por exemplo,
+        </p>
+        <pre><code class="language-scheme">(set-breakpoint gcd-machine 'test-b 4)</code></pre>
+        <p>
+          instala um ponto de interrupção em <code>gcd-machine</code> logo antes
+          da atribuição ao registrador <code>a</code>. Quando o simulador atinge
+          o ponto de interrupção, ele deve imprimir o rótulo e o deslocamento do
+          ponto de interrupção e parar de executar instruções. Alyssa pode então
+          usar <code>get-register-contents</code> e
+          <code>set-register-contents!</code> para manipular o estado da máquina
+          simulada. Ela deve então ser capaz de continuar a execução dizendo
+        </p>
+        <pre><code class="language-scheme">(proceed-machine ⟨machine⟩)</code></pre>
+        <p>
+          Ela também deve ser capaz de remover um ponto de interrupção
+          específico por meio de
+        </p>
+        <pre><code class="language-scheme">(cancel-breakpoint ⟨machine⟩ ⟨label⟩ ⟨n⟩)</code></pre>
+        <p>ou remover todos os pontos de interrupção por meio de</p>
+        <pre><code class="language-scheme">(cancel-all-breakpoints ⟨machine⟩)</code></pre>
+      </blockquote>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de Rodapé</h4>
+
+        <div id="FOOT289">
+          <p>
+            <a class="footnote_backlink" href="#DOCF289"><sup>289</sup></a> Usar
+            o procedimento <code>receive</code> aqui é uma maneira de fazer com
+            que <code>extract-labels</code> retorne efetivamente dois
+            valores—<code>labels</code> e <code>insts</code>—sem explicitamente
+            criar uma estrutura de dados composta para armazená-los. Uma
+            implementação alternativa, que retorna um par explícito de valores,
+            é
+          </p>
+          <pre><code class="language-scheme">(define (extract-labels text)
+            (if (null? text)
+                (cons '() '())
+                (let ((result 
+                       (extract-labels (cdr text))))
+                  (let ((insts (car result))
+                        (labels (cdr result)))
+                    (let ((next-inst (car text)))
+                      (if (symbol? next-inst)
+                          (cons 
+                           insts
+                           (cons 
+                            (make-label-entry 
+                             next-inst insts) 
+                            labels))
+                          (cons 
+                           (cons 
+                            (make-instruction next-inst) 
+                            insts)
+                           labels)))))))</code></pre>
+
+          <p>que seria chamado por <code>assemble</code> da seguinte forma:</p>
+          <pre><code class="language-scheme">(define (assemble controller-text machine)
+            (let ((result 
+                   (extract-labels controller-text)))
+              (let ((insts (car result))
+                    (labels (cdr result)))
+                (update-insts! insts labels machine)
+                insts)))</code></pre>
+
+          <p>
+            Você pode considerar nosso uso de <code>receive</code> como uma
+            demonstração de uma maneira elegante de retornar múltiplos valores,
+            ou simplesmente uma desculpa para mostrar um truque de programação.
+            Um argumento como <code>receive</code> que é o próximo procedimento
+            a ser invocado é chamado de “continuação”. Lembre-se de que também
+            usamos continuações para implementar a estrutura de controle de
+            backtracking no avaliador <code>amb</code> em
+            <a href="4_002e3.html#g_t4_002e3_002e3">4.3.3</a>.
+          </p>
+        </div>
+      </div>
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="5_002e3.html#g_t5_002e3" accesskey="n" rel="next">5.3</a>,
+          Anterior:
+          <a href="5_002e1.html#g_t5_002e1" accesskey="p" rel="prev">5.1</a>,
+          Acima: <a href="#g_t5_002e2" accesskey="u" rel="prev">5.2</a> [<a
+            href="index.html#SEC_Contents"
+            title="Sumário"
+            accesskey="c"
+            rel="contents"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
+    </section>
+    <span class="bottom jump" title="Jump to bottom"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
+  </body>
+</html>
