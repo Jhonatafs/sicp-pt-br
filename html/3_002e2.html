@@ -27,21 +27,22 @@
   </head>
   <body>
     <section>
-      <a id="pagetop"></a>
-      <a id="g_t3_002e2"></a>
+      <span class="top jump" title="Ir para o topo"
+        ><a href="#pagetop" accesskey="t">⇡</a></span
+      ><a id="pagetop"></a><a id="g_t3_002e2"></a>
       <nav class="header">
         <p>
           Próximo:
-          <a href="3_002e3.html#g_t3_002e3" accesskey="n" rel="next">3.3</a>,
+          <a href="3_002e3.xhtml#g_t3_002e3" accesskey="n" rel="next">3.3</a>,
           Anterior:
-          <a href="3_002e1.html#g_t3_002e1" accesskey="p" rel="prev">3.1</a>,
+          <a href="3_002e1.xhtml#g_t3_002e1" accesskey="p" rel="prev">3.1</a>,
           Acima:
-          <a href="Chapter-3.html#Chapter-3" accesskey="u" rel="prev"
+          <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev"
             >Capítulo 3</a
           >
           [<a
-            href="index.html#SEC_Contents"
-            title="Índice"
+            href="index.xhtml#SEC_Contents"
+            title="Sumário"
             accesskey="c"
             rel="contents"
             >Sumário</a
@@ -56,8 +57,8 @@
 
       <p>
         Quando introduzimos procedimentos compostos no
-        <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>, usamos o modelo de
-        substituição de avaliação (<a href="1_002e1.html#g_t1_002e1_002e5"
+        <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>, usamos o modelo de
+        substituição de avaliação (<a href="1_002e1.xhtml#g_t1_002e1_002e5"
           >1.1.5</a
         >) para definir o que significa aplicar um procedimento a argumentos:
       </p>
@@ -72,10 +73,10 @@
       <p>
         Uma vez que admitimos a atribuição em nossa linguagem de programação,
         tal definição não é mais adequada. Em particular,
-        <a href="3_002e1.html#g_t3_002e1_002e3">3.1.3</a> argumentou que, na
+        <a href="3_002e1.xhtml#g_t3_002e1_002e3">3.1.3</a> argumentou que, na
         presença de atribuição, uma variável não pode mais ser considerada
         meramente como um nome para um valor. Em vez disso, uma variável deve de
-        alguma forma designar um "local" em que os valores podem ser
+        alguma forma designar um "local" no qual os valores podem ser
         armazenados. Em nosso novo modelo de avaliação, esses locais serão
         mantidos em estruturas chamadas <a id="index-environments"></a>
         <em>ambientes</em>.
@@ -83,36 +84,36 @@
       <p>
         Um ambiente é uma sequência de <a id="index-frames"></a>
         <em>frames</em>. Cada frame é uma tabela (possivelmente vazia) de
-        <a id="index-bindings"></a> <em>ligações</em>, que associam nomes de
+        <a id="index-bindings"></a> <em>vinculações</em>, que associam nomes de
         variáveis a seus valores correspondentes. (Um único frame pode conter no
-        máximo uma ligação para qualquer variável.) Cada frame também tem um
+        máximo uma vinculação para qualquer variável.) Cada frame também tem um
         ponteiro para seu <a id="index-enclosing-environment"></a>
         <em>ambiente envolvente</em>, a menos que, para fins de discussão, o
-        frame seja considerado
-        <a id="index-global-1"></a>
-        <em>global</em>. O <a id="index-value-of-a-variable"></a>
-        <em>valor de uma variável</em> em relação a um ambiente é o valor dado
-        pela ligação da variável no primeiro frame no ambiente que contém uma
-        ligação para essa variável. Se nenhum frame na sequência especificar uma
-        ligação para a variável, então a variável é dita
-        <a id="index-unbound"></a> <em>não ligada</em> no ambiente.
+        frame seja considerado como <a id="index-global-1"></a> <em>global</em>.
+        O <a id="index-value-of-a-variable"></a>
+        <em>valor de uma variável</em> com respeito a um ambiente é o valor dado
+        pela vinculação da variável no primeiro frame no ambiente que contém uma
+        vinculação para essa variável. Se nenhum frame na sequência especificar
+        uma vinculação para a variável, então a variável é dita
+        <a id="index-unbound"></a> <em>não vinculada</em> no ambiente.
       </p>
       <p>
         <a href="#Figure-3_002e1">Figura 3.1</a> mostra uma estrutura de
         ambiente simples consistindo de três frames, rotulados I, II e III. No
         diagrama, A, B, C e D são ponteiros para ambientes. C e D apontam para o
         mesmo ambiente. As variáveis <code>z</code> e <code>x</code> estão
-        ligadas no frame II, enquanto <code>y</code> e <code>x</code> estão
-        ligadas no frame I. O valor de <code>x</code> no ambiente D é 3. O valor
-        de <code>x</code> em relação ao ambiente B também é 3. Isso é
-        determinado da seguinte forma: Examinamos o primeiro frame na sequência
-        (frame III) e não encontramos uma ligação para <code>x</code>, então
-        prosseguimos para o ambiente envolvente D e encontramos a ligação no
-        frame I. Por outro lado, o valor de <code>x</code> no ambiente A é 7,
-        porque o primeiro frame na sequência (frame II) contém uma ligação de
-        <code>x</code> a 7. Em relação ao ambiente A, a ligação de
-        <code>x</code> a 7 no frame II é dita <a id="index-shadow"></a>
-        <em>ocultar</em> a ligação de <code>x</code> a 3 no frame I.
+        vinculadas no frame II, enquanto <code>y</code> e <code>x</code> estão
+        vinculadas no frame I. O valor de <code>x</code> no ambiente D é 3. O
+        valor de <code>x</code> em relação ao ambiente B também é 3. Isso é
+        determinado da seguinte forma: Nós examinamos o primeiro frame na
+        sequência (frame III) e não encontramos uma vinculação para
+        <code>x</code>, então prosseguimos para o ambiente envolvente D e
+        encontramos a vinculação no frame I. Por outro lado, o valor de
+        <code>x</code> no ambiente A é 7, porque o primeiro frame na sequência
+        (frame II) contém uma vinculação de <code>x</code> a 7. Em relação ao
+        ambiente A, a vinculação de <code>x</code> a 7 no frame II é dita
+        <a id="index-shadow"></a> <em>ocultar</em> a vinculação de
+        <code>x</code> a 3 no frame I.
       </p>
       <figure class="float">
         <a id="Figure-3_002e1"></a>
@@ -123,27 +124,28 @@
         >
           SVG
         </object>
+
         <figcaption class="float-caption">
           <p><strong>Figura 3.1:</strong> Uma estrutura de ambiente simples.</p>
         </figcaption>
       </figure>
 
       <p>
-        O ambiente é crucial para o processo de avaliação, porque determina o
-        contexto no qual uma expressão deve ser avaliada. De fato, pode-se dizer
-        que expressões em uma linguagem de programação não têm, em si mesmas,
-        qualquer significado. Em vez disso, uma expressão adquire significado
-        apenas em relação a algum ambiente no qual é avaliada. Mesmo a
-        interpretação de uma expressão tão simples quanto
+        O ambiente é crucial para o processo de avaliação, porque ele determina
+        o contexto no qual uma expressão deve ser avaliada. De fato, pode-se
+        dizer que expressões em uma linguagem de programação não têm, em si
+        mesmas, qualquer significado. Em vez disso, uma expressão adquire
+        significado apenas em relação a algum ambiente no qual ela é avaliada.
+        Mesmo a interpretação de uma expressão tão simples quanto
         <code>(+ 1 1)</code> depende do entendimento de que se está operando em
         um contexto no qual <code>+</code> é o símbolo para adição. Assim, em
         nosso modelo de avaliação, sempre falaremos de avaliar uma expressão em
         relação a algum ambiente. Para descrever interações com o interpretador,
-        vamos supor que há um ambiente global, consistindo de um único frame
-        (sem ambiente envolvente) que inclui valores para os símbolos associados
-        aos procedimentos primitivos. Por exemplo, a ideia de que
+        nós suporemos que existe um ambiente global, consistindo de um único
+        frame (sem ambiente envolvente) que inclui valores para os símbolos
+        associados aos procedimentos primitivos. Por exemplo, a ideia de que
         <code>+</code> é o símbolo para adição é capturada ao dizer que o
-        símbolo <code>+</code> está ligado no ambiente global ao procedimento
+        símbolo <code>+</code> está vinculado no ambiente global ao procedimento
         primitivo de adição.
       </p>
 
@@ -156,8 +158,8 @@
 
       <p>
         A especificação geral de como o interpretador avalia uma combinação
-        permanece a mesma de quando a introduzimos pela primeira vez em
-        <a href="1_002e1.html#g_t1_002e1_002e3">1.1.3</a>:
+        permanece a mesma que quando a introduzimos pela primeira vez em
+        <a href="1_002e1.xhtml#g_t1_002e1_002e3">1.1.3</a>:
       </p>
       <ul>
         <li>Para avaliar uma combinação:</li>
@@ -186,45 +188,38 @@
       <p>
         No modelo de ambiente de avaliação, um procedimento é sempre um par
         consistindo de algum código e um ponteiro para um ambiente. Os
-        procedimentos são criados de uma única forma: avaliando uma expressão λ.
-        Isso produz um procedimento cujo código é obtido do texto da expressão λ
-        e cujo ambiente é o ambiente no qual a expressão λ foi avaliada para
-        produzir o procedimento. Por exemplo, considere a definição do
-        procedimento
+        procedimentos são criados de uma única maneira: avaliando uma expressão
+        λ. Isso produz um procedimento cujo código é obtido a partir do texto da
+        expressão λ e cujo ambiente é o ambiente no qual a expressão λ foi
+        avaliada para produzir o procedimento. Por exemplo, considere a
+        definição de procedimento
       </p>
-      <div class="lisp">
-        <pre
-          class="lisp prettyprinted"
-        ><span class="opn">(</span><span class="kwd">define</span><span class="pln"> </span><span class="opn">(</span><span class="pln">square x</span><span class="clo">)</span><span class="pln">
-                </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">))</span></pre>
-      </div>
+      <pre><code class="language-scheme">(define (square x)
+  (* x x))</code></pre>
 
       <p>
         avaliada no ambiente global. A sintaxe de definição de procedimento é
-        apenas açúcar sintático para uma expressão λ subjacente. Seria
-        equivalente usar
+        apenas açúcar sintático para uma expressão λ subjacente implícita. Teria
+        sido equivalente usar
       </p>
-      <div class="lisp">
-        <pre
-          class="lisp prettyprinted"
-        ><span class="opn">(</span><span class="kwd">define</span><span class="pln"> square
-                </span><span class="opn">(</span><span class="kwd">lambda</span><span class="pln"> </span><span class="opn">(</span><span class="pln">x</span><span class="clo">)</span><span class="pln"> </span><span class="opn">(</span><span class="pun">*</span><span class="pln"> x x</span><span class="clo">)))</span></pre>
-      </div>
+      <pre><code class="language-scheme">(define square
+  (lambda (x) (* x x)))</code></pre>
 
       <p>
-        que avalia <code>(lambda (x) (* x x))</code> e liga
+        que avalia <code>(lambda (x) (* x x))</code> e vincula
         <code>square</code> ao valor resultante, tudo no ambiente global.
       </p>
       <p>
         <a href="#Figure-3_002e2">Figura 3.2</a> mostra o resultado da avaliação
-        dessa expressão <code>define</code>. O objeto procedimento é um par cujo
-        código especifica que o procedimento tem um parâmetro formal, a saber
-        <code>x</code>, e um corpo de procedimento <code>(* x x)</code>. A parte
-        do ambiente do procedimento é um ponteiro para o ambiente global, já que
-        esse é o ambiente no qual a expressão λ foi avaliada para produzir o
-        procedimento. Uma nova ligação, que associa o objeto procedimento ao
-        símbolo <code>square</code>, foi adicionada ao frame global. Em geral,
-        <code>define</code> cria definições adicionando ligações a frames.
+        dessa expressão <code>define</code>. O objeto de procedimento é um par
+        cujo código especifica que o procedimento tem um parâmetro formal,
+        nomeadamente <code>x</code>, e um corpo de procedimento
+        <code>(* x x)</code>. A parte do ambiente do procedimento é um ponteiro
+        para o ambiente global, já que esse é o ambiente no qual a expressão λ
+        foi avaliada para produzir o procedimento. Uma nova vinculação, que
+        associa o objeto de procedimento ao símbolo <code>square</code>, foi
+        adicionada ao frame global. Em geral, <code>define</code> cria
+        definições adicionando vinculações a frames.
       </p>
       <figure class="float">
         <a id="Figure-3_002e2"></a>
@@ -235,6 +230,7 @@
         >
           SVG
         </object>
+
         <figcaption class="float-caption">
           <p>
             <strong>Figura 3.2:</strong> Estrutura de ambiente produzida pela
@@ -248,9 +244,9 @@
         Agora que vimos como os procedimentos são criados, podemos descrever
         como os procedimentos são aplicados. O modelo de ambiente especifica:
         Para aplicar um procedimento a argumentos, crie um novo ambiente
-        contendo um frame que liga os parâmetros aos valores dos argumentos. O
-        ambiente envolvente desse frame é o ambiente especificado pelo
-        procedimento. Agora, dentro desse novo ambiente, avalie o corpo do
+        contendo um frame que vincula os parâmetros aos valores dos argumentos.
+        O ambiente envolvente deste frame é o ambiente especificado pelo
+        procedimento. Agora, dentro deste novo ambiente, avalie o corpo do
         procedimento.
       </p>
       <p>
@@ -261,10 +257,10 @@
         <a href="#Figure-3_002e2">Figura 3.2</a>. A aplicação do procedimento
         resulta na criação de um novo ambiente, rotulado E1 na figura, que
         começa com um frame no qual <code>x</code>, o parâmetro formal do
-        procedimento, está ligado ao argumento 5. O ponteiro que leva para cima
-        a partir desse frame mostra que o ambiente envolvente do frame é o
-        ambiente global. O ambiente global é escolhido aqui porque esse é o
-        ambiente que é indicado como parte do objeto procedimento
+        procedimento, está vinculado ao argumento 5. O ponteiro que leva para
+        cima a partir deste frame mostra que o ambiente envolvente do frame é o
+        ambiente global. O ambiente global é escolhido aqui, porque este é o
+        ambiente que é indicado como parte do objeto de procedimento
         <code>square</code>. Dentro de E1, avaliamos o corpo do procedimento,
         <code>(* x x)</code>. Como o valor de <code>x</code> em E1 é 5, o
         resultado é <code>(* 5 5)</code>, ou 25.
@@ -278,6 +274,7 @@
         >
           SVG
         </object>
+
         <figcaption class="float-caption">
           <p>
             <strong>Figura 3.3:</strong> Ambiente criado pela avaliação de
@@ -287,55 +284,746 @@
       </figure>
 
       <p>
-        O modelo de ambiente de aplicação de procedimentos pode ser resumido por
+        O modelo de ambiente de aplicação de procedimento pode ser resumido por
         duas regras:
       </p>
       <ul>
         <li>
-          Um objeto procedimento é aplicado a um conjunto de argumentos
-          construindo um frame, ligando os parâmetros formais do procedimento
+          Um objeto de procedimento é aplicado a um conjunto de argumentos
+          construindo um frame, vinculando os parâmetros formais do procedimento
           aos argumentos da chamada, e então avaliando o corpo do procedimento
-          no contexto do novo ambiente construído. O novo frame tem como
-          ambiente envolvente o ambiente especificado pelo objeto procedimento
-          que está sendo aplicado.
+          no contexto do novo ambiente construído. O novo frame tem como seu
+          ambiente envolvente o ambiente parte do objeto de procedimento sendo
+          aplicado.
         </li>
         <li>
           Um procedimento é criado avaliando uma expressão λ em relação a um
-          ambiente dado. O objeto procedimento resultante é um par consistindo
-          do texto da expressão λ e um ponteiro para o ambiente no qual o
-          procedimento foi criado.
+          dado ambiente. O objeto de procedimento resultante é um par
+          consistindo do texto da expressão λ e um ponteiro para o ambiente no
+          qual o procedimento foi criado.
         </li>
       </ul>
 
       <p>
         Também especificamos que definir um símbolo usando
-        <code>define</code> cria uma ligação no frame do ambiente atual e
+        <code>define</code> cria uma vinculação no frame do ambiente atual e
         atribui ao símbolo o valor indicado.<a
           class="footnote_link"
           id="DOCF141"
           href="#FOOT141"
           ><sup>141</sup></a
         >
-        Finalmente, especificamos o comportamento de <code>set!</code>, a
+        Finalmente, nós especificamos o comportamento de <code>set!</code>, a
         operação que nos forçou a introduzir o modelo de ambiente em primeiro
         lugar. Avaliar a expressão
         <code>(set! ⟨<var>variável</var>⟩ ⟨<var>valor</var>⟩)</code> em algum
-        ambiente localiza a ligação da variável no ambiente e altera essa
-        ligação para indicar o novo valor. Ou seja, encontra-se o primeiro frame
-        no ambiente que contém uma ligação para a variável e modifica esse
-        frame. Se a variável não estiver ligada no ambiente, então
+        ambiente localiza a vinculação da variável no ambiente e altera essa
+        vinculação para indicar o novo valor. Ou seja, encontra-se o primeiro
+        frame no ambiente que contém uma vinculação para a variável e modifica
+        esse frame. Se a variável não estiver vinculada no ambiente, então
         <code>set!</code> sinaliza um erro.
       </p>
       <p>
         Essas regras de avaliação, embora consideravelmente mais complexas que o
         modelo de substituição, ainda são razoavelmente diretas. Além disso, o
         modelo de avaliação, embora abstrato, fornece uma descrição correta de
-        como o interpretador avalia expressões. No
-        <a href="Chapter-4.html#Chapter-4">Capítulo 4</a> veremos como esse
+        como o interpretador avalia expressões. Em
+        <a href="Chapter-4.xhtml#Chapter-4">Capítulo 4</a> veremos como esse
         modelo pode servir como um plano para implementar um interpretador
-        funcional. As seções seguintes elaboram os detalhes do modelo ao
-        analisar alguns programas ilustrativos.
+        funcional. As seções seguintes elaboram os detalhes do modelo analisando
+        alguns programas ilustrativos.
       </p>
+
+      <a id="g_t3_002e2_002e2"></a>
+      <a id="Applying-Simple-Procedures"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.2.2</span
+        ><span class="sectitle">Aplicando Procedimentos Simples</span>
+      </h4>
+
+      <p>
+        Quando introduzimos o modelo de substituição em
+        <a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>, mostramos como a
+        combinação <code>(f 5)</code> é avaliada para 136, dadas as seguintes
+        definições de procedimentos:
+      </p>
+
+      <pre><code class="language-scheme">(define (square x)
+  (* x x))
+(define (sum-of-squares x y)
+  (+ (square x) (square y)))
+(define (f a)
+  (sum-of-squares (+ a 1) (* a 2)))</code></pre>
+
+      <p>
+        Podemos analisar o mesmo exemplo usando o modelo de ambiente.
+        <a href="#Figure-3_002e4">Figura 3.4</a> mostra os três objetos de
+        procedimento criados ao avaliar as definições de <code>f</code>,
+        <code>square</code> e <code>sum-of-squares</code> no ambiente global.
+        Cada objeto de procedimento consiste em algum código, junto com um
+        ponteiro para o ambiente global.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e4"></a>
+        <object
+          style="width: 54.14ex; height: 35.83ex"
+          data="fig/chap3/Fig3.4b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.4:</strong> Objetos de procedimento no quadro
+            global.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Na <a href="#Figure-3_002e5">Figura 3.5</a>, vemos a estrutura de
+        ambiente criada ao avaliar a expressão <code>(f 5)</code>. A chamada
+        para <code>f</code> cria um novo ambiente E1 começando com um quadro no
+        qual <code>a</code>, o parâmetro formal de <code>f</code>, é vinculado
+        ao argumento 5. Em E1, avaliamos o corpo de <code>f</code>:
+      </p>
+
+      <pre><code class="language-scheme">(sum-of-squares (+ a 1) (* a 2))</code></pre>
+
+      <figure class="float">
+        <a id="Figure-3_002e5"></a>
+        <object
+          style="width: 57.93ex; height: 31.17ex"
+          data="fig/chap3/Fig3.5b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.5:</strong> Ambientes criados ao avaliar
+            <code>(f 5)</code> usando os procedimentos na
+            <a href="#Figure-3_002e4">Figura 3.4</a>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Para avaliar essa combinação, primeiro avaliamos as subexpressões. A
+        primeira subexpressão, <code>sum-of-squares</code>, tem um valor que é
+        um objeto de procedimento. (Observe como esse valor é encontrado:
+        primeiro procuramos no primeiro quadro de E1, que não contém uma
+        vinculação para <code>sum-of-squares</code>. Em seguida, prosseguimos
+        para o ambiente envolvente, ou seja, o ambiente global, e encontramos a
+        vinculação mostrada na <a href="#Figure-3_002e4">Figura 3.4</a>.) As
+        outras duas subexpressões são avaliadas aplicando as operações
+        primitivas <code>+</code> e <code>*</code> para avaliar as duas
+        combinações <code>(+ a 1)</code> e <code>(* a 2)</code> para obter 6 e
+        10, respectivamente.
+      </p>
+
+      <p>
+        Agora aplicamos o objeto de procedimento
+        <code>sum-of-squares</code> aos argumentos 6 e 10. Isso resulta em um
+        novo ambiente E2 no qual os parâmetros formais <code>x</code> e
+        <code>y</code> são vinculados aos argumentos. Dentro de E2, avaliamos a
+        combinação <code>(+ (square x) (square y))</code>. Isso nos leva a
+        avaliar <code>(square x)</code>, onde <code>square</code> é encontrado
+        no quadro global e <code>x</code> é 6. Mais uma vez, configuramos um
+        novo ambiente, E3, no qual <code>x</code> é vinculado a 6, e dentro dele
+        avaliamos o corpo de <code>square</code>, que é <code>(* x x)</code>.
+        Também como parte da aplicação de <code>sum-of-squares</code>, devemos
+        avaliar a subexpressão <code>(square y)</code>, onde <code>y</code> é
+        10. Essa segunda chamada para <code>square</code> cria outro ambiente,
+        E4, no qual <code>x</code>, o parâmetro formal de <code>square</code>, é
+        vinculado a 10. E dentro de E4 devemos avaliar <code>(* x x)</code>.
+      </p>
+
+      <p>
+        O ponto importante a observar é que cada chamada para
+        <code>square</code> cria um novo ambiente contendo uma vinculação para
+        <code>x</code>. Podemos ver aqui como os diferentes quadros servem para
+        manter separadas as diferentes variáveis locais, todas nomeadas
+        <code>x</code>. Observe que cada quadro criado por
+        <code>square</code> aponta para o ambiente global, já que este é o
+        ambiente indicado pelo objeto de procedimento <code>square</code>.
+      </p>
+
+      <p>
+        Após as subexpressões serem avaliadas, os resultados são retornados. Os
+        valores gerados pelas duas chamadas para <code>square</code> são somados
+        por <code>sum-of-squares</code>, e esse resultado é retornado por
+        <code>f</code>. Como nosso foco aqui é nas estruturas de ambiente, não
+        nos deteremos em como esses valores retornados são passados de chamada
+        para chamada; no entanto, isso também é um aspecto importante do
+        processo de avaliação, e retornaremos a ele em detalhes no
+        <a href="Chapter-5.xhtml#Chapter-5">Capítulo 5</a>.
+      </p>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e9"></a>Exercício 3.9:</strong> Em
+          <a href="1_002e2.xhtml#g_t1_002e2_002e1">1.2.1</a>, usamos o modelo de
+          substituição para analisar dois procedimentos para calcular fatoriais,
+          uma versão recursiva
+        </p>
+
+        <pre><code class="language-scheme">(define (factorial n)
+  (if (= n 1)
+      1
+      (* n (factorial (- n 1)))))</code></pre>
+
+        <p>e uma versão iterativa</p>
+
+        <pre><code class="language-scheme">(define (factorial n)
+  (fact-iter 1 1 n))
+
+(define (fact-iter product 
+                   counter 
+                   max-count)
+  (if (> counter max-count)
+      product
+      (fact-iter (* counter product)
+                 (+ counter 1)
+                 max-count)))</code></pre>
+
+        <p>
+          Mostre as estruturas de ambiente criadas ao avaliar
+          <code>(factorial 6)</code> usando cada versão do procedimento
+          <code>factorial</code>.<a
+            class="footnote_link"
+            id="DOCF142"
+            href="#FOOT142"
+            ><sup>142</sup></a
+          >
+        </p>
+      </blockquote>
+
+      <a id="g_t3_002e2_002e3"></a>
+      <a id="Frames-as-the-Repository-of-Local-State"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.2.3</span
+        ><span class="sectitle">Quadros como Repositório de Estado Local</span>
+      </h4>
+
+      <p>
+        Podemos recorrer ao modelo de ambiente para ver como procedimentos e
+        atribuição podem ser usados para representar objetos com estado local.
+        Como exemplo, considere o “processador de saque” de
+        <a href="3_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a> criado ao chamar o
+        procedimento
+      </p>
+
+      <pre><code class="language-scheme">(define (make-withdraw balance)
+  (lambda (amount)
+    (if (>= balance amount)
+        (begin (set! balance 
+                     (- balance amount))
+               balance)
+        "Insufficient funds")))</code></pre>
+
+      <p>Vamos descrever a avaliação de</p>
+
+      <pre><code class="language-scheme">(define W1 (make-withdraw 100))</code></pre>
+
+      <p>seguido por</p>
+
+      <pre><code class="language-scheme">(W1 50)
+50</code></pre>
+
+      <p>
+        <a href="#Figure-3_002e6">Figura 3.6</a> mostra o resultado de definir o
+        procedimento <code>make-withdraw</code> no ambiente global. Isso produz
+        um objeto de procedimento que contém um ponteiro para o ambiente global.
+        Até agora, isso não é diferente dos exemplos que já vimos, exceto que o
+        corpo do procedimento é ele mesmo uma expressão λ.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e6"></a>
+        <object
+          style="width: 51.72ex; height: 36.87ex"
+          data="fig/chap3/Fig3.6c.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.6:</strong> Resultado de definir
+            <code>make-withdraw</code> no ambiente global.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        A parte interessante da computação acontece quando aplicamos o
+        procedimento <code>make-withdraw</code> a um argumento:
+      </p>
+
+      <pre><code class="language-scheme">(define W1 (make-withdraw 100))</code></pre>
+
+      <p>
+        Começamos, como de costume, configurando um ambiente E1 no qual o
+        parâmetro formal <code>balance</code> é vinculado ao argumento 100.
+        Dentro desse ambiente, avaliamos o corpo de <code>make-withdraw</code>,
+        ou seja, a expressão λ. Isso constrói um novo objeto de procedimento,
+        cujo código é o especificado pelo <code>lambda</code> e cujo ambiente é
+        E1, o ambiente no qual o <code>lambda</code> foi avaliado para produzir
+        o procedimento. O objeto de procedimento resultante é o valor retornado
+        pela chamada para <code>make-withdraw</code>. Isso é vinculado a
+        <code>W1</code> no ambiente global, já que o próprio
+        <code>define</code> está sendo avaliado no ambiente global.
+        <a href="#Figure-3_002e7">Figura 3.7</a> mostra a estrutura de ambiente
+        resultante.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e7"></a>
+        <object
+          style="width: 59.06ex; height: 40.41ex"
+          data="fig/chap3/Fig3.7b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.7:</strong> Resultado de avaliar
+            <code>(define W1 (make-withdraw 100))</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Agora podemos analisar o que acontece quando <code>W1</code> é aplicado
+        a um argumento:
+      </p>
+
+      <pre><code class="language-scheme">(W1 50)
+50</code></pre>
+
+      <p>
+        Começamos construindo um quadro no qual <code>amount</code>, o parâmetro
+        formal de <code>W1</code>, é vinculado ao argumento 50. O ponto crucial
+        a observar é que esse quadro tem como seu ambiente envolvente não o
+        ambiente global, mas sim o ambiente E1, porque este é o ambiente
+        especificado pelo objeto de procedimento <code>W1</code>. Dentro desse
+        novo ambiente, avaliamos o corpo do procedimento:
+      </p>
+
+      <pre><code class="language-scheme">(if (>= balance amount)
+    (begin (set! balance 
+                 (- balance amount))
+           balance)
+    "Insufficient funds")</code></pre>
+
+      <p>
+        A estrutura de ambiente resultante é mostrada na
+        <a href="#Figure-3_002e8">Figura 3.8</a>. A expressão sendo avaliada
+        referencia tanto <code>amount</code> quanto <code>balance</code>.
+        <code>Amount</code> será encontrado no primeiro quadro do ambiente,
+        enquanto <code>balance</code> será encontrado seguindo o ponteiro do
+        ambiente envolvente para E1.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e8"></a>
+        <object
+          style="width: 58.97ex; height: 43.69ex"
+          data="fig/chap3/Fig3.8c.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.8:</strong> Ambientes criados ao aplicar o objeto
+            de procedimento <code>W1</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Quando o <code>set!</code> é executado, a vinculação de
+        <code>balance</code> em E1 é alterada. Ao concluir a chamada para
+        <code>W1</code>, <code>balance</code> é 50, e o quadro que contém
+        <code>balance</code> ainda é apontado pelo objeto de procedimento
+        <code>W1</code>. O quadro que vincula <code>amount</code> (no qual
+        executamos o código que alterou <code>balance</code>) não é mais
+        relevante, já que a chamada de procedimento que o construiu terminou, e
+        não há ponteiros para esse quadro de outras partes do ambiente. Na
+        próxima vez que <code>W1</code> for chamado, isso construirá um novo
+        quadro que vincula <code>amount</code> e cujo ambiente envolvente é E1.
+        Vemos que E1 serve como o “local” que mantém a variável de estado local
+        para o objeto de procedimento <code>W1</code>.
+        <a href="#Figure-3_002e9">Figura 3.9</a> mostra a situação após a
+        chamada para <code>W1</code>.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e9"></a>
+        <object
+          style="width: 59.49ex; height: 32.72ex"
+          data="fig/chap3/Fig3.9b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.9:</strong> Ambientes após a chamada para
+            <code>W1</code>.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Observe o que acontece quando criamos um segundo objeto “withdraw”
+        fazendo outra chamada para <code>make-withdraw</code>:
+      </p>
+
+      <pre><code class="language-scheme">(define W2 (make-withdraw 100))</code></pre>
+
+      <p>
+        Isso produz a estrutura de ambiente da
+        <a href="#Figure-3_002e10">Figura 3.10</a>, que mostra que
+        <code>W2</code> é um objeto de procedimento, ou seja, um par com algum
+        código e um ambiente. O ambiente E2 para <code>W2</code> foi criado pela
+        chamada para <code>make-withdraw</code>. Ele contém um quadro com sua
+        própria vinculação local para <code>balance</code>. Por outro lado,
+        <code>W1</code> e <code>W2</code> têm o mesmo código: o código
+        especificado pela expressão λ no corpo de <code>make-withdraw</code>.<a
+          class="footnote_link"
+          id="DOCF143"
+          href="#FOOT143"
+          ><sup>143</sup></a
+        >
+        Vemos aqui por que <code>W1</code> e <code>W2</code> se comportam como
+        objetos independentes. Chamadas para <code>W1</code> referenciam a
+        variável de estado <code>balance</code> armazenada em E1, enquanto
+        chamadas para <code>W2</code> referenciam o
+        <code>balance</code> armazenado em E2. Assim, alterações no estado local
+        de um objeto não afetam o outro objeto.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e10"></a>
+        <object
+          style="width: 59.66ex; height: 38.68ex"
+          data="fig/chap3/Fig3.10b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.10:</strong> Usando
+            <code>(define W2 (make-withdraw 100))</code> para criar um segundo
+            objeto.
+          </p>
+        </figcaption>
+      </figure>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e10"></a>Exercício 3.10:</strong> No
+          procedimento <code>make-withdraw</code>, a variável local
+          <code>balance</code> é criada como um parâmetro de
+          <code>make-withdraw</code>. Também poderíamos criar a variável de
+          estado local explicitamente, usando <code>let</code>, da seguinte
+          forma:
+        </p>
+
+        <pre><code class="language-scheme">(define (make-withdraw initial-amount)
+  (let ((balance initial-amount))
+    (lambda (amount)
+      (if (>= balance amount)
+          (begin (set! balance 
+                       (- balance amount))
+                 balance)
+          "Insufficient funds"))))</code></pre>
+
+        <p>
+          Lembre-se de <a href="1_002e3.xhtml#g_t1_002e3_002e2">1.3.2</a> que
+          <code>let</code> é simplesmente açúcar sintático para uma chamada de
+          procedimento:
+        </p>
+
+        <pre><code class="language-scheme">(let ((⟨var⟩ ⟨exp⟩)) ⟨body⟩)</code></pre>
+
+        <p>é interpretado como uma sintaxe alternativa para</p>
+
+        <pre><code class="language-scheme">((lambda (⟨var⟩) ⟨body⟩) ⟨exp⟩)</code></pre>
+
+        <p>
+          Use o modelo de ambiente para analisar essa versão alternativa de
+          <code>make-withdraw</code>, desenhando figuras como as acima para
+          ilustrar as interações
+        </p>
+
+        <pre><code class="language-scheme">(define W1 (make-withdraw 100))
+(W1 50)
+(define W2 (make-withdraw 100))</code></pre>
+
+        <p>
+          Mostre que as duas versões de <code>make-withdraw</code> criam objetos
+          com o mesmo comportamento. Como as estruturas de ambiente diferem para
+          as duas versões?
+        </p>
+      </blockquote>
+
+      <a id="g_t3_002e2_002e4"></a>
+      <a id="Internal-Definitions"></a>
+      <h4 class="subsection">
+        <span class="secnum">3.2.4</span
+        ><span class="sectitle">Definições Internas</span>
+      </h4>
+
+      <p>
+        A seção <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a> introduziu a
+        ideia de que procedimentos podem ter definições internas, levando assim
+        a uma estrutura de bloco como no seguinte procedimento para calcular
+        raízes quadradas:
+      </p>
+
+      <pre><code class="language-scheme">(define (sqrt x)
+  (define (good-enough? guess)
+    (&lt; (abs (- (square guess) x)) 0.001))
+  (define (improve guess)
+    (average guess (/ x guess)))
+  (define (sqrt-iter guess)
+    (if (good-enough? guess)
+        guess
+        (sqrt-iter (improve guess))))
+  (sqrt-iter 1.0))</code></pre>
+
+      <p>
+        Agora podemos usar o modelo de ambiente para ver por que essas
+        definições internas se comportam como desejado.
+        <a href="#Figure-3_002e11">Figura 3.11</a> mostra o ponto na avaliação
+        da expressão <code>(sqrt 2)</code> onde o procedimento interno
+        <code>good-enough?</code> foi chamado pela primeira vez com
+        <code>guess</code> igual a 1.
+      </p>
+
+      <figure class="float">
+        <a id="Figure-3_002e11"></a>
+        <object
+          style="width: 60.01ex; height: 56.9ex"
+          data="fig/chap3/Fig3.11b.std.svg"
+          type="image/svg+xml"
+        >
+          SVG
+        </object>
+        <figcaption class="float-caption">
+          <p>
+            <strong>Figura 3.11:</strong> Procedimento <code>sqrt</code> com
+            definições internas.
+          </p>
+        </figcaption>
+      </figure>
+
+      <p>
+        Observe a estrutura do ambiente. <code>Sqrt</code> é um símbolo no
+        ambiente global que está vinculado a um objeto de procedimento cujo
+        ambiente associado é o ambiente global. Quando <code>sqrt</code> foi
+        chamado, um novo ambiente E1 foi formado, subordinado ao ambiente
+        global, no qual o parâmetro <code>x</code> é vinculado a 2. O corpo de
+        <code>sqrt</code> foi então avaliado em E1. Como a primeira expressão no
+        corpo de <code>sqrt</code> é
+      </p>
+
+      <pre><code class="language-scheme">(define (good-enough? guess)
+    (&lt;  (abs (- (square guess) x)) 0.001))</code></pre>
+
+      <p>
+        avaliar essa expressão definiu o procedimento
+        <code>good-enough?</code> no ambiente E1. Para ser mais preciso, o
+        símbolo <code>good-enough?</code> foi adicionado ao primeiro quadro de
+        E1, vinculado a um objeto de procedimento cujo ambiente associado é E1.
+        Da mesma forma, <code>improve</code> e <code>sqrt-iter</code> foram
+        definidos como procedimentos em E1. Por concisão, a
+        <a href="#Figure-3_002e11">Figura 3.11</a> mostra apenas o objeto de
+        procedimento para <code>good-enough?</code>.
+      </p>
+
+      <p>
+        Após os procedimentos locais serem definidos, a expressão
+        <code>(sqrt-iter 1.0)</code> foi avaliada, ainda no ambiente E1. Assim,
+        o objeto de procedimento vinculado a <code>sqrt-iter</code> em E1 foi
+        chamado com 1 como argumento. Isso criou um ambiente E2 no qual
+        <code>guess</code>, o parâmetro de <code>sqrt-iter</code>, é vinculado a
+        1. <code>Sqrt-iter</code> por sua vez chamou
+        <code>good-enough?</code> com o valor de <code>guess</code> (de E2) como
+        o argumento para <code>good-enough?</code>. Isso configurou outro
+        ambiente, E3, no qual <code>guess</code> (o parâmetro de
+        <code>good-enough?</code>) é vinculado a 1. Embora
+        <code>sqrt-iter</code> e <code>good-enough?</code> tenham um parâmetro
+        chamado <code>guess</code>, essas são duas variáveis locais distintas
+        localizadas em quadros diferentes. Além disso, E2 e E3 têm E1 como seu
+        ambiente envolvente, porque os procedimentos <code>sqrt-iter</code> e
+        <code>good-enough?</code> têm E1 como parte de seu ambiente. Uma
+        consequência disso é que o símbolo <code>x</code> que aparece no corpo
+        de <code>good-enough?</code> referenciará a vinculação de
+        <code>x</code> que aparece em E1, ou seja, o valor de <code>x</code> com
+        o qual o procedimento <code>sqrt</code> original foi chamado.
+      </p>
+
+      <p>
+        O modelo de ambiente, portanto, explica as duas propriedades principais
+        que tornam as definições de procedimentos locais uma técnica útil para
+        modularizar programas:
+      </p>
+
+      <ul>
+        <li>
+          Os nomes dos procedimentos locais não interferem com nomes externos ao
+          procedimento envolvente, porque os nomes dos procedimentos locais
+          serão vinculados no quadro que o procedimento cria quando é executado,
+          em vez de serem vinculados no ambiente global.
+        </li>
+        <li>
+          Os procedimentos locais podem acessar os argumentos do procedimento
+          envolvente, simplesmente usando nomes de parâmetros como variáveis
+          livres. Isso ocorre porque o corpo do procedimento local é avaliado em
+          um ambiente que é subordinado ao ambiente de avaliação do procedimento
+          envolvente.
+        </li>
+      </ul>
+
+      <blockquote>
+        <p>
+          <strong><a id="Exercise-3_002e11"></a>Exercício 3.11:</strong> Em
+          <a href="#g_t3_002e2_002e3">3.2.3</a>, vimos como o modelo de ambiente
+          descreveu o comportamento de procedimentos com estado local. Agora
+          vimos como as definições internas funcionam. Um procedimento típico de
+          passagem de mensagens contém ambos esses aspectos. Considere o
+          procedimento de conta bancária de
+          <a href="3_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a>:
+        </p>
+
+        <pre><code class="language-scheme">(define (make-account balance)
+  (define (withdraw amount)
+    (if (>= balance amount)
+        (begin (set! balance 
+                     (- balance 
+                        amount))
+               balance)
+        "Insufficient funds"))
+  (define (deposit amount)
+    (set! balance (+ balance amount))
+    balance)
+  (define (dispatch m)
+    (cond ((eq? m 'withdraw) withdraw)
+          ((eq? m 'deposit) deposit)
+          (else (error "Unknown request: 
+                        MAKE-ACCOUNT" 
+                       m))))
+  dispatch)</code></pre>
+
+        <p>
+          Mostre a estrutura de ambiente gerada pela sequência de interações
+        </p>
+
+        <pre><code class="language-scheme">(define acc (make-account 50))
+
+((acc 'deposit) 40)
+90
+
+((acc 'withdraw) 60)
+30</code></pre>
+
+        <p>
+          Onde o estado local para <code>acc</code> é mantido? Suponha que
+          definamos outra conta
+        </p>
+
+        <pre><code class="language-scheme">(define acc2 (make-account 100))</code></pre>
+
+        <p>
+          Como os estados locais para as duas contas são mantidos distintos?
+          Quais partes da estrutura de ambiente são compartilhadas entre
+          <code>acc</code> e <code>acc2</code>?
+        </p>
+      </blockquote>
+
+      <div class="footnote">
+        <h4 class="footnotes-heading">Notas de rodapé</h4>
+
+        <div id="FOOT140">
+          <p>
+            <a class="footnote_backlink" href="#DOCF140"><sup>140</sup></a> A
+            atribuição introduz uma sutileza na etapa 1 da regra de avaliação.
+            Como mostrado em
+            <a href="3_002e1.xhtml#Exercise-3_002e8">Exercício 3.8</a>, a
+            presença de atribuição nos permite escrever expressões que
+            produzirão valores diferentes dependendo da ordem em que as
+            subexpressões em uma combinação são avaliadas. Assim, para ser
+            preciso, devemos especificar uma ordem de avaliação na etapa 1 (por
+            exemplo, da esquerda para a direita ou da direita para a esquerda).
+            No entanto, essa ordem deve sempre ser considerada um detalhe de
+            implementação, e nunca se deve escrever programas que dependam de
+            alguma ordem específica. Por exemplo, um compilador sofisticado pode
+            otimizar um programa variando a ordem em que as subexpressões são
+            avaliadas.
+          </p>
+        </div>
+        <div id="FOOT141">
+          <p>
+            <a class="footnote_backlink" href="#DOCF141"><sup>141</sup></a> Se
+            já houver uma vinculação para a variável no quadro atual, então a
+            vinculação é alterada. Isso é conveniente porque permite redefinição
+            de símbolos; no entanto, também significa que
+            <code>define</code> pode ser usado para alterar valores, e isso traz
+            à tona questões de atribuição sem usar explicitamente
+            <code>set!</code>. Por causa disso, algumas pessoas preferem que
+            redefinições de símbolos existentes sinalizem erros ou avisos.
+          </p>
+        </div>
+        <div id="FOOT142">
+          <p>
+            <a class="footnote_backlink" href="#DOCF142"><sup>142</sup></a> O
+            modelo de ambiente não esclarecerá nossa afirmação em
+            <a href="1_002e2.xhtml#g_t1_002e2_002e1">1.2.1</a> de que o
+            interpretador pode executar um procedimento como
+            <code>fact-iter</code> em uma quantidade constante de espaço usando
+            recursão em cauda. Discutiremos recursão em cauda quando lidarmos
+            com a estrutura de controle do interpretador em
+            <a href="5_002e4.xhtml#g_t5_002e4">5.4</a>.
+          </p>
+        </div>
+        <div id="FOOT143">
+          <p>
+            <a class="footnote_backlink" href="#DOCF143"><sup>143</sup></a> Se
+            <code>W1</code> e <code>W2</code> compartilham o mesmo código físico
+            armazenado no computador, ou se cada um mantém uma cópia do código,
+            é um detalhe da implementação. Para o interpretador que
+            implementamos no <a href="Chapter-4.xhtml#Chapter-4">Capítulo 4</a>,
+            o código é de fato compartilhado.
+          </p>
+        </div>
+      </div>
+
+      <nav class="header">
+        <p>
+          Próximo:
+          <a href="3_002e3.xhtml#g_t3_002e3" accesskey="n" rel="next">3.3</a>,
+          Anterior:
+          <a href="3_002e1.xhtml#g_t3_002e1" accesskey="p" rel="prev">3.1</a>,
+          Acima: <a href="#g_t3_002e2" accesskey="u" rel="prev">3.2</a> [<a
+            href="index.xhtml#SEC_Contents"
+            title="Índice"
+            accesskey="c"
+            rel="sumário"
+            >Sumário</a
+          >]
+        </p>
+      </nav>
     </section>
+    <span class="bottom jump" title="Jump to bottom"
+      ><a href="#pagebottom" accesskey="b">⇣</a></span
+    ><a id="pagebottom"></a>
   </body>
 </html>
