@@ -33,15 +33,15 @@
       <nav class="header">
         <p>
           Próximo:
-          <a href="3_002e3.xhtml#g_t3_002e3" accesskey="n" rel="next">3.3</a>,
+          <a href="3_002e3.html#g_t3_002e3" accesskey="n" rel="next">3.3</a>,
           Anterior:
-          <a href="3_002e1.xhtml#g_t3_002e1" accesskey="p" rel="prev">3.1</a>,
+          <a href="3_002e1.html#g_t3_002e1" accesskey="p" rel="prev">3.1</a>,
           Acima:
-          <a href="Chapter-3.xhtml#Chapter-3" accesskey="u" rel="prev"
+          <a href="Chapter-3.html#Chapter-3" accesskey="u" rel="prev"
             >Capítulo 3</a
           >
           [<a
-            href="index.xhtml#SEC_Contents"
+            href="index.html#SEC_Contents"
             title="Sumário"
             accesskey="c"
             rel="contents"
@@ -57,8 +57,8 @@
 
       <p>
         Quando introduzimos procedimentos compostos no
-        <a href="Chapter-1.xhtml#Chapter-1">Capítulo 1</a>, usamos o modelo de
-        substituição de avaliação (<a href="1_002e1.xhtml#g_t1_002e1_002e5"
+        <a href="Chapter-1.html#Chapter-1">Capítulo 1</a>, usamos o modelo de
+        substituição de avaliação (<a href="1_002e1.html#g_t1_002e1_002e5"
           >1.1.5</a
         >) para definir o que significa aplicar um procedimento a argumentos:
       </p>
@@ -73,7 +73,7 @@
       <p>
         Uma vez que admitimos a atribuição em nossa linguagem de programação,
         tal definição não é mais adequada. Em particular,
-        <a href="3_002e1.xhtml#g_t3_002e1_002e3">3.1.3</a> argumentou que, na
+        <a href="3_002e1.html#g_t3_002e1_002e3">3.1.3</a> argumentou que, na
         presença de atribuição, uma variável não pode mais ser considerada
         meramente como um nome para um valor. Em vez disso, uma variável deve de
         alguma forma designar um "local" no qual os valores podem ser
@@ -159,7 +159,7 @@
       <p>
         A especificação geral de como o interpretador avalia uma combinação
         permanece a mesma que quando a introduzimos pela primeira vez em
-        <a href="1_002e1.xhtml#g_t1_002e1_002e3">1.1.3</a>:
+        <a href="1_002e1.html#g_t1_002e1_002e3">1.1.3</a>:
       </p>
       <ul>
         <li>Para avaliar uma combinação:</li>
@@ -328,7 +328,7 @@
         modelo de substituição, ainda são razoavelmente diretas. Além disso, o
         modelo de avaliação, embora abstrato, fornece uma descrição correta de
         como o interpretador avalia expressões. Em
-        <a href="Chapter-4.xhtml#Chapter-4">Capítulo 4</a> veremos como esse
+        <a href="Chapter-4.html#Chapter-4">Capítulo 4</a> veremos como esse
         modelo pode servir como um plano para implementar um interpretador
         funcional. As seções seguintes elaboram os detalhes do modelo analisando
         alguns programas ilustrativos.
@@ -343,7 +343,7 @@
 
       <p>
         Quando introduzimos o modelo de substituição em
-        <a href="1_002e1.xhtml#g_t1_002e1_002e5">1.1.5</a>, mostramos como a
+        <a href="1_002e1.html#g_t1_002e1_002e5">1.1.5</a>, mostramos como a
         combinação <code>(f 5)</code> é avaliada para 136, dadas as seguintes
         definições de procedimentos:
       </p>
@@ -458,13 +458,13 @@
         nos deteremos em como esses valores retornados são passados de chamada
         para chamada; no entanto, isso também é um aspecto importante do
         processo de avaliação, e retornaremos a ele em detalhes no
-        <a href="Chapter-5.xhtml#Chapter-5">Capítulo 5</a>.
+        <a href="Chapter-5.html#Chapter-5">Capítulo 5</a>.
       </p>
 
       <blockquote>
         <p>
           <strong><a id="Exercise-3_002e9"></a>Exercício 3.9:</strong> Em
-          <a href="1_002e2.xhtml#g_t1_002e2_002e1">1.2.1</a>, usamos o modelo de
+          <a href="1_002e2.html#g_t1_002e2_002e1">1.2.1</a>, usamos o modelo de
           substituição para analisar dois procedimentos para calcular fatoriais,
           uma versão recursiva
         </p>
@@ -511,7 +511,7 @@
         Podemos recorrer ao modelo de ambiente para ver como procedimentos e
         atribuição podem ser usados para representar objetos com estado local.
         Como exemplo, considere o “processador de saque” de
-        <a href="3_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a> criado ao chamar o
+        <a href="3_002e1.html#g_t3_002e1_002e1">3.1.1</a> criado ao chamar o
         procedimento
       </p>
 
@@ -746,7 +746,7 @@
           "Insufficient funds"))))</code></pre>
 
         <p>
-          Lembre-se de <a href="1_002e3.xhtml#g_t1_002e3_002e2">1.3.2</a> que
+          Lembre-se de <a href="1_002e3.html#g_t1_002e3_002e2">1.3.2</a> que
           <code>let</code> é simplesmente açúcar sintático para uma chamada de
           procedimento:
         </p>
@@ -782,7 +782,7 @@
       </h4>
 
       <p>
-        A seção <a href="1_002e1.xhtml#g_t1_002e1_002e8">1.1.8</a> introduziu a
+        A seção <a href="1_002e1.html#g_t1_002e1_002e8">1.1.8</a> introduziu a
         ideia de que procedimentos podem ter definições internas, levando assim
         a uma estrutura de bloco como no seguinte procedimento para calcular
         raízes quadradas:
@@ -901,7 +901,7 @@
           vimos como as definições internas funcionam. Um procedimento típico de
           passagem de mensagens contém ambos esses aspectos. Considere o
           procedimento de conta bancária de
-          <a href="3_002e1.xhtml#g_t3_002e1_002e1">3.1.1</a>:
+          <a href="3_002e1.html#g_t3_002e1_002e1">3.1.1</a>:
         </p>
 
         <pre><code class="language-scheme">(define (make-account balance)
@@ -957,7 +957,7 @@
             <a class="footnote_backlink" href="#DOCF140"><sup>140</sup></a> A
             atribuição introduz uma sutileza na etapa 1 da regra de avaliação.
             Como mostrado em
-            <a href="3_002e1.xhtml#Exercise-3_002e8">Exercício 3.8</a>, a
+            <a href="3_002e1.html#Exercise-3_002e8">Exercício 3.8</a>, a
             presença de atribuição nos permite escrever expressões que
             produzirão valores diferentes dependendo da ordem em que as
             subexpressões em uma combinação são avaliadas. Assim, para ser
@@ -986,12 +986,12 @@
           <p>
             <a class="footnote_backlink" href="#DOCF142"><sup>142</sup></a> O
             modelo de ambiente não esclarecerá nossa afirmação em
-            <a href="1_002e2.xhtml#g_t1_002e2_002e1">1.2.1</a> de que o
+            <a href="1_002e2.html#g_t1_002e2_002e1">1.2.1</a> de que o
             interpretador pode executar um procedimento como
             <code>fact-iter</code> em uma quantidade constante de espaço usando
             recursão em cauda. Discutiremos recursão em cauda quando lidarmos
             com a estrutura de controle do interpretador em
-            <a href="5_002e4.xhtml#g_t5_002e4">5.4</a>.
+            <a href="5_002e4.html#g_t5_002e4">5.4</a>.
           </p>
         </div>
         <div id="FOOT143">
@@ -1000,7 +1000,7 @@
             <code>W1</code> e <code>W2</code> compartilham o mesmo código físico
             armazenado no computador, ou se cada um mantém uma cópia do código,
             é um detalhe da implementação. Para o interpretador que
-            implementamos no <a href="Chapter-4.xhtml#Chapter-4">Capítulo 4</a>,
+            implementamos no <a href="Chapter-4.html#Chapter-4">Capítulo 4</a>,
             o código é de fato compartilhado.
           </p>
         </div>
@@ -1009,11 +1009,11 @@
       <nav class="header">
         <p>
           Próximo:
-          <a href="3_002e3.xhtml#g_t3_002e3" accesskey="n" rel="next">3.3</a>,
+          <a href="3_002e3.html#g_t3_002e3" accesskey="n" rel="next">3.3</a>,
           Anterior:
-          <a href="3_002e1.xhtml#g_t3_002e1" accesskey="p" rel="prev">3.1</a>,
+          <a href="3_002e1.html#g_t3_002e1" accesskey="p" rel="prev">3.1</a>,
           Acima: <a href="#g_t3_002e2" accesskey="u" rel="prev">3.2</a> [<a
-            href="index.xhtml#SEC_Contents"
+            href="index.html#SEC_Contents"
             title="Índice"
             accesskey="c"
             rel="sumário"
