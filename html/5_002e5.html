@@ -33,16 +33,16 @@
       <nav class="header">
         <p>
           Próximo:
-          <a href="References.xhtml#References" accesskey="n" rel="next"
+          <a href="References.html#References" accesskey="n" rel="next"
             >Referências</a
           >, Anterior:
-          <a href="5_002e4.xhtml#g_t5_002e4" accesskey="p" rel="prev">5.4</a>,
+          <a href="5_002e4.html#g_t5_002e4" accesskey="p" rel="prev">5.4</a>,
           Acima:
-          <a href="Chapter-5.xhtml#Chapter-5" accesskey="u" rel="prev"
+          <a href="Chapter-5.html#Chapter-5" accesskey="u" rel="prev"
             >Capítulo 5</a
           >
           [<a
-            href="index.xhtml#SEC_Contents"
+            href="index.html#SEC_Contents"
             title="Índice"
             accesskey="c"
             rel="contents"
@@ -57,7 +57,7 @@
 
       <p>
         O avaliador de controle explícito de
-        <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> é uma máquina de registros
+        <a href="5_002e4.html#g_t5_002e4">5.4</a> é uma máquina de registros
         cujo controlador interpreta programas em Scheme. Nesta seção, veremos
         como executar programas em Scheme em uma máquina de registros cujo
         controlador não é um interpretador de Scheme.
@@ -187,7 +187,7 @@
       </p>
       <p>
         Esse é o mesmo tipo de otimização que implementamos no avaliador
-        analisador de <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>. Mas há
+        analisador de <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>. Mas há
         mais oportunidades para ganhar eficiência no código compilado. Conforme
         o interpretador é executado, ele segue um processo que deve ser
         aplicável a qualquer expressão na linguagem. Em contraste, um
@@ -250,7 +250,7 @@
       </h4>
 
       <p>
-        Em <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a>, modificamos nosso
+        Em <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a>, modificamos nosso
         interpretador metacircular original para separar a análise da execução.
         Analisamos cada expressão para produzir um procedimento de execução que
         tomava um ambiente como argumento e realizava as operações necessárias.
@@ -261,13 +261,13 @@
       <p>
         O procedimento <code>compile</code> é o despacho de alto nível no
         compilador. Ele corresponde ao procedimento <code>eval</code> de
-        <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a>, ao procedimento
+        <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a>, ao procedimento
         <code>analyze</code> de
-        <a href="4_002e1.xhtml#g_t4_002e1_002e7">4.1.7</a> e ao ponto de entrada
+        <a href="4_002e1.html#g_t4_002e1_002e7">4.1.7</a> e ao ponto de entrada
         <code>eval-dispatch</code> do avaliador de controle explícito em
-        <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>. O compilador, como
+        <a href="5_002e4.html#g_t5_002e4_002e1">5.4.1</a>. O compilador, como
         os interpretadores, usa os procedimentos de sintaxe de expressão
-        definidos em <a href="4_002e1.xhtml#g_t4_002e1_002e2">4.1.2</a>.<a
+        definidos em <a href="4_002e1.html#g_t4_002e1_002e2">4.1.2</a>.<a
           class="footnote_link"
           id="DOCF320"
           href="#FOOT320"
@@ -861,7 +861,7 @@
           restaurar <code>env</code> em torno da avaliação do operador de uma
           combinação no caso em que o operador é um símbolo. Poderíamos também
           construir tais otimizações no avaliador. De fato, o avaliador de
-          controle explícito de <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> já
+          controle explícito de <a href="5_002e4.html#g_t5_002e4">5.4</a> já
           realiza uma otimização semelhante, tratando combinações sem operandos
           como um caso especial.
         </p>
@@ -1131,7 +1131,7 @@ after-if</code></pre>
         Observe que <code>cond</code> é uma expressão derivada, então tudo que o
         compilador precisa fazer para lidar com ela é aplicar o transformador
         <code>cond-&gt;if</code> (de
-        <a href="4_002e1.xhtml#g_t4_002e1_002e2">4.1.2</a>) e compilar a
+        <a href="4_002e1.html#g_t4_002e1_002e2">4.1.2</a>) e compilar a
         expressão <code>if</code> resultante.
       </p>
       <a id="Compiling-sequences"></a>
@@ -1429,9 +1429,9 @@ after-lambda</code></pre>
         aplicar o procedimento em <code>proc</code> aos argumentos em
         <code>argl</code>. O código realiza essencialmente a mesma despacho que
         o procedimento <code>apply</code> no avaliador metacircular de
-        <a href="4_002e1.xhtml#g_t4_002e1_002e1">4.1.1</a> ou o ponto de entrada
+        <a href="4_002e1.html#g_t4_002e1_002e1">4.1.1</a> ou o ponto de entrada
         <code>apply-dispatch</code> no avaliador de controle explícito de
-        <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>. Ele verifica se o
+        <a href="5_002e4.html#g_t5_002e4_002e1">5.4.1</a>. Ele verifica se o
         procedimento a ser aplicado é um procedimento primitivo ou um
         procedimento compilado. Para um procedimento primitivo, ele usa
         <code>apply-primitive-procedure</code>; veremos em breve como ele lida
@@ -1787,7 +1787,7 @@ proc-return
         Este procedimento usa algumas operações simples para manipular conjuntos
         representados como listas, semelhantes à representação de conjuntos (não
         ordenados) descrita em
-        <a href="2_002e3.xhtml#g_t2_002e3_002e3">2.3.3</a>:
+        <a href="2_002e3.html#g_t2_002e3_002e3">2.3.3</a>:
       </p>
       <pre><code class="language-scheme">(define (list-union s1 s2)
   (cond ((null? s1)) s2)
@@ -2396,7 +2396,7 @@ after-lambda15
           Modifique o compilador para que ele produza alguma outra ordem de
           avaliação. (Veja a discussão sobre ordem de avaliação para o avaliador
           de controle explícito em
-          <a href="5_002e4.xhtml#g_t5_002e4_002e1">5.4.1</a>.) Como mudar a
+          <a href="5_002e4.html#g_t5_002e4_002e1">5.4.1</a>.) Como mudar a
           ordem de avaliação dos operandos afeta a eficiência do código que
           constrói a lista de argumentos?
         </p>
@@ -2729,15 +2729,15 @@ not-found</code></pre>
       <blockquote>
         <p>
           <strong><a id="Exercise-5_002e43"></a>Exercício 5.43:</strong>
-          Argumentamos em <a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a>
+          Argumentamos em <a href="4_002e1.html#g_t4_002e1_002e6">4.1.6</a>
           que as definições internas para estrutura de blocos não devem ser
           consideradas "verdadeiras"
           <code>define</code>s. Em vez disso, o corpo de um procedimento deve
           ser interpretado como se as variáveis internas sendo definidas fossem
           instaladas como variáveis comuns de <code>lambda</code> inicializadas
           com seus valores corretos usando <code>set!</code>.
-          <a href="4_002e1.xhtml#g_t4_002e1_002e6">4.1.6</a> e
-          <a href="4_002e1.xhtml#Exercise-4_002e16">Exercício 4.16</a> mostraram
+          <a href="4_002e1.html#g_t4_002e1_002e6">4.1.6</a> e
+          <a href="4_002e1.html#Exercise-4_002e16">Exercício 4.16</a> mostraram
           como modificar o interpretador metacircular para realizar isso,
           escaneando as definições internas. Modifique o compilador para
           realizar a mesma transformação antes de compilar o corpo de um
@@ -2791,7 +2791,7 @@ not-found</code></pre>
         Ainda não explicamos como carregar código compilado na máquina do
         avaliador ou como executá-lo. Assumiremos que a máquina do avaliador de
         controle explícito foi definida como em
-        <a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>, com as operações
+        <a href="5_002e4.html#g_t5_002e4_002e4">5.4.4</a>, com as operações
         adicionais especificadas em
         <a href="#Footnote-323">Nota de rodapé 323</a>. Implementaremos um
         procedimento <code>compile-and-go</code> que compila uma expressão
@@ -2823,7 +2823,7 @@ ok
         Para permitir que o avaliador lide com procedimentos compilados (por
         exemplo, para avaliar a chamada a <code>factorial</code> acima),
         precisamos mudar o código em <code>apply-dispatch</code> (<a
-          href="5_002e4.xhtml#g_t5_002e4_002e1"
+          href="5_002e4.html#g_t5_002e4_002e1"
           >5.4.1</a
         >) para que ele reconheça procedimentos compilados (distintos de
         procedimentos compostos ou primitivos) e transfira o controle
@@ -2910,7 +2910,7 @@ read-eval-print-loop
         <code>return</code>. Para transformar o código objeto produzido pelo
         compilador em instruções executáveis para a máquina de registradores do
         avaliador, usamos o procedimento <code>assemble</code> do simulador de
-        máquina de registradores (<a href="5_002e2.xhtml#g_t5_002e2_002e2"
+        máquina de registradores (<a href="5_002e2.html#g_t5_002e2_002e2"
           >5.2.2</a
         >). Em seguida, inicializamos o registrador <code>val</code> para
         apontar para a lista de instruções, setamos o <code>flag</code> para que
@@ -2934,7 +2934,7 @@ read-eval-print-loop
 
       <p>
         Se tivermos configurado o monitoramento da pilha, como no final de
-        <a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>, podemos examinar o
+        <a href="5_002e4.html#g_t5_002e4_002e4">5.4.4</a>, podemos examinar o
         uso da pilha pelo código compilado:
       </p>
 
@@ -2959,7 +2959,7 @@ ok
         Compare este exemplo com a avaliação de
         <code>(factorial 5)</code> usando a versão interpretada do mesmo
         procedimento, mostrada no final de
-        <a href="5_002e4.xhtml#g_t5_002e4_002e4">5.4.4</a>. A versão
+        <a href="5_002e4.html#g_t5_002e4_002e4">5.4.4</a>. A versão
         interpretada exigiu 144 pushes e uma profundidade máxima de pilha de 28.
         Isso ilustra a otimização resultante de nossa estratégia de compilação.
       </p>
@@ -2996,7 +2996,7 @@ ok
         estratégias para portar linguagens para novos computadores. Suponha que
         desejamos implementar Lisp para uma nova máquina. Uma estratégia é
         começar com o avaliador de controle explícito de
-        <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> e traduzir suas instruções
+        <a href="5_002e4.html#g_t5_002e4">5.4</a> e traduzir suas instruções
         para instruções da nova máquina. Uma estratégia diferente é começar com
         o compilador e mudar os geradores de código para que eles gerem código
         para a nova máquina. A segunda estratégia nos permite executar qualquer
@@ -3016,7 +3016,7 @@ ok
           ><sup>339</sup></a
         >
         Ou podemos compilar um dos interpretadores de
-        <a href="4_002e1.xhtml#g_t4_002e1">4.1</a> para produzir um
+        <a href="4_002e1.html#g_t4_002e1">4.1</a> para produzir um
         interpretador que roda na nova máquina.
       </p>
       <blockquote>
@@ -3033,7 +3033,7 @@ ok
         </p>
         <ol>
           <li>
-            <a href="5_002e4.xhtml#Exercise-5_002e27">Exercício 5.27</a> pediu
+            <a href="5_002e4.html#Exercise-5_002e27">Exercício 5.27</a> pediu
             que você determinasse, como uma função de
             <math xmlns="http://www.w3.org/1998/Math/MathML"> <mi>n</mi> </math
             >, o número de pushes e a profundidade máxima da pilha necessária
@@ -3045,10 +3045,10 @@ ok
               </mrow>
             </math>
             usando o procedimento fatorial recursivo dado acima.
-            <a href="5_002e2.xhtml#Exercise-5_002e14">Exercício 5.14</a> pediu
+            <a href="5_002e2.html#Exercise-5_002e14">Exercício 5.14</a> pediu
             que você fizesse as mesmas medições para a máquina de fatorial de
             propósito especial mostrada em
-            <a href="5_002e1.xhtml#Figure-5_002e11">Figura 5.11</a>. Agora,
+            <a href="5_002e1.html#Figure-5_002e11">Figura 5.11</a>. Agora,
             realize a mesma análise usando o procedimento
             <code>factorial</code> compilado.
 
@@ -3106,9 +3106,9 @@ ok
 
         <p>
           comparado à eficácia de usar a máquina de Fibonacci de propósito
-          especial de <a href="5_002e1.xhtml#Figure-5_002e12">Figura 5.12</a>.
+          especial de <a href="5_002e1.html#Figure-5_002e12">Figura 5.12</a>.
           (Para medição do desempenho interpretado, veja
-          <a href="5_002e4.xhtml#Exercise-5_002e29">Exercício 5.29</a>.) Para
+          <a href="5_002e4.html#Exercise-5_002e29">Exercício 5.29</a>.) Para
           Fibonacci, o recurso de tempo usado não é linear em
           <math xmlns="http://www.w3.org/1998/Math/MathML">
             <mrow class="MJX-TeXAtom-ORD">
@@ -3203,7 +3203,7 @@ ok
         <p>
           <strong><a id="Exercise-5_002e50"></a>Exercício 5.50:</strong> Use o
           compilador para compilar o avaliador metacircular de
-          <a href="4_002e1.xhtml#g_t4_002e1">4.1</a> e execute este programa
+          <a href="4_002e1.html#g_t4_002e1">4.1</a> e execute este programa
           usando o simulador de máquina de registradores. (Para compilar mais de
           uma definição de cada vez, você pode empacotar as definições em um
           <code>begin</code>.) O interpretador resultante rodará muito
@@ -3218,7 +3218,7 @@ ok
           Desenvolva uma implementação rudimentar de Scheme em C (ou alguma
           outra linguagem de baixo nível de sua escolha) traduzindo o avaliador
           de controle explícito de
-          <a href="5_002e4.xhtml#g_t5_002e4">5.4</a> para C. Para rodar esse
+          <a href="5_002e4.html#g_t5_002e4">5.4</a> para C. Para rodar esse
           código, você também precisará fornecer rotinas apropriadas de alocação
           de armazenamento e outros suportes de tempo de execução.
         </p>
@@ -3230,7 +3230,7 @@ ok
           contraponto a <a href="#Exercise-5_002e51">Exercício 5.51</a>,
           modifique o compilador para que ele compile procedimentos Scheme em
           sequências de instruções C. Compile o avaliador metacircular de
-          <a href="4_002e1.xhtml#g_t4_002e1">4.1</a> para produzir um
+          <a href="4_002e1.html#g_t4_002e1">4.1</a> para produzir um
           interpretador Scheme escrito em C.
         </p>
       </blockquote>
@@ -3344,7 +3344,7 @@ ok
             <a id="Footnote-323"></a>Precisamos de operações da máquina para
             implementar uma estrutura de dados para representar procedimentos
             compilados, análoga à estrutura para procedimentos compostos
-            descrita em <a href="4_002e1.xhtml#g_t4_002e1_002e3">4.1.3</a>:
+            descrita em <a href="4_002e1.html#g_t4_002e1_002e3">4.1.3</a>:
           </p>
 
           <pre><code class="language-scheme">(define (make-compiled-procedure entry env)
@@ -3384,13 +3384,13 @@ ok
             acredita ser mais eficiente. Compiladores Lisp sofisticados podem,
             de fato, usar a pilha para argumentos sem destruir a recursão em
             cauda. (Veja
-            <a href="References.xhtml#Hanson-1990">Hanson 1990</a> para uma
+            <a href="References.html#Hanson-1990">Hanson 1990</a> para uma
             descrição.) Há também algum debate sobre se a alocação em pilha é
             realmente mais eficiente que a coleta de lixo em primeiro lugar, mas
             os detalhes parecem depender de pontos finos da arquitetura do
             computador. (Veja
-            <a href="References.xhtml#Appel-1987">Appel 1987</a> e
-            <a href="References.xhtml#Miller-and-Rozas-1994"
+            <a href="References.html#Appel-1987">Appel 1987</a> e
+            <a href="References.html#Miller-and-Rozas-1994"
               >Miller e Rozas 1994</a
             >
             para visões opostas sobre essa questão.)
@@ -3499,7 +3499,7 @@ ok
             Como um procedimento compilado é um objeto que o sistema pode tentar
             imprimir, também modificamos a operação de impressão do sistema
             <code>user-print</code> (de
-            <a href="4_002e1.xhtml#g_t4_002e1_002e4">4.1.4</a>) para que ele não
+            <a href="4_002e1.html#g_t4_002e1_002e4">4.1.4</a>) para que ele não
             tente imprimir os componentes de um procedimento compilado:
           </p>
 
@@ -3550,7 +3550,7 @@ ok
             "Worm" que paralisou a Internet em 1988 explorou a falha do sistema
             operacional <abbr>UNIX</abbr>(tm) em verificar se o buffer de
             entrada transbordou no daemon finger. (Veja
-            <a href="References.xhtml#Spafford-1989">Spafford 1989</a>.)
+            <a href="References.html#Spafford-1989">Spafford 1989</a>.)
           </p>
         </div>
         <div id="FOOT338">
@@ -3582,12 +3582,12 @@ ok
       <nav class="header">
         <p>
           Próximo:
-          <a href="References.xhtml#References" accesskey="n" rel="next"
+          <a href="References.html#References" accesskey="n" rel="next"
             >Referências</a
           >, Anterior:
-          <a href="5_002e4.xhtml#g_t5_002e4" accesskey="p" rel="prev">5.4</a>,
+          <a href="5_002e4.html#g_t5_002e4" accesskey="p" rel="prev">5.4</a>,
           Acima: <a href="#g_t5_002e5" accesskey="u" rel="prev">5.5</a> [<a
-            href="index.xhtml#SEC_Contents"
+            href="index.html#SEC_Contents"
             title="Índice"
             accesskey="c"
             rel="contents"
