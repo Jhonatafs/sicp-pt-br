@@ -1,5 +1,35 @@
 @import url(fonts/fonts.css);
 
+:root {
+  --background: #f8f8f8;
+  --other-bg-1: #f0f0f0;
+  --text: #383838;
+  --primary: #aeaece;
+  --secondary: #9090c0;
+  --other-one: #606060;
+  --other-two: #a07040;
+  --link: #804040;
+  --button: #c0c0c08f;
+  --popup-bg: #ffffff;
+  --faulty-text: #ff0000;
+  --faulty-bg: #ffff00;
+}
+
+.dark-theme {
+  --background: #181818;
+  --other-bg-1: #202020;
+  --text: #e0e0e0;
+  --primary: #6b6b9b;
+  --secondary: #58589b;
+  --other-one: #b0b0b0;
+  --other-two: #d48c5c;
+  --link: #d08080;
+  --button: #6060608f;
+  --popup-bg: #282828;
+  --faulty-text: #ff8080;
+  --faulty-bg: #804000;
+}
+
 /* Generated rules from HTML.pm centralized here */
 a.summary-letter {
   text-decoration: none;
@@ -64,8 +94,8 @@ ul.no-bullet {
 
 html {
   font-family: "Linux Libertine O", serif;
-  font-size: 170%; /* 100% for epub */
-  color: #383838;
+  font-size: 170%;
+  color: var(--text);
   line-height: 130%;
   /* 'liga' turns on ligatures, 'ss06' picks alternate ampersand */
   -moz-font-feature-settings: "liga" 1, "ss06";
@@ -78,7 +108,7 @@ html {
 
 @media (min-width: 481px) and (max-width: 720px) {
   html {
-    font-size: 140%; /* 100% for epub */
+    font-size: 140%;
   }
   blockquote {
     margin-left: 1em;
@@ -91,7 +121,7 @@ html {
 
 @media (max-width: 480px) {
   html {
-    font-size: 120%; /* 100% for epub */
+    font-size: 120%;
   }
   blockquote {
     margin-left: 0.5em;
@@ -103,7 +133,7 @@ html {
 }
 
 body {
-  background-color: #f8f8f8;
+  background-color: var(--background);
   margin: 0 auto;
   max-width: 100dvw !important;
 }
@@ -188,7 +218,7 @@ h5 code {
   display: inline-block;
   font-weight: normal;
   font-size: 6.7em;
-  color: #aeaece;
+  color: var(--primary);
   height: 1ex;
   margin-top: 0.3ex;
   margin-bottom: 0.5ex;
@@ -209,7 +239,7 @@ h5 code {
 
 .secnum {
   display: inline-block;
-  color: #9090c0;
+  color: var(--secondary);
   margin-right: 0.8em;
   vertical-align: top;
 }
@@ -248,11 +278,11 @@ pre var {
 }
 
 .lisp .MathJax {
-  color: #606060;
+  color: var(--other-one);
 }
 
 .roman .MathJax {
-  color: #a07040;
+  color: var(--other-two);
 }
 
 p,
@@ -290,7 +320,7 @@ a#UTF ~ p > i:last-child {
 }
 
 a[href] {
-  color: #804040;
+  color: var(--link);
   text-decoration: none;
 }
 
@@ -312,7 +342,7 @@ nav.header p {
   font-size: 0.9rem;
   padding: 0.5em;
   margin: 0;
-  background-color: #f0f0f0;
+  background-color: var(--other-bg-1);
 }
 
 nav.header a[href] {
@@ -354,7 +384,7 @@ figcaption p {
 }
 
 #footnote_popup {
-  background-color: #ffffff;
+  background-color: var(--popup-bg);
   padding: 0 3ex;
   width: 100%;
   -webkit-box-shadow: 4px 4px 22px rgba(0, 0, 0, 0.5);
@@ -427,7 +457,7 @@ h2 ~ p:first-of-type:first-letter {
   text-transform: uppercase;
   font-weight: normal;
   font-size: 3rem;
-  color: #9090c0;
+  color: var(--secondary);
 }
 
 h2 + blockquote {
@@ -526,8 +556,8 @@ math *[mathvariant="monospace"] {
 }
 
 .faulty {
-  color: red;
-  background-color: yellow;
+  color: var(--faulty-text);
+  background-color: var(--faulty-bg);
 }
 
 a#References ~ p {
@@ -558,14 +588,14 @@ a#References ~ p {
   font-family: "DejaVu-Arrows";
   font-size: 2rem;
   font-weight: bold;
-  position: fixed; /* comment out when generating epub */
+  position: fixed;
   /* display: none; */ /* uncomment for epub */
   right: 0;
   text-align: center;
 }
 
 .jump a[href] {
-  color: #c0c0c08f;
+  color: var(--button);
   margin: -1.5ex;
   padding: 1.5ex;
 }
@@ -594,4 +624,10 @@ object {
 
 figure svg {
   max-width: 100% !important;
+}
+
+/* Jhonfs */
+.icon_theme::before {
+  font-family: "Icons";
+  content: "󰔎";
 }

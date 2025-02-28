@@ -24,9 +24,13 @@
     <script src="js/jquery.min.js"></script>
     <script src="js/footnotes.js"></script>
     <script src="js/browsertest.js"></script>
+    <script src="js/light.js"></script>
   </head>
   <body>
     <section>
+      <button id="button-light" onclick="lightStatus()">
+        <span class="icon_theme"></span>
+      </button>
       <span class="top jump" title="Ir para o topo"
         ><a href="#pagetop" accesskey="t">⇡</a></span
       >
@@ -1062,9 +1066,9 @@
             <code>cdr</code> derivam da implementação original do Lisp no IBM
             704. Essa máquina tinha um esquema de endereçamento que permitia
             referenciar as partes "endereço" e "decremento" de uma localização
-            de memória. <code>Car</code> significa "Sumário da parte de
-            Endereço do Registro" e <code>cdr</code> (pronunciado "cú-der")
-            significa "Sumário da parte de Decremento do Registro".
+            de memória. <code>Car</code> significa "Sumário da parte de Endereço
+            do Registro" e <code>cdr</code> (pronunciado "cú-der") significa
+            "Sumário da parte de Decremento do Registro".
           </p>
         </div>
         <div id="FOOT69">
