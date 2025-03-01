@@ -10,135 +10,74 @@
 
 .hljs {
   display: block;
-  background: transparent;
-  color: #606060; /* .pln color from Prettify */
-  overflow-x: auto !important;
+  overflow-x: auto;
+  padding: 0 0.5em;
+  background-color: var(--code-bg);
+  color: var(--code-text);
+  border-radius: 4px;
 }
 
-/* Plain text */
+/* Substituição padrão */
 .hljs-subst {
-  color: #606060; /* .pln color from Prettify */
+  color: var(--code-text);
 }
 
-/* Strings */
-.hljs-string {
-  color: #985098; /* .str color from Prettify */
-}
-
-/* Keywords */
+/* ========== ELEMENTOS PRINCIPAIS ========== */
 .hljs-keyword,
-.hljs-selector-tag,
-.hljs-meta-keyword {
-  color: #4070a0; /* .kwd color from Prettify */
-  font-weight: normal;
+.hljs-selector-tag {
+  color: var(--code-keyword); /* Roxo identidade */
+  font-weight: 600;
 }
 
-/* Comments */
-.hljs-comment {
-  color: #b08050; /* .com color from Prettify */
+.hljs-string,
+.hljs-template-variable {
+  color: var(--code-string); /* Roxo secundário */
+}
+
+.hljs-comment,
+.hljs-doctag {
+  color: var(--code-comment); /* Cinza suave */
   font-style: italic;
 }
 
-/* Types */
-.hljs-type,
-.hljs-class .hljs-title {
-  color: #606; /* .typ color from Prettify */
-}
-
-/* Literals */
 .hljs-number,
 .hljs-literal {
-  color: #509040; /* .lit color from Prettify */
+  color: var(--code-number); /* Laranja acento */
 }
 
-/* Punctuation */
-.hljs-punctuation {
-  color: #909020; /* .pun color from Prettify */
-}
-
-/* Opening and closing brackets */
-.hljs-opn,
-.hljs-clo {
-  color: #989898; /* .opn and .clo colors from Prettify */
-}
-
-/* Errors */
-.hljs-err {
-  color: #c06050; /* .err color from Prettify */
-}
-
-/* Tags */
-.hljs-tag {
-  color: #008; /* .tag color from Prettify */
-}
-
-/* Attribute names */
-.hljs-attr {
-  color: #606; /* .atn color from Prettify */
-}
-
-/* Attribute values */
-.hljs-attribute {
-  color: #080; /* .atv color from Prettify */
-}
-
-/* Declarations and variables */
-.hljs-variable,
-.hljs-name {
-  color: #606; /* .dec and .var colors from Prettify */
-}
-
-/* Functions */
-.hljs-function .hljs-title {
-  color: red; /* .fun color from Prettify */
-}
-
-/* Titles and sections */
-.hljs-title,
-.hljs-section {
-  color: #880000; /* .title color from Prettify */
-  font-weight: bold;
-}
-
-/* Regular expressions, symbols, etc. */
-.hljs-regexp,
-.hljs-symbol,
-.hljs-template-variable,
-.hljs-link,
-.hljs-selector-attr,
 .hljs-operator,
-.hljs-selector-pseudo {
-  color: #ab5656; /* .regexp color from Prettify */
+.hljs-punctuation {
+  color: var(--code-operator); /* Cinza médio */
 }
 
-/* Built-in functions */
-.hljs-built_in {
-  color: #397300; /* .built_in color from Prettify */
+.hljs-built_in,
+.hljs-type {
+  color: var(--code-builtin); /* Roxo terciário */
 }
 
-/* Bullets, code, additions */
-.hljs-bullet,
-.hljs-code,
-.hljs-addition {
-  color: #397300; /* .bullet, .code, .addition colors from Prettify */
+.hljs-function,
+.hljs-title {
+  color: var(--code-function); /* Azul adaptado */
 }
 
-/* Meta information */
+/* ========== ELEMENTOS SECUNDÁRIOS ========== */
 .hljs-meta {
-  color: #1f7199; /* .meta color from Prettify */
+  color: var(--code-meta); /* Verde suave */
 }
 
-.hljs-meta .hljs-string {
-  color: #38a; /* .meta .string color from Prettify */
+.hljs-attr,
+.hljs-variable {
+  color: var(--code-variable); /* Texto base */
 }
 
-/* Emphasis and strong */
-.hljs-emphasis {
-  font-style: italic;
+.hljs-link,
+.hljs-regexp {
+  color: var(--code-link); /* Link padrão */
 }
 
-.hljs-strong {
-  font-weight: bold;
+.hljs-error {
+  background-color: var(--faulty-bg);
+  color: var(--faulty-text);
 }
 
 pre {

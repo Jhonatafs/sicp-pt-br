@@ -166,9 +166,9 @@
   font-style: normal;
 }
 
-/* New */
+/* Icons */
 
 @font-face {
-  font-family: "Symbols";
+  font-family: "Icons";
   src: url("SymbolsNerdFontMono-Regular.ttf");
 }
