@@ -675,23 +675,28 @@ figure svg {
   display: block;
   margin: 0;
   padding: 0.3rem;
-  padding-left: 1rem;
   width: max-content;
   height: max-content;
   border: none;
   background-color: transparent;
+  color: var(--button);
   cursor: pointer;
 
   position: fixed;
   top: calc(50% - 0.95rem);
   left: 0;
+
+  transition: all 0.4s ease-in-out;
+}
+
+#button-light:hover {
+  padding-left: 1rem;
+  border-radius: 0 5px 5px 0;
+  color: var(--background);
+  background-color: var(--code-link);
+  box-shadow: 0px 0px 3px black;
 }
 
 #button-light .icon_theme {
   font-size: 1.3rem;
-  color: var(--button);
-}
-
-#button-light .icon_theme:hover {
-  color: var(--link);
 }
