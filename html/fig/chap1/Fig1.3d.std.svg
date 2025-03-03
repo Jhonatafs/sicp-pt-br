@@ -1,38 +1,143 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <!-- Created with Inkscape (http://www.inkscape.org/) -->
-<?xml-stylesheet href="../../css/fonts/fonts.css" type="text/css"?>
-<svg xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" version="1.1" preserveAspectRatio="xMinYMin meet" viewBox="0 0 609 364" id="svg4079" width="100%" height="100%">
-  
-  <title id="title4161">SICP Figure 1.3</title>
-  <defs id="defs4081">
-    <marker refX="0" refY="0" orient="auto" id="EmptyTriangleOutL" style="overflow:visible">
-      <path d="m 5.77,0 -8.65,5 0,-10 8.65,5 z" transform="matrix(0.8,0,0,0.8,-4.8,0)" id="path4792" style="fill:#ffffff;fill-rule:evenodd;stroke:#383838;stroke-width:1pt;marker-start:none"/>
+
+<?xml-stylesheet href="../../css/fonts/fonts.css" type="text/css"?><svg
+   version="1.1"
+   preserveAspectRatio="xMinYMin meet"
+   viewBox="0 0 609 364"
+   id="svg4079"
+   width="100%"
+   height="100%"
+   sodipodi:docname="Fig1.3d.std.svg"
+   inkscape:version="1.4 (e7c3feb100, 2024-10-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <sodipodi:namedview
+     id="namedview1"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="0.94714162"
+     inkscape:cx="67.571732"
+     inkscape:cy="-73.906582"
+     inkscape:window-width="677"
+     inkscape:window-height="725"
+     inkscape:window-x="683"
+     inkscape:window-y="40"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4079" />
+  <title
+     id="title4161">SICP Figure 1.3</title>
+  <defs
+     id="defs4081">
+    <marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="EmptyTriangleOutL"
+       style="overflow:visible">
+      <path
+         d="m 5.77,0 -8.65,5 0,-10 8.65,5 z"
+         transform="matrix(0.8,0,0,0.8,-4.8,0)"
+         id="path4792"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:#383838;stroke-width:1pt;marker-start:none" />
     </marker>
-    <marker refX="0" refY="0" orient="auto" id="Tail" style="overflow:visible">
-      <g transform="scale(-1.2,-1.2)" id="g4667">
-        <path d="M -3.8048674,-3.9585227 0.54352094,0" id="path4669" style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none"/>
-        <path d="M -1.2866832,-3.9585227 3.0617053,0" id="path4671" style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none"/>
-        <path d="M 1.3053582,-3.9585227 5.6537466,0" id="path4673" style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none"/>
-        <path d="M -3.8048674,4.1775838 0.54352094,0.21974226" id="path4675" style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none"/>
-        <path d="M -1.2866832,4.1775838 3.0617053,0.21974226" id="path4677" style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none"/>
-        <path d="M 1.3053582,4.1775838 5.6537466,0.21974226" id="path4679" style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none"/>
+    <marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Tail"
+       style="overflow:visible">
+      <g
+         transform="scale(-1.2,-1.2)"
+         id="g4667">
+        <path
+           d="M -3.8048674,-3.9585227 0.54352094,0"
+           id="path4669"
+           style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none" />
+        <path
+           d="M -1.2866832,-3.9585227 3.0617053,0"
+           id="path4671"
+           style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none" />
+        <path
+           d="M 1.3053582,-3.9585227 5.6537466,0"
+           id="path4673"
+           style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none" />
+        <path
+           d="M -3.8048674,4.1775838 0.54352094,0.21974226"
+           id="path4675"
+           style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none" />
+        <path
+           d="M -1.2866832,4.1775838 3.0617053,0.21974226"
+           id="path4677"
+           style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none" />
+        <path
+           d="M 1.3053582,4.1775838 5.6537466,0.21974226"
+           id="path4679"
+           style="fill:none;stroke:#383838;stroke-width:0.80000001;stroke-linecap:round;marker-start:none;marker-end:none" />
       </g>
     </marker>
-    <marker refX="0" refY="0" orient="auto" id="Arrow2Lstart" style="overflow:visible">
-      <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(1.1,0,0,1.1,1.1,0)" id="path4649" style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"/>
+    <marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow2Lstart"
+       style="overflow:visible">
+      <path
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(1.1,0,0,1.1,1.1,0)"
+         id="path4649"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" />
     </marker>
-    <marker refX="0" refY="0" orient="auto" id="Arrow1Lstart" style="overflow:visible">
-      <path d="M 0,0 5,-5 -12.5,0 5,5 0,0 z" transform="matrix(0.8,0,0,0.8,10,0)" id="path4631" style="fill-rule:evenodd;fill:#383838;stroke:#383838;stroke-width:1pt;marker-start:none"/>
+    <marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Lstart"
+       style="overflow:visible">
+      <path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(0.8,0,0,0.8,10,0)"
+         id="path4631"
+         style="fill-rule:evenodd;fill:#383838;stroke:#383838;stroke-width:1pt;marker-start:none" />
     </marker>
-    <marker refX="0" refY="0" orient="auto" id="Arrow1Lend" style="overflow:visible">
-      <path d="M 0,0 5,-5 -12.5,0 5,5 0,0 z" transform="matrix(-0.8,0,0,-0.8,-10,0)" id="path4634" style="fill-rule:evenodd;fill:#383838;stroke:#383838;stroke-width:1pt;marker-start:none"/>
+    <marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow1Lend"
+       style="overflow:visible">
+      <path
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)"
+         id="path4634"
+         style="fill-rule:evenodd;fill:#383838;stroke:#383838;stroke-width:1pt;marker-start:none" />
     </marker>
-    <marker refX="0" refY="0" orient="auto" id="Arrow2Lend" style="overflow:visible">
-      <path d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z" transform="matrix(-1.1,0,0,-1.1,-1.1,0)" id="path4652" style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"/>
+    <marker
+       refX="0"
+       refY="0"
+       orient="auto"
+       id="Arrow2Lend"
+       style="overflow:visible">
+      <path
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
+         id="path4652"
+         style="font-size:12px;fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round" />
     </marker>
   </defs>
-  <metadata id="metadata_1.3">
-  <!--
+  <metadata
+     id="metadata_1.3">
+    <!--
     <rdf:RDF>
       <cc:Work rdf:about="">
         <dc:format>image/svg+xml</dc:format>
@@ -70,9 +175,92 @@
       </cc:License>
     </rdf:RDF>
   -->
-</metadata>
-  <g transform="translate(-81.822056,-58.88169)" id="layer1" style="display:inline">
-    <text x="79.70108" y="75.198502" id="text4087" xml:space="preserve" style="font-size:20px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;line-height:150%;fill:#383838;font-family:Inconsolata LGC;-inkscape-font-specification:Inconsolata LGC Medium"><tspan x="79.70108" y="75.198502" id="tspan4089">(factorial 6)</tspan><tspan x="79.70108" y="106.69814" dy="0 0 0" id="tspan4091">(* 6 (factorial 5))</tspan><tspan x="79.70108" y="138.19777" dy="0 0 0 0 0 0 0 0" id="tspan4093">(* 6 (* 5 (factorial 4)))</tspan><tspan x="79.70108" y="169.69742" dy="0 0 0 0 0 0 0 0 0 0 0 0 0" id="tspan4095">(* 6 (* 5 (* 4 (factorial 3))))</tspan><tspan x="79.70108" y="201.19705" dy="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" id="tspan4097">(* 6 (* 5 (* 4 (* 3 (factorial 2)))))</tspan><tspan x="79.70108" y="232.69669" dy="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" id="tspan4099">(* 6 (* 5 (* 4 (* 3 (* 2 (factorial 1))))))</tspan><tspan x="79.70108" y="264.19632" dy="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" id="tspan4101">(* 6 (* 5 (* 4 (* 3 (* 2 1)))))</tspan><tspan x="79.70108" y="295.69595" dy="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0" id="tspan4103">(* 6 (* 5 (* 4 (* 3 2))))</tspan><tspan x="79.70108" y="327.19559" dy="0 0 0 0 0 0 0 0 0 0 0 0 0" id="tspan4105">(* 6 (* 5 (* 4 6)))</tspan><tspan x="79.70108" y="358.69522" dy="0 0 0 0 0 0 0 0" id="tspan4107">(* 6 (* 5 24))</tspan><tspan x="79.70108" y="390.19485" dy="0 0 0" id="tspan4109">(* 6 120)</tspan><tspan x="79.70108" y="421.69452" id="tspan4111">720 </tspan></text>
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>SICP Figure 1.3</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     transform="translate(-81.822056,-58.88169)"
+     id="layer1"
+     style="display:inline;fill:#4a90e2;fill-opacity:1">
+    <text
+       x="79.70108"
+       y="75.198502"
+       id="text4087"
+       xml:space="preserve"
+       style="font-size:20px;font-style:normal;font-variant:normal;font-weight:500;font-stretch:normal;line-height:150%;fill:#4a90e2;font-family:Inconsolata LGC;-inkscape-font-specification:Inconsolata LGC Medium;fill-opacity:1"><tspan
+         x="79.70108"
+         y="75.198502"
+         id="tspan4089"
+         style="fill:#4a90e2;fill-opacity:1">(factorial 6)</tspan><tspan
+         x="79.70108"
+         y="106.69814"
+         dy="0 0 0"
+         id="tspan4091"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (factorial 5))</tspan><tspan
+         x="79.70108"
+         y="138.19777"
+         dy="0 0 0 0 0 0 0 0"
+         id="tspan4093"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (* 5 (factorial 4)))</tspan><tspan
+         x="79.70108"
+         y="169.69742"
+         dy="0 0 0 0 0 0 0 0 0 0 0 0 0"
+         id="tspan4095"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (* 5 (* 4 (factorial 3))))</tspan><tspan
+         x="79.70108"
+         y="201.19705"
+         dy="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+         id="tspan4097"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (* 5 (* 4 (* 3 (factorial 2)))))</tspan><tspan
+         x="79.70108"
+         y="232.69669"
+         dy="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+         id="tspan4099"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (* 5 (* 4 (* 3 (* 2 (factorial 1))))))</tspan><tspan
+         x="79.70108"
+         y="264.19632"
+         dy="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+         id="tspan4101"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (* 5 (* 4 (* 3 (* 2 1)))))</tspan><tspan
+         x="79.70108"
+         y="295.69595"
+         dy="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0"
+         id="tspan4103"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (* 5 (* 4 (* 3 2))))</tspan><tspan
+         x="79.70108"
+         y="327.19559"
+         dy="0 0 0 0 0 0 0 0 0 0 0 0 0"
+         id="tspan4105"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (* 5 (* 4 6)))</tspan><tspan
+         x="79.70108"
+         y="358.69522"
+         dy="0 0 0 0 0 0 0 0"
+         id="tspan4107"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 (* 5 24))</tspan><tspan
+         x="79.70108"
+         y="390.19485"
+         dy="0 0 0"
+         id="tspan4109"
+         style="fill:#4a90e2;fill-opacity:1">(* 6 120)</tspan><tspan
+         x="79.70108"
+         y="421.69452"
+         id="tspan4111"
+         style="fill:#4a90e2;fill-opacity:1">720 </tspan></text>
   </g>
-  <path style="fill:none;stroke:#383838;stroke-width:1.19052756;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Lend);marker-end:url(#Arrow1Lend)" id="path4118" d="m 191.56957,8.604777 42.76257,0 c 20.9996,0 35.50109,3.3776 47.90531,8.531093 99.18817,44.18038 150.46281,68.689655 249.65099,115.36643 25.00128,11.1239 31.49939,20.9996 31.49939,36.74928 0,15.74968 -6.49811,27.84043 -31.49939,36.74926 -135.31335,50.30526 -231.21209,87.0759 -367.77365,139.25348 -24.28075,7.74359 -42.90361,9.84355 -66.279916,9.84355 l -42.366146,0"/>
+  <path
+     style="fill:none;stroke:#4a90e2;stroke-width:1.19052756;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;marker-start:url(#Arrow1Lend);marker-end:url(#Arrow1Lend)"
+     id="path4118"
+     d="m 191.56957,8.604777 42.76257,0 c 20.9996,0 35.50109,3.3776 47.90531,8.531093 99.18817,44.18038 150.46281,68.689655 249.65099,115.36643 25.00128,11.1239 31.49939,20.9996 31.49939,36.74928 0,15.74968 -6.49811,27.84043 -31.49939,36.74926 -135.31335,50.30526 -231.21209,87.0759 -367.77365,139.25348 -24.28075,7.74359 -42.90361,9.84355 -66.279916,9.84355 l -42.366146,0" />
+  <path
+     style="fill:#4a90e2;fill-opacity:1;stroke:#4a90e2;stroke-width:2.11162;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+     d="m 178.97768,10.333658 c 0.52446,-2.0895973 0.12591,-3.0921 -1.75224,-4.4076116 -1.88109,-1.3175635 -2.03375,-1.7028131 -0.67478,-1.7028131 0.96598,0 2.05775,0.4877138 2.42615,1.0838085 0.36841,0.5960947 1.2279,0.995015 1.90998,0.8864895 0.68208,-0.1085255 2.66549,0.4029167 4.40757,1.1365382 l 3.16742,1.3338573 -2.63952,1.1120107 c -1.45173,0.6116055 -3.04586,1.0211205 -3.54251,0.9100335 -0.49664,-0.111088 -1.59553,0.372777 -2.44196,1.075254 -1.3,1.078907 -1.43356,0.85724 -0.86011,-1.427567 z"
+     id="path1" />
+  <path
+     style="fill:#4a90e2;fill-opacity:1;stroke:#4a90e2;stroke-width:2.11162;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+     d="m 65.62913,357.66571 c -0.673652,-0.67365 -1.224823,-0.83407 -1.224823,-0.35648 0,0.47759 -0.66266,0.31839 -1.472578,-0.35379 -0.809918,-0.67217 -1.878924,-1.14919 -2.375569,-1.06005 -1.905727,0.34205 -4.923535,-0.11471 -4.375925,-0.66232 0.315881,-0.31588 1.939186,-0.80473 3.607345,-1.08633 1.668158,-0.2816 3.745685,-0.8072 4.616727,-1.168 0.871042,-0.3608 2.478941,-0.82893 3.573109,-1.04029 1.661215,-0.3209 1.772358,-0.12278 0.673736,1.20098 -0.723612,0.8719 -1.045699,2.28878 -0.715747,3.14862 0.782581,2.03937 -0.736897,2.94704 -2.306275,1.37766 z"
+     id="path2" />
 </svg>
