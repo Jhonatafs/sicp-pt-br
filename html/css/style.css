@@ -669,6 +669,21 @@ figure svg {
   font-size: 120%;
 }
 
+.icon_cc::before {
+  font-family: "Icons";
+  content: "";
+}
+
+.icon_by::before {
+  font-family: "Icons";
+  content: "";
+}
+
+.icon_sa::before {
+  font-family: "Icons";
+  content: "";
+}
+
 /* Button Theme */
 
 #button-light {
