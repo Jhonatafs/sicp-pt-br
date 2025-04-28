@@ -1,6 +1,6 @@
 # Tradução para Português Brasileiro: Structure and Interpretation of Computer Programs (SICP)
 
-![Capa](./html/fig/bookwheel.jpg)
+![Capa](./html/fig/coverpage.jpg)
 
 ---
 
