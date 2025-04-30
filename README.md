@@ -4,7 +4,7 @@
 
 ---
 
-Tradução completa do livro clássico de Ciência da Computação **Structure and Interpretation of Computer Programs (2ª Edição)**, de Harold Abelson e Gerald Jay Sussman com Julie Sussman, para o Português Brasileiro.
+Tradução completa (via DeepSeek) do livro clássico de Ciência da Computação **Structure and Interpretation of Computer Programs (2ª Edição)**, de Harold Abelson e Gerald Jay Sussman com Julie Sussman, para o Português Brasileiro.
 
 **Sobre o Livro:**
 
@@ -18,8 +18,9 @@ Tornar este material seminal acessível à comunidade de estudantes, professores
 
 * [X] Tradução Completa do Conteudo (2ª Edição)
 * [ ] Tradução da página HTML Term-Index
-* [ ] Revisão em andamento (ou Concluída)
-* [ ] Verção TextInfo, EPUB e PDF.
+* [ ] Revisão em andamento
+* [ ] Revisão Concluida
+* [ ] Versão TextInfo, EPUB, KPF e PDF.
 
 **Como Acessar:**
 
