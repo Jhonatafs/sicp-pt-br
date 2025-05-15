@@ -28,7 +28,7 @@ Tornar este material seminal acessível à comunidade de estudantes, professores
 
 **Motivação:**
 
-[Sua breve frase sobre motivação aqui - opcional, mas recomendado]
+Como estudante autodidata, reconheço a crucial importância de conteúdos de alta qualidade para o aprendizado em Ciência da Computação. Por isso, decidi traduzir o livro 'Structure and Interpretation of Computer Programs', com o duplo objetivo de aprofundar meus próprios estudos e auxiliar outros estudantes, especialmente aqueles que buscam materiais de excelência e gratuitos para sua formação independente.
 
 **Créditos:**
 
